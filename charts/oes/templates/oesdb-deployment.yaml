@@ -1,0 +1,22 @@
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  labels:
+    app: db-opsmx
+  name: db-opsmx
+spec:
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: db-opsmx
+    spec:
+      imagePullSecrets:
+        - name: {{ .Values.k8sSecret}}
+      containers:
+      - image: {{ .Values.OESDBImage }}
+        imagePullPolicy: IfNotPresent
+        name: db-opsmx
+        ports:
+        - containerPort: 5432
+          protocol: TCP

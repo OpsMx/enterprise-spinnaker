@@ -1,0 +1,62 @@
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  name: oes
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: oes
+  template:
+    metadata:
+      labels:
+        app: oes
+      annotations:
+        configmap/checksum: {{ (.Files.Glob "config/*").AsConfig | sha256sum }}
+    spec:
+      volumes:
+        - name: backend-config-volume
+          configMap:
+            name: oesbackendconfig
+        - name: frontend-config-volume
+          configMap:
+            name: oesfrontendconfig
+        - name: server-config-volume
+          configMap:
+            name: oesserverconfig
+      imagePullSecrets:
+        - name: {{ .Values.k8sSecret}}
+      containers:
+        - image: {{ .Values.OESImage }}
+          imagePullPolicy: IfNotPresent
+          name: oes
+          ports:
+            - containerPort: 8090
+              name: backend
+              protocol: TCP
+            - containerPort: 9090
+              name: metricfetcher
+              protocol: TCP
+            - containerPort: 8161
+              name: frontend
+              protocol: TCP
+            - containerPort: 8050
+              name: audit
+              protocol: TCP
+          volumeMounts:
+          - name: backend-config-volume
+            mountPath: /opt/opsmx/config.properties
+            subPath: config.properties
+          - name: backend-config-volume
+            mountPath: /opt/opsmx/hibernate.cfg.xml
+            subPath: hibernate.cfg.xml
+          - name: frontend-config-volume
+            mountPath: /opt/opsmx/app.config.js
+            subPath: app.config.js
+          - name: server-config-volume
+            mountPath: /opt/apache-tomcat/conf/server.xml
+            subPath: server.xml
+          command: ["/bin/bash"]
+          args:
+          - -c
+          - "/usr/local/bin/run.sh"
