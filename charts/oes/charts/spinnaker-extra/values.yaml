@@ -1,2 +1,0 @@
-k8sServiceType: LoadBalancer
-createIngress: false

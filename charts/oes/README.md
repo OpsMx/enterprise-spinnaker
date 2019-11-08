@@ -84,7 +84,7 @@ Example output would be:
     NAME   TYPE           CLUSTER-IP   EXTERNAL-IP     PORT(S)                                                       AGE
     oes    LoadBalancer   10.0.4.246   34.66.226.138   8090:32097/TCP,8161:32527/TCP,9090:31265/TCP,8050:31094/TCP   9m11s
 
-Using the EXTERNAL-IP address, go to http://EXTERNAL-IP:8161/opsmx-analysis/public/canaryAnalysis.html#/audit/
+Using the EXTERNAL-IP address, go to http://EXTERNAL-IP:8161/
 
 You can login with admin/OpsMx@123
 

@@ -7,7 +7,3 @@ dependencies:
     version: ~1.20.2
     repository: https://kubernetes-charts.storage.googleapis.com/
     condition: installSpinnaker
-  - name: spinnaker-extra
-    version: 0.1.0
-    repository: file://charts/spinnaker-extra
-    condition: installSpinnaker

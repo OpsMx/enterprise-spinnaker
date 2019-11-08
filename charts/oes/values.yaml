@@ -12,6 +12,11 @@ openldap:
   adminPassword: OpsMx@123
 
 #####################################################
+# Spinnaker extra configuration
+#####################################################
+k8sServiceType: LoadBalancer
+createIngress: false
+#####################################################
 # Spinnaker instance configuration
 #####################################################
 spinnaker:
@@ -57,28 +62,6 @@ spinnaker:
               remoteIpHeader: X-Forwarded-For
               internalProxies: .*
               httpsServerPort: X-Forwarded-Port
-        # spinnakerconfig-local.yml:
-        #   spring:
-        #     profiles:
-        #       include: vault
-        #     cloud:
-        #       config:
-        #         server:
-        #           vault:
-        #             host: vault
-        #             port: 8200
-        #             backend: oes
-        #             kvVersion: 2
-        #             default-key: clouddriver
-        #             token: s.nzTzOFE6nkTNOY7oMF0ElW8C
-            # spring:
-            #   profiles:
-            #     include: git
-            #   cloud:
-            #     config:
-            #       server:
-            #         git:
-            #           uri: https://github.com/Nirmalyasen/restapp.git
 
     ## Define custom settings for Spinnaker services. Read more for details:
     ## https://www.spinnaker.io/reference/halyard/custom/#custom-service-settings

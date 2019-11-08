@@ -1,3 +1,4 @@
+{{- if .Values.installSpinnaker }}
 {{- if .Values.createIngress }}
 apiVersion: extensions/v1beta1
 kind: Ingress
@@ -23,4 +24,5 @@ spec:
         backend:
           serviceName: spin-gate-np
           servicePort: 8084
+{{- end }}
 {{- end }}
