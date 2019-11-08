@@ -30,6 +30,8 @@ You can install OES along with Spinnaker or you can add OES on top of an existin
 
 ## Deploying OES including Spinnaker
 
+Current version of OES is 1.0.
+
 - Clone the OpsMx Enterprise Spinnaker github repository
 
 		git clone https://github.com/OpsMx/enterprise-spinnaker.git
