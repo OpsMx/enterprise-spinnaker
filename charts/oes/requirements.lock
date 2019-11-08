@@ -1,0 +1,9 @@
+dependencies:
+- name: openldap
+  repository: https://kubernetes-charts.storage.googleapis.com/
+  version: 1.2.1
+- name: spinnaker
+  repository: https://kubernetes-charts.storage.googleapis.com/
+  version: 1.20.2
+digest: sha256:8f06d25040cd6e44cb8fbac1b0975dd4b21d235c697ea26f30d9764ff9fb9496
+generated: "2019-10-12T23:08:21.536507-07:00"

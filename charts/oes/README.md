@@ -22,6 +22,8 @@
 		kubectl create namespace mynamespace
 
   If you name your secret something other than oes-repo, you need to update the key k8sSecret in values.yaml.
+
+	Before you install OES, please send an email to support@opsmx.com requesting access to the OES images with your Dockerhub id. You can proceed with installation your Dockerhub id has been granted access.
 - Your Kubernetes cluster supports persistent volumes and loadbalancer service type
 
 You can install OES along with Spinnaker or you can add OES on top of an existing Spinnaker installation.
