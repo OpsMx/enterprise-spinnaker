@@ -1,5 +1,6 @@
 
-# Spinnaker PoC Installations Instructions -  Spinnaker + OpsMx Open Enterprise Spinnaker (OES) extensions.
+# Spinnaker PoC Installtion Instructions
+# Spinnaker + OpsMx Enterprise Spinnaker (OES) extensions.
 
 ## Prequisites
 
