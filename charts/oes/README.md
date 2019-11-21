@@ -1,5 +1,5 @@
 
-# OpsMx Enterprise Spinnaker (OES)
+# Spinnaker PoC Installations Instructions -  Spinnaker + OpsMx Open Enterprise Spinnaker (OES) extensions.
 
 ## Prequisites
 
@@ -23,14 +23,13 @@
 
   If you name your secret something other than oes-repo, you need to update the key k8sSecret in values.yaml.
 
-	Before you install OES, please send an email to support@opsmx.com requesting access to the OES images with your Dockerhub id. You can proceed with installation your Dockerhub id has been granted access.
+	Before you install OES, please send an email to spinnaker-poc@opsmx.io requesting access to the Spinnaker images. We will provide the dockerhub username/password that you can use to access the image.
+	
 - Your Kubernetes cluster supports persistent volumes and loadbalancer service type
 
-You can install OES along with Spinnaker or you can add OES on top of an existing Spinnaker installation.
 
-## Deploying OES including Spinnaker
+## Deploying Spinnaker with OpsMx Enterprise Spinnaker (OES) Extensions
 
-Current version of OES is 1.0.
 
 - Clone the OpsMx Enterprise Spinnaker github repository
 
@@ -42,9 +41,9 @@ Current version of OES is 1.0.
     helm install -n oes . [--namespace mynamespace]
 
 
-## Deploying OES on top of existing Spinnaker
+## Deploying OpsMx Enterprise Spinnaker (OES) Extensions on top of existing Spinnaker
 
-The existing Spinnaker must be running in a Kubernetes cluster and OES should be deployed
+The existing Spinnaker must be running in a Kubernetes cluster and OpsMx Enterprises Extensions should be deployed
 to the same namespace where Spinnaker is installed.
 
 - Clone the OpsMx Enterprise Spinnaker github repository
@@ -58,7 +57,7 @@ to the same namespace where Spinnaker is installed.
       cd enterprise-spinnaker/charts/oes
       helm install -n oes . --set installSpinnaker=false [--namespace mynamespace]
 
-## Connecting to Spinnaker and OES
+## Connecting to Spinnaker and OpsMx Enterprise Enterprise Extensions
 
 ### Connecting to Spinnaker
 
@@ -73,7 +72,7 @@ Example output would be:
 
 Using the EXTERNAL-IP address, go to http://EXTERNAL-IP:9000/
 
-### Connecting to OES
+### Connecting to OpsMx Enterprise Spinnaker Extensions(OES)
 
 Once the service is up and running, find the service ip address
 
