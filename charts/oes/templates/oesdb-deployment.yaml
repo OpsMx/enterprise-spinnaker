@@ -20,3 +20,10 @@ spec:
         ports:
         - containerPort: 5432
           protocol: TCP
+        volumeMounts:
+        - mountPath: "/var/lib/pgsql-pv"
+          name: db-lib-postgresql
+      volumes:
+      - name: db-lib-postgresql
+        persistentVolumeClaim:
+          claimName: db-lib-postgresql
