@@ -1,0 +1,43 @@
+{{- if .Values.installSpinnaker }}
+{{- if .Values.createIngress }}
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    app: spin
+    stack: gate
+  name: spin-gate-np
+spec:
+  {{- if .Values.createIngress }}
+  type: NodePort
+  {{- else }}
+  type: {{ .Values.k8sServiceType }}
+  {{- end }}
+  ports:
+  -  name: http
+     port: 8084
+     protocol: TCP
+  selector:
+    cluster: "spin-gate"
+{{- end }}
+---
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    app: spin
+    stack: deck
+  name: spin-deck-np
+spec:
+  {{- if .Values.createIngress }}
+  type: NodePort
+  {{- else }}
+  type: {{ .Values.k8sServiceType }}
+  {{- end }}
+  ports:
+  -  name: http
+     port: 9000
+     protocol: TCP
+  selector:
+    cluster: "spin-deck"
+{{- end }}

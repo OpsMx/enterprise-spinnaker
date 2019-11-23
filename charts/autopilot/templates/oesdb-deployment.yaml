@@ -1,0 +1,49 @@
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  labels:
+    app: db-opsmx
+  name: db-opsmx
+spec:
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: db-opsmx
+    spec:
+      imagePullSecrets:
+        - name: {{ .Values.k8sSecret}}
+      containers:
+      - image: {{ .Values.OESDBImage }}
+        imagePullPolicy: IfNotPresent
+        name: db-opsmx
+        ports:
+        - containerPort: 5432
+          protocol: TCP
+        volumeMounts:
+        - mountPath: "/var/lib/pgsql-pv"
+          name: db-lib-postgresql
+      volumes:
+      - name: db-lib-postgresql
+        persistentVolumeClaim:
+          claimName: db-lib-postgresql
+  #       volumeMounts:
+  #       - mountPath: "/var/log/pgsql"
+  #         name: db-log
+  #       - mountPath: "/var/lib/pgsql-pv"
+  #         name: db-lib-postgresql
+  # volumeClaimTemplates:
+  # - metadata:
+  #     name: db-log
+  #   spec:
+  #     accessModes: [ "ReadWriteOnce" ]
+  #     resources:
+  #       requests:
+  #         storage: 10G
+  # - metadata:
+  #     name: db-lib-postgresql
+  #   spec:
+  #     accessModes: [ "ReadWriteOnce" ]
+  #     resources:
+  #       requests:
+  #         storage: 10G

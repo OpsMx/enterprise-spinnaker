@@ -1,0 +1,28 @@
+{{- if .Values.installSpinnaker }}
+{{- if .Values.createIngress }}
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  labels:
+    app: spinnaker
+  name: spinnaker-ingress
+  annotations:
+    "helm.sh/hook": post-install
+    "helm.sh/hook-delete-policy": before-hook-creation
+spec:
+  backend:
+    serviceName: spin-deck-np
+    servicePort: 9000
+  rules:
+  - http:
+      paths:
+      - path: /login
+        backend:
+          serviceName: spin-gate-np
+          servicePort: 8084
+      - path: /auth/*
+        backend:
+          serviceName: spin-gate-np
+          servicePort: 8084
+{{- end }}
+{{- end }}
