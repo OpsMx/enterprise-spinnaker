@@ -1,8 +1,9 @@
 #####################################################
 # OpsMx Enterprise configuration
 #####################################################
-OESDBImage: opsmxdev/autopilot:db-0.9
-OESImage: opsmxdev/autopilot:v0.9.27.201910171823
+OESDBImage: opsmxdev/ubi8-autopilot-db:v1.1.0
+OESImage: opsmxdev/ubi8-autopilot:v0.9.30.201911131811
+OESDBMountSize: 8Gi
 k8sServiceType: LoadBalancer
 k8sSecret: oes-repo
 installOpenLdap: true
