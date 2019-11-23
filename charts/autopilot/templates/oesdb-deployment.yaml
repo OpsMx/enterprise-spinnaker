@@ -27,23 +27,3 @@ spec:
       - name: db-lib-postgresql
         persistentVolumeClaim:
           claimName: db-lib-postgresql
-  #       volumeMounts:
-  #       - mountPath: "/var/log/pgsql"
-  #         name: db-log
-  #       - mountPath: "/var/lib/pgsql-pv"
-  #         name: db-lib-postgresql
-  # volumeClaimTemplates:
-  # - metadata:
-  #     name: db-log
-  #   spec:
-  #     accessModes: [ "ReadWriteOnce" ]
-  #     resources:
-  #       requests:
-  #         storage: 10G
-  # - metadata:
-  #     name: db-lib-postgresql
-  #   spec:
-  #     accessModes: [ "ReadWriteOnce" ]
-  #     resources:
-  #       requests:
-  #         storage: 10G
