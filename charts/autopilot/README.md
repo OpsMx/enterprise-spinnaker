@@ -36,7 +36,7 @@
 
 		cd enterprise-spinnaker/charts/autopilot
     helm install -n autopilot . [--namespace mynamespace]
-		
+
 
 ## Connecting to Autopilot
 
