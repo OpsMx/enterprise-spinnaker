@@ -2,10 +2,11 @@
 # OpsMx Enterprise configuration
 #####################################################
 OESDBImage: opsmxdev/ubi8-autopilot-db:v1.1.0
-OESImage: opsmxdev/ubi8-autopilot:v0.9.30.201911131811
+OESImage: opsmxdev/ubi8-autopilot:v0.9.30.201911222106
 OESDBMountSize: 8Gi
 k8sServiceType: LoadBalancer
 k8sSecret: oes-repo
+# Feature List
 installOpenLdap: true
 installSpinnaker: true
 # Password for the admin user
@@ -18,14 +19,40 @@ openldap:
 k8sServiceType: LoadBalancer
 createIngress: false
 #####################################################
+# Centralized Logging Configuration
+#####################################################
+enableCentralLogging: true
+fluent-bit:
+  backend:
+    type: es
+    es:
+      host: spinnaker-elasticsearch-client
+      port: 9200
+kibana:
+  env:
+    ELASTICSEARCH_HOSTS: http://spinnaker-elasticsearch-client:9200
+elasticsearch:
+  cluster:
+    env:
+      MINIMUM_MASTER_NODES: 1
+  client:
+    replicas: 1
+  master:
+    replicas: 2
+    podDisruptionBudget:
+      minAvailable: 1
+  data:
+    replicas: 1
+
+#####################################################
 # Spinnaker instance configuration
 #####################################################
 spinnaker:
   halyard:
-    spinnakerVersion: 1.16.2
+    spinnakerVersion: 1.17.0
     image:
       repository: gcr.io/spinnaker-marketplace/halyard
-      tag: 1.24.0
+      tag: 1.28.0
     # Set to false to disable persistence data volume for halyard
     persistence:
       enabled: true
@@ -186,7 +213,6 @@ spinnaker:
   #   - pipeline-templates
   spinnakerFeatureFlags:
     - artifacts
-    - jobs
     - pipeline-templates
     - managed-pipeline-templates-v2-ui
 
