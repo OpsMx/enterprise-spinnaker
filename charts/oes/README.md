@@ -1,6 +1,5 @@
 
-# Spinnaker PoC Installtion Instructions
-# Spinnaker + OpsMx Enterprise Spinnaker (OES) extensions.
+# Spinnaker + OpsMx Enterprise Spinnaker Extensions (OES) Setup Instructions
 
 ## Prequisites
 
@@ -24,12 +23,12 @@
 
   If you name your secret something other than oes-repo, you need to update the key k8sSecret in values.yaml.
 
-	Before you install OES, please send an email to spinnaker-poc@opsmx.io requesting access to the Spinnaker images. We will provide the dockerhub username/password that you can use to access the image.
+	Before you install OES, please send an email to spinnaker-poc@opsmx.io requesting access to the OES images. We would require your dockerhub id to grant you access. If you do not already have a dockerhub id, you can get one at https://hub.docker.com/.
 	
-- Your Kubernetes cluster supports persistent volumes and loadbalancer service type
+- Your Kubernetes cluster supports persistent volumes and loadbalancer service type.
 
 
-## Deploying Spinnaker with OpsMx Enterprise Spinnaker (OES) Extensions
+## Deploying Spinnaker with OpsMx Enterprise Spinnaker Extensions (OES)
 
 
 - Clone the OpsMx Enterprise Spinnaker github repository
