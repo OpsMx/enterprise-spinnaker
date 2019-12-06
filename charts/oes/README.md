@@ -4,11 +4,13 @@
 ## Prequisites
 
 - Kubernetes cluster 1.13 or later with at least 6 cores and 20 GB memory
-- Helm is setup and initialized in your Kubernetes cluster. The following command should return both client and server version.
+- Helm is setup and initialized in your Kubernetes cluster. 
 
 		helm version
 
-  If helm is not setup, follow <https://helm.sh/docs/using_helm/#install-helm> to install helm. If you use the Google or Azure cloud shell, they already have helm installed on it. You can follow these three simple steps to initialize helm in the kubernetes cluster.
+  If helm is not setup, follow <https://helm.sh/docs/using_helm/#install-helm> to install helm. 
+  
+  If you are using helm v2.x, you need to initialize the Kubernetes to work with helm. If using helm v2.x, the helm version command should return both the client and server versions. If it does not return both client and server versions, you can follow these three simple steps to initialize helm v2.x in the kubernetes cluster:
 
 		kubectl create serviceaccount -n kube-system tiller
 		kubectl create clusterrolebinding tiller-binding --clusterrole=cluster-admin --serviceaccount kube-system:tiller
@@ -38,8 +40,11 @@
 - Go to enterprise-spinnaker/charts/oes and deploy the chart, optionally specifying the namespace
 
 		cd enterprise-spinnaker/charts/oes
-    helm install -n oes . [--namespace mynamespace]
+    		helm install oes . [--namespace mynamespace]
 
+If using helm v2.x, 
+
+      helm install -n oes . [--namespace mynamespace]
 
 ## Deploying OpsMx Enterprise Spinnaker (OES) Extensions on top of existing Spinnaker
 
@@ -55,6 +60,10 @@ to the same namespace where Spinnaker is installed.
 - Go to enterprise-spinnaker/charts/oes and deploy the chart, optionally specifying the namespace where Spinnaker is already installed
 
       cd enterprise-spinnaker/charts/oes
+      helm install oes . --set installSpinnaker=false [--namespace mynamespace]
+      
+If using helm v2.x, 
+
       helm install -n oes . --set installSpinnaker=false [--namespace mynamespace]
 
 ## Connecting to Spinnaker and OpsMx Enterprise Enterprise Extensions
