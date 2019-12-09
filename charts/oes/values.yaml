@@ -8,6 +8,8 @@ k8sServiceType: LoadBalancer
 k8sSecret: oes-repo
 installOpenLdap: true
 installSpinnaker: true
+persistence:
+  enabled: false
 # Password for the admin user
 openldap:
   adminPassword: OpsMx@123
