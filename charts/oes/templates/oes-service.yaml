@@ -21,3 +21,20 @@ spec:
     targetPort: 8050
   selector:
     app: oes
+{{- if .Values.enableCentralLogging }}
+---
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    app: oes-kibana
+  name: oes-kibana
+spec:
+  type: {{ .Values.k8sServiceType }}
+  ports:
+  - name: "kibana-service"
+    port: 5601
+    targetPort: 5601
+  selector:
+    app: kibana
+{{- end }}

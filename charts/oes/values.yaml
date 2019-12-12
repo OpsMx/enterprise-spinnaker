@@ -3,12 +3,14 @@
 #####################################################
 OESDBImage: opsmxdev/ubi8-autopilot-db:v1.1.0
 OESImage: opsmxdev/ubi8-autopilot:v0.9.30.201911222106
-OESDBMountSize: 8Gi
 k8sServiceType: LoadBalancer
 k8sSecret: oes-repo
 # Feature List
 installOpenLdap: true
 installSpinnaker: true
+persistence:
+  enabled: true
+OESDBSize: 8Gi
 # Password for the admin user
 openldap:
   adminPassword: OpsMx@123
@@ -22,16 +24,8 @@ createIngress: false
 # Centralized Logging Configuration
 #####################################################
 enableCentralLogging: true
-fluent-bit:
-  backend:
-    type: es
-    es:
-      host: spinnaker-elasticsearch-client
-      port: 9200
-kibana:
-  env:
-    ELASTICSEARCH_HOSTS: http://spinnaker-elasticsearch-client:9200
 elasticsearch:
+  fullnameOverride: elasticsearch
   cluster:
     env:
       MINIMUM_MASTER_NODES: 1
@@ -179,7 +173,7 @@ spinnaker:
     - kube-system
     - kube-public
     onlySpinnakerManaged:
-      enabled: false
+      enabled: true
 
   # Change this if youd like to expose Spinnaker outside the cluster
   ingress:

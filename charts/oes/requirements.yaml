@@ -11,6 +11,10 @@ dependencies:
     version: ^1.22.0
     repository: https://kubernetes-charts.storage.googleapis.com/
     condition: enableCentralLogging
+  - name: elasticsearch-curator
+    version: ^2.1.0
+    repository: https://kubernetes-charts.storage.googleapis.com/
+    condition: enableCentralLogging
   - name: kibana
     version: ^3.0.0
     repository: https://kubernetes-charts.storage.googleapis.com/
