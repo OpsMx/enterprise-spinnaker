@@ -25,7 +25,7 @@
   If you name your secret something other than oes-repo, you need to update the key k8sSecret in values.yaml.
 
 	Before you install OES, please send an email to spinnaker-poc@opsmx.io requesting access to the Spinnaker images. We will provide the dockerhub username/password that you can use to access the image.
-	
+
 - Your Kubernetes cluster supports persistent volumes and loadbalancer service type
 
 
@@ -91,3 +91,20 @@ You can login with admin/OpsMx@123
 You can change the default password during installation by updating the values.yaml or by adding this additional parameter to the helm install command:
 
 	--set openldap.adminPassword=myPassword
+
+
+### Enabling centralized logging
+Spinnaker consists of multiple microservices and you need to connect to each microservice to see what is going on. We have enabled elasticsearch, fluentbit and kibana to provide a centralized logging solution for Spinnaker. To enable it, you need to install with the flag
+
+	    --set enableCentralLogging=true
+
+Kibana, the UI to look at the logs is available as a service. To find the hostname for the service, run
+
+	    kubectl gt svc oes-kibana [--namespace mynamespace]
+
+Example output would be:
+
+    NAME          TYPE           CLUSTER-IP   EXTERNAL-IP     PORT(S)      AGE
+	oes-kibana    LoadBalancer   10.0.4.246   34.66.226.138   5601:32097   9m43s
+
+Using the EXTERNAL-IP address, go to http://EXTERNAL-IP:5601

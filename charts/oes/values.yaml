@@ -23,7 +23,7 @@ createIngress: false
 #####################################################
 # Centralized Logging Configuration
 #####################################################
-enableCentralLogging: true
+enableCentralLogging: false
 elasticsearch:
   fullnameOverride: elasticsearch
   cluster:

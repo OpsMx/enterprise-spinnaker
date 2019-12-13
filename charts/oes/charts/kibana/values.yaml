@@ -4,7 +4,7 @@ image:
   pullPolicy: "IfNotPresent"
 
 testFramework:
-  enabled: "true"
+  enabled: "false"
   image: "dduportal/bats"
   tag: "0.4.0"
 
