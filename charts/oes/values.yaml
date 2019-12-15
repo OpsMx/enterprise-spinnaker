@@ -10,7 +10,7 @@ installOpenLdap: true
 installSpinnaker: true
 persistence:
   enabled: true
-OESDBSize: 8Gi
+  OESDBSize: 8Gi
 # Password for the admin user
 openldap:
   adminPassword: OpsMx@123
@@ -20,23 +20,38 @@ openldap:
 #####################################################
 k8sServiceType: LoadBalancer
 createIngress: false
+
 #####################################################
 # Centralized Logging Configuration
 #####################################################
 enableCentralLogging: false
 elasticsearch:
-  fullnameOverride: elasticsearch
-  cluster:
-    env:
-      MINIMUM_MASTER_NODES: 1
-  client:
-    replicas: 1
-  master:
-    replicas: 2
-    podDisruptionBudget:
-      minAvailable: 1
-  data:
-    replicas: 1
+  replicas: 1
+  minimumMasterNodes: 1
+  resources:
+    requests:
+      cpu: "100m"
+      memory: "1Gi"
+
+kibana:
+  service:
+    type: LoadBalancer
+  resources:
+    requests:
+      cpu: "100m"
+      memory: "250Mi"
+  lifecycle:
+    postStart:
+      exec:
+        command:
+          - bash
+          - -c
+          - >
+            until curl localhost:5601; do echo "Waiting for Kibana to be available..."; sleep 5; done;
+            until curl elasticsearch-master:9200; do echo "Waiting for Elasticsearch to be available..."; sleep 5; done;
+            sleep 60;
+            curl https://raw.githubusercontent.com/OpsMx/enterprise-spinnaker/v1.5/scripts/kibana/kibana_objects.ndjson > /tmp/kibana_objects.ndjson;
+            curl -X POST "localhost:5601/api/saved_objects/_import?overwrite=true" -H "kbn-xsrf: true" --form file=@/tmp/kibana_objects.ndjson 2>&1 1> /tmp/postStart.out;
 
 #####################################################
 # Spinnaker instance configuration

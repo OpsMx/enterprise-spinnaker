@@ -64,12 +64,12 @@ to the same namespace where Spinnaker is installed.
 
 Once the service is up and running, find the service ip address
 
-	kubectl get svc spin-deck-np [--namespace mynamespace]
+	kubectl get svc spin-deck-ui [--namespace mynamespace]
 
 Example output would be:
 
     NAME           TYPE           CLUSTER-IP     EXTERNAL-IP   PORT(S)          AGE
-		spin-deck-np   LoadBalancer   10.0.139.222   40.78.4.201   9000:31030/TCP   8m9s
+		spin-deck-ui   LoadBalancer   10.0.139.222   40.78.4.201   9000:31030/TCP   8m9s
 
 Using the EXTERNAL-IP address, go to http://EXTERNAL-IP:9000/
 
@@ -100,11 +100,13 @@ Spinnaker consists of multiple microservices and you need to connect to each mic
 
 Kibana, the UI to look at the logs is available as a service. To find the hostname for the service, run
 
-	    kubectl gt svc oes-kibana [--namespace mynamespace]
+	    kubectl get svc oes-kibana-ui [--namespace mynamespace]
 
 Example output would be:
 
-    NAME          TYPE           CLUSTER-IP   EXTERNAL-IP     PORT(S)      AGE
-	oes-kibana    LoadBalancer   10.0.4.246   34.66.226.138   5601:32097   9m43s
+    NAME           TYPE           CLUSTER-IP   EXTERNAL-IP     PORT(S)      AGE
+	oes-kibana-ui    LoadBalancer   10.0.4.246   34.66.226.138   5601:32097   9m43s
 
 Using the EXTERNAL-IP address, go to http://EXTERNAL-IP:5601
+
+In Kibana, go to Discover -> Open -> Spinnaker Logs to see logs from Spinnaker pods.
