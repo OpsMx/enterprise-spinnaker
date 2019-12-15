@@ -1,15 +1,16 @@
 
-# Spinnaker PoC Installtion Instructions
-# Spinnaker + OpsMx Enterprise Spinnaker (OES) extensions.
+# Spinnaker + OpsMx Enterprise Spinnaker Extensions (OES) Setup Instructions
 
 ## Prequisites
 
 - Kubernetes cluster 1.13 or later with at least 6 cores and 20 GB memory
-- Helm is setup and initialized in your Kubernetes cluster. The following command should return both client and server version.
+- Helm is setup and initialized in your Kubernetes cluster.
 
 		helm version
 
-  If helm is not setup, follow <https://helm.sh/docs/using_helm/#install-helm> to install helm. If you use the Google or Azure cloud shell, they already have helm installed on it. You can follow these three simple steps to initialize helm in the kubernetes cluster.
+  If helm is not setup, follow <https://helm.sh/docs/using_helm/#install-helm> to install helm.
+
+  If you are using helm v2.x, you need to initialize the Kubernetes to work with helm. If using helm v2.x, the helm version command should return both the client and server versions. If it does not return both client and server versions, you can follow these three simple steps to initialize helm v2.x in the kubernetes cluster:
 
 		kubectl create serviceaccount -n kube-system tiller
 		kubectl create clusterrolebinding tiller-binding --clusterrole=cluster-admin --serviceaccount kube-system:tiller
@@ -24,12 +25,12 @@
 
   If you name your secret something other than oes-repo, you need to update the key k8sSecret in values.yaml.
 
-	Before you install OES, please send an email to spinnaker-poc@opsmx.io requesting access to the Spinnaker images. We will provide the dockerhub username/password that you can use to access the image.
+	Before you install OES, please send an email to spinnaker-poc@opsmx.io requesting access to the OES images. We would require your dockerhub id to grant you access. If you do not already have a dockerhub id, you can get one at https://hub.docker.com/.
 
-- Your Kubernetes cluster supports persistent volumes and loadbalancer service type
+- Your Kubernetes cluster supports persistent volumes and loadbalancer service type.
 
 
-## Deploying Spinnaker with OpsMx Enterprise Spinnaker (OES) Extensions
+## Deploying Spinnaker with OpsMx Enterprise Spinnaker Extensions (OES)
 
 
 - Clone the OpsMx Enterprise Spinnaker github repository
@@ -39,8 +40,11 @@
 - Go to enterprise-spinnaker/charts/oes and deploy the chart, optionally specifying the namespace
 
 		cd enterprise-spinnaker/charts/oes
-    helm install -n oes . [--namespace mynamespace]
+    		helm install oes . [--namespace mynamespace]
 
+If using helm v2.x,
+
+      helm install -n oes . [--namespace mynamespace]
 
 ## Deploying OpsMx Enterprise Spinnaker (OES) Extensions on top of existing Spinnaker
 
@@ -56,6 +60,10 @@ to the same namespace where Spinnaker is installed.
 - Go to enterprise-spinnaker/charts/oes and deploy the chart, optionally specifying the namespace where Spinnaker is already installed
 
       cd enterprise-spinnaker/charts/oes
+      helm install oes . --set installSpinnaker=false [--namespace mynamespace]
+
+If using helm v2.x,
+
       helm install -n oes . --set installSpinnaker=false [--namespace mynamespace]
 
 ## Connecting to Spinnaker and OpsMx Enterprise Enterprise Extensions
@@ -98,14 +106,15 @@ Spinnaker consists of multiple microservices and you need to connect to each mic
 
 	    --set enableCentralLogging=true
 
-Kibana, the UI to look at the logs is available as a service. To find the hostname for the service, run
+Note, that out-of-the-box configuration of the service requires addition 2G of memory and 1 core.
+To get the hostname for Kibana, run
 
-	    kubectl get svc oes-kibana-ui [--namespace mynamespace]
+	    kubectl get svc [--namespace mynamespace]
 
-Example output would be:
+and find the service with Kibana in the name. Example output would be:
 
-    NAME           TYPE           CLUSTER-IP   EXTERNAL-IP     PORT(S)      AGE
-	oes-kibana-ui    LoadBalancer   10.0.4.246   34.66.226.138   5601:32097   9m43s
+    NAME               TYPE           CLUSTER-IP   EXTERNAL-IP     PORT(S)      AGE
+	  somename-kibana    LoadBalancer   10.0.4.246   34.66.226.138   5601:32097   9m43s
 
 Using the EXTERNAL-IP address, go to http://EXTERNAL-IP:5601
 
