@@ -119,3 +119,13 @@ and find the service with Kibana in the name. Example output would be:
 Using the EXTERNAL-IP address, go to http://EXTERNAL-IP:5601
 
 In Kibana, go to Discover -> Open -> Spinnaker Logs to see logs from Spinnaker pods.
+
+
+### Change History
+Oct 2019: Initial version
+          Installs Spinnaker, OpsMx Autopilot and openldap
+
+Dec 2019: Include Elasticsearch, fluentbit and kibana
+          Make use of persistent volumes optional
+          Update default Spinnaker version to 1.17.4
+          Use RHEL images for OpsMx Autopilot

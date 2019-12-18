@@ -58,7 +58,7 @@ kibana:
 #####################################################
 spinnaker:
   halyard:
-    spinnakerVersion: 1.17.0
+    spinnakerVersion: 1.17.4
     image:
       repository: gcr.io/spinnaker-marketplace/halyard
       tag: 1.28.0
