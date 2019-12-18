@@ -129,3 +129,4 @@ Dec 2019: Include Elasticsearch, fluentbit and kibana
           Make use of persistent volumes optional
           Update default Spinnaker version to 1.17.4
           Use RHEL images for OpsMx Autopilot
+          Support for helm v3
