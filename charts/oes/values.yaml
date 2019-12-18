@@ -2,12 +2,15 @@
 # OpsMx Enterprise configuration
 #####################################################
 OESDBImage: opsmxdev/ubi8-autopilot-db:v1.1.0
-OESImage: opsmxdev/ubi8-autopilot:v0.9.30.201911131811
-OESDBMountSize: 8Gi
+OESImage: opsmxdev/ubi8-autopilot:v0.9.30.201911222106
 k8sServiceType: LoadBalancer
 k8sSecret: oes-repo
+# Feature List
 installOpenLdap: true
 installSpinnaker: true
+persistence:
+  enabled: true
+  OESDBSize: 8Gi
 # Password for the admin user
 openldap:
   adminPassword: OpsMx@123
@@ -17,15 +20,48 @@ openldap:
 #####################################################
 k8sServiceType: LoadBalancer
 createIngress: false
+
+#####################################################
+# Centralized Logging Configuration
+#####################################################
+enableCentralLogging: false
+elasticsearch:
+  replicas: 1
+  minimumMasterNodes: 1
+  resources:
+    requests:
+      cpu: "100m"
+      memory: "1Gi"
+
+kibana:
+  service:
+    type: LoadBalancer
+  resources:
+    requests:
+      cpu: "100m"
+      memory: "250Mi"
+  lifecycle:
+    postStart:
+      exec:
+        command:
+          - bash
+          - -c
+          - >
+            until curl localhost:5601; do echo "Waiting for Kibana to be available..."; sleep 5; done;
+            until curl elasticsearch-master:9200; do echo "Waiting for Elasticsearch to be available..."; sleep 5; done;
+            sleep 60;
+            curl https://raw.githubusercontent.com/OpsMx/enterprise-spinnaker/v1.5/scripts/kibana/kibana_objects.ndjson > /tmp/kibana_objects.ndjson;
+            curl -X POST "localhost:5601/api/saved_objects/_import?overwrite=true" -H "kbn-xsrf: true" --form file=@/tmp/kibana_objects.ndjson 2>&1 1> /tmp/postStart.out;
+
 #####################################################
 # Spinnaker instance configuration
 #####################################################
 spinnaker:
   halyard:
-    spinnakerVersion: 1.16.2
+    spinnakerVersion: 1.17.4
     image:
       repository: gcr.io/spinnaker-marketplace/halyard
-      tag: 1.24.0
+      tag: 1.28.0
     # Set to false to disable persistence data volume for halyard
     persistence:
       enabled: true
@@ -152,7 +188,7 @@ spinnaker:
     - kube-system
     - kube-public
     onlySpinnakerManaged:
-      enabled: false
+      enabled: true
 
   # Change this if youd like to expose Spinnaker outside the cluster
   ingress:
@@ -186,7 +222,6 @@ spinnaker:
   #   - pipeline-templates
   spinnakerFeatureFlags:
     - artifacts
-    - jobs
     - pipeline-templates
     - managed-pipeline-templates-v2-ui
 

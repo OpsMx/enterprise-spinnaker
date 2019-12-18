@@ -4,12 +4,12 @@
 ## Prequisites
 
 - Kubernetes cluster 1.13 or later with at least 6 cores and 20 GB memory
-- Helm is setup and initialized in your Kubernetes cluster. 
+- Helm is setup and initialized in your Kubernetes cluster.
 
 		helm version
 
-  If helm is not setup, follow <https://helm.sh/docs/using_helm/#install-helm> to install helm. 
-  
+  If helm is not setup, follow <https://helm.sh/docs/using_helm/#install-helm> to install helm.
+
   If you are using helm v2.x, you need to initialize the Kubernetes to work with helm. If using helm v2.x, the helm version command should return both the client and server versions. If it does not return both client and server versions, you can follow these three simple steps to initialize helm v2.x in the kubernetes cluster:
 
 		kubectl create serviceaccount -n kube-system tiller
@@ -26,7 +26,7 @@
   If you name your secret something other than oes-repo, you need to update the key k8sSecret in values.yaml.
 
 	Before you install OES, please send an email to spinnaker-poc@opsmx.io requesting access to the OES images. We would require your dockerhub id to grant you access. If you do not already have a dockerhub id, you can get one at https://hub.docker.com/.
-	
+
 - Your Kubernetes cluster supports persistent volumes and loadbalancer service type.
 
 
@@ -42,7 +42,7 @@
 		cd enterprise-spinnaker/charts/oes
     		helm install oes . [--namespace mynamespace]
 
-If using helm v2.x, 
+If using helm v2.x,
 
       helm install -n oes . [--namespace mynamespace]
 
@@ -61,8 +61,8 @@ to the same namespace where Spinnaker is installed.
 
       cd enterprise-spinnaker/charts/oes
       helm install oes . --set installSpinnaker=false [--namespace mynamespace]
-      
-If using helm v2.x, 
+
+If using helm v2.x,
 
       helm install -n oes . --set installSpinnaker=false [--namespace mynamespace]
 
@@ -72,12 +72,12 @@ If using helm v2.x,
 
 Once the service is up and running, find the service ip address
 
-	kubectl get svc spin-deck-np [--namespace mynamespace]
+	kubectl get svc spin-deck-ui [--namespace mynamespace]
 
 Example output would be:
 
     NAME           TYPE           CLUSTER-IP     EXTERNAL-IP   PORT(S)          AGE
-		spin-deck-np   LoadBalancer   10.0.139.222   40.78.4.201   9000:31030/TCP   8m9s
+		spin-deck-ui   LoadBalancer   10.0.139.222   40.78.4.201   9000:31030/TCP   8m9s
 
 Using the EXTERNAL-IP address, go to http://EXTERNAL-IP:9000/
 
@@ -99,3 +99,34 @@ You can login with admin/OpsMx@123
 You can change the default password during installation by updating the values.yaml or by adding this additional parameter to the helm install command:
 
 	--set openldap.adminPassword=myPassword
+
+
+### Enabling centralized logging
+Spinnaker consists of multiple microservices and you need to connect to each microservice to see what is going on. We have enabled elasticsearch, fluentbit and kibana to provide a centralized logging solution for Spinnaker. To enable it, you need to install with the flag
+
+	    --set enableCentralLogging=true
+
+Note, that out-of-the-box configuration of the service requires addition 2G of memory and 1 core.
+To get the hostname for Kibana, run
+
+	    kubectl get svc [--namespace mynamespace]
+
+and find the service with Kibana in the name. Example output would be:
+
+    NAME               TYPE           CLUSTER-IP   EXTERNAL-IP     PORT(S)      AGE
+	  somename-kibana    LoadBalancer   10.0.4.246   34.66.226.138   5601:32097   9m43s
+
+Using the EXTERNAL-IP address, go to http://EXTERNAL-IP:5601
+
+In Kibana, go to Discover -> Open -> Spinnaker Logs to see logs from Spinnaker pods.
+
+
+### Change History
+Oct 2019: Initial version
+          Installs Spinnaker, OpsMx Autopilot and openldap
+
+Dec 2019: Include Elasticsearch, fluentbit and kibana
+          Make use of persistent volumes optional
+          Update default Spinnaker version to 1.17.4
+          Use RHEL images for OpsMx Autopilot
+          Support for helm v3
