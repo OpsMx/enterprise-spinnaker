@@ -128,7 +128,7 @@ lifecycle: {}
   #       - -c
   #       - >
   #         until curl localhost:5601; do echo "Waiting for Kibana to be available..."; sleep 5; done;
-  #         curl https://raw.githubusercontent.com/OpsMx/enterprise-spinnaker/v1.5/scripts/kibana/kibana_objects.ndjson > /tmp/kibana_objects.ndjson;
+  #         curl https://raw.githubusercontent.com/OpsMx/enterprise-spinnaker/master/scripts/kibana/kibana_objects.ndjson > /tmp/kibana_objects.ndjson;
   #         curl -X POST "localhost:5601/api/saved_objects/_import" -H "kbn-xsrf: true" --form file=@/tmp/kibana_objects.ndjson;
   # preStop:
   #   exec:
