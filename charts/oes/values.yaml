@@ -50,7 +50,7 @@ kibana:
             until curl localhost:5601; do echo "Waiting for Kibana to be available..."; sleep 5; done;
             until curl elasticsearch-master:9200; do echo "Waiting for Elasticsearch to be available..."; sleep 5; done;
             sleep 60;
-            curl https://raw.githubusercontent.com/OpsMx/enterprise-spinnaker/v1.5/scripts/kibana/kibana_objects.ndjson > /tmp/kibana_objects.ndjson;
+            curl https://raw.githubusercontent.com/OpsMx/enterprise-spinnaker/master/scripts/kibana/kibana_objects.ndjson > /tmp/kibana_objects.ndjson;
             curl -X POST "localhost:5601/api/saved_objects/_import?overwrite=true" -H "kbn-xsrf: true" --form file=@/tmp/kibana_objects.ndjson 2>&1 1> /tmp/postStart.out;
 
 #####################################################
