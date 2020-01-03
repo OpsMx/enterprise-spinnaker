@@ -53,59 +53,66 @@ to the target k8s cluster:
 
 We use helm to install OES. Instructions for installing helm3 are here:
 
-> [[https://helm.sh/docs/intro/install/]](https://helm.sh/docs/intro/install/)
+> [[https://helm.sh/docs/intro/install/]{.underline}](https://helm.sh/docs/intro/install/)
 
 (II)Before you install OES, **please send an email to
-[[spinnaker-poc\@opsmx.io]](mailto:spinnaker-poc@opsmx.io)**
+[[spinnaker-poc\@opsmx.io]{.underline}](mailto:spinnaker-poc@opsmx.io)**
 requesting access to the OES images. We would require your dockerhub id
 to grant you access. If you do not already have a dockerhub id, you can
 get one at [https://hub.docker.com](https://hub.docker.com/) .
 
 **Scripted Installation**
 
-Detailed step-by-step instuctions are available in the next section.
-These steps have been consolidated into a few scripts and tested on
+Detailed step-by-step instuctions are available in the next section. The
+instructions below install Kubernetes and configure Spinakar for common
+use cases, all with-in an hour. These steps have been tested on
 Vagrant-based installation on a Ubuntu 18.04 Machine with 32GB Memory
 and 500GB Hard disk.
 
-The instructions will install Kubernetes with Spinnakar and also
-configure Spinakar for common use cases, all with-in an hour. The steps
-are as follows:
+**Common Tasks :**
 
-A\) Open a terminal (ctrl+alt+T) and install virtualbox 5.2 from
-[[here]](https://qiita.com/shaching/items/4fcc95f20cff2450aa8f).
+1\) Create a temporary directory and CD into it
 
-B\) Install Vagrant version2.2.4 from
-[[here]](https://linuxize.com/post/how-to-install-vagrant-on-ubuntu-18-04).
+2\) git clone <https://github.com/ksrinimba/enterprise-spinnaker.git>
 
-c\) Install disksize plugin for vagrant: vagrant plugin install
-vagrant-disksize
+3\) cd enterprise-spinnaker/baremetalk8s-install \# Stay in this
+directory for subsequent steps
 
-D\) git clone <https://github.com/ksrinimba/enterprise-spinnaker.git>
-
-E\) cd enterprise-spinnaker/baremetalk8s-install
-
-F\) Edit config\_hal.sh and update the usernames and passwords as
+4\) Edit config\_hal.sh and update the usernames and passwords as
 required
 
-G\) vagrant up \# Create VMs and install k8s master and node1 (10-15
+**Installation:**
+
+A\) Open a terminal (ctrl+alt+T) and install virtualbox 5.2 from
+[[here]{.underline}](https://qiita.com/shaching/items/4fcc95f20cff2450aa8f).
+
+B\) Install Vagrant version2.2.4 from
+[[here]{.underline}](https://linuxize.com/post/how-to-install-vagrant-on-ubuntu-18-04).
+
+C\) Install disksize plugin for vagrant: vagrant plugin install
+vagrant-disksize
+
+D\) vagrant up \# Create VMs and install k8s master and node1 (10-15
 minutes)
 
-H\) vagrant ssh node1 \# ssh into node1
+E\) vagrant ssh node1 \# ssh into node1
 
-I\) /vagrant/inst\_oes.sh \# execute the script to install OES in k8s
+F\) /vagrant/inst\_oes.sh \# execute the script to install OES in k8s
 (10 minutes)
 
-J\) Wait for installtion to complete. If required apply the fix
+Note: "Error: failed post-install: timed out waiting for the condition"
+is normal as the installation takes longer
+
+G\) Wait for installtion to complete. If required apply the fix
 TIP-SPIN-DECK mentioned in detailed steps below
 
-K\) /vagrant/config\_hal.sh \# Configure HAL (10 minutes)
+H\) /vagrant/config\_hal.sh \# Configure HAL (10 minutes)
 
-L\) Get DECK-NODEPORT using: kubectl get svc spin-deck-ui -n oes -o
-jsonpath=\'{\...nodePort}\'
+I\) kubectl get svc spin-deck-ui -n oes -o
+jsonpath=\'{\"http://10.168.3.11:\"}{\...nodePort}{\"\\n\"}\'
 
-M\) Open browser on your machine and go to 10.168.3.11: DECK-NODEPORT
-and access Spinnaker (Login with <admin/OpsMx@123>, if required)
+J\) Access Spinnaker URL (printed above) on your machine (Login with
+<admin/OpsMx@123>, if required)
 
 **Detailed Step-by-Step Installation**
 
@@ -188,7 +195,8 @@ bound to the PVs:
 
 kubectl get pvc -n oes
 
-![](.//media/image1.png)
+![](.//media/image1.png){width="6.6930555555555555in"
+height="0.6520833333333333in"}
 
 **TIPs:**
 
@@ -276,8 +284,6 @@ to this:
 
 > securityContext:
 >
-> fsGroup: 0
->
 > runAsUser: 0
 
 j\) Create spin-gate-np and make a note of the NodePort number
@@ -298,7 +304,8 @@ Kubectl get svc -n oes
 
 **Note spin-deck-np(30989) and spin-gate-np(32009) external ports**
 
-![](.//media/image2.png)
+![](.//media/image2.png){width="6.6930555555555555in"
+height="1.7548611111111112in"}
 
 l\) Copy kubeconfig file to Halyard pod. The example shows copying the
 default "config" file. Ideally one should set-up a service account and
@@ -396,11 +403,13 @@ apply the work-around mentioned above.
 o\) Wait for all spinnaker pods to restart. The screen below indicates
 that pods are still restarting:
 
-![](.//media/image3.png)
+![](.//media/image3.png){width="5.664583333333334in"
+height="3.770138888888889in"}
 
 Once all pods have restarted, the status should look like this:
 
-![](.//media/image4.png)
+![](.//media/image4.png){width="5.620138888888889in"
+height="2.6131944444444444in"}
 
 At this point PART-I (Simple and "it works", hopefully) should be
 complete. Try opening Spinnaker in a browser:
