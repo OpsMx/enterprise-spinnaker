@@ -4,26 +4,27 @@
 #Not sure which PVCs need to be created, but they should be in the help package
 
 kubectl create ns oes
-kubectl create secret docker-registry oes-repo --docker-username=USERNAME --docker-password=PASSWORD --docker-email=opsmx@example.com --namespace oes
+kubectl create secret docker-registry oes-repo --docker-username=<username> --docker-password=<password> --docker-email=opsmx@example.com --namespace oes
 
-#CHANGE THIS AS REQUIRED
 cd /home/vagrant
-
 rm -rf PVDIR
 mkdir -p PVDIR
 mkdir -p PVDIR/LIB-POSTGRESQL
 mkdir -p PVDIR/minio
 mkdir -p PVDIR/redis
 mkdir -p PVDIR/halyard
+mkdir -p PVDIR/ELASTICSEARCH
 chmod -R 777 PVDIR
 
-#CHANGE THIS AS REQUIRED
-cd /vagrant
-
 # Create PVs as required
-kubectl apply -f oes-pv.yaml
-kubectl apply -f autopilot-pv.yaml
 
+kubectl apply -f /vagrant/oes-pv.yaml
+kubectl apply -f /vagrant/autopilot-pv.yaml
+kubectl apply -f /vagrant/spin-gate-np.yaml -n oes
+
+rm -rf enterprise-spinnaker
 git clone https://github.com/OpsMx/enterprise-spinnaker.git 
 cd enterprise-spinnaker/charts/oes
-helm install oes . --namespace oes --set enableCentralLogging=true
+echo "Installing OES using Helm, this make take 10-mins or depending on the network and CPU speed"
+echo "/vagrant/helm install oes . --namespace oes --set enableCentralLogging=true"
+/vagrant/helm install oes . --namespace oes --set enableCentralLogging=true

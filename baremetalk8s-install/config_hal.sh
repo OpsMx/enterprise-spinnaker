@@ -1,17 +1,32 @@
-BASEURL=http://35.209.174.56:8181/jenkins
-USERNAME=JENKINS_USERNAME
-PASSWORD=JENKINS_PASSWORD
-TOKEN_FILE=GITHUB-TOKEN
+# OpsMx 
+# Hal Configuration Script
+# Please note that this script should be run ONLY ONCE
+#######################################################################################################
+# Update this information based on your environment
+# Instructions for creating guthub-token can be found at https://github.com/settings/tokens
+# and https://www.spinnaker.io/setup/artifacts/github
+#######################################################################################################
+BASEURL=http://<jenkins-server>:8181/jenkins
+USERNAME=<jenkins login>
+PASSWORD=<jenkins password>
+TOKEM_FILE=<git-token-file>
+#######################################################################################################
 
+
+# Get nodePort numbers
+DECKNP=$(kubectl get svc spin-deck-ui -n oes -o jsonpath='{...nodePort}')
+GATENP=$(kubectl get svc spin-gate-np -n oes -o jsonpath='{...nodePort}')
+
+#Creat a script to be run inside HAL Pod
 cd /vagrant
-rm tmp-hal-config.sh
+rm /tmp/tmp-hal-config.sh
 cat <<EOF >> /tmp/tmp-hal-config.sh
 #!/bin/sh
-hal config security ui edit --override-base-url http://10.168.3.11:32470
-hal config security api edit --override-base-url http://10.168.3.11:32467
+hal config security ui edit --override-base-url http://10.168.3.11:$DECKNP
+hal config security api edit --override-base-url http://10.168.3.11:$GATENP
 hal config provider kubernetes account add OpsMx-k8s --provider-version v2 --kubeconfig-file=/home/spinnaker/.kube/config --only-spinnaker-managed true
 hal config provider kubernetes enable
-hal config artifact github account add OpsMx-k8s-Github --token-file /home/spinnaker/.hal/$TOKEN_FILE
+hal config artifact github account add OpsMx-k8s-Github --token-file /home/spinnaker/$TOKEN_FILE
 hal config artifact github enable
 
 hal config ci jenkins master add OpsMx-k8s-Jenkins --address $BASEURL --username $USERNAME --password $PASSWORD
@@ -23,9 +38,11 @@ hal config security authn ldap enable
 hal deploy apply
 EOF
 
-chmod +x tmp.sh
-
+chmod +x /tmp/tmp-hal-config.sh
+#Copy the script and required files into the HAD POD
 kubectl cp ~/.kube/config oes-spinnaker-halyard-0:/home/spinnaker/.kube  -n oes
-kubectl cp $TOKEN_FILE oes-spinnaker-halyard-0:/home/spinnaker/.hal  -n oes
+kubectl cp $TOKEN_FILE oes-spinnaker-halyard-0:/home/spinnaker/ -n oes
 kubectl cp /tmp/tmp-hal-config.sh oes-spinnaker-halyard-0:/home/spinnaker/tmp.sh  -n oes
+
+#Execute the script
 kubectl exec oes-spinnaker-halyard-0 -n oes -- /home/spinnaker/tmp.sh
