@@ -1,4 +1,4 @@
-**Installing Open Enterprise Spinnaker (OES) on baremetal kubernetes**
+# Installing Open Enterprise Spinnaker (OES) on baremetal kubernetes
 
 Most of the documentation available on in the internet assumes that we
 are installing Spinnaker on GCP, Azure or some other cloud. However,
