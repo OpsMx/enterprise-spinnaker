@@ -5,10 +5,10 @@ are installing Spinnaker on GCP, Azure or some other cloud. However,
 when we install Spinnaker on baremetal kubernetes, e.g. on-prem k8s
 cluster, there are couple of challenges that we need to overcome:
 
-a. Lack of "automatically provisioned" Persistent Storage (Persistent
+- Lack of "automatically provisioned" Persistent Storage (Persistent
 Volumes)
 
-b. Lack of "automatically provisioned" load-balancer
+- Lack of "automatically provisioned" load-balancer
 
 Steps to overcome these challenges are presented along with some
 commonly used spinnaker configuration steps so to get a fairly
