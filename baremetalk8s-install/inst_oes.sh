@@ -2,9 +2,15 @@
 #Script to be executed on node1
 #For creating PVs, PVCs and binding them
 #Not sure which PVCs need to be created, but they should be in the help package
+#################################################################################################################
+### PLEASE UPDATE THESE WITH THE USERNAME AND CREDENTIALS provided by OpsMX
+#################################################################################################################
+DOCKER_USERNAME=<username>
+DOCKER_PASSWORD=<password>
+#################################################################################################################
 
 kubectl create ns oes
-kubectl create secret docker-registry oes-repo --docker-username=<username> --docker-password=<password> --docker-email=opsmx@example.com --namespace oes
+kubectl create secret docker-registry oes-repo --docker-username=$DOCKER_USERNAME --docker-password=$DOCKER_PASSWORD --docker-email=opsmx@example.com --namespace oes
 
 cd /home/vagrant
 rm -rf PVDIR
@@ -27,4 +33,5 @@ git clone https://github.com/OpsMx/enterprise-spinnaker.git
 cd enterprise-spinnaker/charts/oes
 echo "Installing OES using Helm, this make take 10-mins or depending on the network and CPU speed"
 echo "/vagrant/helm install oes . --namespace oes --set enableCentralLogging=true"
-/vagrant/helm install oes . --namespace oes --set enableCentralLogging=true
+/vagrant/helm install oes . --namespace oes 
+#/vagrant/helm install oes . --namespace oes --set enableCentralLogging=true

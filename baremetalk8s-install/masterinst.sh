@@ -56,5 +56,5 @@ cp /etc/kubernetes/admin.conf .kube/config
 cp /etc/kubernetes/admin.conf /vagrant
 chown vagrant:vagrant .kube/config
 cp /vagrant/bashrc /home/vagrant/.bashrc
-kubeadm token create --print-join-command  --kubeconfig=/etc/kubernetes/admin.conf >> /vagrant/kubeadm_join_cmd.sh
+kubeadm token create --print-join-command  --kubeconfig=/etc/kubernetes/admin.conf > /vagrant/kubeadm_join_cmd.sh
 chmod +x /vagrant/kubeadm_join_cmd.sh

@@ -48,9 +48,8 @@ Vagrant.configure("2") do |config|
     m.disksize.size = '50GB'
     m.vm.provision "shell", path: "nodeinst.sh", privileged: true
     m.vm.provider "virtualbox" do |vb|
-#      vb.memory = "12288"
-      vb.memory = "16384"
-      vb.cpus = 3  # Change this as appropriate
+      vb.memory = "24576"
+      vb.cpus = 6  # Change this as appropriate
    end
   end
 #

@@ -1,14 +1,14 @@
-# Installing Open Enterprise Spinnaker (OES) on baremetal kubernetes
+**Installing Open Enterprise Spinnaker (OES) on baremetal kubernetes**
 
 Most of the documentation available on in the internet assumes that we
 are installing Spinnaker on GCP, Azure or some other cloud. However,
 when we install Spinnaker on baremetal kubernetes, e.g. on-prem k8s
 cluster, there are couple of challenges that we need to overcome:
 
-- Lack of "automatically provisioned" Persistent Storage (Persistent
+a\) Lack of "automatically provisioned" Persistent Storage (Persistent
 Volumes)
 
-- Lack of "automatically provisioned" load-balancer
+b\) Lack of "automatically provisioned" load-balancer
 
 Steps to overcome these challenges are presented along with some
 commonly used spinnaker configuration steps so to get a fairly
@@ -95,7 +95,10 @@ vagrant-disksize
 D\) vagrant up \# Create VMs and install k8s master and node1 (10-15
 minutes)
 
-E\) vagrant ssh node1 \# ssh into node1
+E\) vagrant ssh master \# ssh into master
+
+kubectl taint nodes \$(hostname)
+node-role.kubernetes.io/master:NoSchedule-
 
 F\) /vagrant/inst\_oes.sh \# execute the script to install OES in k8s
 (10 minutes)
@@ -103,13 +106,13 @@ F\) /vagrant/inst\_oes.sh \# execute the script to install OES in k8s
 Note: "Error: failed post-install: timed out waiting for the condition"
 is normal as the installation takes longer
 
-G\) Wait for installtion to complete. If required apply the fix
-TIP-SPIN-DECK mentioned in detailed steps below
+G\) Wait for installtion to complete-**HOW**!!. If required apply the
+fix TIP-SPIN-DECK mentioned in detailed steps below
 
 H\) /vagrant/config\_hal.sh \# Configure HAL (10 minutes)
 
 I\) kubectl get svc spin-deck-ui -n oes -o
-jsonpath=\'{\"http://10.168.3.11:\"}{\...nodePort}{\"\\n\"}\'
+jsonpath=\'{\"http://10.168.3.10:\"}{\...nodePort}{\"\\n\"}\'
 
 J\) Access Spinnaker URL (printed above) on your machine (Login with
 <admin/OpsMx@123>, if required)

@@ -1,0 +1,6 @@
+10.168.3.10 master
+10.168.3.11 node1
+10.168.3.12 node2 
+10.168.3.13 node3
+192.168.3.55 baremetalk8s.opsmx.com
+127.0.0.1 localhost

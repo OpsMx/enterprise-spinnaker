@@ -1,0 +1,16 @@
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    cluster: spin-gate
+  name: spin-gate-np
+spec:
+  externalTrafficPolicy: Cluster
+  ports:
+  - port: 8084
+    protocol: TCP
+    targetPort: 8084
+  selector:
+    cluster: spin-gate
+  sessionAffinity: None
+  type: NodePort

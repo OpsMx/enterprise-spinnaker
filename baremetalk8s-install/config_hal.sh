@@ -9,7 +9,7 @@
 BASEURL=http://<jenkins-server>:8181/jenkins
 USERNAME=<jenkins login>
 PASSWORD=<jenkins password>
-TOKEM_FILE=<git-token-file>
+TOKEN_FILE=<git-token-file>
 #######################################################################################################
 
 
@@ -32,8 +32,8 @@ hal config artifact github enable
 hal config ci jenkins master add OpsMx-k8s-Jenkins --address $BASEURL --username $USERNAME --password $PASSWORD
 hal config ci jenkins enable
 
-hal config security authn ldap edit --user-dn-pattern="cn={0}" --url=ldap://oes-openldap:389/dc=example,dc=org
-hal config security authn ldap enable
+#hal config security authn ldap edit --user-dn-pattern="cn={0}" --url=ldap://oes-openldap:389/dc=example,dc=org
+#hal config security authn ldap enable
 
 hal deploy apply
 EOF
