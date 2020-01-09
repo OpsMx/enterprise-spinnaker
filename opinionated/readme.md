@@ -16,7 +16,7 @@ What you need: A laptop or desktop running Ubuntu 18.04 with i5(8 core),
 required.
 
 Before you install OES, **please send an email to
-[[spinnaker-poc\@opsmx.io]{.underline}](mailto:spinnaker-poc@opsmx.io)**
+[[spinnaker-poc\@opsmx.io]](mailto:spinnaker-poc@opsmx.io)**
 requesting access to the OES images. We would require your dockerhub id
 to grant you access. If you do not already have a dockerhub id, you can
 get one at [https://hub.docker.com](https://hub.docker.com/) .
@@ -27,10 +27,10 @@ Open a terminal (ctrl+alt+T), create a temporary directory and CD into
 it
 
 1\) Install virtualbox 5.2 from
-[[here]{.underline}](https://qiita.com/shaching/items/4fcc95f20cff2450aa8f).
+[[here]](https://qiita.com/shaching/items/4fcc95f20cff2450aa8f).
 
 2\) Install Vagrant version 2.2.4 from
-[[here]{.underline}](https://linuxize.com/post/how-to-install-vagrant-on-ubuntu-18-04).
+[[here]](https://linuxize.com/post/how-to-install-vagrant-on-ubuntu-18-04).
 
 3\) Install disksize plugin using this command: vagrant plugin install
 vagrant-disksize
@@ -76,7 +76,7 @@ to this:
 > runAsUser: 0
 
 c\) The application URL is
-[[http://10.168.3.10]{.underline}](http://10.168.3.10/):{DECK NodePort}
+[[http://10.168.3.10]](http://10.168.3.10/):{DECK NodePort}
 can be obtained with this command on the master node:
 
 kubectl get svc spin-deck-ui -n oes -o
