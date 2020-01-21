@@ -39,7 +39,7 @@ vagrant-disksize
 
 A\) git clone <https://github.com/ksrinimba/enterprise-spinnaker.git>
 
-B\) cd enterprise-spinnaker/opinionated
+B\) cd enterprise-spinnaker/easy-spinnaker
 
 C\) Edit inst\_oes.sh and update "docker-username" and "docker-password"
 for the OES images
