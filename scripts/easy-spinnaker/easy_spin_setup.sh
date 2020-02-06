@@ -18,6 +18,7 @@ wget https://get.helm.sh/helm-v3.0.1-linux-amd64.tar.gz
 tar -xvf helm-v3.0.1-linux-amd64.tar.gz
 mv linux-amd64/helm /usr/bin
 chmod 755 /usr/bin/helm
+cp /usr/bin/helm .
 rm -rf linux-amd64 helm-v3.0.1-linux-amd64.tar.gz
 
 vagrant plugin install vagrant-disksize
