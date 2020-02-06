@@ -26,7 +26,8 @@ get one at [https://hub.docker.com](https://hub.docker.com/) .
 Open a terminal (ctrl+alt+T), create a temporary directory and CD into
 it
 
-1\) git clone <https://github.com/ksrinimba/enterprise-spinnaker.git>
+1\) git clone
+[https://github.com/o](https://github.com/ksrinimba/enterprise-spinnaker.git)psmx[/enterprise-spinnaker.git](https://github.com/ksrinimba/enterprise-spinnaker.git)
 
 2\) cd enterprise-spinnaker/scripts/easy-spinnaker
 
