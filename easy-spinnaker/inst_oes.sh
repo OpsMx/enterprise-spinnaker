@@ -5,8 +5,8 @@
 #################################################################################################################
 ### PLEASE UPDATE THESE WITH THE USERNAME AND CREDENTIALS provided by OpsMX
 #################################################################################################################
-DOCKER_USERNAME=<username>
-DOCKER_PASSWORD=<password>
+DOCKER_USERNAME=opsmxuser
+DOCKER_PASSWORD=OpsMx@321
 #################################################################################################################
 
 export KUBECONFIG=/home/vagrant/.kube/config
@@ -33,18 +33,20 @@ chmod -R 777 PVDIR
 
 # Create PVs as required
 
-kubectl apply -f /vagrant/oes-pv.yaml
-kubectl apply -f /vagrant/autopilot-pv.yaml
+#kubectl apply -f /vagrant/oes-pv.yaml
+#kubectl apply -f /vagrant/autopilot-pv.yaml
+kubectl apply -f /vagrant/spin-pv.yaml
 kubectl apply -f /vagrant/spin-gate-np.yaml -n oes
+kubectl apply -f /vagrant/spin-deck-np.yaml -n oes
 
 rm -rf enterprise-spinnaker 2>&1 > /dev/null
-git clone https://github.com/OpsMx/enterprise-spinnaker.git 
-cd enterprise-spinnaker/charts/oes
-echo "Installing OES using Helm, this make take 10-mins or depending on the network and CPU speed"
-echo "/vagrant/helm install oes . --namespace oes --set enableCentralLogging=true"
-echo "/vagrant/helm install oes . --namespace oes "
-cp /vagrant/values.yaml /home/vagrant/enterprise-spinnaker/charts/oes/values.yaml
-/vagrant/helm install oes . --namespace oes 
+#git clone https://github.com/OpsMx/enterprise-spinnaker.git 
+#cd enterprise-spinnaker/charts/oes
+#echo "Installing OES using Helm, this make take 10-mins or depending on the network and CPU speed"
+#echo "/vagrant/helm install oes . --namespace oes --set enableCentralLogging=true"
+#echo "/vagrant/helm install oes . --namespace oes "
+#cp /vagrant/values.yaml /home/vagrant/enterprise-spinnaker/charts/oes/values.yaml
+#/vagrant/helm install oes . --namespace oes 
 
 # If you want to install Kibana based monitoring, please uncomment this line
 #/vagrant/helm install oes . --namespace oes --set enableCentralLogging=true

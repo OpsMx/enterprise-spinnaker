@@ -16,8 +16,14 @@
 export KUBECONFIG=/home/vagrant/.kube/config
 
 # Get nodePort numbers
-DECKNP=$(kubectl get svc spin-deck-ui -n oes -o jsonpath='{...nodePort}')
+DECKNP=$(kubectl get svc spin-deck-np -n oes -o jsonpath='{...nodePort}')
 GATENP=$(kubectl get svc spin-gate-np -n oes -o jsonpath='{...nodePort}')
+
+#Get Halyard name
+HALPOD=$(kubectl get po -n oes | grep spinnaker-halyard-0 | head -1 | cut -d' ' -f 1)
+
+echo "HALPORD=$HALPOD"
+
 
 #Creat a script to be run inside HAL Pod
 cd /vagrant
@@ -47,19 +53,19 @@ chmod +x /tmp/tmp-hal-config.sh
 #kubectl cp /home/vagrant/.kube/config oes-spinnaker-halyard-0:/home/spinnaker/.kube  -n oes
 
 # OPTIONAL ADDITIONAL CONFIGURATION
-#kubectl cp $TOKEN_FILE oes-spinnaker-halyard-0:/home/spinnaker/ -n oes
+#kubectl cp $TOKEN_FILE $HALPOD:/home/spinnaker/ -n oes
 
-kubectl cp /tmp/tmp-hal-config.sh oes-spinnaker-halyard-0:/home/spinnaker/tmp.sh  -n oes
+kubectl cp /tmp/tmp-hal-config.sh $HALPOD:/home/spinnaker/tmp.sh  -n oes
 
 #Execute the script
-kubectl exec oes-spinnaker-halyard-0 -n oes -- /home/spinnaker/tmp.sh
-sleep 600
-#echo "==========================================================================="
-#echo "==========================================================================="
-#echo 
-#echo "Installation of Spinnaker is now complete. Login to the URL below using admin/OpsMx@123"
-#echo 
-#kubectl get svc spin-deck-ui -n oes -o jsonpath='{"http://10.168.3.10:"}{...nodePort}{"\n"}'
-#echo 
-#echo "==========================================================================="
-#echo "==========================================================================="
+kubectl exec $HALPOD -n oes -- /home/spinnaker/tmp.sh
+#sleep 600
+echo "==========================================================================="
+echo "==========================================================================="
+echo 
+echo "Installation of Spinnaker is now complete. Login to the URL below using admin/OpsMx@123"
+echo 
+kubectl get svc spin-deck-np -n oes -o jsonpath='{"http://10.168.3.10:"}{...nodePort}{"\n"}'
+echo 
+echo "==========================================================================="
+echo "==========================================================================="

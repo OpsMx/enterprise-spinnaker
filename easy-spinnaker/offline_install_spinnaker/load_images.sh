@@ -1,0 +1,11 @@
+sudo docker load -i docker_images/clouddriver.tar
+sudo docker load -i docker_images/deck.tar
+sudo docker load -i docker_images/echo.tar
+sudo docker load -i docker_images/front50.tar
+sudo docker load -i docker_images/gate.tar
+sudo docker load -i docker_images/halyard.tar
+sudo docker load -i docker_images/igor.tar
+sudo docker load -i docker_images/orca.tar
+sudo docker load -i docker_images/redis.tar
+sudo docker load -i docker_images/rosco.tar
+sudo docker load -i docker_images/minio-new.tar

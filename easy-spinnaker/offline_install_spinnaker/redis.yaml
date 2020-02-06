@@ -1,0 +1,117 @@
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  creationTimestamp: "2020-02-03T09:18:42Z"
+  generation: 1
+  labels:
+    app: redis
+    chart: redis-3.8.0
+    heritage: Helm
+    release: spinnaker
+  name: spinnaker-redis-master
+  namespace: oes
+  resourceVersion: "153977"
+  selfLink: /apis/apps/v1/namespaces/oes/statefulsets/spinnaker-redis-master
+  uid: 03464993-20f0-4ad2-a8bd-437811456771
+spec:
+  podManagementPolicy: OrderedReady
+  replicas: 1
+  revisionHistoryLimit: 10
+  selector:
+    matchLabels:
+      app: redis
+      chart: redis-3.8.0
+      release: spinnaker
+      role: master
+  serviceName: redis-master
+  template:
+    metadata:
+      creationTimestamp: null
+      labels:
+        app: redis
+        chart: redis-3.8.0
+        release: spinnaker
+        role: master
+    spec:
+      containers:
+      - env:
+        - name: REDIS_REPLICATION_MODE
+          value: master
+        - name: REDIS_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              key: redis-password
+              name: spinnaker-redis
+        - name: REDIS_DISABLE_COMMANDS
+          value: FLUSHDB,FLUSHALL
+        image: docker.io/bitnami/redis:4.0.11-debian-9
+        imagePullPolicy: Never
+        livenessProbe:
+          exec:
+            command:
+            - redis-cli
+            - ping
+          failureThreshold: 5
+          initialDelaySeconds: 30
+          periodSeconds: 10
+          successThreshold: 1
+          timeoutSeconds: 5
+        name: spinnaker-redis
+        ports:
+        - containerPort: 6379
+          name: redis
+          protocol: TCP
+        readinessProbe:
+          exec:
+            command:
+            - redis-cli
+            - ping
+          failureThreshold: 5
+          initialDelaySeconds: 5
+          periodSeconds: 10
+          successThreshold: 1
+          timeoutSeconds: 1
+        resources: {}
+        terminationMessagePath: /dev/termination-log
+        terminationMessagePolicy: File
+        volumeMounts:
+        - mountPath: /bitnami/redis/data
+          name: redis-data
+      dnsPolicy: ClusterFirst
+      restartPolicy: Always
+      schedulerName: default-scheduler
+      securityContext:
+        fsGroup: 1001
+        runAsUser: 1001
+      serviceAccount: default
+      serviceAccountName: default
+      terminationGracePeriodSeconds: 30
+  updateStrategy:
+    type: OnDelete
+  volumeClaimTemplates:
+  - metadata:
+      creationTimestamp: null
+      labels:
+        app: redis
+        chart: redis-3.8.0
+        component: master
+        heritage: Helm
+        release: spinnaker
+      name: redis-data
+    spec:
+      accessModes:
+      - ReadWriteOnce
+      resources:
+        requests:
+          storage: 8Gi
+      volumeMode: Filesystem
+    status:
+      phase: Pending
+status:
+  collisionCount: 0
+  currentReplicas: 1
+  currentRevision: spinnaker-redis-master-5668b69d4b
+  observedGeneration: 1
+  replicas: 1
+  updateRevision: spinnaker-redis-master-5668b69d4b
+  updatedReplicas: 1
