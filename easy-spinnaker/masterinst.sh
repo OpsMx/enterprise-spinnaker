@@ -45,6 +45,7 @@ K8S_CNI_VERSION=0.7.5-00
 apt-get install -y kubelet=$K8S_VERSION kubectl=$K8S_VERSION kubeadm=$K8S_VERSION kubernetes-cni=$K8S_CNI_VERSION --allow-unauthenticated
 IP_ADDR=10.168.3.10
 kubeadm init --apiserver-advertise-address=$IP_ADDR --apiserver-cert-extra-sans=$IP_ADDR  --node-name master --pod-network-cidr=10.244.0.0/16
+kubectl taint nodes master node-role.kubernetes.io/master:NoSchedule-
 kubectl apply  --kubeconfig=/etc/kubernetes/admin.conf -f "https://cloud.weave.works/k8s/net?k8s-version=$(kubectl version --kubeconfig=/etc/kubernetes/admin.conf | base64 | tr -d '\n')&env.IPALLOC_RANGE=10.244.0.0/16"
 
 cd /home/vagrant
@@ -53,3 +54,4 @@ cp /etc/kubernetes/admin.conf .kube/config
 cp /etc/kubernetes/admin.conf /vagrant
 chown vagrant:vagrant .kube/config
 cp /vagrant/bashrc .bashrc
+

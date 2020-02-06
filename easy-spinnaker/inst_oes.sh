@@ -5,8 +5,8 @@
 #################################################################################################################
 ### PLEASE UPDATE THESE WITH THE USERNAME AND CREDENTIALS provided by OpsMX
 #################################################################################################################
-DOCKER_USERNAME=opsmxuser
-DOCKER_PASSWORD=OpsMx@321
+DOCKER_USERNAME=<username>
+DOCKER_PASSWORD=<password>
 #################################################################################################################
 
 export KUBECONFIG=/home/vagrant/.kube/config
@@ -40,15 +40,21 @@ kubectl apply -f /vagrant/spin-gate-np.yaml -n oes
 kubectl apply -f /vagrant/spin-deck-np.yaml -n oes
 
 rm -rf enterprise-spinnaker 2>&1 > /dev/null
-#git clone https://github.com/OpsMx/enterprise-spinnaker.git 
-#cd enterprise-spinnaker/charts/oes
-#echo "Installing OES using Helm, this make take 10-mins or depending on the network and CPU speed"
-#echo "/vagrant/helm install oes . --namespace oes --set enableCentralLogging=true"
-#echo "/vagrant/helm install oes . --namespace oes "
+git clone https://github.com/OpsMx/enterprise-spinnaker.git 
+cd enterprise-spinnaker/charts/oes
+
+# Uncomment this line if you want to edit values.yaml and make any changes
 #cp /vagrant/values.yaml /home/vagrant/enterprise-spinnaker/charts/oes/values.yaml
-#/vagrant/helm install oes . --namespace oes 
+
+echo "Installing OES using Helm, this make take 10-mins or more depending on the network and CPU speed"
 
 # If you want to install Kibana based monitoring, please uncomment this line
+#echo "/vagrant/helm install oes . --namespace oes --set enableCentralLogging=true"
 #/vagrant/helm install oes . --namespace oes --set enableCentralLogging=true
+
+# Comment this line if you want only OES without kibana
+echo "/vagrant/helm install oes . --namespace oes "
+/vagrant/helm install oes . --namespace oes 
+
 exit 0
 
