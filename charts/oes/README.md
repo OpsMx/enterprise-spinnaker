@@ -40,7 +40,7 @@
 - Go to enterprise-spinnaker/charts/oes and deploy the chart, optionally specifying the namespace
 
 		cd enterprise-spinnaker/charts/oes
-    		helm install oes . [--namespace mynamespace]
+		helm install oes . [--namespace mynamespace]
 
 If using helm v2.x,
 
@@ -77,7 +77,7 @@ Once the service is up and running, find the service ip address
 Example output would be:
 
     NAME           TYPE           CLUSTER-IP     EXTERNAL-IP   PORT(S)          AGE
-		spin-deck-ui   LoadBalancer   10.0.139.222   40.78.4.201   9000:31030/TCP   8m9s
+    spin-deck-ui   LoadBalancer   10.0.139.222   40.78.4.201   9000:31030/TCP   8m9s
 
 Using the EXTERNAL-IP address, go to http://EXTERNAL-IP:9000/
 
@@ -114,7 +114,7 @@ To get the hostname for Kibana, run
 and find the service with Kibana in the name. Example output would be:
 
     NAME               TYPE           CLUSTER-IP   EXTERNAL-IP     PORT(S)      AGE
-	  somename-kibana    LoadBalancer   10.0.4.246   34.66.226.138   5601:32097   9m43s
+    somename-kibana    LoadBalancer   10.0.4.246   34.66.226.138   5601:32097   9m43s
 
 Using the EXTERNAL-IP address, go to http://EXTERNAL-IP:5601
 
@@ -122,11 +122,13 @@ In Kibana, go to Discover -> Open -> Spinnaker Logs to see logs from Spinnaker p
 
 
 ### Change History
-Oct 2019: Initial version
-          Installs Spinnaker, OpsMx Autopilot and openldap
+Dec 2019:
+- Include Elasticsearch, fluentbit and kibana
+- Make use of persistent volumes optional
+- Update default Spinnaker version to 1.17.4
+- Use RHEL images for OpsMx Autopilot
+- Support for helm v3
 
-Dec 2019: Include Elasticsearch, fluentbit and kibana
-          Make use of persistent volumes optional
-          Update default Spinnaker version to 1.17.4
-          Use RHEL images for OpsMx Autopilot
-          Support for helm v3
+Oct 2019:
+- Initial version
+- Installs Spinnaker, OpsMx Autopilot and openldap
