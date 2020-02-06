@@ -1,0 +1,26 @@
+# -*- mode: ruby -*-
+# vi: set ft=ruby :
+
+# All Vagrant configuration is done below. The "2" in Vagrant.configure
+# configures the configuration version (we support older styles for
+# backwards compatibility). Please don't change it unless you know what
+# you're doing.
+Vagrant.configure("2") do |config|
+
+  config.vm.define "master" do |m|
+    m.vm.box = "ubuntu/xenial64"
+    m.vm.hostname = "master"
+    m.vm.network "private_network", ip: "10.168.3.10"
+    m.disksize.size = '50GB'
+    m.vm.provision "shell", path: "masterinst.sh", privileged: true
+    m.vm.provision "shell", path: "inst_oes.sh"
+    m.vm.provision "shell", path: "check_halyard_ready.sh"
+    m.vm.provision "shell", path: "config_hal.sh"
+    m.vm.provision "shell", path: "deck_fix.sh"
+    m.vm.provision "shell", path: "check_inst_complete.sh"
+    m.vm.provider "virtualbox" do |vb|
+      vb.memory = "24576"  # 16GB: 16384 or 24GB: 24576
+      vb.cpus = 6  # Can change this to 4 or 8 depending on your system
+   end
+  end
+end
