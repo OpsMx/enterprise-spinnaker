@@ -1,0 +1,60 @@
+---
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: pv-spinnaker-minio
+spec:
+  accessModes:
+  - ReadWriteOnce
+  capacity:
+    storage: 10Gi
+  claimRef:
+    apiVersion: v1
+    kind: PersistentVolumeClaim
+    name: oes-minio
+    namespace: oes
+  persistentVolumeReclaimPolicy: Retain
+  #storageClassName: standard
+  hostPath:
+    path: "/home/vagrant/PVDIR/minio"
+
+---
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: pv-redis-data-spinnaker
+spec:
+  accessModes:
+  - ReadWriteOnce
+  capacity:
+    storage: 8Gi
+  claimRef:
+    apiVersion: v1
+    kind: PersistentVolumeClaim
+    name: redis-data-oes-redis-master-0
+    namespace: oes
+  persistentVolumeReclaimPolicy: Retain
+  #storageClassName: standard
+  hostPath:
+    path: "/home/vagrant/PVDIR/redis"
+  
+---
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: pv-halyard
+spec:
+  accessModes:
+  - ReadWriteOnce
+  capacity:
+    storage: 10Gi
+  claimRef:
+    apiVersion: v1
+    kind: PersistentVolumeClaim
+    namespace: oes
+    name: halyard-home-oes-spinnaker-halyard-0
+  persistentVolumeReclaimPolicy: Retain
+  #storageClassName: standard
+  hostPath:
+    path: "/home/vagrant/PVDIR/halyard"
+  
