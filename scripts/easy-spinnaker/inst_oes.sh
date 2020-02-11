@@ -43,9 +43,6 @@ rm -rf enterprise-spinnaker 2>&1 > /dev/null
 git clone https://github.com/OpsMx/enterprise-spinnaker.git 
 cd enterprise-spinnaker/charts/oes
 
-# Uncomment this line if you want to edit values.yaml and make any changes
-#cp /vagrant/values.yaml /home/vagrant/enterprise-spinnaker/charts/oes/values.yaml
-
 echo "Installing OES using Helm, this make take 10-mins or more depending on the network and CPU speed"
 
 # If you want to install Kibana based monitoring, please uncomment this line
