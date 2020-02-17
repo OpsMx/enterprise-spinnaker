@@ -35,7 +35,7 @@ chmod -R 777 PVDIR
 
 #kubectl apply -f /vagrant/oes-pv.yaml
 #kubectl apply -f /vagrant/autopilot-pv.yaml
-kubectl apply -f /vagrant/spin-pv.yaml
+kubectl apply -f /vagrant/oes-pv.yaml
 kubectl apply -f /vagrant/spin-gate-np.yaml -n oes
 kubectl apply -f /vagrant/spin-deck-np.yaml -n oes
 
