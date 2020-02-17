@@ -39,7 +39,7 @@ echo "==========================================================================
 echo 
 echo "Installation of Spinnaker is now complete. Login to the URL below using admin/OpsMx@123"
 echo 
-kubectl get svc spin-deck-ui -n oes -o jsonpath='{"http://10.168.3.10:"}{..nodePort}{"\n"}'
+kubectl get svc spin-deck-np -n oes -o jsonpath='{"http://10.168.3.10:"}{..nodePort}{"\n"}'
 echo 
 echo "==========================================================================="
 echo "==========================================================================="

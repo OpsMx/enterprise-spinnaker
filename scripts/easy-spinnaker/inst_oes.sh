@@ -5,13 +5,13 @@
 #################################################################################################################
 ### PLEASE UPDATE THESE WITH THE USERNAME AND CREDENTIALS provided by OpsMX
 #################################################################################################################
-DOCKER_USERNAME=<username>
-DOCKER_PASSWORD=<password>
+DOCKER_USERNAME=opsmxuser
+DOCKER_PASSWORD=OpsMx@123
 #################################################################################################################
 
 export KUBECONFIG=/home/vagrant/.kube/config
 
-kubectl taint nodes $(hostname) node-role.kubernetes.io/master:NoSchedule-
+#kubectl taint nodes $(hostname) node-role.kubernetes.io/master:NoSchedule-
 kubectl create ns oes
 kubectl create secret docker-registry oes-repo --docker-username=$DOCKER_USERNAME --docker-password=$DOCKER_PASSWORD --docker-email=opsmx@example.com --namespace oes
 kubectl create secret generic my-kubeconfig -n oes --from-file=config=/vagrant/admin.conf

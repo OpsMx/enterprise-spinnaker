@@ -59,11 +59,12 @@ kubectl cp /tmp/tmp-hal-config.sh $HALPOD:/home/spinnaker/tmp.sh  -n oes
 
 #Execute the script
 kubectl exec $HALPOD -n oes -- /home/spinnaker/tmp.sh
-#sleep 600
+sleep 200
 echo "==========================================================================="
 echo "==========================================================================="
 echo 
-echo "Installation of Spinnaker is now complete. Login to the URL below using admin/OpsMx@123"
+echo "Installation of Spinnaker is now complete. Waiting for Spinnaker to come up..."
+echo "Once completed, Spinnaker UI will be available at:"
 echo 
 kubectl get svc spin-deck-np -n oes -o jsonpath='{"http://10.168.3.10:"}{...nodePort}{"\n"}'
 echo 
