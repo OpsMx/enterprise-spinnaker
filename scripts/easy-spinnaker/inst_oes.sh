@@ -5,8 +5,8 @@
 #################################################################################################################
 ### PLEASE UPDATE THESE WITH THE USERNAME AND CREDENTIALS provided by OpsMX
 #################################################################################################################
-DOCKER_USERNAME=opsmxuser
-DOCKER_PASSWORD=OpsMx@123
+DOCKER_USERNAME=USER_NAME_GOES_HERE
+DOCKER_PASSWORD=PASSWORD_GOES_HERE
 #################################################################################################################
 
 export KUBECONFIG=/home/vagrant/.kube/config
