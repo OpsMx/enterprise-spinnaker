@@ -1,3 +1,4 @@
+#!/bin/bash
 # K.Srinivas 5-Dec-2019
 #Script to be executed on node1
 #For creating PVs, PVCs and binding them
@@ -5,9 +6,15 @@
 #################################################################################################################
 ### PLEASE UPDATE THESE WITH THE USERNAME AND CREDENTIALS provided by OpsMX
 #################################################################################################################
-DOCKER_USERNAME=USER_NAME_GOES_HERE
-DOCKER_PASSWORD=PASSWORD_GOES_HERE
+DOCKER_USERNAME='opsmxuser'   # USER_NAME_GOES_HERE
+DOCKER_PASSWORD='OpsMx@321'   # PASSWORD_GOES_HERE
 #################################################################################################################
+
+if [[ -z "$DOCKER_USERNAME" || -z "$DOCKER_PASSWORD" ]]
+then
+   echo "ERROR:Docker Username and password must be updated in inst_oes.sh"
+   exit 1
+fi
 
 export KUBECONFIG=/home/vagrant/.kube/config
 
@@ -33,11 +40,10 @@ chmod -R 777 PVDIR
 
 # Create PVs as required
 
-#kubectl apply -f /vagrant/oes-pv.yaml
-#kubectl apply -f /vagrant/autopilot-pv.yaml
+kubectl apply -f /vagrant/autopilot-pv.yaml
 kubectl apply -f /vagrant/oes-pv.yaml
 kubectl apply -f /vagrant/spin-gate-np.yaml -n oes
-kubectl apply -f /vagrant/spin-deck-np.yaml -n oes
+#kubectl apply -f /vagrant/spin-deck-np.yaml -n oes
 
 rm -rf enterprise-spinnaker 2>&1 > /dev/null
 git clone https://github.com/OpsMx/enterprise-spinnaker.git 
