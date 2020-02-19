@@ -6,8 +6,8 @@
 #################################################################################################################
 ### PLEASE UPDATE THESE WITH THE USERNAME AND CREDENTIALS provided by OpsMX
 #################################################################################################################
-DOCKER_USERNAME=''   # USER_NAME_GOES_HERE
-DOCKER_PASSWORD=''   # PASSWORD_GOES_HERE
+DOCKER_USERNAME='opsmxuser'   # USER_NAME_GOES_HERE
+DOCKER_PASSWORD='OpsMx@321'   # PASSWORD_GOES_HERE
 #################################################################################################################
 
 if [[ -z "$DOCKER_USERNAME" || -z "$DOCKER_PASSWORD" ]]
@@ -25,7 +25,7 @@ kubectl create secret generic my-kubeconfig -n oes --from-file=config=/vagrant/a
 
 kubectl delete -f /vagrant/oes-pv.yaml  2>&1 > /dev/null
 kubectl delete -f /vagrant/autopilot-pv.yaml  2>&1 > /dev/null
-kubectl delete -f /vagrant/spin-gate-np.yaml -n oes  2>&1 > /dev/null
+kubectl delete -f /vagrant/spin-gate-svc.yaml -n oes  2>&1 > /dev/null
 kubectl delete clusterrolebinding oes-spinnaker-spinnaker 2>&1 > /dev/null
 
 cd /home/vagrant
@@ -42,8 +42,7 @@ chmod -R 777 PVDIR
 
 kubectl apply -f /vagrant/autopilot-pv.yaml
 kubectl apply -f /vagrant/oes-pv.yaml
-kubectl apply -f /vagrant/spin-gate-np.yaml -n oes
-#kubectl apply -f /vagrant/spin-deck-np.yaml -n oes
+kubectl apply -f /vagrant/spin-gate-svc.yaml -n oes
 
 rm -rf enterprise-spinnaker 2>&1 > /dev/null
 git clone https://github.com/OpsMx/enterprise-spinnaker.git 

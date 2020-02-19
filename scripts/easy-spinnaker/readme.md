@@ -77,7 +77,7 @@ c\) The application URL is
 [[http://10.168.3.10]{.underline}](http://10.168.3.10/):{DECK NodePort}
 can be obtained with this command on the master node:
 
-kubectl get svc spin-deck-np -n oes -o
+kubectl get svc spin-deck-ui -n oes -o
 jsonpath=\'{\"[http://10.168.3.10](http://10.168.3.10/):\"}{\...nodePort}{\"\\n\"}\'
 
 **Manual Software Setup \[ Not needed unless there is an issue in

@@ -17,7 +17,7 @@ export KUBECONFIG=/home/vagrant/.kube/config
 
 # Get nodePort numbers
 DECKNP=$(kubectl get svc spin-deck-ui -n oes -o jsonpath='{...nodePort}')
-GATENP=$(kubectl get svc spin-gate-np -n oes -o jsonpath='{...nodePort}')
+GATENP=$(kubectl get svc spin-gate-ui -n oes -o jsonpath='{...nodePort}')
 
 #Get Halyard name
 HALPOD=$(kubectl get po -n oes | grep spinnaker-halyard-0 | head -1 | cut -d' ' -f 1)
