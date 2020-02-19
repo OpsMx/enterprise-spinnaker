@@ -6,8 +6,8 @@
 #################################################################################################################
 ### PLEASE UPDATE THESE WITH THE USERNAME AND CREDENTIALS provided by OpsMX
 #################################################################################################################
-DOCKER_USERNAME='opsmxuser'   # USER_NAME_GOES_HERE
-DOCKER_PASSWORD='OpsMx@321'   # PASSWORD_GOES_HERE
+DOCKER_USERNAME=''   # USER_NAME_GOES_HERE
+DOCKER_PASSWORD=''   # PASSWORD_GOES_HERE
 #################################################################################################################
 
 if [[ -z "$DOCKER_USERNAME" || -z "$DOCKER_PASSWORD" ]]
