@@ -55,3 +55,4 @@ cp /etc/kubernetes/admin.conf /vagrant
 chown vagrant:vagrant .kube/config
 cp /vagrant/bashrc .bashrc
 
+kubectl taint nodes $(hostname) node-role.kubernetes.io/master:NoSchedule-  --kubeconfig=/etc/kubernetes/admin.conf

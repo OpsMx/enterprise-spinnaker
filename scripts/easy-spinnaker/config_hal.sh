@@ -16,14 +16,13 @@
 export KUBECONFIG=/home/vagrant/.kube/config
 
 # Get nodePort numbers
-DECKNP=$(kubectl get svc spin-deck-np -n oes -o jsonpath='{...nodePort}')
-GATENP=$(kubectl get svc spin-gate-np -n oes -o jsonpath='{...nodePort}')
+DECKNP=$(kubectl get svc spin-deck-ui -n oes -o jsonpath='{...nodePort}')
+GATENP=$(kubectl get svc spin-gate-ui -n oes -o jsonpath='{...nodePort}')
 
 #Get Halyard name
 HALPOD=$(kubectl get po -n oes | grep spinnaker-halyard-0 | head -1 | cut -d' ' -f 1)
 
-echo "HALPORD=$HALPOD"
-
+echo "Found halyard pod=$HALPOD , continuing..."
 
 #Creat a script to be run inside HAL Pod
 cd /vagrant
@@ -59,13 +58,14 @@ kubectl cp /tmp/tmp-hal-config.sh $HALPOD:/home/spinnaker/tmp.sh  -n oes
 
 #Execute the script
 kubectl exec $HALPOD -n oes -- /home/spinnaker/tmp.sh
-#sleep 600
+sleep 200
 echo "==========================================================================="
 echo "==========================================================================="
 echo 
-echo "Installation of Spinnaker is now complete. Login to the URL below using admin/OpsMx@123"
+echo "Installation of Spinnaker is now complete. Waiting for Spinnaker to come up..."
+echo "Once completed, Spinnaker UI will be available at:"
 echo 
-kubectl get svc spin-deck-np -n oes -o jsonpath='{"http://10.168.3.10:"}{...nodePort}{"\n"}'
+kubectl get svc spin-deck-ui -n oes -o jsonpath='{"http://10.168.3.10:"}{...nodePort}{"\n"}'
 echo 
 echo "==========================================================================="
 echo "==========================================================================="
