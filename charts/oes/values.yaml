@@ -1,8 +1,8 @@
 #####################################################
 # OpsMx Enterprise configuration
 #####################################################
-OESDBImage: opsmxdev/ubi8-autopilot-db:v1.1.0
-OESImage: opsmxdev/ubi8-autopilot:v0.202001191101
+OESDBImage: opsmxdev/ubi8-autopilot-db:v1.2.1
+OESImage: opsmxdev/ubi8-autopilot:v0.202004212200
 k8sServiceType: LoadBalancer
 k8sSecret: oes-repo
 # Feature List
@@ -14,6 +14,7 @@ persistence:
 # Password for the admin user
 openldap:
   adminPassword: OpsMx@123
+  omitClusterIP: true
 
 #####################################################
 # Spinnaker extra configuration
@@ -58,10 +59,10 @@ kibana:
 #####################################################
 spinnaker:
   halyard:
-    spinnakerVersion: 1.17.4
+    spinnakerVersion: 1.19.5
     image:
       repository: gcr.io/spinnaker-marketplace/halyard
-      tag: 1.28.0
+      tag: 1.34.0
     # Set to false to disable persistence data volume for halyard
     persistence:
       enabled: true
