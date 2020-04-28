@@ -23,6 +23,8 @@ spec:
         volumeMounts:
         - mountPath: "/var/lib/pgsql-pv"
           name: db-lib-postgresql
+      securityContext:
+        fsGroup: 1000
       volumes:
       - name: db-lib-postgresql
         persistentVolumeClaim:
