@@ -14,6 +14,7 @@ persistence:
 # Password for the admin user
 openldap:
   adminPassword: OpsMx@123
+  omitClusterIP: true
 
 #####################################################
 # Spinnaker extra configuration
