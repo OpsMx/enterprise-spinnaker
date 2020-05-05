@@ -1,0 +1,57 @@
+---
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: pv-minio
+spec:
+  accessModes:
+  - ReadWriteOnce
+  capacity:
+    storage: 10Gi
+  storageClassName: standard
+  persistentVolumeReclaimPolicy: Retain
+  hostPath:
+    path: "/vagrant/pv-spin/minio"
+#  claimRef:
+#    kind: PersistentVolumeClaim
+#    name: pvc-minio
+#    namespace: offline
+
+---
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: pv-redis
+spec:
+  accessModes:
+  - ReadWriteOnce
+  capacity:
+    storage: 8Gi
+  storageClassName: standard
+  persistentVolumeReclaimPolicy: Retain
+  hostPath:
+    path: "/vagrant/pv-spin/redis"
+#  claimRef:
+#    kind: PersistentVolumeClaim
+#    name: pvc-redis
+#    namespace: offline
+  
+---
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: pv-halyard
+spec:
+  accessModes:
+  - ReadWriteOnce
+  capacity:
+    storage: 10Gi
+  storageClassName: standard
+  persistentVolumeReclaimPolicy: Retain
+  hostPath:
+    path: "/vagrant/pv-spin/halyard"
+ # claimRef:
+ #   kind: PersistentVolumeClaim
+ #   name: pvc-halyard
+ #   namespace: offline
+  
