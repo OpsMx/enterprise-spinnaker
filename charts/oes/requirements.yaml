@@ -9,9 +9,11 @@ dependencies:
     condition: installSpinnaker
   - name: elasticsearch
     version: 7.5.0
+    repository: https://helm.elastic.co/
     condition: enableCentralLogging
   - name: kibana
     version: 7.5.0
+    repository: https://helm.elastic.co
     condition: enableCentralLogging
   - name: fluent-bit
     version: ^1.9.0
