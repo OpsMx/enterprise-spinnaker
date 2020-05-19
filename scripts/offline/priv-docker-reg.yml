@@ -1,0 +1,5 @@
+dockerRegistries:
+- name: privatedocker
+  address: http://10.168.3.10:8082
+  username: admin
+  password: admin
