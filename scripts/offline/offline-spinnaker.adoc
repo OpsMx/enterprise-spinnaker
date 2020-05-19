@@ -1,0 +1,285 @@
+= Spinnaker - Airgapped/Offline Installation
+
+[.lead]
+//Use case
+At times there are situations that an environment does not have Internet connectivity or temporarily not working. In such environment, if we need to install Spinnaker there is no out-of-the-box installation procedure. We should to prepare the installation package on a machine where Internet is working and then use that package to install on a Non-intenet connected machine.
+
+In this guide, We will describe the offline installation method of Spinnaker.
+
+== Scope
+
+This document describes the steps for installing Spinnaker 1.16.1 on Kubernetes/Openshift environment without internet connectivity. 
+
+If you like to install different Spinnaker version, change the version number input parameter to the script.
+
+The scripts are executed in a Ubuntu 16.04 environment (both Internet machine and Airgapped machine), you might have to adjust them if any changes are required.
+
+== Pre-requirements
+=== Internet Connection machine
+We consider the following tools are available on the Internet connected machine. If not available, install them. +
+- Docker CLI +
+- yq CLI +
+- gsutil CLI +
+- Subversion CLI +
+- curl +
+
+=== Internet Disconnected / Air Gapped machine
+Make sure the target Spinnaker server meets the Hardware requirement +
+- Spinnaker requires minimum of 16GB memory and 4 core processor. +
+- It requires 2 x 10g (for halyard & minio) storage and 8g disk for redis to complete a successful Spinnaker installation. +
+
+We expect the following tools are available on the Air Gapped target Spinnaker machine +
+- Docker CLI+
+- Helm 3+ +
+- Curl 3+ +
+- Working Kubernetes 1.14.0 or more but less than 1.16.0 cluster +
+
+== How to do?
+
+*Procedure Outline* + 
+* First, prepare the Offline installation package from an Internet connected machine. + 
+* Next, on internet offline machine use the offline package to install Spinnaker. + 
+
+== Detailed Procedure
+
+Halyard, the Spinnaker's installation tool, will perform installing Spinnaker using the configurations available here - $HOME/.hal/.boms/bom/1.16.1.yml (Spinnaker version file) on the target machine. Our focus is to first prepare this file along with it's all dependency files and docker images.
+
+
+=== Prepare the Offline Installation Package
+
+NOTE: This procedure is performed in an Internet connected machine, under the directory - '_offlinespinnaker_'. 
+
+Execute the shell script _spin-offline.sh_, which downloads the below files and bundles them into a single compressed file. +
+- The Bill Of Materials (BOM) - <version> files +
+- Docker images as referenced in <version>.yml file + 
+- Helm chart of Spinnaker app +
+
+Running the script calls all the scripts under the this section and produces the final _airgapped-spin.tar.gz_.
+
+[source,bash]
+----
+bash spin-offline.sh 1.16.1
+#Copy the file spin-airgapped.tgz to target system.
+----
+
+Once the bundle package is created, you can copy  it to the target machine. At this time, you can ignore the remaining steps under the current section and jump to the next section _[Perform Offline Spinnaker Installation]_
+
+For some reason if the above script is failing or you want to execute the steps in a more hard way, you can follow steps in a sequence as explained below.
+
+1. Script: Download the Bill of Materials of Spinnaker
++
+[source,bash]
+----
+# Current directory is offlinespinnaker
+bash spin-getbom.sh 1.16.1
+----
+NOTE: During the installation of Spinnaker using halyard with help of the command `hal deploy apply`, the configuration files for each service will be read from GCS; So modifying the BOM file 1.16.1.yml with _'local:'_ prefix for each service version is necessary to indicate that they should be sourced locally. This step is handled in the script already since it is also included in the BOM tar file.
++
+2. Script: Download & Save Docker Images
++
+[source,bash]
+----
+bash spin-docker-save.sh 1.16.1
+----
++
+3. Script: Download Spinnaker Helm chart
++
+[source,bash]
+----
+cd airgapped-spin
+curl -O https://kubernetes-charts.storage.googleapis.com/spinnaker-1.23.1.tgz
+----
++
+4. Compress all files into single tar file.
++
+[source,bash]
+----
+#Create tar file from airgapped-spin directory
+cd offlinespinnaker
+tar -czvf airgapped-spin.tar.gz airgapped-spin
+----
++
+5. Ship the generated files to the air-gapped target environment.
+
+=== Perform Offline Spinnaker Installation
+
+NOTE: This procedure is performed in the air-gapped target System, designated to host Spinnaker.
+
+IMPORTANT: You should have copied the generated files from Internet system to the target machine
+
+1. Extract the offline tar.gz file
++
+[source,bash]
+----
+#Assuming the file airgapped-spin.tar.gz is placed in - $HOME/offlinespinnaker
+tar -zxvf airgapped-spin.tar.gz
+#Extracted files are available at - $HOME/offlinespinnaker/airgapped-spin
+----
++
+2. Load the Docker images into the local Docker cache and then push them into the private Docker registry
++
+[source,bash]
+----
+# Docker Bundle @ $HOME/offlinespinnaker/airgapped-spin/spin-images.tar.gz
+bash spin-docker-load.sh 1.16.1
+----
++
+3. Create a namespace '_oes_' and set the current context to use it as the default namespace for our future actions to simplify command length.
++
+[source,bash]
+----
+#Create namespace
+kubectl create ns oes
+
+#Create context for spinnaker namespace
+kubectl config set-context oes-ctx --namespace=oes --user=kubernetes-admin --cluster=kubernetes
+kubectl config use-context oes-ctx 
+
+#Or, simply set a alias
+alias kubectl='kubectl -n oes'
+----
+Going forward, you don't have to specify `-n oes` argument to the `kubectl` command.
++ 
+4. If Storage class is already defined in your K8s environment this step is optional, because the required Persistent volumes are created automatically at runtime.
++
+If Storage class is not defined, you need to ensure that Persistent volumes are created by Cluster admin prior to installing Spinnaker. In case the environment is a testing one (not Production), you can setup local PVs using HostPath type. The PV requirements are - 10g for Minio, 10g for Halyard and 8g for Mino services.
++
+[source,bash]
+----
+# This is for HostPath setup, just for testing - not recommended for Production
+# cd /tmp; mkdir -p pv-spin/hal pv-spin/redis pv-spin/minio; chmod -R 777 pv-spin/
+# kubectl apply -f spin-pv.yaml
+----
++
+5. Create a ConfigMap containing the BOM file and a script that loads the BOM file into Halyard pod
++
+[source,bash]
+----
+bash preInstall.sh
+----
+NOTE: The command creates a ConfigMap cm-spinnaker-boms containing ASCII data BOM file which is originally a binary file. Converting it to base64 encoded twice make it to ASCII file.
++
+6. Install Spinnaker using Helm Chart
++
+[source,bash]
+----
+cd airgapped-spin;
+helm --debug install --set halyard.spinnakerVersion=local:1.16.1,halyard.image.tag=1.29.0, \
+  --set halyard.additionalScripts.enabled=true,halyard.additionalScripts.configMapName=cm-spinnaker-boms, \
+  --set halyard.additionalScripts.configMapKey=callCopyBoms.sh,redis.image.pullPolicy=IfNotPresent \
+  --set gcs.enabled=false -f dockerreg.yml spinnaker spinnaker-1.23.1.tgz -n offline \
+  --timeout 20m0s
+----
+Note: In the above command, we have instructed Helm to use Halyard image version 1.29.0. The redis StatefulSet is configured to pull the image _Always_ - which will force the redis image to be fetched from Internet dockerhub site. This will make Redis pod not being initialized as it is Internet disconnected machine; Hence, the helm command is instructed to pull the image _IfNotAvailable_ only. We are also configuring the BOM ConfigMap created in the previous step as an input to the helm command.
++
+7. Verify if all of the Spinnaker service pods are started successfully
++
+[source, bash]
+----
+watch kubectl get pods
+----
++
+If all Kubernetes services are running, you have successfully installed Spinnaker. 
+
+
+== Troubleshooting
+
+1. Halyard or Minio or Redis pods are not started successfully, your PVs are possibly not ready. Make sure to have the PVs created and if required edit the pv yaml file manually to connect with your PVC names explicitly.
++
+2. Error starting Halyard. It gives the error in `kubectl describe pod halyard` as below
++
+[source]
+----
+Failed to pull image "gcr.io/spinnaker-marketplace/halyard:1.23.2": rpc error: code = Unknown desc = Error response from daemon: Get https://gcr.io/v2/: net/http: request canceled while waiting for connection (Client.Timeout exceeded while awaiting headers)
+----
+It is likely that you have loaded different halyard version than what is used in the Helm chart. You must install the Helm chart with overriden Halyard version. [Or] Make sure the given Docker image is available for your offline installation.
++
+3. If Redis pod is not starting and is shown with error 'ImagePullError', edit the statefulset and set `ImagePullPolicy` to `IfNotPresent`
++
+4. Deck Pod is failing to start and is in 'CrashLoop'. You may have to modify the _spin-deck_ deployment and configure securityContext of the deck container as below
++
+[source,yaml]
+----
+securityContext:
+  runAsUser: 0
+----
+////
+hal config version edit --version local:${VERSION}
+
+sudo apt install -y subversion
+
+yq r t/bom/1.16.1.yml -j | jq .
+
+yq r t/bom/1.16.1.yml -j | jq -r 'path(..) | join("/")'
+yq r t/bom/1.16.1.yml services | egrep -v ' .*|moni' | sed 's/:$//'
+
+declare -a services=(deck orca gate igor echo clouddriver front50 rosco fiat kayenta)
+declare -a services=$(yq r t/bom/1.16.1.yml services | egrep -v ' .*|moni' | sed 's/:$//')
+for x in ${services[@]}; do
+  echo $x
+done
+================
+Helm should be there
+Check https://helm.sh/docs/intro/install/ for installation instructions 
+
+==========
+Cleaning Spinnaker installation
+-------------------------------
+for obj in deploy sts svc job Secret ConfigMap pvc pv RoleBinding ClusterRoleBinding ; do 
+  kubectl get $obj | grep -v NAME | awk '{print $1}' | grep spin | xargs kubectl delete $obj
+done
+kubectl dlete pv pv-halyard pv-minio pv-redis
+kubectl delete ns offline
+
+=========
+kubectl create ns offline
+Create PV directories and assign 777 to them
+kubectl apply -f spin-pv.yaml
+
+helm --debug install --set halyard.spinnakerVersion=local:1.17.2,halyard.image.tag=1.29.0,redis.image.pullPolicy=IfNotPresent \
+  spinnaker spinnaker-1.23.1.tgz -n offline --timeout 20m0s 
+
+-----
+kubectl exec -it spinnaker-spinnaker-halyard-0 -- bash -c 'mkdir -p /home/spinnaker/saga'
+kubectl cp ~/.kube/config  spinnaker-spinnaker-halyard-0:/home/spinnaker/.kube/config
+kubectl cp offline-boms.tar.gz spinnaker-spinnaker-halyard-0:/home/spinnaker/offline-boms.tar.gz
+
+kubectl exec -it spinnaker-spinnaker-halyard-0 -- bash
+
+hal config provider kubernetes account add offline-k8s --provider-version v2 --location offline
+
+securityContext:
+  runAsUser: 0
+
+Script that copies bom, kubeconfig
+
+for obj in deploy sts svc job Secret ConfigMap pvc pv role clusterrole ; do kubectl get $obj | grep -v NAME | grep -i spin | awk '{print $1}' | xargs kubectl delete $obj; done
+============
+[ -s airgapped-spin/spin-boms.tar.gz ] && rm -fv airgapped-spin/spin-boms.tar.gz
+tar -xzvf airgapped-spin.tar.gz
+cd airgapped-spin/
+base64 spin-boms.tar.gz | base64 - > boms.enc
+file spin-boms.tar.gz boms.enc
+du -h spin-boms.tar.gz boms.enc
+kubectl create configmap cm-boms --from-file=./boms.enc --from-file=./copyBoms.sh
+
+
+cd /tmp
+kubectl get configmap cm-boms -o "jsonpath={.data['boms\.enc']}" > boms.enc
+cat boms.enc | base64 -d | base64 -d > spin-boms.tar.gz
+du -h spin-boms.tar.gz boms.enc
+tar -xzvf spin-boms.tar.gz
+[ ! -d $HOME/.hal ] && mkdir -pv $HOME/.hal 
+cp -rv .boms $HOME/.hal/
+-----
+cd /vagrant; mkdir -p pv-spin/halyard pv-spin/minio pv-spin/redis; chmod -R 777 pv-spin/
+cd $HOME; kubectl apply -f spin-pv.yaml
+
+Create 2 configmaps
+ - bom.zip
+ - copyBoms.sh
+
+halyard.additionalScripts.enabled=true
+halyard.additionalScripts.configMapName=cm-boms
+halyard.additionalScripts.configMapKey=copyBoms.sh
+////
