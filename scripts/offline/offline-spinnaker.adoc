@@ -130,21 +130,22 @@ bash spin-docker-push.sh <private-registry>
 #bash spin-docker-push.sh 10.168.3.10:8082
 ----
 +
-3. Create a namespace '_oes_' and set the current context to use it as the default namespace for our future actions to simplify command length.
+3. Create a namespace '_offline_' and set the current context to use it as the default namespace for our future actions to simplify command length.
 +
 [source,bash]
 ----
 #Create namespace
-kubectl create ns oes
+kubectl create ns offline
 
 #Create context for spinnaker namespace
-kubectl config set-context oes-ctx --namespace=oes --user=kubernetes-admin --cluster=kubernetes
-kubectl config use-context oes-ctx 
+kubectl config set-context offline-ctx --namespace=offline --user=kubernetes-admin --cluster=kubernetes
+kubectl config use-context offline-ctx 
 
 #Or, simply set a alias
-alias kubectl='kubectl -n oes'
+alias kubectl='kubectl -n offline'
 ----
-Going forward, you don't have to specify `-n oes` argument to the `kubectl` command.
+Going forward, you don't have to specify `-n offline` argument to the `kubectl` command.
+NOTE: If you prefer to change the namespace from _offline_ to something else, you will also need to update the scripts executed the Airgapped system. 
 + 
 4. If Storage class is already defined in your K8s environment this step is optional, because the required Persistent volumes are created automatically at runtime.
 +
