@@ -28,11 +28,15 @@ Make sure the target Spinnaker server meets the Hardware requirement +
 - Spinnaker requires minimum of 16GB memory and 4 core processor. +
 - It requires 2 x 10g (for halyard & minio) storage and 8g disk for redis to complete a successful Spinnaker installation. +
 
+It is expected that Airgapped system will be pulling the Spinnaker services' images from a privately hosted Docker registry. +
+
 We expect the following tools are available on the Air Gapped target Spinnaker machine +
 - Docker CLI+
 - Helm 3+ +
 - Curl 3+ +
 - Working Kubernetes 1.14.0 or more but less than 1.16.0 cluster +
+
+It is
 
 == How to do?
 
@@ -42,7 +46,7 @@ We expect the following tools are available on the Air Gapped target Spinnaker m
 
 == Detailed Procedure
 
-Halyard, the Spinnaker's installation tool, will perform installing Spinnaker using the configurations available here - $HOME/.hal/.boms/bom/1.16.1.yml (Spinnaker version file) on the target machine. Our focus is to first prepare this file along with it's all dependency files and docker images.
+Halyard, the Spinnaker's installation tool, will perform installing Spinnaker using the configurations available here - $HOME/.hal/.boms/bom/1.16.1.yml (Spinnaker version file) on the target machine. We will use Spinnaker helm chart to perform the installation. Our focus is to first prepare the required files (Helm chart, Docker images, BOM files) as a single bundled file that can be easily shipped to target offline machine.
 
 
 === Prepare the Offline Installation Package
@@ -73,9 +77,10 @@ For some reason if the above script is failing or you want to execute the steps 
 # Current directory is offlinespinnaker
 bash spin-getbom.sh 1.16.1
 ----
-NOTE: During the installation of Spinnaker using halyard with help of the command `hal deploy apply`, the configuration files for each service will be read from GCS; So modifying the BOM file 1.16.1.yml with _'local:'_ prefix for each service version is necessary to indicate that they should be sourced locally. This step is handled in the script already since it is also included in the BOM tar file.
+NOTE: The _Halyard_ program which performs Spinnaker installation when executing `hal deploy apply`, reads the configuration files for each service from GCS; So modifying the BOM file 1.16.1.yml with _'local:'_ prefix for each service version is necessary to indicate that they should be sourced locally. 
+This step is handled in the script already since it is also included in the BOM tar file.
 +
-2. Script: Download & Save Docker Images
+2. Script: Download & Save Docker Images as tar files
 +
 [source,bash]
 ----
@@ -99,7 +104,7 @@ cd offlinespinnaker
 tar -czvf airgapped-spin.tar.gz airgapped-spin
 ----
 +
-5. Ship the generated files to the air-gapped target environment.
+5. Ship the generated single tar file to the air-gapped target environment.
 
 === Perform Offline Spinnaker Installation
 
@@ -121,7 +126,8 @@ tar -zxvf airgapped-spin.tar.gz
 [source,bash]
 ----
 # Docker Bundle @ $HOME/offlinespinnaker/airgapped-spin/spin-images.tar.gz
-bash spin-docker-load.sh 1.16.1
+bash spin-docker-push.sh <private-registry>
+#bash spin-docker-push.sh 10.168.3.10:8082
 ----
 +
 3. Create a namespace '_oes_' and set the current context to use it as the default namespace for our future actions to simplify command length.
@@ -151,26 +157,41 @@ If Storage class is not defined, you need to ensure that Persistent volumes are 
 # kubectl apply -f spin-pv.yaml
 ----
 +
-5. Create a ConfigMap containing the BOM file and a script that loads the BOM file into Halyard pod
+5. Perform pre-install configurations such as updating the Docker registry in the BOM <version>.yml file, amending the <BOM>.tar.gz file with <version>.yml and creating a ConfigMap containing both the BOM file and a script that loads the BOM file into Halyard pod
 +
 [source,bash]
 ----
-bash preInstall.sh
+bash preInstall.sh <private-registry>
+#bash preInstall.sh 10.168.3.10:8082
 ----
-NOTE: The command creates a ConfigMap cm-spinnaker-boms containing ASCII data BOM file which is originally a binary file. Converting it to base64 encoded twice make it to ASCII file.
+NOTE: The command creates a ConfigMap cm-spinnaker-boms containing ASCII data BOM file which is originally a binary file. Converting it to base64 encoded twice to make it to ASCII file.
 +
 6. Install Spinnaker using Helm Chart
 +
 [source,bash]
 ----
 cd airgapped-spin;
-helm --debug install --set halyard.spinnakerVersion=local:1.16.1,halyard.image.tag=1.29.0, \
+helm --debug install --set halyard.spinnakerVersion=local:1.17.2,halyard.image.tag=1.29.0, \
   --set halyard.additionalScripts.enabled=true,halyard.additionalScripts.configMapName=cm-spinnaker-boms, \
   --set halyard.additionalScripts.configMapKey=callCopyBoms.sh,redis.image.pullPolicy=IfNotPresent \
-  --set gcs.enabled=false -f dockerreg.yml spinnaker spinnaker-1.23.1.tgz -n offline \
-  --timeout 20m0s
+  --set minio.image.repository=10.168.3.10:8082/minio,halyard.image.repository=10.168.3.10:8082/halyard \
+  --set redis.image.registry=10.168.3.10:8082,redis.image.repository=redis \
+  --set gcs.enabled=false -f priv-docker-reg.yml spinnaker spinnaker-1.23.1.tgz -n offline \
+  --timeout 20m0s | tee helminstall.log
+
 ----
-Note: In the above command, we have instructed Helm to use Halyard image version 1.29.0. The redis StatefulSet is configured to pull the image _Always_ - which will force the redis image to be fetched from Internet dockerhub site. This will make Redis pod not being initialized as it is Internet disconnected machine; Hence, the helm command is instructed to pull the image _IfNotAvailable_ only. We are also configuring the BOM ConfigMap created in the previous step as an input to the helm command.
+Note: In the above command, we have instructed Helm to use Halyard image version 1.29.0. The redis StatefulSet is configured to pull the image _Always_ - which will force the redis image to be fetched from Internet dockerhub site. This will make Redis pod not being initialized as it is Internet disconnected machine; Hence, the helm command is instructed to pull the image _IfNotAvailable_ only. We are also configuring the BOM ConfigMap created in the previous step as an input to the helm command. 
++
+In the command, the value '_10.168.3.10:8082_' is a private docker registry, you should change it to your local registry vaule. We have also overridden private Docker registry with file of which's content is something like below
+[source, yaml]
+----
+dockerRegistries:
+- name: privatedocker
+  address: http://10.168.3.10:8082
+  username: admin
+  password: admin
+
+----
 +
 7. Verify if all of the Spinnaker service pods are started successfully
 +
@@ -282,4 +303,16 @@ Create 2 configmaps
 halyard.additionalScripts.enabled=true
 halyard.additionalScripts.configMapName=cm-boms
 halyard.additionalScripts.configMapKey=copyBoms.sh
+
+kubectl create secret generic nexuscred \
+    --from-file=.dockerconfigjson=/home/vagrant/docker-secret.json \
+    --type=kubernetes.io/dockerconfigjson
+
+kubectl create secret generic nexuscred \
+    --from-file=.dockerconfigjson=/home/vagrant/docker-secret.json \
+    --type=kubernetes.io/dockerconfigjson
+
+kubectl patch serviceaccount default -p '{"imagePullSecrets": [{"name": "nexuscred"}]}'
+
+tar -cvzf spin-boms.tar.gz .boms
 ////
