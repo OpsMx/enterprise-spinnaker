@@ -56,6 +56,7 @@ echo
  
 #Additionally download the Rosco depeding packer files
 cd $BOMSROOT/rosco/
+[ -d packer ] && rm -rvf packer/
 svn checkout https://github.com/spinnaker/rosco/trunk/rosco-web/config/packer
 sudo rm -r ./packer/.svn
 cd ./packer

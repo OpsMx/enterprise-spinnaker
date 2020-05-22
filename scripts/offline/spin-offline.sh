@@ -29,13 +29,14 @@ cp -vf $TMPFILE $OLROOT/
 
 # Download BOM files
 cd $scriptdir; echo -e "\n\n-----> spin-getbom.sh"
-bash $scriptdir/spin-getbom.sh $VER
-mv -v $SRCROOT/spin-boms.tar.gz $OLROOT/
+#bash $scriptdir/spin-getbom.sh $VER
+#mv -v $SRCROOT/spin-boms.tar.gz $OLROOT/
 
 # Download Docker images
-cd $scriptdir; echo -e "\n\n-----> spin-getbom.sh"
-bash $scriptdir/spin-docker-save.sh $VER
-mv $SRCROOT/spin-images.tar.gz $OLROOT/
+cd $scriptdir; echo -e "\n\n-----> spin-docker-save.sh"
+rm -rfv $SRCROOT/spin-images.tar.gz $SRCROOT/spin-images
+#bash $scriptdir/spin-docker-save.sh $VER
+#mv $SRCROOT/spin-images.tar.gz $OLROOT/
 
 #Download Helm chart
 echo -e "\n\n-----> Fetching Spinnaker Helm chart"
@@ -43,7 +44,7 @@ cd $OLROOT; curl -O https://kubernetes-charts.storage.googleapis.com/spinnaker-1
 
 #Create tar file from $OLROOT directory
 echo "Creating $WORKDIR/airgapped-spin.tar.gz"
-cd $WORKDIR/..
+cd $WORKDIR
 tar -czvf airgapped-spin.tar.gz airgapped-spin
 
 echo "All-in-one file $WORKDIR/airgapped-spin.tar.gz is ready. Use this file for your offline installation"

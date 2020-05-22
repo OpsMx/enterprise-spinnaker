@@ -1,13 +1,35 @@
 #!/bin/bash
-kubectl delete cm cm-spinnaker-boms
+scriptname=$(basename $BASH_SOURCE)
+
+#Exit if Private Docker registry is not supplied
+if [ $# -eq 0 ]; then
+   echo "ERROR: Private Docker Regisry is not supplied"
+   echo "Syntax: $scriptname <private-registry-url>"
+   echo "Example: $scriptname 10.168.3.10:8082"
+
+   exit 1
+fi
+DCR=$1
+
+BOMCM=$(kubectl get cm | grep -i boms | awk '{print $1}')
+echo $BOMCM
+[ ! -z $BOMCM ] && kubectl delete cm cm-spinnaker-boms
 
 WORKDIR=$PWD
 cd $WORKDIR
 
 #[ -s airgapped-spin/spin-boms.tar.gz ] && rm -fv airgapped-spin/spin-boms.tar.gz
 #Change the below line to remove /vagrant
-#tar -xzvf /vagrant/airgapped-spin.tar.gz
+tar -xzvf airgapped-spin.tar.gz
 cd airgapped-spin/
+tar -xzvf spin-boms.tar.gz
+mv spin-boms.tar.gz spin-boms.tar.gz_old
+VFILE=$(ls .boms/bom/*.*.*.yml)
+echo $VFILE
+sed -i "s|dockerRegistry: .*|dockerRegistry: $DCR|" $VFILE
+head -5 $VFILE
+tar -cvzf spin-boms.tar.gz .boms
+
 base64 spin-boms.tar.gz | base64 - > boms.enc
 file spin-boms.tar.gz boms.enc
 du spin-boms.tar.gz boms.enc

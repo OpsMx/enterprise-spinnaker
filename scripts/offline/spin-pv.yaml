@@ -12,10 +12,10 @@ spec:
   persistentVolumeReclaimPolicy: Retain
   hostPath:
     path: "/vagrant/pv-spin/minio"
-#  claimRef:
-#    kind: PersistentVolumeClaim
-#    name: pvc-minio
-#    namespace: offline
+  claimRef:
+    kind: PersistentVolumeClaim
+    name: spinnaker-minio
+    namespace: offline
 
 ---
 apiVersion: v1
@@ -31,10 +31,10 @@ spec:
   persistentVolumeReclaimPolicy: Retain
   hostPath:
     path: "/vagrant/pv-spin/redis"
-#  claimRef:
-#    kind: PersistentVolumeClaim
-#    name: pvc-redis
-#    namespace: offline
+  claimRef:
+    kind: PersistentVolumeClaim
+    name: redis-data-spinnaker-redis-master-0
+    namespace: offline
   
 ---
 apiVersion: v1
@@ -50,8 +50,8 @@ spec:
   persistentVolumeReclaimPolicy: Retain
   hostPath:
     path: "/vagrant/pv-spin/halyard"
- # claimRef:
- #   kind: PersistentVolumeClaim
- #   name: pvc-halyard
- #   namespace: offline
-  
+  claimRef:
+    kind: PersistentVolumeClaim
+    name: halyard-home-spinnaker-spinnaker-halyard-0
+    namespace: offline
+ 
