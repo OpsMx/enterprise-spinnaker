@@ -55,11 +55,46 @@ kibana:
             curl -X POST "localhost:5601/api/saved_objects/_import?overwrite=true" -H "kbn-xsrf: true" --form file=@/tmp/kibana_objects.ndjson 2>&1 1> /tmp/postStart.out;
 
 #####################################################
+# Centralized Logging Configuration
+#####################################################
+enableMonitoring: false
+
+grafana:
+  service:
+    type: LoadBalancer
+    port: 3000
+  sidecar:
+    datasources:
+      enabled: true
+      label: grafana_datasource
+  dashboardProviders:
+    dashboardproviders.yaml:
+      apiVersion: 1
+      providers:
+      - name: 'default'
+        orgId: 1
+        folder: ''
+        type: file
+        disableDeletion: false
+        editable: true
+        options:
+          path: /var/lib/grafana/dashboards/default
+  dashboards:
+     default:
+       kubernetes-workloads:
+         gnetId: 6781
+         datasource: Prometheus
+       kubernetes:
+         gnetId: 6417
+         datasource: Prometheus
+
+
+#####################################################
 # Spinnaker instance configuration
 #####################################################
 spinnaker:
   halyard:
-    spinnakerVersion: 1.19.5
+    spinnakerVersion: 1.20.3
     image:
       repository: gcr.io/spinnaker-marketplace/halyard
       tag: 1.34.0

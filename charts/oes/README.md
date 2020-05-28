@@ -102,16 +102,16 @@ You can change the default password during installation by updating the values.y
 
 
 ### Enabling centralized logging
-Spinnaker consists of multiple microservices and you need to connect to each microservice to see what is going on. We have enabled elasticsearch, fluentbit and kibana to provide a centralized logging solution for Spinnaker. To enable it, you need to install with the flag
+Spinnaker consists of multiple microservices and you need to connect to each microservice to see what is going on. OES has enabled elasticsearch, fluentbit and kibana to provide a centralized logging solution for Spinnaker. To enable it, you need to install with the flag
 
-	    --set enableCentralLogging=true
+	  --set enableCentralLogging=true
 
 Note, that out-of-the-box configuration of the service requires addition 2G of memory and 1 core.
 To get the hostname for Kibana, run
 
-	    kubectl get svc [--namespace mynamespace]
+	  kubectl get svc [--namespace mynamespace]
 
-and find the service with Kibana in the name. Example output would be:
+and find the service with kibana in the name. Example output would be:
 
     NAME               TYPE           CLUSTER-IP   EXTERNAL-IP     PORT(S)      AGE
     somename-kibana    LoadBalancer   10.0.4.246   34.66.226.138   5601:32097   9m43s
@@ -120,8 +120,32 @@ Using the EXTERNAL-IP address, go to http://EXTERNAL-IP:5601
 
 In Kibana, go to Discover -> Open -> Spinnaker Logs to see logs from Spinnaker pods.
 
+### Enabling centralized monitoring
+Monitoring the different services of Spinnaker is important in keeping it operating optimally. OES has enabled prometheus and grafana to provide a way to monitor Spinnaker. To enable it, you need to install with the flag
+
+    --set enableMonitoring=true
+
+To get the hostname for Grafana, run
+
+    kubectl get svc [--namespace mynamespace] | grep grafana
+
+and find the service with grafana in the name. Example output would be:
+
+	NAME                TYPE           CLUSTER-IP   EXTERNAL-IP   PORT(S)          AGE
+	somename-grafana    LoadBalancer   10.28.5.38   34.68.196.3   3000:32620/TCP   10m
+
+Using the EXTERNAL-IP address, go to http://EXTERNAL-IP:3000
+
+The login userid will be *admin*. The get the password, run the following, replacing myname with the helm release name:
+
+	kubectl get secret myname-grafana -o jsonpath="{.data.admin-password}"  | base64 --decode
+
+Once you have logged in, you can go to Dashboards -> Manage and explore two dashboards that are already installed.
 
 ### Change History
+Apr 2019:
+- Include Prometheus, grafana
+
 Dec 2019:
 - Include Elasticsearch, fluentbit and kibana
 - Make use of persistent volumes optional
