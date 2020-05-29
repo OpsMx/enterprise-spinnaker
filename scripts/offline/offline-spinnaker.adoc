@@ -58,6 +58,30 @@ Execute the shell script _spin-offline.sh_, which downloads the below files and 
 - Docker images as referenced in <version>.yml file + 
 - Helm chart of Spinnaker app +
 
+NOTE: In case of overridding Spinnaker components' images with custom ones, do the below steps (with alpha numbers) first.
+
+a. Create a file : image-overrides.yml with content like below.
++
+[source,bash]
+----
+#Comment lines are prefixed with #
+#fiat: docker.io/devopsmx/ubi8-oes-fiat:version-1.9.0
+front50: docker.io/devopsmx/ubi8-oes-front50:version-0.21.0
+gate: docker.io/devopsmx/ubi8-oes-gate:version-1.14.0
+igor: docker.io/devopsmx/ubi8-oes-igor:version-1.8.2
+ # kayenta: docker.io/devopsmx/ubi8-oes-kayenta:version-0.13.0
+redis: docker.io/devopsmx/ubi8-oes-redis:4.0.14
+rosco: docker.io/devopsmx/ubi8-oes-rosco:version-0.17.0
+----
++
+b. Run the script : bash spin-docker-getimages.sh,to pull images from private registry. 
+[source,bash]
+----
+bash spin-docker-getimages.sh
+----
+
+_Now every step below can be continued as even if private registry are used_
+
 Running the script calls all the scripts under the this section and produces the final _airgapped-spin.tar.gz_.
 
 [source,bash]
@@ -193,6 +217,29 @@ dockerRegistries:
   password: admin
 
 ----
++
+Additionally, in case of custom images, you should create a file - image_values.yml with content as in the sample below.
+[source, yaml]
+----
+halyard:
+  additionalServiceSettings:
+    deck.yml:
+      artifactId: 10.168.3.10:8082/ubi8-oes-deck:version-2.11.0
+    fiat.yml:
+      artifactId: 10.168.3.10:8082/ubi8-oes-fiat:version-1.9.0
+    front50.yml:
+      artifactId: 10.168.3.10:8082/ubi8-oes-front50:version-0.21.0
+    gate.yml:
+      artifactId: 10.168.3.10:8082/ubi8-oes-gate:version-1.14.0
+    igor.yml:
+      artifactId: 10.168.3.10:8082/ubi8-oes-igor:version-1.8.2
+    kayenta.yml:
+      artifactId: 10.168.3.10:8082/ubi8-oes-kayenta:version-0.13.0
+    rosco.yml:
+      artifactId: 10.168.3.10:8082/ubi8-oes-rosco:version-0.17.0
+
+----
++ And then add `-f image_values.yml` to the command argument to `helm install`
 +
 7. Verify if all of the Spinnaker service pods are started successfully
 +

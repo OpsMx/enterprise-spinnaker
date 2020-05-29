@@ -1,0 +1,16 @@
+halyard:
+  additionalServiceSettings:
+    deck.yml:
+      artifactId: 10.168.3.10:8082/ubi8-oes-deck:version-2.11.0
+    fiat.yml:
+      artifactId: 10.168.3.10:8082/ubi8-oes-fiat:version-1.9.0
+    front50.yml:
+      artifactId: 10.168.3.10:8082/ubi8-oes-front50:version-0.21.0
+    gate.yml:
+      artifactId: 10.168.3.10:8082/ubi8-oes-gate:version-1.14.0
+    igor.yml:
+      artifactId: 10.168.3.10:8082/ubi8-oes-igor:version-1.8.2
+    kayenta.yml:
+      artifactId: 10.168.3.10:8082/ubi8-oes-kayenta:version-0.13.0
+    rosco.yml:
+      artifactId: 10.168.3.10:8082/ubi8-oes-rosco:version-0.17.0

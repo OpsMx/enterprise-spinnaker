@@ -1,0 +1,8 @@
+#Comment lines are prefixed with #
+#fiat: docker.io/devopsmx/ubi8-oes-fiat:version-1.9.0
+front50: docker.io/devopsmx/ubi8-oes-front50:version-0.21.0
+gate: docker.io/devopsmx/ubi8-oes-gate:version-1.14.0
+igor: docker.io/devopsmx/ubi8-oes-igor:version-1.8.2
+ # kayenta: docker.io/devopsmx/ubi8-oes-kayenta:version-0.13.0
+redis: docker.io/devopsmx/ubi8-oes-redis:4.0.14
+rosco: docker.io/devopsmx/ubi8-oes-rosco:version-0.17.0
