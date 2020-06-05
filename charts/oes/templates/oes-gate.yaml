@@ -1,0 +1,28 @@
+# apiVersion: v1
+# kind: Deployment
+# metadata:
+#   name: oes-gate
+# spec:
+#   replicas: 1
+#   selector:
+#     matchLabels:
+#       app: oes-gate
+#   template:
+#     metadata:
+#       labels:
+#         app: oes-gate
+#     spec:
+#       imagePullSecrets:
+#         - name: {{ .Values.k8sSecret}}
+#       containers:
+#         - image: {{ .Values.OESGateImage }}
+#           imagePullPolicy: IfNotPresent
+#           name: oes-gate
+#           ports:
+#             - containerPort: 8084
+#               name: gate-port
+#               protocol: TCP
+#           command: ["/bin/bash"]
+#           args:
+#           - -c
+#           - "/usr/local/bin/run.sh"

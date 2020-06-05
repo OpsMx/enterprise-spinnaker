@@ -1,0 +1,28 @@
+# apiVersion: v1
+# kind: Deployment
+# metadata:
+#   name: oes-api
+# spec:
+#   replicas: 1
+#   selector:
+#     matchLabels:
+#       app: oes-api
+#   template:
+#     metadata:
+#       labels:
+#         app: oes-api
+#     spec:
+#       imagePullSecrets:
+#         - name: {{ .Values.k8sSecret}}
+#       containers:
+#         - image: {{ .Values.OESAPIImage }}
+#           imagePullPolicy: IfNotPresent
+#           name: oes-api
+#           ports:
+#             - containerPort: 8090
+#               name: api-port
+#               protocol: TCP
+#           command: ["/bin/bash"]
+#           args:
+#           - -c
+#           - "/usr/local/bin/run.sh"
