@@ -29,14 +29,14 @@ cp -vf $TMPFILE $OLROOT/
 
 # Download BOM files
 cd $scriptdir; echo -e "\n\n-----> spin-getbom.sh"
-#bash $scriptdir/spin-getbom.sh $VER
-#mv -v $SRCROOT/spin-boms.tar.gz $OLROOT/
+bash $scriptdir/spin-getbom.sh $VER
+mv -v $SRCROOT/spin-boms.tar.gz $OLROOT/
 
 # Download Docker images
 cd $scriptdir; echo -e "\n\n-----> spin-docker-save.sh"
 rm -rfv $SRCROOT/spin-images.tar.gz $SRCROOT/spin-images
-#bash $scriptdir/spin-docker-save.sh $VER
-#mv $SRCROOT/spin-images.tar.gz $OLROOT/
+bash $scriptdir/spin-docker-save.sh $VER
+mv $SRCROOT/spin-images.tar.gz $OLROOT/
 
 #Download Helm chart
 echo -e "\n\n-----> Fetching Spinnaker Helm chart"
