@@ -1,8 +1,8 @@
 #####################################################
 # OpsMx Enterprise configuration
 #####################################################
-OESDBImage: opsmxdev/ubi8-autopilot-db:v1.2.1
-OESImage: opsmxdev/ubi8-autopilot:v0.202004212200
+OESDBImage: opsmxdev/ubi8-autopilot-db:v1.3.0
+OESImage: opsmxdev/ubi8-autopilot:v2.9.9-202006171914
 k8sServiceType: LoadBalancer
 k8sSecret: oes-repo
 # Feature List
@@ -59,10 +59,10 @@ kibana:
 #####################################################
 spinnaker:
   halyard:
-    spinnakerVersion: 1.19.5
+    spinnakerVersion: 1.20.5
     image:
       repository: gcr.io/spinnaker-marketplace/halyard
-      tag: 1.34.0
+      tag: 1.35.3
     # Set to false to disable persistence data volume for halyard
     persistence:
       enabled: true
