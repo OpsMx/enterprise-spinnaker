@@ -6,7 +6,7 @@ replicaCount: 1
 
 # Define deployment strategy - IMPORTANT: use rollingUpdate: null when use Recreate strategy.
 # It prevents from merging with existing map keys which are forbidden.
-strategy: {}
+strategy:
   # type: RollingUpdate
   # rollingUpdate:
   #   maxSurge: 1
@@ -14,7 +14,7 @@ strategy: {}
   #
   # or
   #
-  # type: Recreate
+   type: Recreate
   # rollingUpdate: null
 image:
   # From repository https://github.com/osixia/docker-openldap
@@ -59,7 +59,7 @@ env:
   LDAP_BACKEND: "hdb"
   LDAP_TLS: "true"
   LDAP_TLS_ENFORCE: "false"
-  LDAP_REMOVE_CONFIG_AFTER_SETUP: "true"
+  LDAP_REMOVE_CONFIG_AFTER_SETUP: "false"
 
 # Default Passwords to use, stored as a secret. If unset, passwords are auto-generated.
 # You can override these at install time with
@@ -68,13 +68,77 @@ env:
 # configPassword: config
 
 # Custom openldap configuration files used to override default settings
-# customLdifFiles:
-  # 01-default-users.ldif: |-
-    # Predefine users here
+customLdifFiles:
+  01-memberof.ldif: |-
+    dn: cn=module,cn=config
+    cn: module
+    objectClass: olcModuleList
+    olcModuleLoad: memberof.la
+    olcModulePath: /usr/lib/ldap
 
+    dn: olcOverlay={0}memberof,olcDatabase={1}hdb,cn=config
+    objectClass: olcConfig
+    objectClass: olcMemberOf
+    objectClass: olcOverlayConfig
+    objectClass: top
+    olcOverlay: memberof
+    olcMemberOfDangling: ignore
+    olcMemberOfRefInt: TRUE
+    olcMemberOfGroupOC: groupOfNames
+    olcMemberOfMemberAD: member
+    olcMemberOfMemberOfAD: memberOf
+  02-refint1.ldif: |-
+    dn: cn=module{1},cn=config
+    changetype: modify
+    add: olcmoduleload
+    olcmoduleload: refint.la
+  03-refint2.ldif: |-
+    dn: olcOverlay={1}refint,olcDatabase={1}hdb,cn=config
+    objectClass: olcConfig
+    objectClass: olcOverlayConfig
+    objectClass: olcRefintConfig
+    objectClass: top
+    olcOverlay: {1}refint
+    olcRefintAttribute: memberof member manager owner
+  04-add_ou.ldif: |-
+    dn: ou=groups,dc=example,dc=org
+    objectClass: organizationalUnit
+    ou: Groups
+  05-add_ro.ldif: |-
+    dn: cn=readonly,dc=example,dc=org
+    objectClass: simpleSecurityObject
+    objectClass: organizationalRole
+    cn: readonly
+    userPassword: opsmx@123
+  06-add_rx.ldif: |-
+    dn: cn=rxonly,dc=example,dc=org
+    objectClass: simpleSecurityObject
+    objectClass: organizationalRole
+    cn: rxonly
+    userPassword: opsmx@123
+  07-ro.ldif: |-
+    dn: cn=rogroup,ou=groups,dc=example,dc=org
+    objectClass: groupofnames
+    cn: rogroup
+    description: read only users
+    member: cn=admin,dc=example,dc=org
+    member: cn=readonly,dc=example,dc=org
+  08-rx.ldif: |-
+    dn: cn=rxgroup,ou=groups,dc=example,dc=org
+    objectClass: groupofnames
+    cn: rxgroup
+    description: read and execute group
+    member: cn=admin,dc=example,dc=org
+    member: cn=rxonly,dc=example,dc=org
+  09-rwx.ldif: |-
+    dn: cn=rwxgroup,ou=groups,dc=example,dc=org
+    objectClass: groupofnames
+    cn: rwxgroup
+    description: read write and execute group
+    member: cn=admin,dc=example,dc=org
 ## Persist data to a persistent volume
 persistence:
-  enabled: false
+  enabled: true
   ## database data Persistent Volume Storage Class
   ## If defined, storageClassName: <storageClass>
   ## If set to "-", storageClassName: "", which disables dynamic provisioning
@@ -82,7 +146,7 @@ persistence:
   ##   set, choosing the default provisioner.  (gp2 on AWS, standard on
   ##   GKE, AWS & OpenStack)
   ##
-  # storageClass: "-"
+  storageClass: "default"
   accessMode: ReadWriteOnce
   size: 8Gi
   # existingClaim: ""
