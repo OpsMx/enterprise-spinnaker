@@ -35,39 +35,6 @@ entries:
     - OpsMx-1.0.1.tgz
     version: 1.0.1
   - apiVersion: v1
-    appVersion: 1.0.1
-    created: "2020-06-18T18:56:53.9612977+05:30"
-    dependencies:
-    - condition: installOpenLdap
-      name: openldap
-      repository: https://kubernetes-charts.storage.googleapis.com/
-      version: ~1.2.1
-    - condition: installSpinnaker
-      name: spinnaker
-      repository: https://kubernetes-charts.storage.googleapis.com/
-      version: ~1.20.2
-    - condition: enableCentralLogging
-      name: elasticsearch
-      repository: https://helm.elastic.co/
-      version: 7.5.0
-    - condition: enableCentralLogging
-      name: kibana
-      repository: https://helm.elastic.co
-      version: 7.5.0
-    - condition: enableCentralLogging
-      name: fluent-bit
-      repository: https://kubernetes-charts.storage.googleapis.com/
-      version: ^1.9.0
-    digest: d6ae5bb7369e81c8b90ba3611e9a25d5d34ba78b0997fbef929642f165789ad7
-    home: https://www.opsmx.com/
-    keywords:
-    - OpsMx
-    - OES
-    name: OpsMx
-    urls:
-    - charts/OpsMx-1.0.1.tgz
-    version: 1.0.1
-  - apiVersion: v1
     appVersion: 1.0.0
     created: "2020-06-18T18:56:53.8897708+05:30"
     dependencies:
