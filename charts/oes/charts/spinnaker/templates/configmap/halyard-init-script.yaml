@@ -13,11 +13,11 @@ data:
     printf 'server.address: 0.0.0.0\n' > /tmp/config/halyard-local.yml
 
     # Use Redis deployed via the dependent Helm chart
-    rm -rf /tmp/spinnaker/.hal/default/service-settings
+    #rm -rf /tmp/spinnaker/.hal/default/service-settings
     mkdir -p /tmp/spinnaker/.hal/default/service-settings
     cp /tmp/service-settings/* /tmp/spinnaker/.hal/default/service-settings/
 
-    rm -rf /tmp/spinnaker/.hal/default/profiles
+    #rm -rf /tmp/spinnaker/.hal/default/profiles
     mkdir -p /tmp/spinnaker/.hal/default/profiles
     cp /tmp/additionalProfileConfigMaps/* /tmp/spinnaker/.hal/default/profiles/
 
