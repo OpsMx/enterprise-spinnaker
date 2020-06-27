@@ -1,0 +1,33 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: oes-gate
+  name: oes-gate
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: oes-gate
+  template:
+    metadata:
+      annotations:
+        configmap/checksum: {{ (.Files.Glob "config/*").AsConfig | sha256sum }}
+      labels:
+        app: oes-gate
+    spec:
+      containers:
+      - image: {{ .Values.OESGateImage }}
+        name: oes-gate
+        ports:
+        - containerPort: 8084
+          protocol: TCP
+        volumeMounts:
+        - name: gate-volume
+          mountPath: /opt/spinnaker/config
+      imagePullSecrets:
+      - name: {{ .Values.k8sSecret}}
+      volumes:
+        - name: gate-volume
+          configMap:
+            name: oes-gate-config

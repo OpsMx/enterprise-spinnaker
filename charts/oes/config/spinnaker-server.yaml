@@ -1,0 +1,10 @@
+spinnaker:
+  #  baseurl: http://52.255.164.169:8084
+  # base-url: http://oes-gate-svc:8084
+  base-url: https://demo.opsmx.com/gate
+  external-base-url: http://55.555.164.169:8084
+  username: admin
+  password: OpsMx@123
+  adminLoginEnabled: false
+  adminUsername:
+  adminPassword:

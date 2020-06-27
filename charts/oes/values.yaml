@@ -1,7 +1,10 @@
 #####################################################
 # OpsMx Enterprise configuration
 #####################################################
-OESDBImage: opsmxdev/ubi8-autopilot-db:v1.2.1
+OESUIIImage: opsmx11/oes:ui-v0.202006091010
+OESSERImage: opsmx11/oes:server-v0.202006091402
+OESGateImage: opsmx11/oes:gate-v0.202006091103
+OESDBImage: opsmxdev/ubi8-autopilot-db:v1.3.0
 OESImage: opsmxdev/ubi8-autopilot:v0.202004212200
 k8sServiceType: LoadBalancer
 k8sSecret: oes-repo

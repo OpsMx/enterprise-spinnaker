@@ -1,0 +1,15 @@
+spring:
+  profiles:
+    include: vault
+  cloud:
+    config:
+      server:
+        vault:
+          host: 52.149.23.51
+          port: 8200
+          scheme: http
+          backend: spinnaker
+          kvVersion: 2
+          token: vault-root-token
+
+Events:  <none>

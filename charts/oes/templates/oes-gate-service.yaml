@@ -1,0 +1,15 @@
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    app: oes-gate
+  name: oes-gate-svc
+spec:
+  type: {{ .Values.k8sServiceType }}
+  ports:
+  - name: "oes-gate-service"
+    port: 8084
+    protocol: TCP
+    targetPort: 8084
+  selector:
+    app: oes-gate
