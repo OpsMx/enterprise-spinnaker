@@ -5,7 +5,7 @@ metadata:
     app: autopilot
   name: autopilot
 spec:
-  type: {{ .Values.autopilot.k8sServiceType }}
+  type: {{ .Values.autopilot.service.type }}
   ports:
   - name: "cas-service"
     port: 8090

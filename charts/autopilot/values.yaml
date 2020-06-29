@@ -19,10 +19,31 @@ autopilot:
     type: LoadBalancer
 
   config:
-    dbUrl: jdbc:postgresql://db-opsmx:5432/opsmx
-    backendPort: 8090
-    ldapUrl: ldap://{{ .Release.Name }}-openldap:389
+    dataSource:
+      url: jdbc:postgresql://db-opsmx:5432/opsmx
+      username: postgres
+      password: networks123
 
+    spinnaker:
+      loginAdminEnabled: false
+      baseUrl: http://spin-gate:8084
+      adminUsername: OpsMxUser
+      adminPassword: OpsMx@123
+
+    appConfigJS:
+      backendPort: 8090
+
+    ldap:
+      authEnabled: false
+      url: ldap://oes-openldap:389
+      baseDN: cn=Users,dc=local,dc=opsmx,dc=com
+      userFilterPattern: (&(cn=USERNAME))
+      userGroups: Administrators
+    ssl:
+      keyStore: keystore.p12
+      keyStorePassword: OpsMx@123
+      keyStoreType: PKCS12
+      keyAlias: tomcat
 
 opsmxdb:
   # Change this to false if autopilot is installed along with OES
