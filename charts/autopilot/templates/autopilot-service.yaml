@@ -2,10 +2,10 @@ apiVersion: v1
 kind: Service
 metadata:
   labels:
-    app: oes
-  name: oes
+    app: autopilot
+  name: autopilot
 spec:
-  type: {{ .Values.k8sServiceType }}
+  type: {{ .Values.autopilot.k8sServiceType }}
   ports:
   - name: "cas-service"
     port: 8090
@@ -16,8 +16,5 @@ spec:
   - name: "monitoring-service"
     port: 9090
     targetPort: 9090
-  - name: "audit-service"
-    port: 8050
-    targetPort: 8050
   selector:
-    app: oes
+    app: autopilot

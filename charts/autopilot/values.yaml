@@ -1,8 +1,42 @@
 #####################################################
-# OpsMx Enterprise configuration
+# OpsMX Autopilot configuration
 #####################################################
-OESDBImage: nirmalya/oesdb:v1.2.1
-OESImage: opsmxdev/ubi8-autopilot:v0.202004212200
-OESDBMountSize: 8Gi
-k8sServiceType: LoadBalancer
-k8sSecret: oes-repo
+# Default values for autopilot chart.
+# This is a YAML-formatted file.
+# Declare variables to be passed into your templates.
+
+imagePullSecret: oes-repo
+
+autopilot:
+
+  labels: {}
+  image:
+    repository: opsmxdev/ubi8-autopilot
+    tag: v2.9.10-202006181240
+    pullPolicy: IfNotPresent
+
+  service:
+    type: LoadBalancer
+
+  config:
+    dbUrl: jdbc:postgresql://db-opsmx:5432/opsmx
+    backendPort: 8090
+    ldapUrl: ldap://{{ .Release.Name }}-openldap:389
+
+
+opsmxdb:
+  # Change this to false if autopilot is installed along with OES
+  # as autopilot can use the DB of OES
+  enabled: true
+
+  securityContext:
+    fsGroup: 1000
+
+  podManagementPolicy: OrderedReady
+
+  image:
+    repository: opsmxdev/ubi8-autopilot-db
+    tag: v1.3.0
+    pullPolicy: IfNotPresent
+
+  storageMountSize: 8Gi

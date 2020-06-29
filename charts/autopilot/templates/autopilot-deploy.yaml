@@ -1,35 +1,35 @@
 apiVersion: extensions/v1beta1
 kind: Deployment
 metadata:
-  name: oes
+  name: autopilot
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: oes
+      app: autopilot
   template:
     metadata:
       labels:
-        app: oes
+        app: autopilot
       annotations:
         configmap/checksum: {{ (.Files.Glob "config/*").AsConfig | sha256sum }}
     spec:
       volumes:
         - name: backend-config-volume
           configMap:
-            name: oesbackendconfig
+            name: autopilotbackendconfig
         - name: frontend-config-volume
           configMap:
-            name: oesfrontendconfig
+            name: autopilotfrontendconfig
         - name: server-config-volume
           configMap:
-            name: oesserverconfig
+            name: autopilotserverconfig
       imagePullSecrets:
-        - name: {{ .Values.k8sSecret}}
+        - name: {{ .Values.imagePullSecret}}
       containers:
-        - image: {{ .Values.OESImage }}
-          imagePullPolicy: IfNotPresent
-          name: oes
+        - image: {{ .Values.autopilot.image.repository }}:{{ .Values.autopilot.image.tag }}
+          imagePullPolicy: {{ .Values.autopilot.image.pullPolicy }}
+          name: autopilot
           ports:
             - containerPort: 8090
               name: backend
@@ -39,9 +39,6 @@ spec:
               protocol: TCP
             - containerPort: 8161
               name: frontend
-              protocol: TCP
-            - containerPort: 8050
-              name: audit
               protocol: TCP
           volumeMounts:
           - name: backend-config-volume
