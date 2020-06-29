@@ -2,19 +2,22 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   labels:
-    app: oes-ui
+    app: oes
+    component: oes-ui
   name: oes-ui
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: oes-ui
+      app: oes
+      component: oes-ui
   template:
     metadata:
       annotations:
         configmap/checksum: {{ (.Files.Glob "config/*").AsConfig | sha256sum }}
       labels:
-        app: oes-ui
+        app: oes
+        component: oes-ui
     spec:
       containers:
       - image: {{ .Values.OESUIIImage }}

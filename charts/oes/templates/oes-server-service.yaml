@@ -2,7 +2,8 @@ apiVersion: v1
 kind: Service
 metadata:
   labels:
-    app: oes-server
+    app: oes
+    component: oes-server
   name: oes-server-svc
 spec:
   type: {{ .Values.k8sServiceType }}
@@ -11,4 +12,5 @@ spec:
     port: 8085
     targetPort: 8085
   selector:
-    app: oes-server
+    app: oes
+    component: oes-server

@@ -2,7 +2,8 @@ apiVersion: v1
 kind: Service
 metadata:
   labels:
-    app: oes-gate
+    app: oes
+    component: oes-gate
   name: oes-gate-svc
 spec:
   type: {{ .Values.k8sServiceType }}
@@ -12,4 +13,5 @@ spec:
     protocol: TCP
     targetPort: 8084
   selector:
-    app: oes-gate
+    app: oes
+    component: oes-gate

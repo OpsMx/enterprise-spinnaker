@@ -2,19 +2,22 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   labels:
-    app: oes-gate
+    app: oes
+    component: oes-gate
   name: oes-gate
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: oes-gate
+      app: oes
+      component: oes-gate
   template:
     metadata:
       annotations:
         configmap/checksum: {{ (.Files.Glob "config/*").AsConfig | sha256sum }}
       labels:
-        app: oes-gate
+        app: oes
+        component: oes-gate
     spec:
       containers:
       - image: {{ .Values.OESGateImage }}
