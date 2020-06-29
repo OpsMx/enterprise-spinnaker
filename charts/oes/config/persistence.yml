@@ -1,8 +1,8 @@
 spring:
   datasource:
-    url: jdbc:postgresql://db-opsmx:5432/opsmx
-    username: postgres
-    password: networks123
+    url: {{ .Values.oes.config.db.dbUrl }}
+    username: {{ .Values.oes.config.db.username }}
+    password: {{ .Values.oes.config.db.password }}
     driver-class-name: org.postgresql.Driver
     testWhileIdle: true
     test-on-borrow: true

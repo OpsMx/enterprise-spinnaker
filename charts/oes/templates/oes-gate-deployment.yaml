@@ -20,7 +20,7 @@ spec:
         component: oes-gate
     spec:
       containers:
-      - image: {{ .Values.OESGateImage }}
+      - image: {{ .Values.oes.image.gate.repository }}:{{ .Values.oes.image.gate.tag }}
         name: oes-gate
         ports:
         - containerPort: 8084
@@ -28,6 +28,17 @@ spec:
         volumeMounts:
         - name: gate-volume
           mountPath: /opt/spinnaker/config
+        readinessProbe:
+          tcpSocket:
+            port: 8084
+          initialDelaySeconds: 120
+          periodSeconds: 30
+        livenessProbe:
+          httpGet:
+            path: /health
+            port: 8084
+          initialDelaySeconds: 180
+          periodSeconds: 60
       imagePullSecrets:
       - name: {{ .Values.k8sSecret}}
       volumes:

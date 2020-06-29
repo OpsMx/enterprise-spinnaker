@@ -1,11 +1,16 @@
-apiVersion: extensions/v1beta1
-kind: Deployment
+apiVersion: apps/v1
+kind: StatefulSet
 metadata:
   labels:
     app: db-opsmx
   name: db-opsmx
 spec:
+  podManagementPolicy: {{ .Values.opsmxdb.podManagementPolicy }}
   replicas: 1
+  serviceName: db-opsmx
+  selector:
+    matchLabels:
+      app: db-opsmx
   template:
     metadata:
       labels:
@@ -14,20 +19,32 @@ spec:
       imagePullSecrets:
         - name: {{ .Values.k8sSecret}}
       containers:
-      - image: {{ .Values.OESDBImage }}
-        imagePullPolicy: IfNotPresent
+      - image: {{ .Values.opsmxdb.image.repository }}:{{ .Values.opsmxdb.image.tag }}
+        imagePullPolicy: {{ .Values.opsmxdb.image.pullPolicy }}
         name: db-opsmx
         ports:
         - containerPort: 5432
           protocol: TCP
-      {{- if .Values.persistence.enabled }}
         volumeMounts:
         - mountPath: "/var/lib/pgsql-pv"
           name: db-lib-postgresql
+        readinessProbe:
+          tcpSocket:
+            port: 5432
+          initialDelaySeconds: 10
+          periodSeconds: 5
       securityContext:
-        fsGroup: 1000
-      volumes:
-      - name: db-lib-postgresql
-        persistentVolumeClaim:
-          claimName: db-lib-postgresql
-      {{- end }}
+        fsGroup: {{ .Values.opsmxdb.securityContext.fsGroup }}
+  volumeClaimTemplates:
+  - metadata:
+      creationTimestamp: null
+      labels:
+        app: db-opsmx
+      name: db-lib-postgresql
+    spec:
+      accessModes:
+      - ReadWriteOnce
+      resources:
+        requests:
+          storage: {{ .Values.opsmxdb.persistence.OESDBSize }}
+      volumeMode: Filesystem

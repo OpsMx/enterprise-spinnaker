@@ -1,23 +1,77 @@
 #####################################################
 # OpsMx Enterprise configuration
 #####################################################
-OESUIIImage: opsmx11/oes:ui-v0.202006091010
-OESSERImage: opsmx11/oes:server-v0.202006091402
-OESGateImage: opsmx11/oes:gate-v0.202006091103
-OESDBImage: opsmxdev/ubi8-autopilot-db:v1.3.0
-OESImage: opsmxdev/ubi8-autopilot:v0.202004212200
 k8sServiceType: LoadBalancer
 k8sSecret: oes-repo
-# Feature List
 installOpenLdap: true
-installSpinnaker: true
-persistence:
-  enabled: true
-  OESDBSize: 8Gi
-# Password for the admin user
-openldap:
-  adminPassword: OpsMx@123
-  omitClusterIP: true
+installSpinnaker: false
+
+###################################################
+
+###################################################
+
+###
+oes:
+  #labels: {}
+  image:
+    gate:
+      repository: opsmx11/oes
+      tag: gate-v0.202006091103
+      pullPolicy: IfNotPresent
+    server:
+      repository: opsmx11/oes
+      tag: server-v0.202006091402
+      pullPolicy: IfNotPresent
+    ui:
+      repository: opsmx11/oes
+      tag: ui-v0.202006091010
+      pullPolicy: IfNotPresent
+  config:
+    db:
+      dbUrl: jdbc:postgresql://db-opsmx:5432/opsmx
+      username: postgres
+      password: networks123
+      #backendPort: 8090
+    spinnaker:
+      baseUrl: https://demo.opsmx.com/  # Value of the Spinnaker-UI URL (Deck)
+      endPointUrl: http://106.51.137.146:31174/"  # Value of the OES-GATE URL
+      username: admin # Value of the Spinnaker-UI Username (Deck)
+      password: OpsMx@123 # Value of the Spinnaker-UI Password (Deck)
+      adminLoginEnabled: false
+    ldap:
+      enabled: true
+      url: ldap://23.99.207.205:389  # Value of ldap.url
+      userDnPattern: cn={0} # Value of ldap.userdn
+      basedn: dc=example,dc=org # Value of ldap.base.dn
+      pattern: (&(cn=USERNAME)) # Value of ldap.user.filter.pattern
+        # Password for the admin user
+      adminPassword: OpsMx@123
+      omitClusterIP: true
+###################################################
+opsmxdb:
+  # Change this to false if autopilot is installed along with OES
+  # as autopilot can use the DB of OES
+  #enabled: true
+  podManagementPolicy: OrderedReady
+  securityContext:
+    fsGroup: 1000
+  #labels: {}
+  image:
+    repository: opsmxdev/ubi8-autopilot-db
+    tag: v1.3.0
+    pullPolicy: IfNotPresent
+  persistence:
+    OESDBSize: 8Gi
+#######################################################
+# LDAP Config List
+
+###################################################
+
+
+
+######################################################
+
+
 
 #####################################################
 # Spinnaker extra configuration

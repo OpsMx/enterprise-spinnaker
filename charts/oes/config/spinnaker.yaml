@@ -31,7 +31,7 @@ services:
   deck:
     host: 0.0.0.0
     port: 9000
-    baseUrl: http://106.51.137.146:31162
+    baseUrl: {{ .Values.oes.config.spinnaker.baseUrl }}
     enabled: true
   echo:
     host: 0.0.0.0
@@ -61,7 +61,7 @@ services:
   gate:
     host: 0.0.0.0
     port: 8084
-    baseUrl: http://106.51.137.146:30677
+    baseUrl: /gate
     enabled: true
   igor:
     host: 0.0.0.0

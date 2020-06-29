@@ -23,17 +23,14 @@ services:
 cors:
   allowed-origins-pattern: ^https?://(?:localhost|oes-ui-svc|oes-demo.opsmx.com|oes-demo@opsmx.com)(?::[1-9]\d*)?/?
 ldap:
-  enabled: true
-  url: ldap://23.99.207.205:389/dc=example,dc=org
-  userDnPattern: cn={0}
+  enabled: {{ .Values.oes.config.ldap.enabled }}
+  url: {{ .Values.oes.config.ldap.url }}/{{ .Values.oes.config.ldap.basedn }}
+  userDnPattern: {{ .Values.oes.config.ldap.userDnPattern }}
 google: {}
 
 integrations:
   gremlin:
     enabled: false
     baseUrl: https://api.gremlin.com/v1
-
-# halconfig
-
 redis:
   connection: ${services.redis.baseUrl:redis://localhost:6379}

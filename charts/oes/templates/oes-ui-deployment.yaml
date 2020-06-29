@@ -20,7 +20,7 @@ spec:
         component: oes-ui
     spec:
       containers:
-      - image: {{ .Values.OESUIIImage }}
+      - image: {{ .Values.oes.image.ui.repository }}:{{ .Values.oes.image.ui.tag }}
         name: oes-ui
         ports:
         - containerPort: 80
@@ -28,6 +28,17 @@ spec:
         volumeMounts:
         - name: config-dir
           mountPath: /var/www/html/assets/config
+        readinessProbe:
+          tcpSocket:
+            port: 80
+          initialDelaySeconds: 120
+          periodSeconds: 30
+        livenessProbe:
+          httpGet:
+            path: /health
+            port: 80
+          initialDelaySeconds: 180
+          periodSeconds: 60
       imagePullSecrets:
       - name: {{ .Values.k8sSecret}}
       volumes:
