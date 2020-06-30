@@ -26,25 +26,26 @@ oes:
       dbUrl: jdbc:postgresql://db-opsmx:5432/opsmx
       username: postgres
       password: networks123
+      #backendPort: 8090
     server:
       baseUrl: http://oes-sapor-svc:8085
       enabled: true
     spinnaker:
-      oesGateURL: http://192.168.0.171:31174/  # Value of the OES-GATE URL
-      oesUIcors: ^https?://(?:localhost|192.168.0.171|opsmx.com)(?::[1-9]\d*)?/? # Value of the OES UI URL
-      spinGateURL: https://demo.opsmx.com/gate # Value of the Spinnaker-gate URL
-      spinExternalGateURL: https://demo.opsmx.com/ # Value of the Spinnaker URL to access spinnaker from UI
-      spinuser: ***** # Value of the Spinnaker Username (Deck)
-      spinpasswd: ****** # Value of the Spinnaker Password (Deck)
+      oesGateURL: http://106.51.137.146:31174/  # Value of the OES-GATE URL
+      oesUIcors: ^https?://(?:localhost|oes-ui-svc|opsmx.com)(?::[1-9]\d*)?/? # Value of the OES UI URL
+      spinGateURL: http://106.51.137.146:31174/gate # Value of the Spinnaker-gate URL
+      spinExternalGateURL: http://106.51.137.146:31174/gate # Value of the Spinnaker URL to access spinnaker from UI
+      spinuser: admin # Value of the Spinnaker Username (Deck)
+      spinpasswd: OpsMx@123 # Value of the Spinnaker Password (Deck)
       adminLoginEnabled: false
     ldap:
       enabled: true
-      url: ldap://oes-openldap:389  # Value of ldap.url
+      url: ldap://23.99.207.205:389  # Value of ldap.url
       userDnPattern: cn={0} # Value of ldap.userdn
       basedn: dc=example,dc=org # Value of ldap.base.dn
       pattern: (&(cn=USERNAME)) # Value of ldap.user.filter.pattern
         # Password for the admin user
-      adminPassword: ********
+      adminPassword: OpsMx@123
       omitClusterIP: true
 ###################################################
 opsmxdb:
