@@ -1,4 +1,4 @@
-{{- if eq .Values.installSpinnaker false }}
+{{- if and (eq .Values.installSpinnaker false) (eq .Values.installRedis true) }}
 apiVersion: apps/v1
 kind: StatefulSet
 metadata:
