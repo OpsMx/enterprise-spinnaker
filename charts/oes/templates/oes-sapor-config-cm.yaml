@@ -11,4 +11,4 @@ data:
 
 kind: ConfigMap
 metadata:
-  name: oes-server-config
+  name: oes-sapor-config
