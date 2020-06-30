@@ -39,7 +39,7 @@ oes:
       adminLoginEnabled: false
     ldap:
       enabled: true
-      url: ldap://23.99.207.205:389  # Value of ldap.url
+      url: ldap://oes-openldap:389  # Value of ldap.url
       userDnPattern: cn={0} # Value of ldap.userdn
       basedn: dc=example,dc=org # Value of ldap.base.dn
       pattern: (&(cn=USERNAME)) # Value of ldap.user.filter.pattern
