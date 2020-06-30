@@ -13,7 +13,7 @@ oes:
       repository: opsmx11/oes
       tag: gate-v0.202006091103
       pullPolicy: IfNotPresent
-    server:
+    sapor:
       repository: opsmx11/oes
       tag: server-v0.202006091402
       pullPolicy: IfNotPresent
@@ -27,7 +27,7 @@ oes:
       username: postgres
       password: networks123
     server:
-      baseUrl: http://oes-server-svc:8085
+      baseUrl: http://oes-sapor-svc:8085
       enabled: true
     spinnaker:
       oesGateURL: http://192.168.0.171:31174/  # Value of the OES-GATE URL
