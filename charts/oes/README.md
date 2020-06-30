@@ -42,9 +42,9 @@
 		cd enterprise-spinnaker/charts/oes
 		helm install oes . [--namespace mynamespace]
 
-If using helm v2.x,
+For helm v2, install using: helm install -n oes . [--namespace mynamespace]
 
-      helm install -n oes . [--namespace mynamespace]
+For helm v3, install using: helm install oes . [--namespace mynamespace]
 
 ## Deploying OpsMx Enterprise Spinnaker (OES) Extensions on top of existing Spinnaker
 
@@ -60,11 +60,15 @@ to the same namespace where Spinnaker is installed.
 - Go to enterprise-spinnaker/charts/oes and deploy the chart, optionally specifying the namespace where Spinnaker is already installed
 
       cd enterprise-spinnaker/charts/oes
+      Update the values.yaml file with the below details (to install OES with Spinnaker)
+      spinuser     # Spinnker login User name
+      spinpasswd   # Spinnker login User Password
+      oesGateURL   # OES Gate URL
+      oesUIcors    # Value of the OES UI URL Regex
+      spinGateURL  # Spinnaker Gate URL
+      spinExternalGateURL ## Value of the Spinnaker URL to access spinnaker from UI
+      
       helm install oes . --set installSpinnaker=false [--namespace mynamespace]
-
-If using helm v2.x,
-
-      helm install -n oes . --set installSpinnaker=false [--namespace mynamespace]
 
 ## Connecting to Spinnaker and OpsMx Enterprise Enterprise Extensions
 
