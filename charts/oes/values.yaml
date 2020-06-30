@@ -33,15 +33,15 @@ oes:
       password: networks123
       #backendPort: 8090
     server:
-      baseUrl: http://oes-sapor-svc:8085
+      baseUrl: http://sapor-svc:8085
       enabled: true
     spinnaker:
       oesGateURL: http://106.51.137.146:31174/  # Value of the OES-GATE URL
       oesUIcors: ^https?://(?:localhost|oes-ui-svc|opsmx.com)(?::[1-9]\d*)?/? # Value of the OES UI URL Regex
       spinGateURL: http://106.51.137.146:31174/gate # Value of the Spinnaker-gate URL
       spinExternalGateURL: http://106.51.137.146:31174/gate # Value of the Spinnaker URL to access spinnaker from UI
-      spinuser: admin # Value of the Spinnaker Username (Deck)
-      spinpasswd: OpsMx@123 # Value of the Spinnaker Password (Deck)
+      spinuser: dummyuser # Value of the Spinnaker Username (Deck)
+      spinpasswd: dummypwd # Value of the Spinnaker Password (Deck)
       adminLoginEnabled: false
     ldap:
       enabled: true
@@ -50,7 +50,7 @@ oes:
       basedn: dc=example,dc=org # Value of ldap.base.dn
       pattern: (&(cn=USERNAME)) # Value of ldap.user.filter.pattern
         # Password for the admin user
-      adminPassword: OpsMx@123
+      adminPassword: dummypwd
       omitClusterIP: true
 ###################################################
 opsmxdb:
