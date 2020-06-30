@@ -32,8 +32,7 @@ oes:
       enabled: true
     spinnaker:
       oesGateURL: http://106.51.137.146:31174/gate  # Value of the OES-GATE URL
-      oesUIcors: 106.51.137.146 # Value of the OES UI URL
-      spinnakerURL: https://demo.opsmx.com  # Value of the Spinnaker URL
+      oesUIcors: ^https?://(?:localhost|oes-ui-svc|{{ .Values.oes.config.spinnaker.oesUIcors }}|opsmx.com)(?::[1-9]\d*)?/? # Value of the OES UI URL
       spinGateURL: http://106.51.137.146:31174/gate # Value of the Spinnaker-gate URL
       spinExternalGateURL: http://106.51.137.146:31174/gate # Value of the Spinnaker URL to access spinnaker from UI
       spinuser: admin # Value of the Spinnaker Username (Deck)

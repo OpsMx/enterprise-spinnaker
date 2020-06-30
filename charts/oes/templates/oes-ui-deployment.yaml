@@ -31,8 +31,8 @@ spec:
         readinessProbe:
           tcpSocket:
             port: 80
-          initialDelaySeconds: 120
-          periodSeconds: 30
+          initialDelaySeconds: 15
+          periodSeconds: 5
         livenessProbe:
           httpGet:
             path: /health

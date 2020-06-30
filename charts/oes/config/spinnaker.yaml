@@ -31,7 +31,7 @@ services:
   deck:
     host: 0.0.0.0
     port: 9000
-    baseUrl: {{ .Values.oes.config.spinnaker.spinnakerURL }}
+    baseUrl: http://spin-deck.oes:9000
     enabled: true
   echo:
     host: 0.0.0.0
