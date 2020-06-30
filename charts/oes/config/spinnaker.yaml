@@ -31,7 +31,7 @@ services:
   deck:
     host: 0.0.0.0
     port: 9000
-    baseUrl: {{ .Values.oes.config.spinnaker.baseUrl }}
+    baseUrl: {{ .Values.oes.config.spinnaker.spinnakerURL }}
     enabled: true
   echo:
     host: 0.0.0.0
@@ -61,7 +61,7 @@ services:
   gate:
     host: 0.0.0.0
     port: 8084
-    baseUrl: /gate
+    baseUrl: {{ .Values.oes.config.spinnaker.spinGateURL }}
     enabled: true
   igor:
     host: 0.0.0.0

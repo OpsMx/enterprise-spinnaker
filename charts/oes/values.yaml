@@ -5,11 +5,6 @@ k8sServiceType: LoadBalancer
 k8sSecret: oes-repo
 installOpenLdap: true
 installSpinnaker: false
-
-###################################################
-
-###################################################
-
 ###
 oes:
   #labels: {}
@@ -32,11 +27,16 @@ oes:
       username: postgres
       password: networks123
       #backendPort: 8090
+    server:
+      baseUrl: http://oes-server-svc:8085
+      enabled: true
     spinnaker:
-      baseUrl: https://demo.opsmx.com/  # Value of the Spinnaker-UI URL (Deck)
-      endPointUrl: http://106.51.137.146:31174/"  # Value of the OES-GATE URL
-      username: admin # Value of the Spinnaker-UI Username (Deck)
-      password: OpsMx@123 # Value of the Spinnaker-UI Password (Deck)
+      oesGateURL: http://106.51.137.146:31174/gate  # Value of the OES-GATE URL
+      oesUIcors: 106.51.137.146 # Value of the OES UI URL
+      spinnakerURL: https://demo.opsmx.com  # Value of the Spinnaker URL
+      spinGateURL: http://106.51.137.146:31174/gate # Value of the Spinnaker-gate URL
+      spinuser: admin # Value of the Spinnaker Username (Deck)
+      spinpasswd: OpsMx@123 # Value of the Spinnaker Password (Deck)
       adminLoginEnabled: false
     ldap:
       enabled: true
@@ -62,15 +62,6 @@ opsmxdb:
     pullPolicy: IfNotPresent
   persistence:
     OESDBSize: 8Gi
-#######################################################
-# LDAP Config List
-
-###################################################
-
-
-
-######################################################
-
 
 
 #####################################################

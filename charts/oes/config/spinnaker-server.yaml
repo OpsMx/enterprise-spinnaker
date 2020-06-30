@@ -1,8 +1,8 @@
 spinnaker:
-  base-url: {{ .Values.oes.config.spinnaker.baseUrl }}/gate
+  base-url: {{ .Values.oes.config.spinnaker.spinGateURL }}
   external-base-url: http://55.555.164.169:8084
-  username: {{ .Values.oes.config.spinnaker.username }}
-  password: {{ .Values.oes.config.spinnaker.password }}
+  username: {{ .Values.oes.config.spinnaker.spinuser }}
+  password: {{ .Values.oes.config.spinnaker.spinpasswd }}
   adminLoginEnabled: {{ .Values.oes.config.spinnaker.adminLoginEnabled }}
   adminUsername:
   adminPassword:

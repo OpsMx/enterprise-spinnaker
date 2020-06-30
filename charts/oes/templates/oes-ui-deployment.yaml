@@ -37,8 +37,8 @@ spec:
           httpGet:
             path: /health
             port: 80
-          initialDelaySeconds: 180
-          periodSeconds: 60
+          initialDelaySeconds: 15
+          periodSeconds: 5
       imagePullSecrets:
       - name: {{ .Values.k8sSecret}}
       volumes:

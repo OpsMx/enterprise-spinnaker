@@ -1,4 +1,3 @@
 {
-    "baseUrl":"{{ .Values.oes.config.spinnaker.baseUrl }}",
-    "endPointUrl":"{{ .Values.oes.config.spinnaker.endPointUrl }}"
+    "endPointUrl":"{{ .Values.oes.config.spinnaker.oesGateURL }}"
 }
