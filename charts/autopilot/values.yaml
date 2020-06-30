@@ -19,26 +19,32 @@ autopilot:
     type: LoadBalancer
 
   config:
+    # Autopilot Backend URL
     dataSource:
       url: jdbc:postgresql://db-opsmx:5432/opsmx
       username: postgres
       password: networks123
 
+    # Spinnaker configuration to trigger pipelines for canary
     spinnaker:
       loginAdminEnabled: false
-      baseUrl: http://spin-gate:8084
-      adminUsername: OpsMxUser
-      adminPassword: OpsMx@123
+      spinGateUrl: http://spin-gate:8084
+      spinUsername: OpsMxUser
+      spinPassword: OpsMx@123
 
+    # Autopilot server URL
     appConfigJS:
-      backendPort: 8090
+      autopilotServerUrl: autopilot:8090
 
+    # LDAP configuration
     ldap:
       authEnabled: false
       url: ldap://oes-openldap:389
       baseDN: cn=Users,dc=local,dc=opsmx,dc=com
       userFilterPattern: (&(cn=USERNAME))
       userGroups: Administrators
+
+    # SSL configuration
     ssl:
       keyStore: keystore.p12
       keyStorePassword: OpsMx@123

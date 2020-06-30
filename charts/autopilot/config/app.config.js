@@ -1,5 +1,5 @@
 var AppConfig = {
 	getBaseUrl:function() {
-		return "//" + window.location.hostname + ":{{ .Values.autopilot.config.appConfigJS.backendPort }}";
+		return "//{{ .Values.autopilot.config.appConfigJS.autopilotServerUrl }}";
 	}
 }
