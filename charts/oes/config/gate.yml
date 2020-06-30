@@ -21,7 +21,7 @@ services:
     baseUrl: {{ .Values.oes.config.server.baseUrl }}
     enabled: {{ .Values.oes.config.server.enabled }}
 cors:
-  allowed-origins-pattern: ^https?://(?:localhost|oes-ui-svc|{{ .Values.oes.config.spinnaker.oesUIcors }}|oes-demo.opsmx.com)(?::[1-9]\d*)?/?
+  allowed-origins-pattern: ^https?://(?:localhost|oes-ui-svc|{{ .Values.oes.config.spinnaker.oesUIcors }}|*.opsmx.com)(?::[1-9]\d*)?/?
 ldap:
   enabled: {{ .Values.oes.config.ldap.enabled }}
   url: {{ .Values.oes.config.ldap.url }}/{{ .Values.oes.config.ldap.basedn }}
