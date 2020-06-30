@@ -26,7 +26,6 @@ oes:
       dbUrl: jdbc:postgresql://db-opsmx:5432/opsmx
       username: postgres
       password: networks123
-      #backendPort: 8090
     server:
       baseUrl: http://oes-server-svc:8085
       enabled: true
