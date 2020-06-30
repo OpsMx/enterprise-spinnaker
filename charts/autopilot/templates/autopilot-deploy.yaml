@@ -53,6 +53,11 @@ spec:
           - name: server-config-volume
             mountPath: /opt/apache-tomcat/conf/server.xml
             subPath: server.xml
+          readinessProbe:
+            tcpSocket:
+              port: 8090
+            initialDelaySeconds: 30
+            periodSeconds: 10
           command: ["/bin/bash"]
           args:
           - -c

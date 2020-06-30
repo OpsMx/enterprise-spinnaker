@@ -29,8 +29,8 @@ autopilot:
     spinnaker:
       loginAdminEnabled: false
       spinGateUrl: http://spin-gate:8084
-      spinUsername: OpsMxUser
-      spinPassword: OpsMx@123
+      spinUsername: dummyusername
+      spinPassword: dummypassword
 
     # Autopilot server URL
     appConfigJS:
@@ -45,11 +45,12 @@ autopilot:
       userGroups: Administrators
 
     # SSL configuration
-    ssl:
-      keyStore: keystore.p12
-      keyStorePassword: OpsMx@123
-      keyStoreType: PKCS12
-      keyAlias: tomcat
+    # Uncomment below lines if SSL configuration is required
+    #ssl:
+    #  keyStore: keystore.p12
+    #  keyStorePassword: **** # Provide keystore password
+    #  keyStoreType: PKCS12
+    #  keyAlias: tomcat
 
 opsmxdb:
   # Change this to false if autopilot is installed along with OES
