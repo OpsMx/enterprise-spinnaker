@@ -3,14 +3,14 @@ kind: Service
 metadata:
   labels:
     app: oes
-    component: oes-sapor
-  name: oes-sapor-svc
+    component: sapor
+  name: sapor-svc
 spec:
   type: {{ .Values.k8sServiceType }}
   ports:
-  - name: "oes-sapor"
+  - name: "sapor"
     port: 8085
     targetPort: 8085
   selector:
     app: oes
-    component: oes-sapor
+    component: sapor

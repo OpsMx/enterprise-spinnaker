@@ -3,25 +3,25 @@ kind: Deployment
 metadata:
   labels:
     app: oes
-    component: oes-sapor
-  name: oes-sapor
+    component: sapor
+  name: sapor
 spec:
   replicas: 1
   selector:
     matchLabels:
       app: oes
-      component: oes-sapor
+      component: sapor
   template:
     metadata:
       annotations:
         configmap/checksum: {{ (.Files.Glob "config/*").AsConfig | sha256sum }}
       labels:
         app: oes
-        component: oes-sapor
+        component: sapor
     spec:
       containers:
       - image: {{ .Values.oes.image.sapor.repository }}:{{ .Values.oes.image.sapor.tag }}
-        name: oes-sapor
+        name: sapor
         ports:
         - containerPort: 8085
           protocol: TCP
@@ -46,7 +46,7 @@ spec:
       volumes:
         - name: api-volume
           configMap:
-            name: oes-sapor-config
+            name: sapor-config
         - name: certs-volume
           configMap:
-            name: oes-sapor-certs
+            name: sapor-certs
