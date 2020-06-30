@@ -44,7 +44,7 @@ oes:
       basedn: dc=example,dc=org # Value of ldap.base.dn
       pattern: (&(cn=USERNAME)) # Value of ldap.user.filter.pattern
         # Password for the admin user
-      adminPassword: OpsMx@123
+      adminPassword: ********
       omitClusterIP: true
 ###################################################
 opsmxdb:
