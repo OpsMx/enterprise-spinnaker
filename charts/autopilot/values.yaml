@@ -6,6 +6,11 @@
 # Declare variables to be passed into your templates.
 
 imagePullSecret: oes-repo
+imageCredentials:
+  registry: index.docker.io/v1/
+  username: dockerHubId  # Docker hub username
+  password: dockerHubPwd # Docker hub password
+  email: abc@xyz.com   # email corresponding to docker hub ID
 
 autopilot:
 
@@ -46,11 +51,12 @@ autopilot:
 
     # SSL configuration
     # Uncomment below lines if SSL configuration is required
-    #ssl:
-    #  keyStore: keystore.p12
-    #  keyStorePassword: **** # Provide keystore password
-    #  keyStoreType: PKCS12
-    #  keyAlias: tomcat
+    ssl:
+      enabled: false  # Set it to true if SSL is to be enabled
+      keyStore: keystore.p12
+      keyStorePassword: dummypwd # Provide keystore password
+      keyStoreType: PKCS12
+      keyAlias: tomcat
 
 opsmxdb:
   # Change this to false if autopilot is installed along with OES

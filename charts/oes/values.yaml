@@ -2,8 +2,15 @@
 # OpsMx Enterprise configuration
 #####################################################
 k8sServiceType: LoadBalancer
-k8sSecret: oes-repo
 installOpenLdap: true
+
+# Values to create imagePullSecret
+k8sSecret: oes-repo
+imageCredentials:
+  registry: index.docker.io/v1/
+  username: dockerHubId  # Docker hub username
+  password: dockerHubPwd # Docker hub password
+  email: abc@xyz.com   # email corresponding to docker hub ID
 
 #######################################################
 # Install the Seperate Redis if installSpinnaker is set to false
