@@ -166,19 +166,35 @@ spinnaker:
     ## You can use it to add annotations for pods, override the image, etc.
     additionalServiceSettings:
       gate.yml:
+        artifactId: docker.io/devopsmx/ubi8-oes-gate:1.16.1
         healthEndpoint: /health
         kubernetes:
           useExecHealthCheck: false
-      # deck.yml:
+      deck.yml:
+        artifactId: docker.io/devopsmx/ubi8-oes-deck:3.1.2
       #   artifactId: gcr.io/spinnaker-marketplace/deck:2.9.0-20190412012808
       #   kubernetes:
       #     podAnnotations:
       #       iam.amazonaws.com/role: <role_arn>
-      # clouddriver.yml:
+      clouddriver.yml:
+        artifactId: docker.io/devopsmx/ubi8-oes-clouddriver:6.9.2
       #   kubernetes:
       #     podAnnotations:
       #       iam.amazonaws.com/role: <role_arn>
-
+      echo.yml:
+        artifactId: docker.io/devopsmx/ubi8-oes-echo:2.12.1
+      fial.yml:
+        artifactId: docker.io/devopsmx/ubi8-oes-fiat:1.11.0
+      front50.yml:
+        artifactId: docker.io/devopsmx/ubi8-oes-front50:0.23.1
+      igor.yml:
+        artifactId: docker.io/devopsmx/ubi8-oes-igor:1.10.0
+      kayenta.yml:
+        artifactId: docker.io/devopsmx/ubi8-oes-kayenta:0.15.1
+      orca.yml:
+        artifactId: docker.io/devopsmx/ubi8-oes-orca:2.14.2
+      rosco.yml:
+        artifactId: docker.io/devopsmx/ubi8-oes-rosco:0.19.0
     ## Uncomment if you want to add extra commands to the init script
     ## run by the init container before halyard is started.
     ## The content will be passed through `tpl`, so value interpolation is supported.
