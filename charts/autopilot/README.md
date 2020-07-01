@@ -14,17 +14,10 @@
 		kubectl create clusterrolebinding tiller-binding --clusterrole=cluster-admin --serviceaccount kube-system:tiller
 		helm init --service-account tiller --wait
 
-- Docker registry credentials is setup as a secret in Kubernetes, optionally specifying the namespace <mynamespace> will be deployed to
-
-		kubectl create secret docker-registry oes-repo --docker-username=your_username --docker-password=your_password --docker-email=opsmx@example.com [--namespace mynamespace]
-
-	The namespace must exist before you run the command. If it does not exist,
+- If autopilot is to be deployed to a specific namespace, the namespace must exist before you run the command. If it does not exist,
 
 		kubectl create namespace <mynamespace>
 
-  If you name your secret something other than oes-repo, you need to update the key k8sSecret in values.yaml.
-
-	Before you install Autopilot, please send an email to support@opsmx.com requesting access to the Autopilot images with your Dockerhub id. You can proceed with installation once your Dockerhub id has been granted access.
 - Your Kubernetes cluster supports persistent volumes and loadbalancer service type
 
 ## Deploying Autopilot
@@ -35,23 +28,30 @@
 
 - Go to enterprise-spinnaker/charts/autopilot and deploy the chart, optionally specifying the namespace
 
-		cd enterprise-spinnaker/charts/autopilot
-    For helm v2, install using:
-    helm install -n autopilot . [--namespace mynamespace]
+  Update the necessary parameters in values.yaml or use --set option while running helm install.
+  To be able to fetch Autopilot docker images, username and password shall be set in values.yaml or use --set imageCredentials.username=<username> --set imageCredentials.password=<password> while running helm install.
 
-    For helm v3, install using:
-    helm install autopilot . [--namespace mynamespace]
+  Before you install Autopilot, please send an email to support@opsmx.com requesting access to the Autopilot images with your Dockerhub id. You can proceed with installation once your Dockerhub id has been granted access.
+
+		cd enterprise-spinnaker/charts/autopilot
+  For helm v2, install using:
+    		helm install -n autopilot . [--namespace mynamespace]
+    		helm install -n autopilot . [--namespace mynamespace] --set imageCredentials.username=<username> --set imageCredentials.password=<password>
+
+  For helm v3, install using:
+    		helm install -n autopilot . [--namespace mynamespace]
+    		helm install autopilot . [--namespace mynamespace] --set imageCredentials.username=<username> --set imageCredentials.password=<password>
 
 
 ## Connecting to Autopilot
 
 Once the service is up and running, find the service ip address
 
-	kubectl get svc autopilot [--namespace mynamespace]
+    		kubectl get svc autopilot [--namespace mynamespace]
 
 Example output would be:
 
     NAME         TYPE           CLUSTER-IP   EXTERNAL-IP     PORT(S)                                        AGE
     autopilot    LoadBalancer   10.0.4.246   34.66.226.138   8090:32097/TCP,8161:32527/TCP,9090:31265/TCP   9m11s
 
-Using the EXTERNAL-IP address, go to http://EXTERNAL-IP:8161/
+Now, UI can be accessed via EXTERNAL-IP address, go to http://<EXTERNAL-IP>:8161/
