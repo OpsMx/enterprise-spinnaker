@@ -14,7 +14,7 @@ imageCredentials:
 
 #######################################################
 # Install the Seperate Redis if installSpinnaker is set to false
-installSpinnaker: false
+installSpinnaker: true
 installRedis: true
 #######################################################
 
@@ -182,7 +182,7 @@ spinnaker:
       #     podAnnotations:
       #       iam.amazonaws.com/role: <role_arn>
       echo.yml:
-        artifactId: docker.io/devopsmx/ubi8-oes-echo:2.12.1
+        artifactId: docker.io/devopsmx/ubi8-oes-echo:version-2.12.1
       fial.yml:
         artifactId: docker.io/devopsmx/ubi8-oes-fiat:1.11.0
       front50.yml:
