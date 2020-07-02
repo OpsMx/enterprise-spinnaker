@@ -30,7 +30,7 @@
 - Your Kubernetes cluster supports persistent volumes and loadbalancer service type.
 
 
-## Deploying Spinnaker with OpsMx Enterprise Spinnaker Extensions (OES)
+## Deploying OpsMx Enterprise Spinnaker Extensions (OES) Spinnaker
 
 
 - Clone the OpsMx Enterprise Spinnaker github repository
@@ -42,9 +42,9 @@
 		cd enterprise-spinnaker/charts/oes
 		helm install oes . [--namespace mynamespace]
 
-For helm v2, install using: helm install -n oes . [--namespace mynamespace]
+For helm v2, install using: helm install -n oes . --set imageCredentials.username= --set imageCredentials.password= [--namespace mynamespace]
 
-For helm v3, install using: helm install oes . [--namespace mynamespace]
+For helm v3, install using: helm install oes . --set imageCredentials.username= --set imageCredentials.password= [--namespace mynamespace]
 
 ## Deploying OpsMx Enterprise Spinnaker (OES) Extensions on top of existing Spinnaker
 
@@ -55,7 +55,7 @@ to the same namespace where Spinnaker is installed.
 
 		git clone https://github.com/OpsMx/enterprise-spinnaker.git
 
-- If Gate is accessible on a name other than spin-gate within the cluster, update spinnaker.baseurl property in enterprise-spinnaker/charts/oes/config/config.properties file to the correct value.
+- If Gate is accessible on a name other than spin-gate within the cluster, update spinGateURL property in enterprise-spinnaker/charts/oes/values.yaml file to the correct value.
 
 - Go to enterprise-spinnaker/charts/oes and deploy the chart, optionally specifying the namespace where Spinnaker is already installed
 
@@ -67,8 +67,8 @@ to the same namespace where Spinnaker is installed.
       oesUIcors    # Value of the OES UI URL Regex
       spinGateURL  # Spinnaker Gate URL
       spinExternalGateURL ## Value of the Spinnaker URL to access spinnaker from UI
-      
-      helm install oes . --set installSpinnaker=false [--namespace mynamespace]
+
+      helm install oes . --set installSpinnaker=false --set installRedis=true --set imageCredentials.username= --set imageCredentials.password= [--namespace mynamespace]
 
 ## Connecting to Spinnaker and OpsMx Enterprise Enterprise Extensions
 
@@ -89,20 +89,16 @@ Using the EXTERNAL-IP address, go to http://EXTERNAL-IP:9000/
 
 Once the service is up and running, find the service ip address
 
-	kubectl get svc oes [--namespace mynamespace]
+	kubectl get svc oes-ui [--namespace mynamespace]
 
 Example output would be:
 
-    NAME   TYPE           CLUSTER-IP   EXTERNAL-IP     PORT(S)                                                       AGE
-    oes    LoadBalancer   10.0.4.246   34.66.226.138   8090:32097/TCP,8161:32527/TCP,9090:31265/TCP,8050:31094/TCP   9m11s
+NAME   							TYPE           CLUSTER-IP   EXTERNAL-IP     PORT(S)          AGE
+oes-ui-svc       LoadBalancer     10.0.33.110  52.149.54.222   80:30860/TCP      20h
 
-Using the EXTERNAL-IP address, go to http://EXTERNAL-IP:8161/
+Using the EXTERNAL-IP address, go to http://EXTERNAL-IP:80/
 
-You can login with admin/OpsMx@123
-
-You can change the default password during installation by updating the values.yaml or by adding this additional parameter to the helm install command:
-
-	--set openldap.adminPassword=myPassword
+You can login with dummysuer/dummypwd
 
 
 ### Enabling centralized logging

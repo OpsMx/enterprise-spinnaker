@@ -1,0 +1,26 @@
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  labels:
+    app: oes
+    component: opa
+  name: opa
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: oes
+      component: opa
+  template:
+    metadata:
+      labels:
+        app: oes
+        component: opa
+      name: opa
+    spec:
+      containers:
+        - name: opa
+          image: openpolicyagent/opa:latest
+          args:
+            - "run"
+            - "--server"
