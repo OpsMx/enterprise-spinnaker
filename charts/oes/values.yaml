@@ -13,13 +13,25 @@ imageCredentials:
   email: abc@xyz.com   # email corresponding to docker hub ID
 
 #######################################################
-# Install the Seperate Redis if installSpinnaker is set to false
-installSpinnaker: true
+# Install a seperate Redis for OES if installSpinnaker is set to false
+installSpinnaker: false
 installRedis: true
+
+# Details of redis-master image for OES
+redis:
+  image:
+    registry: docker.io
+    repository: bitnami/redis
+    ## Bitnami Redis image tag
+    ## ref: https://github.com/bitnami/bitnami-docker-redis#supported-tags-and-respective-dockerfile-links
+    ##
+    tag: 4.0.11-debian-9
+    pullPolicy: IfNotPresent
 #######################################################
 
 oes:
-  #labels: {}
+
+  # Details related to image of OES components
   image:
     gate:
       repository: opsmx11/oes-gate
@@ -33,23 +45,30 @@ oes:
       repository: opsmx11/oes-ui
       tag: v0.202007011835
       pullPolicy: IfNotPresent
+
   config:
+    # Address and credentials for OES to connect with DB
     db:
+      # DB URL, typically it is reachable over db-opsmx service
       dbUrl: jdbc:postgresql://db-opsmx:5432/opsmx
+      # Username and password to connect with DB
       username: postgres
       password: networks123
-      #backendPort: 8090
+
+    # To allow oes-gate reach sapor
     server:
       baseUrl: http://sapor-svc:8085
       enabled: true
+
     spinnaker:
-      oesGateURL: http://106.51.137.146:31174/  # Value of the OES-GATE URL
+      oesGateURL: http://106.51.137.146:31174/  # URL used by oes-ui to reach oes-gate
       oesUIcors: ^https?://(?:localhost|oes-ui-svc|opsmx.com)(?::[1-9]\d*)?/? # Value of the OES UI URL Regex
       spinGateURL: http://106.51.137.146:31174/gate # Value of the Spinnaker-gate URL
       spinExternalGateURL: http://106.51.137.146:31174/gate # Value of the Spinnaker URL to access spinnaker from UI
       spinuser: dummyuser # Value of the Spinnaker Username (Deck)
       spinpasswd: dummypwd # Value of the Spinnaker Password (Deck)
       adminLoginEnabled: false
+
     ldap:
       enabled: true
       url: ldap://23.99.207.205:389  # Value of ldap.url
@@ -61,17 +80,24 @@ oes:
       omitClusterIP: true
 ###################################################
 opsmxdb:
-  # Change this to false if autopilot is installed along with OES
-  # as autopilot can use the DB of OES
-  #enabled: true
+  # Change this to false if OES is installed after opsmx-autopilot
+  # as DB installed by opsmx-autopilot can be re-used by OES
+  enabled: true
+
+  # Strategy to rollout statefulset pods
   podManagementPolicy: OrderedReady
+
+  # Default group to which the default user of a pod belongs
   securityContext:
     fsGroup: 1000
-  #labels: {}
+
+  # Details related to image of OpsMx DB
   image:
     repository: opsmxdev/ubi8-autopilot-db
     tag: v1.3.0
     pullPolicy: IfNotPresent
+
+  # storageMountSize is the size with which a PVC is to be created
   persistence:
     OESDBSize: 8Gi
 

@@ -28,8 +28,8 @@ spec:
               name: redis-secret
         - name: REDIS_DISABLE_COMMANDS
           value: FLUSHDB,FLUSHALL
-        image: docker.io/bitnami/redis:4.0.11-debian-9
-        imagePullPolicy: Always
+        image: {{ template "redis.image" . }}
+        imagePullPolicy: {{ .Values.redis.image.pullPolicy }}
         livenessProbe:
           exec:
             command:
