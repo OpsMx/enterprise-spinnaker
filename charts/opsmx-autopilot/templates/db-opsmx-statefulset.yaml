@@ -20,7 +20,7 @@ spec:
       imagePullSecrets:
         - name: {{ .Values.imagePullSecret}}
       containers:
-      - image: {{ .Values.opsmxdb.image.repository }}:{{ .Values.opsmxdb.image.tag }}
+      - image: {{ template "opsmxdb.image" . }}
         imagePullPolicy: {{ .Values.opsmxdb.image.pullPolicy }}
         name: db-opsmx
         ports:

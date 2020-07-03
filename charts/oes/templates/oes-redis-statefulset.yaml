@@ -28,7 +28,7 @@ spec:
               name: redis-secret
         - name: REDIS_DISABLE_COMMANDS
           value: FLUSHDB,FLUSHALL
-        image: {{ template "redis.image" . }}
+        image: {{ .Values.redis.image.registry }}/{{ .Values.redis.image.repository }}:{{ .Values.redis.image.tag }}
         imagePullPolicy: {{ .Values.redis.image.pullPolicy }}
         livenessProbe:
           exec:

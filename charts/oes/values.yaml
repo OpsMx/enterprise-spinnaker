@@ -19,7 +19,7 @@ imageCredentials:
 #######################################################
 
 # Install a seperate Redis for OES if installSpinnaker is set to false
-installRedis: true
+installRedis: false
 
 # Details of redis-master image for OES
 redis:

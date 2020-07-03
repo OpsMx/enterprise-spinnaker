@@ -27,7 +27,7 @@ spec:
       imagePullSecrets:
         - name: {{ .Values.imagePullSecret}}
       containers:
-        - image: {{ .Values.autopilot.image.repository }}:{{ .Values.autopilot.image.tag }}
+        - image: {{ template "autopilot.image" . }}
           imagePullPolicy: {{ .Values.autopilot.image.pullPolicy }}
           name: autopilot
           ports:
