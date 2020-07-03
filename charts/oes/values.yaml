@@ -1,9 +1,10 @@
 #####################################################
-# OpsMx Enterprise configuration
+# Spinnaker configuration
 #####################################################
-k8sServiceType: LoadBalancer
+installSpinnaker: true
+createIngress: false   # set to TRUE to expose spinnaker and deck services as LoadBalancers
 installOpenLdap: true
-
+k8sServiceType: LoadBalancer
 # Values to create imagePullSecret
 k8sSecret: oes-repo
 imageCredentials:
@@ -12,9 +13,12 @@ imageCredentials:
   password: dockerHubPwd # Docker hub password
   email: abc@xyz.com   # email corresponding to docker hub ID
 
+
 #######################################################
+# OpsMx Enterprise configuration
+#######################################################
+
 # Install a seperate Redis for OES if installSpinnaker is set to false
-installSpinnaker: false
 installRedis: true
 
 # Details of redis-master image for OES
@@ -28,7 +32,29 @@ redis:
     tag: 4.0.11-debian-9
     pullPolicy: IfNotPresent
 #######################################################
+opsmxdb:
+  # Change this to false if OES is installed after opsmx-autopilot
+  # as DB installed by opsmx-autopilot can be re-used by OES
+  enabled: true
 
+  # Strategy to rollout statefulset pods
+  podManagementPolicy: OrderedReady
+
+  # Default group to which the default user of a pod belongs
+  securityContext:
+    fsGroup: 1000
+
+
+  # Details related to image of OpsMx DB
+  image:
+    repository: opsmxdev/ubi8-autopilot-db
+    tag: v1.3.0
+    pullPolicy: IfNotPresent
+
+  # storageMountSize is the size with which a PVC is to be created
+  persistence:
+    OESDBSize: 8Gi
+#######################################################
 oes:
 
   # Details related to image of OES components
@@ -57,9 +83,10 @@ oes:
 
     # To allow oes-gate reach sapor
     server:
-      baseUrl: http://sapor-svc:8085
       enabled: true
+      baseUrl: http://sapor-svc:8085
 
+    # To allow sapor reach to your spinnaker-gate
     spinnaker:
       oesGateURL: http://106.51.137.146:31174/  # URL used by oes-ui to reach oes-gate
       oesUIcors: ^https?://(?:localhost|oes-ui-svc|opsmx.com)(?::[1-9]\d*)?/? # Value of the OES UI URL Regex
@@ -69,44 +96,26 @@ oes:
       spinpasswd: dummypwd # Value of the Spinnaker Password (Deck)
       adminLoginEnabled: false
 
+    # Ldap server details that needs to be configured with OES
     ldap:
       enabled: true
-      url: ldap://23.99.207.205:389  # Value of ldap.url
+      url: ldap://{{ .Release.Name }}-openldap:389  # Value of ldap.url
       userDnPattern: cn={0} # Value of ldap.userdn
       basedn: dc=example,dc=org # Value of ldap.base.dn
       pattern: (&(cn=USERNAME)) # Value of ldap.user.filter.pattern
-        # Password for the admin user
+      # Password for the admin user
       adminPassword: dummypwd
       omitClusterIP: true
 ###################################################
-opsmxdb:
-  # Change this to false if OES is installed after opsmx-autopilot
-  # as DB installed by opsmx-autopilot can be re-used by OES
+opa:
   enabled: true
-
-  # Strategy to rollout statefulset pods
-  podManagementPolicy: OrderedReady
-
-  # Default group to which the default user of a pod belongs
-  securityContext:
-    fsGroup: 1000
-
-  # Details related to image of OpsMx DB
   image:
-    repository: opsmxdev/ubi8-autopilot-db
-    tag: v1.3.0
+    repository: openpolicyagent/opa
+    tag: latest
     pullPolicy: IfNotPresent
-
-  # storageMountSize is the size with which a PVC is to be created
-  persistence:
-    OESDBSize: 8Gi
+###################################################
 
 
-#####################################################
-# Spinnaker extra configuration
-#####################################################
-k8sServiceType: LoadBalancer
-createIngress: false
 
 #####################################################
 # Centralized Logging Configuration

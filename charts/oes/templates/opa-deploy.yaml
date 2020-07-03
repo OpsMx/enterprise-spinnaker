@@ -1,3 +1,4 @@
+{{- if .Values.opa.enabled }}
 apiVersion: extensions/v1beta1
 kind: Deployment
 metadata:
@@ -20,7 +21,8 @@ spec:
     spec:
       containers:
         - name: opa
-          image: openpolicyagent/opa:latest
+          image: {{ .Values.opa.image.repository }}:{{ .Values.opa.image.tag }}
           args:
             - "run"
             - "--server"
+{{- end }}
