@@ -1,6 +1,6 @@
 apiVersion: v1
 data:
-{{ (.Files.Glob "config/sapor-config/*").AsConfig | indent 2 }}
+{{ (tpl (.Files.Glob "config/sapor-config/*").AsConfig . ) | indent 2 }}
 
 kind: ConfigMap
 metadata:
