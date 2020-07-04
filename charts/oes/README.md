@@ -1,4 +1,3 @@
-
 # Spinnaker + OpsMx Enterprise Spinnaker Extensions (OES) Setup Instructions
 
 ## Prequisites
@@ -15,19 +14,6 @@
 		kubectl create serviceaccount -n kube-system tiller
 		kubectl create clusterrolebinding tiller-binding --clusterrole=cluster-admin --serviceaccount kube-system:tiller
 		helm init --service-account tiller --wait
-- Docker registry credentials is setup as a secret in Kubernetes, optionally specifying the namespace OES will be deployed to
-
-		kubectl create secret docker-registry oes-repo --docker-username=your_username --docker-password=your_password --docker-email=opsmx@example.com [--namespace mynamespace]
-
-	The namespace must exist before you run the command. If it does not exist,
-
-		kubectl create namespace mynamespace
-
-  If you name your secret something other than oes-repo, you need to update the key k8sSecret in values.yaml.
-
-	Before you install OES, please send an email to spinnaker-poc@opsmx.io requesting access to the OES images. We would require your dockerhub id to grant you access. If you do not already have a dockerhub id, you can get one at https://hub.docker.com/.
-
-- Your Kubernetes cluster supports persistent volumes and loadbalancer service type.
 
 
 ## Deploying OpsMx Enterprise Spinnaker Extensions (OES) Spinnaker
@@ -37,7 +23,17 @@
 
 		git clone https://github.com/OpsMx/enterprise-spinnaker.git
 
+- Docker registry credentials is setup as a secret in Kubernetes. Before you install Autopilot, please send an email to support@opsmx.com requesting access to the Autopilot images with your Dockerhub id. You can proceed with installation once your Dockerhub id has been granted access.
+
+  To be able to fetch Autopilot docker images, username and password shall be set in values.yaml or use --set imageCredentials.username=<username> --set imageCredentials.password=<password> while running helm install.
+
+- Your Kubernetes cluster supports persistent volumes and loadbalancer service type.
+
 - Go to enterprise-spinnaker/charts/oes and deploy the chart, optionally specifying the namespace
+
+  The namespace must exist before you run the command. If it does not exist,
+
+		kubectl create namespace mynamespace
 
 		cd enterprise-spinnaker/charts/oes
 		helm install oes . [--namespace mynamespace]

@@ -20,7 +20,7 @@ spec:
         component: sapor
     spec:
       containers:
-      - image: {{ .Values.oes.image.sapor.repository }}:{{ .Values.oes.image.sapor.tag }}
+      - image: {{ template "sapor.image" . }}
         name: sapor
         ports:
         - containerPort: 8085

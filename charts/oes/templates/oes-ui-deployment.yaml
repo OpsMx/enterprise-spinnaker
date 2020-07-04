@@ -20,7 +20,7 @@ spec:
         component: oes-ui
     spec:
       containers:
-      - image: {{ .Values.oes.image.ui.repository }}:{{ .Values.oes.image.ui.tag }}
+      - image: {{ template "ui.image" . }}
         name: oes-ui
         ports:
         - containerPort: 80
@@ -40,7 +40,7 @@ spec:
           initialDelaySeconds: 15
           periodSeconds: 5
       imagePullSecrets:
-      - name: {{ .Values.k8sSecret}}
+      - name: {{ .Values.imagePullSecret}}
       volumes:
         - name: config-dir
           configMap:

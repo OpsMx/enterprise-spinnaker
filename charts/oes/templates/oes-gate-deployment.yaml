@@ -20,7 +20,7 @@ spec:
         component: oes-gate
     spec:
       containers:
-      - image: {{ .Values.oes.image.gate.repository }}:{{ .Values.oes.image.gate.tag }}
+      - image: {{ template "gate.image" . }}
         name: oes-gate
         ports:
         - containerPort: 8084
@@ -40,7 +40,7 @@ spec:
           initialDelaySeconds: 120
           periodSeconds: 60
       imagePullSecrets:
-      - name: {{ .Values.k8sSecret}}
+      - name: {{ .Values.imagePullSecret}}
       volumes:
         - name: gate-volume
           configMap:

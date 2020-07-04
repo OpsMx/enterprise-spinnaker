@@ -18,9 +18,9 @@ spec:
         app: db-opsmx
     spec:
       imagePullSecrets:
-        - name: {{ .Values.k8sSecret}}
+        - name: {{ .Values.imagePullSecret}}
       containers:
-      - image: {{ .Values.opsmxdb.image.repository }}:{{ .Values.opsmxdb.image.tag }}
+      - image: {{ template "opsmxdb.image" . }}
         imagePullPolicy: {{ .Values.opsmxdb.image.pullPolicy }}
         name: db-opsmx
         ports:
@@ -47,6 +47,6 @@ spec:
       - ReadWriteOnce
       resources:
         requests:
-          storage: {{ .Values.opsmxdb.persistence.OESDBSize }}
+          storage: {{ .Values.opsmxdb.storageMountSize }}
       volumeMode: Filesystem
 {{- end }}

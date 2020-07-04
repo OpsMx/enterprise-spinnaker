@@ -5,8 +5,13 @@ installSpinnaker: true
 createIngress: false   # set to TRUE to expose spinnaker and deck services as LoadBalancers
 installOpenLdap: true
 k8sServiceType: LoadBalancer
-# Values to create imagePullSecret
-k8sSecret: oes-repo
+
+# Name of the secret for pulling image from docker registry.
+# Change it only if you want to create a secret with
+# different name.
+imagePullSecret: oes-repo
+
+# Docker registry credentials to create imagePullSecret
 imageCredentials:
   registry: index.docker.io/v1/
   username: dockerHubId  # Docker hub username
@@ -47,28 +52,31 @@ opsmxdb:
 
   # Details related to image of OpsMx DB
   image:
-    repository: opsmxdev/ubi8-autopilot-db
+    registry: opsmxdev
+    repository: ubi8-autopilot-db
     tag: v1.3.0
     pullPolicy: IfNotPresent
 
   # storageMountSize is the size with which a PVC is to be created
-  persistence:
-    OESDBSize: 8Gi
+  storageMountSize: 8Gi
 #######################################################
 oes:
 
   # Details related to image of OES components
   image:
     gate:
-      repository: opsmx11/oes-gate
+      registry: opsmx11
+      repository: oes-gate
       tag: v0.202007021055
       pullPolicy: IfNotPresent
     sapor:
-      repository: opsmx11/sapor
+      registry: opsmx11
+      repository: sapor
       tag: v0.202007011757
       pullPolicy: IfNotPresent
     ui:
-      repository: opsmx11/oes-ui
+      registry: opsmx11
+      repository: oes-ui
       tag: v0.202007011835
       pullPolicy: IfNotPresent
 
