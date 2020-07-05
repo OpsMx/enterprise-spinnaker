@@ -35,19 +35,21 @@
 
 		cd enterprise-spinnaker/charts/autopilot
   For helm v2, install using:
-    		helm install -n autopilot . [--namespace mynamespace]
-    		helm install -n autopilot . [--namespace mynamespace] --set imageCredentials.username=<username> --set imageCredentials.password=<password>
+  
+		helm install -n autopilot . [--namespace mynamespace]
+		helm install -n autopilot . [--namespace mynamespace] --set imageCredentials.username=<username> --set imageCredentials.password=<password>
 
   For helm v3, install using:
-    		helm install -n autopilot . [--namespace mynamespace]
-    		helm install autopilot . [--namespace mynamespace] --set imageCredentials.username=<username> --set imageCredentials.password=<password>
+  
+		helm install -n autopilot . [--namespace mynamespace]
+		helm install autopilot . [--namespace mynamespace] --set imageCredentials.username=<username> --set imageCredentials.password=<password>
 
 
 ## Connecting to Autopilot
 
 Once the service is up and running, find the service ip address
 
-    		kubectl get svc autopilot [--namespace mynamespace]
+		kubectl get svc autopilot [--namespace mynamespace]
 
 Example output would be:
 
