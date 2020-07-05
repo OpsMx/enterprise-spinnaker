@@ -84,7 +84,7 @@ oes:
     # Address and credentials for OES to connect with DB
     db:
       # DB URL, typically it is reachable over db-opsmx service
-      dbUrl: jdbc:postgresql://db-opsmx:5432/opsmx
+      dbUrl: jdbc:postgresql://db-opsmx:5432/oesdb
       # Username and password to connect with DB
       username: postgres
       password: networks123
