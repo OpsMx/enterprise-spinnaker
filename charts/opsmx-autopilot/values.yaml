@@ -8,11 +8,11 @@
 # Name of the secret for pulling image from docker registry.
 # Change it only if you want to create a secret with
 # different name.
-imagePullSecret: oes-repo
+imagePullSecret: autopilot-repo
 
 # Docker registry credentials to create imagePullSecret
 imageCredentials:
-  registry: index.docker.io/v1/
+  registry: https://index.docker.io/v1/
   username: dockerHubId  # Docker hub username
   password: dockerHubPwd # Docker hub password
   email: abc@xyz.com   # email corresponding to docker hub ID
