@@ -1,5 +1,5 @@
 #####################################################
-# Spinnaker configuration
+# OpsMx Enterprise Spinnaker configuration
 #####################################################
 installSpinnaker: true
 createIngress: false   # set to TRUE to expose spinnaker and deck services as LoadBalancers
@@ -17,11 +17,6 @@ imageCredentials:
   username: dockerHubId  # Docker hub username
   password: dockerHubPwd # Docker hub password
   email: abc@xyz.com   # email corresponding to docker hub ID
-
-
-#######################################################
-# OpsMx Enterprise configuration
-#######################################################
 
 # Install a seperate Redis for OES if installSpinnaker is set to false
 installRedis: false
