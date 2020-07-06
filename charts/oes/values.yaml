@@ -1,17 +1,32 @@
 #####################################################
 # OpsMx Enterprise Spinnaker configuration
 #####################################################
+
+# Option to skip installation of spinnaker, if it already exists
+# or if OES is to be connected to existing spinnaker
+#
 installSpinnaker: true
-createIngress: false   # set to TRUE to expose spinnaker and deck services as LoadBalancers
+
+# Set to true to expose spinnaker and deck services as LoadBalancers
+#
+createIngress: false
+
+# Set it to false to skip the installation of Open LDAP server
+#
 installOpenLdap: true
+
+# OES UI service type
+#
 k8sServiceType: LoadBalancer
 
 # Name of the secret for pulling image from docker registry.
 # Change it only if you want to create a secret with
 # different name.
+#
 imagePullSecret: oes-repo
 
 # Docker registry credentials to create imagePullSecret
+#
 imageCredentials:
   registry: https://index.docker.io/v1/
   username: dockerHubId  # Docker hub username
@@ -19,9 +34,11 @@ imageCredentials:
   email: abc@xyz.com   # email corresponding to docker hub ID
 
 # Install a seperate Redis for OES if installSpinnaker is set to false
+#
 installRedis: false
 
 # Details of redis-master image for OES
+#
 redis:
   image:
     registry: docker.io
@@ -31,21 +48,27 @@ redis:
     ##
     tag: 4.0.11-debian-9
     pullPolicy: IfNotPresent
+
 #######################################################
+#
 opsmxdb:
   # Change this to false if OES is installed after opsmx-autopilot
   # as DB installed by opsmx-autopilot can be re-used by OES
+  #
   enabled: true
 
   # Strategy to rollout statefulset pods
+  #
   podManagementPolicy: OrderedReady
 
   # Default group to which the default user of a pod belongs
+  #
   securityContext:
     fsGroup: 1000
 
 
   # Details related to image of OpsMx DB
+  #
   image:
     registry: opsmxdev
     repository: ubi8-autopilot-db
@@ -53,11 +76,13 @@ opsmxdb:
     pullPolicy: IfNotPresent
 
   # storageMountSize is the size with which a PVC is to be created
+  #
   storageMountSize: 8Gi
 #######################################################
+#
 oes:
-
   # Details related to image of OES components
+  #
   image:
     gate:
       registry: opsmx11
@@ -77,29 +102,35 @@ oes:
 
   config:
     # Address and credentials for OES to connect with DB
+    #
     db:
       # DB URL, typically it is reachable over db-opsmx service
+      #
       dbUrl: jdbc:postgresql://db-opsmx:5432/oesdb
       # Username and password to connect with DB
+      #
       username: postgres
       password: networks123
 
     # To allow oes-gate reach sapor
+    #
     server:
       enabled: true
       baseUrl: http://sapor-svc:8085
 
     # To allow sapor reach to your spinnaker-gate
+    #
     spinnaker:
       oesGateURL: http://106.51.137.146:31174/  # URL used by oes-ui to reach oes-gate
-      oesUIcors: ^https?://(?:localhost|oes-ui-svc|opsmx.com)(?::[1-9]\d*)?/? # Value of the OES UI URL Regex
-      spinGateURL: http://106.51.137.146:31174/gate # Value of the Spinnaker-gate URL
-      spinExternalGateURL: http://106.51.137.146:31174/gate # Value of the Spinnaker URL to access spinnaker from UI
+      oesUIcors: ^https?://(?:localhost|oes-ui-svc|opsmx.com)(?::[1-9]\d*)?/? # Value of the OES-UI URL regex
+      spinGateURL: http://106.51.137.146:31174/gate # URL used by sapor to connect to Spinnaker
+      spinExternalGateURL: http://106.51.137.146:31174/gate # URL used by OES-UI to access Spinnaker from GUI
       spinuser: dummyuser # Value of the Spinnaker Username (Deck)
       spinpasswd: dummypwd # Value of the Spinnaker Password (Deck)
       adminLoginEnabled: false
 
     # Ldap server details that needs to be configured with OES
+    #
     ldap:
       enabled: true
       url: ldap://{{ .Release.Name }}-openldap:389  # Value of ldap.url
@@ -110,6 +141,8 @@ oes:
       adminPassword: dummypwd
       omitClusterIP: true
 
+    # Set the below field to true if default java cacert is to be overriden
+    #
     caCerts:
       override: false
 ###################################################
@@ -211,17 +244,11 @@ spinnaker:
         healthEndpoint: /health
         kubernetes:
           useExecHealthCheck: false
+      ## artifactId to override Spinnaker components images with OpsMx custom images
       deck.yml:
         artifactId: docker.io/devopsmx/ubi8-oes-deck:3.1.2
-      #   artifactId: gcr.io/spinnaker-marketplace/deck:2.9.0-20190412012808
-      #   kubernetes:
-      #     podAnnotations:
-      #       iam.amazonaws.com/role: <role_arn>
       clouddriver.yml:
         artifactId: docker.io/devopsmx/ubi8-oes-clouddriver:6.9.2
-      #   kubernetes:
-      #     podAnnotations:
-      #       iam.amazonaws.com/role: <role_arn>
       echo.yml:
         artifactId: docker.io/devopsmx/ubi8-oes-echo:version-2.12.1
       fial.yml:
