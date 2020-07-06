@@ -19,7 +19,7 @@ cors:
   allowed-origins-pattern: {{ .Values.oes.config.spinnaker.oesUIcors }}
 ldap:
   enabled: {{ .Values.oes.config.ldap.enabled }}
-  url: {{ .Values.oes.config.ldap.url }}/{{ .Values.oes.config.ldap.basedn }}
+  url: {{ tpl .Values.oes.config.ldap.url . }}/{{ .Values.oes.config.ldap.basedn }}
   userDnPattern: {{ .Values.oes.config.ldap.userDnPattern }}
 google: {}
 integrations:
