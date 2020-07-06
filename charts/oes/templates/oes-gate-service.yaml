@@ -4,6 +4,7 @@ metadata:
   labels:
     app: oes
     component: oes-gate
+{{ include "oes.standard-labels" . | indent 4 }}
   name: oes-gate-svc
 spec:
   type: {{ .Values.k8sServiceType }}

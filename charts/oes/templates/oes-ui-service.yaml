@@ -4,6 +4,7 @@ metadata:
   labels:
     app: oes
     component: oes-ui
+{{ include "oes.standard-labels" . | indent 4 }}
   name: oes-ui-svc
 spec:
   type: {{ .Values.k8sServiceType }}

@@ -5,3 +5,5 @@ data:
 kind: ConfigMap
 metadata:
   name: oes-ui-config
+  labels:
+{{ include "oes.standard-labels" . | indent 4 }}

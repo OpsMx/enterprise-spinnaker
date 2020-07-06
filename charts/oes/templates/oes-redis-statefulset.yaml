@@ -4,6 +4,7 @@ kind: StatefulSet
 metadata:
   labels:
     app: redis
+{{ include "oes.standard-labels" . | indent 4 }}
   name: {{ .Release.Name }}-redis-master
 spec:
   podManagementPolicy: OrderedReady
@@ -16,6 +17,7 @@ spec:
     metadata:
       labels:
         app: redis
+{{ include "oes.standard-labels" . | indent 8 }}
     spec:
       containers:
       - env:
@@ -77,6 +79,7 @@ spec:
       creationTimestamp: null
       labels:
         app: redis
+{{ include "oes.standard-labels" . | indent 8 }}
       name: redis-data
     spec:
       accessModes:

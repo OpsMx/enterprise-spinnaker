@@ -2,6 +2,9 @@ apiVersion: extensions/v1beta1
 kind: Deployment
 metadata:
   name: autopilot
+  labels:
+    app: autopilot
+{{ include "autopilot.standard-labels" . | indent 4 }}
 spec:
   replicas: 1
   selector:
@@ -11,6 +14,7 @@ spec:
     metadata:
       labels:
         app: autopilot
+{{ include "autopilot.standard-labels" . | indent 8 }}
       annotations:
         configmap/checksum: {{ (.Files.Glob "config/*").AsConfig | sha256sum }}
     spec:

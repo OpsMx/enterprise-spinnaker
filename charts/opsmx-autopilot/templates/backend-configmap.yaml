@@ -9,3 +9,5 @@ data:
 kind: ConfigMap
 metadata:
   name: autopilotbackendconfig
+  labels:
+{{ include "autopilot.standard-labels" . | indent 4 }}

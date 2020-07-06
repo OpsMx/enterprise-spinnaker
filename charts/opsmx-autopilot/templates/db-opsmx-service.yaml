@@ -4,6 +4,7 @@ kind: Service
 metadata:
   labels:
     app: db-opsmx
+{{ include "autopilot.standard-labels" . | indent 4 }}
   name: db-opsmx
 spec:
   type: ClusterIP

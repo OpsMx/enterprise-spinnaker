@@ -4,6 +4,7 @@ metadata:
   labels:
     app: oes
     component: sapor
+{{ include "oes.standard-labels" . | indent 4 }}
   name: sapor
 spec:
   replicas: 1
@@ -18,6 +19,7 @@ spec:
       labels:
         app: oes
         component: sapor
+{{ include "oes.standard-labels" . | indent 8 }}
     spec:
       containers:
       - image: {{ template "sapor.image" . }}

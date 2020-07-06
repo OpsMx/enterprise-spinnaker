@@ -4,6 +4,7 @@ metadata:
   labels:
     app: oes
     component: sapor
+{{ include "oes.standard-labels" . | indent 4 }}
   name: sapor-svc
 spec:
   type: {{ .Values.k8sServiceType }}

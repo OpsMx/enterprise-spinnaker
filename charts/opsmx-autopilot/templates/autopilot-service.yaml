@@ -3,6 +3,7 @@ kind: Service
 metadata:
   labels:
     app: autopilot
+{{ include "autopilot.standard-labels" . | indent 4 }}
   name: autopilot
 spec:
   type: {{ .Values.autopilot.service.type }}

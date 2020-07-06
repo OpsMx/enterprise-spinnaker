@@ -4,6 +4,7 @@ kind: Service
 metadata:
   labels:
     app: redis
+{{ include "oes.standard-labels" . | indent 4 }}
   name: {{ .Release.Name }}-redis-master
 spec:
   ports:

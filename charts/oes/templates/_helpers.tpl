@@ -5,6 +5,15 @@
 {{- end }}
 
 {{/*
+Common labels for metadata.
+*/}}
+{{- define "oes.standard-labels" -}}
+heritage: {{ .Release.Service | quote }}
+release: {{ .Release.Name | quote }}
+chart: "{{ .Chart.Name }}-{{ .Chart.Version }}"
+{{- end -}}
+
+{{/*
 Return the proper UI image name
 */}}
 {{- define "ui.image" -}}

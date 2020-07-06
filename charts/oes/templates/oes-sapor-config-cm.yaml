@@ -5,3 +5,5 @@ data:
 kind: ConfigMap
 metadata:
   name: sapor-config
+  labels:
+{{ include "oes.standard-labels" . | indent 4 }}

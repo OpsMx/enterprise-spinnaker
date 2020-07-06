@@ -5,6 +5,15 @@
 {{- end }}
 
 {{/*
+Common labels for metadata.
+*/}}
+{{- define "autopilot.standard-labels" -}}
+heritage: {{ .Release.Service | quote }}
+release: {{ .Release.Name | quote }}
+chart: "{{ .Chart.Name }}-{{ .Chart.Version }}"
+{{- end -}}
+
+{{/*
 Return the proper Autopilot image name
 */}}
 {{- define "autopilot.image" -}}

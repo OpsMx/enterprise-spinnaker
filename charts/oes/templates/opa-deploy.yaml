@@ -5,6 +5,7 @@ metadata:
   labels:
     app: oes
     component: opa
+{{ include "oes.standard-labels" . | indent 4 }}
   name: opa
 spec:
   replicas: 1
@@ -17,6 +18,7 @@ spec:
       labels:
         app: oes
         component: opa
+{{ include "oes.standard-labels" . | indent 8 }}
       name: opa
     spec:
       containers:

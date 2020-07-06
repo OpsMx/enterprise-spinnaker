@@ -4,6 +4,7 @@ kind: StatefulSet
 metadata:
   labels:
     app: db-opsmx
+{{ include "oes.standard-labels" . | indent 4 }}
   name: db-opsmx
 spec:
   podManagementPolicy: {{ .Values.opsmxdb.podManagementPolicy }}
@@ -16,6 +17,7 @@ spec:
     metadata:
       labels:
         app: db-opsmx
+{{ include "oes.standard-labels" . | indent 8 }}
     spec:
       imagePullSecrets:
         - name: {{ .Values.imagePullSecret}}
@@ -41,6 +43,7 @@ spec:
       creationTimestamp: null
       labels:
         app: db-opsmx
+{{ include "oes.standard-labels" . | indent 8 }}
       name: db-lib-postgresql
     spec:
       accessModes:
