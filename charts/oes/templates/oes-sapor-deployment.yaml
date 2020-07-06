@@ -30,8 +30,10 @@ spec:
         volumeMounts:
         - name: api-volume
           mountPath: /opt/opsmx/
+{{- if .Values.oes.config.caCerts.override }}
         - name: certs-volume
           mountPath: /etc/pki/ca-trust/extracted/java
+{{- end }}
         readinessProbe:
           tcpSocket:
             port: 8085
@@ -49,6 +51,8 @@ spec:
         - name: api-volume
           configMap:
             name: sapor-config
+{{- if .Values.oes.config.caCerts.override }}
         - name: certs-volume
           configMap:
             name: sapor-certs
+{{- end }}

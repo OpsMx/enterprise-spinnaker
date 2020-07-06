@@ -114,6 +114,9 @@ oes:
       # Password for the admin user
       adminPassword: dummypwd
       omitClusterIP: true
+
+    caCerts:
+      override: false
 ###################################################
 opa:
   enabled: true
