@@ -1,29 +1,160 @@
 #####################################################
-# OpsMx Enterprise configuration
+# OpsMx Enterprise Spinnaker configuration
 #####################################################
-OESUIIImage: opsmx11/autopilot:test-v0.202005011235
-OESAPIImage: opsmx11/autopilot:test-v0.202005011447
-OESGateImage: opsmx11/autopilot:test-v0.202005011719
-OESDBImage: opsmxdev/ubi8-autopilot-db:v1.2.1
-OESImage: opsmxdev/ubi8-autopilot:v0.202004212200
-k8sServiceType: LoadBalancer
-k8sSecret: oes-repo
-# Feature List
-installOpenLdap: true
-installSpinnaker: true
-persistence:
-  enabled: true
-  OESDBSize: 8Gi
-# Password for the admin user
-openldap:
-  adminPassword: OpsMx@123
-  omitClusterIP: true
 
-#####################################################
-# Spinnaker extra configuration
-#####################################################
-k8sServiceType: LoadBalancer
+# Option to skip installation of spinnaker, if it already exists
+# or if OES is to be connected to existing spinnaker
+#
+installSpinnaker: true
+
+# Set to true to expose spinnaker and deck services as LoadBalancers
+#
 createIngress: false
+
+# Set it to false to skip the installation of Open LDAP server
+#
+installOpenLdap: true
+
+# OES UI service type
+#
+k8sServiceType: LoadBalancer
+
+# Name of the secret for pulling image from docker registry.
+# Change it only if you want to create a secret with
+# different name.
+#
+imagePullSecret: oes-repo
+
+# Docker registry credentials to create imagePullSecret
+#
+imageCredentials:
+  registry: https://index.docker.io/v1/
+  username: dockerHubId  # Docker hub username
+  password: dockerHubPwd # Docker hub password
+  email: abc@xyz.com   # email corresponding to docker hub ID
+
+# Install a seperate Redis for OES if installSpinnaker is set to false
+#
+installRedis: false
+
+# Details of redis-master image for OES
+#
+redis:
+  image:
+    registry: docker.io
+    repository: bitnami/redis
+    ## Bitnami Redis image tag
+    ## ref: https://github.com/bitnami/bitnami-docker-redis#supported-tags-and-respective-dockerfile-links
+    ##
+    tag: 4.0.11-debian-9
+    pullPolicy: IfNotPresent
+
+#######################################################
+#
+opsmxdb:
+  # Change this to false if OES is installed after opsmx-autopilot
+  # as DB installed by opsmx-autopilot can be re-used by OES
+  #
+  enabled: true
+
+  # Strategy to rollout statefulset pods
+  #
+  podManagementPolicy: OrderedReady
+
+  # Default group to which the default user of a pod belongs
+  #
+  securityContext:
+    fsGroup: 1000
+
+
+  # Details related to image of OpsMx DB
+  #
+  image:
+    registry: opsmxdev
+    repository: ubi8-autopilot-db
+    tag: v1.3.0
+    pullPolicy: IfNotPresent
+
+  # storageMountSize is the size with which a PVC is to be created
+  #
+  storageMountSize: 8Gi
+#######################################################
+#
+oes:
+  # Details related to image of OES components
+  #
+  image:
+    gate:
+      registry: opsmx11
+      repository: oes-gate
+      tag: v0.202007021055
+      pullPolicy: IfNotPresent
+    sapor:
+      registry: opsmx11
+      repository: sapor
+      tag: v0.202007011757
+      pullPolicy: IfNotPresent
+    ui:
+      registry: opsmx11
+      repository: oes-ui
+      tag: v0.202007011835
+      pullPolicy: IfNotPresent
+
+  config:
+    # Address and credentials for OES to connect with DB
+    #
+    db:
+      # DB URL, typically it is reachable over db-opsmx service
+      #
+      dbUrl: jdbc:postgresql://db-opsmx:5432/oesdb
+      # Username and password to connect with DB
+      #
+      username: postgres
+      password: networks123
+
+    # To allow oes-gate reach sapor
+    #
+    server:
+      enabled: true
+      baseUrl: http://sapor-svc:8085
+
+    # To allow sapor reach to your spinnaker-gate
+    #
+    spinnaker:
+      oesGateURL: http://106.51.137.146:31174/  # URL used by oes-ui to reach oes-gate
+      oesUIcors: ^https?://(?:localhost|oes-ui-svc|opsmx.com)(?::[1-9]\d*)?/? # Value of the OES-UI URL regex
+      spinGateURL: http://106.51.137.146:31174/gate # URL used by sapor to connect to Spinnaker
+      spinExternalGateURL: http://106.51.137.146:31174/gate # URL used by OES-UI to access Spinnaker from GUI
+      spinuser: dummyuser # Value of the Spinnaker Username (Deck)
+      spinpasswd: dummypwd # Value of the Spinnaker Password (Deck)
+      adminLoginEnabled: false
+
+    # Ldap server details that needs to be configured with OES
+    #
+    ldap:
+      enabled: true
+      url: ldap://{{ .Release.Name }}-openldap:389  # Value of ldap.url
+      userDnPattern: cn={0} # Value of ldap.userdn
+      basedn: dc=example,dc=org # Value of ldap.base.dn
+      pattern: (&(cn=USERNAME)) # Value of ldap.user.filter.pattern
+      # Password for the admin user
+      adminPassword: dummypwd
+      omitClusterIP: true
+
+    # Set the below field to true if default java cacert is to be overriden
+    #
+    caCerts:
+      override: false
+###################################################
+opa:
+  enabled: true
+  image:
+    repository: openpolicyagent/opa
+    tag: latest
+    pullPolicy: IfNotPresent
+###################################################
+
+
 
 #####################################################
 # Centralized Logging Configuration
@@ -62,10 +193,10 @@ kibana:
 #####################################################
 spinnaker:
   halyard:
-    spinnakerVersion: 1.19.5
+    spinnakerVersion: 1.20.5
     image:
-      repository: gcr.io/spinnaker-marketplace/halyard
-      tag: 1.34.0
+      repository: docker.io/devopsmx/ubi8-oes-operator-halyard
+      tag: 1.20.5
     # Set to false to disable persistence data volume for halyard
     persistence:
       enabled: true
@@ -109,19 +240,29 @@ spinnaker:
     ## You can use it to add annotations for pods, override the image, etc.
     additionalServiceSettings:
       gate.yml:
+        artifactId: docker.io/devopsmx/ubi8-oes-gate:1.16.1
         healthEndpoint: /health
         kubernetes:
           useExecHealthCheck: false
-      # deck.yml:
-      #   artifactId: gcr.io/spinnaker-marketplace/deck:2.9.0-20190412012808
-      #   kubernetes:
-      #     podAnnotations:
-      #       iam.amazonaws.com/role: <role_arn>
-      # clouddriver.yml:
-      #   kubernetes:
-      #     podAnnotations:
-      #       iam.amazonaws.com/role: <role_arn>
-
+      ## artifactId to override Spinnaker components images with OpsMx custom images
+      deck.yml:
+        artifactId: docker.io/devopsmx/ubi8-oes-deck:3.1.2
+      clouddriver.yml:
+        artifactId: docker.io/devopsmx/ubi8-oes-clouddriver:6.9.2
+      echo.yml:
+        artifactId: docker.io/devopsmx/ubi8-oes-echo:version-2.12.1
+      fial.yml:
+        artifactId: docker.io/devopsmx/ubi8-oes-fiat:1.11.0
+      front50.yml:
+        artifactId: docker.io/devopsmx/ubi8-oes-front50:0.23.1
+      igor.yml:
+        artifactId: docker.io/devopsmx/ubi8-oes-igor:1.10.0
+      kayenta.yml:
+        artifactId: docker.io/devopsmx/ubi8-oes-kayenta:0.15.1
+      orca.yml:
+        artifactId: docker.io/devopsmx/ubi8-oes-orca:2.14.2
+      rosco.yml:
+        artifactId: docker.io/devopsmx/ubi8-oes-rosco:0.19.0
     ## Uncomment if you want to add extra commands to the init script
     ## run by the init container before halyard is started.
     ## The content will be passed through `tpl`, so value interpolation is supported.

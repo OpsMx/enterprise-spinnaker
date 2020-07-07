@@ -1,0 +1,58 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: oes
+    component: sapor
+{{ include "oes.standard-labels" . | indent 4 }}
+  name: sapor
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: oes
+      component: sapor
+  template:
+    metadata:
+      annotations:
+        configmap/checksum: {{ (.Files.Glob "config/*").AsConfig | sha256sum }}
+      labels:
+        app: oes
+        component: sapor
+{{ include "oes.standard-labels" . | indent 8 }}
+    spec:
+      containers:
+      - image: {{ template "sapor.image" . }}
+        name: sapor
+        ports:
+        - containerPort: 8085
+          protocol: TCP
+        volumeMounts:
+        - name: api-volume
+          mountPath: /opt/opsmx/
+{{- if .Values.oes.config.caCerts.override }}
+        - name: certs-volume
+          mountPath: /etc/pki/ca-trust/extracted/java
+{{- end }}
+        readinessProbe:
+          tcpSocket:
+            port: 8085
+          initialDelaySeconds: 120
+          periodSeconds: 30
+        livenessProbe:
+          httpGet:
+            path: /actuator/health
+            port: 8085
+          initialDelaySeconds: 180
+          periodSeconds: 60
+      imagePullSecrets:
+      - name: regcred
+      volumes:
+        - name: api-volume
+          configMap:
+            name: sapor-config
+{{- if .Values.oes.config.caCerts.override }}
+        - name: certs-volume
+          configMap:
+            name: sapor-certs
+{{- end }}
