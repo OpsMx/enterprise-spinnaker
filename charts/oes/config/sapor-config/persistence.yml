@@ -1,0 +1,26 @@
+spring:
+  datasource:
+    url: {{ .Values.oes.config.db.dbUrl }}
+    username: {{ .Values.oes.config.db.username }}
+    password: {{ .Values.oes.config.db.password }}
+    driver-class-name: org.postgresql.Driver
+    testWhileIdle: true
+    test-on-borrow: true
+    hikari:
+      connection-timeout: 30000
+      idle-timeout: 600000
+      max-lifetime: 1000
+      maxLifetime: 1800000
+  jpa:
+    show-sql: true
+    hibernate:
+      ddl-auto: update # delete this property after table creation
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+
+logging:
+  level:
+    com:
+      zaxxer:
+        hikari: DEBUG

@@ -1,0 +1,30 @@
+{{- if .Values.opa.enabled }}
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: oes
+    component: opa
+{{ include "oes.standard-labels" . | indent 4 }}
+  name: opa
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: oes
+      component: opa
+  template:
+    metadata:
+      labels:
+        app: oes
+        component: opa
+{{ include "oes.standard-labels" . | indent 8 }}
+      name: opa
+    spec:
+      containers:
+        - name: opa
+          image: {{ .Values.opa.image.repository }}:{{ .Values.opa.image.tag }}
+          args:
+            - "run"
+            - "--server"
+{{- end }}

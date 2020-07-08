@@ -1,0 +1,49 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: oes
+    component: oes-gate
+{{ include "oes.standard-labels" . | indent 4 }}
+  name: oes-gate
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: oes
+      component: oes-gate
+  template:
+    metadata:
+      annotations:
+        configmap/checksum: {{ (.Files.Glob "config/*").AsConfig | sha256sum }}
+      labels:
+        app: oes
+        component: oes-gate
+{{ include "oes.standard-labels" . | indent 8 }}
+    spec:
+      containers:
+      - image: {{ template "gate.image" . }}
+        name: oes-gate
+        ports:
+        - containerPort: 8084
+          protocol: TCP
+        volumeMounts:
+        - name: gate-volume
+          mountPath: /opt/spinnaker/config
+        readinessProbe:
+          tcpSocket:
+            port: 8084
+          initialDelaySeconds: 120
+          periodSeconds: 30
+        livenessProbe:
+          httpGet:
+            path: /health
+            port: 8084
+          initialDelaySeconds: 120
+          periodSeconds: 60
+      imagePullSecrets:
+      - name: {{ .Values.imagePullSecret}}
+      volumes:
+        - name: gate-volume
+          configMap:
+            name: oes-gate-config

@@ -1,0 +1,49 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: oes
+    component: oes-ui
+{{ include "oes.standard-labels" . | indent 4 }}
+  name: oes-ui
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: oes
+      component: oes-ui
+  template:
+    metadata:
+      annotations:
+        configmap/checksum: {{ (.Files.Glob "config/*").AsConfig | sha256sum }}
+      labels:
+        app: oes
+        component: oes-ui
+{{ include "oes.standard-labels" . | indent 8 }}
+    spec:
+      containers:
+      - image: {{ template "ui.image" . }}
+        name: oes-ui
+        ports:
+        - containerPort: 80
+          protocol: TCP
+        volumeMounts:
+        - name: config-dir
+          mountPath: /var/www/html/assets/config
+        readinessProbe:
+          tcpSocket:
+            port: 80
+          initialDelaySeconds: 15
+          periodSeconds: 5
+        livenessProbe:
+          httpGet:
+            path: /health
+            port: 80
+          initialDelaySeconds: 15
+          periodSeconds: 5
+      imagePullSecrets:
+      - name: {{ .Values.imagePullSecret}}
+      volumes:
+        - name: config-dir
+          configMap:
+            name: oes-ui-config

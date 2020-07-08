@@ -3,15 +3,15 @@ kind: Service
 metadata:
   labels:
     app: oes
-    component: oes-ui
+    component: sapor
 {{ include "oes.standard-labels" . | indent 4 }}
-  name: oes-ui-svc
+  name: sapor-svc
 spec:
   type: {{ .Values.k8sServiceType }}
   ports:
-  - name: "oes-ui-service"
-    port: 80
-    targetPort: 80
+  - name: "sapor"
+    port: 8085
+    targetPort: 8085
   selector:
     app: oes
-    component: oes-ui
+    component: sapor

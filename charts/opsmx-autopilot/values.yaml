@@ -1,0 +1,92 @@
+#####################################################
+# OpsMX Autopilot configuration
+#####################################################
+# Default values for autopilot chart.
+# This is a YAML-formatted file.
+# Declare variables to be passed into your templates.
+
+# Name of the secret for pulling image from docker registry.
+# Change it only if you want to create a secret with
+# different name.
+imagePullSecret: autopilot-repo
+
+# Docker registry credentials to create imagePullSecret
+imageCredentials:
+  registry: https://index.docker.io/v1/
+  username: dockerHubId  # Docker hub username
+  password: dockerHubPwd # Docker hub password
+  email: abc@xyz.com   # email corresponding to docker hub ID
+
+# Values of autopilot server
+autopilot:
+
+  # Image specific details
+  image:
+    registry: opsmxdev
+    repository: ubi8-autopilot
+    tag: v2.9.10-202006181240
+    pullPolicy: IfNotPresent
+
+  # Type of service overwhich autopilot shall be exposed
+  service:
+    type: LoadBalancer
+
+  config:
+    # Autopilot Backend URL
+    dataSource:
+      url: jdbc:postgresql://db-opsmx:5432/opsmx
+      username: postgres
+      password: networks123
+
+    # Spinnaker configuration to trigger pipelines for canary
+    spinnaker:
+      loginAdminEnabled: false
+      spinGateUrl: http://spin-gate:8084
+      spinUsername: dummyusername
+      spinPassword: dummypassword
+
+    # Autopilot server URL
+    appConfigJS:
+      autopilotServerUrl: autopilot:8090
+
+    # LDAP configuration
+    ldap:
+      authEnabled: false
+      url: ldap://oes-openldap:389
+      baseDN: cn=Users,dc=local,dc=opsmx,dc=com
+      userFilterPattern: (&(cn=USERNAME))
+      userGroups: Administrators
+
+    # SSL configuration
+    # Uncomment below lines if SSL configuration is required
+    ssl:
+      enabled: false  # Set it to true if SSL is to be enabled
+      keyStore: keystore.p12
+      keyStorePassword: dummypwd # Provide keystore password
+      keyStoreType: PKCS12
+      keyAlias: tomcat
+
+# Values of OpsMx DB if a separate DB is to be setup for Autopilot.
+# Typically Autopilot uses OpsMx DB provided by OES if installed
+# on a system with OES running already.
+opsmxdb:
+  # Change this to false if autopilot is installed along with OES
+  # as autopilot can use the DB of OES
+  enabled: true
+
+  # Default group to which the default user of a pod belongs
+  securityContext:
+    fsGroup: 1000
+
+  # Strategy to rollout statefulset pods
+  podManagementPolicy: OrderedReady
+
+  # Details related to image of OpsMx DB
+  image:
+    registry: opsmxdev
+    repository: ubi8-autopilot-db
+    tag: v1.3.0
+    pullPolicy: IfNotPresent
+
+  # storageMountSize is the size with which a PVC is to be created
+  storageMountSize: 8Gi
