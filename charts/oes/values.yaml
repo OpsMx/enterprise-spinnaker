@@ -129,6 +129,10 @@ oes:
       spinpasswd: dummypwd # Value of the Spinnaker Password (Deck)
       adminLoginEnabled: false
 
+      ## Used by sapor to know if authentication is enabled in Spinnaker
+      ## Set it to true if authentication is enabled in Spinnaker
+      authnEnabled: false
+
     # Ldap server details that needs to be configured with OES
     #
     ldap:
@@ -137,14 +141,20 @@ oes:
       userDnPattern: cn={0} # Value of ldap.userdn
       basedn: dc=example,dc=org # Value of ldap.base.dn
       pattern: (&(cn=USERNAME)) # Value of ldap.user.filter.pattern
-      # Password for the admin user
-      adminPassword: dummypwd
-      omitClusterIP: true
 
     # Set the below field to true if default java cacert is to be overriden
     #
     caCerts:
       override: false
+
+##################################################
+# Openldap configuration
+##################################################
+openldap:
+  # Password for the admin user; by default it is set to admin
+  adminPassword: admin
+  omitClusterIP: true
+
 ###################################################
 opa:
   enabled: true
