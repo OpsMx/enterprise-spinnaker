@@ -21,6 +21,22 @@ spec:
         component: oes-gate
 {{ include "oes.standard-labels" . | indent 8 }}
     spec:
+      {{- if .Values.oes.initContainer.enabled }}
+      initContainers:
+      - env:
+        - name: EXTERNAL_IP_CHECK_DELAY
+          value: "{{ .Values.oes.initContainer.externalIpCheckDelay}}"
+        image: opsmx11/oes-init:v1
+        imagePullPolicy: Always
+        name: oes-ui-init
+        command: ["/home/config_endpoint.sh"]
+        args: ["oes-gate"]
+        volumeMounts:
+        - mountPath: /config
+          name: config-temp
+        - mountPath: /opt/spinnaker/config
+          name: gate-volume
+      {{- end }}
       containers:
       - image: {{ template "gate.image" . }}
         name: oes-gate
@@ -44,6 +60,14 @@ spec:
       imagePullSecrets:
       - name: {{ .Values.imagePullSecret}}
       volumes:
-        - name: gate-volume
-          configMap:
-            name: oes-gate-config
+      {{- if .Values.oes.initContainer.enabled }}
+      - configMap:
+          name: oes-gate-config
+        name: config-temp
+      - emptyDir: {}
+        name: gate-volume
+      {{- else }}
+      - name: gate-volume
+        configMap:
+          name: oes-gate-config
+      {{- end }}
