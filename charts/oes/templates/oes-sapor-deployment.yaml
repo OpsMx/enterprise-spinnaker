@@ -21,6 +21,22 @@ spec:
         component: sapor
 {{ include "oes.standard-labels" . | indent 8 }}
     spec:
+      {{- if .Values.oes.initContainer.enabled }}
+      initContainers:
+      - env:
+        - name: EXTERNAL_IP_CHECK_DELAY
+          value: "{{ .Values.oes.initContainer.externalIpCheckDelay}}"
+        image: opsmx11/oes-init:v1
+        imagePullPolicy: Always
+        name: sapor-init
+        command: ["/home/config_endpoint.sh"]
+        args: ["sapor"]
+        volumeMounts:
+        - mountPath: /config
+          name: config-temp
+        - mountPath: /opt/opsmx/
+          name: api-volume
+      {{- end }}
       containers:
       - image: {{ template "sapor.image" . }}
         name: sapor
@@ -48,11 +64,19 @@ spec:
       imagePullSecrets:
       - name: regcred
       volumes:
-        - name: api-volume
-          configMap:
-            name: sapor-config
+      {{- if .Values.oes.initContainer.enabled }}
+      - configMap:
+          name: sapor-config
+        name: config-temp
+      - emptyDir: {}
+        name: api-volume
+      {{- else }}
+      - name: api-volume
+        configMap:
+          name: sapor-config
+      {{- end }}
 {{- if .Values.oes.config.caCerts.override }}
-        - name: certs-volume
-          configMap:
-            name: sapor-certs
+      - name: certs-volume
+        configMap:
+          name: sapor-certs
 {{- end }}

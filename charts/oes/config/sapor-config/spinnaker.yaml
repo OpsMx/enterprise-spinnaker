@@ -6,3 +6,4 @@ spinnaker:
   adminLoginEnabled: {{ .Values.oes.config.spinnaker.adminLoginEnabled }}
   adminUsername:
   adminPassword:
+  authnEnabled: {{ .Values.oes.config.spinnaker.authnEnabled }}
