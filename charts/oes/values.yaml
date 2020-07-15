@@ -106,7 +106,7 @@ oes:
 
     # Image for init container to automatically configure oes components
     # during startup
-    image: opsmx11/oes-init:v1
+    image: opsmx11/oes-init:v2
 
     # Max time(in secs) that an init container of oes-ui should wait
     # to fetch External Load Balancer IP of oes-gate and vice versa
