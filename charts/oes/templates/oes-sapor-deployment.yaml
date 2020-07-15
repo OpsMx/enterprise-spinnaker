@@ -26,7 +26,9 @@ spec:
       - env:
         - name: EXTERNAL_IP_CHECK_DELAY
           value: "{{ .Values.oes.initContainer.externalIpCheckDelay}}"
-        image: opsmx11/oes-init:v1
+        - name: SPINNAKER_SETUP_DELAY
+          value: "{{ .Values.oes.initContainer.spinnakerSetupMaxDelay}}"
+        image: {{ .Values.oes.initContainer.image}}
         imagePullPolicy: Always
         name: sapor-init
         command: ["/home/config_endpoint.sh"]

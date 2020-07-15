@@ -89,8 +89,8 @@ Once the service is up and running, find the service ip address
 
 Example output would be:
 
-NAME   							TYPE           CLUSTER-IP   EXTERNAL-IP     PORT(S)          AGE
-oes-ui-svc       LoadBalancer     10.0.33.110  52.149.54.222   80:30860/TCP      20h
+NAME 	     TYPE             CLUSTER-IP   EXTERNAL-IP     PORT(S)          AGE
+oes-ui       LoadBalancer     10.0.33.110  52.149.54.222   80:30860/TCP     20h
 
 Using the EXTERNAL-IP address, go to http://EXTERNAL-IP:80/
 

@@ -101,8 +101,20 @@ oes:
       pullPolicy: IfNotPresent
 
   initContainer:
+    # Set it to false if oes components works seamlessly with default conf
     enabled: true
-    externalIpCheckDelay: 15s
+
+    # Image for init container to automatically configure oes components
+    # during startup
+    image: opsmx11/oes-init:v1
+
+    # Max time(in secs) that an init container of oes-ui should wait
+    # to fetch External Load Balancer IP of oes-gate and vice versa
+    externalIpCheckDelay: 180
+
+    # Approximate time(in secs) that it takes for spin-gate service to be up
+    # and running so that sapor can establish connection with spin-gate
+    spinnakerSetupMaxDelay: 1200 # Default 20 mins
 
   config:
     # Address and credentials for OES to connect with DB
@@ -120,7 +132,7 @@ oes:
     #
     server:
       enabled: true
-      baseUrl: http://sapor-svc:8085
+      baseUrl: http://sapor:8085
 
     # To allow sapor reach to your spinnaker-gate
     #
