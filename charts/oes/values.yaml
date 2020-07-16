@@ -100,21 +100,27 @@ oes:
       tag: v0.202007011835
       pullPolicy: IfNotPresent
 
-  initContainer:
-    # Set it to false if oes components works seamlessly with default conf
+  ## This option enables OES to be configured automatically
+  ## Load Balancer IPs will be automatically replaced in the 
+  ## configuration files of oes-gate, oes-ui & sapor
+  autoConfiguration:
+    # Set it to false if OES is being installed on restricted evnironment;
+    # Autoconfiguration assumes Load Balancer is available for oes-gate, oes-ui
+    # and spind-deck and configures accordingly
     enabled: true
 
-    # Image for init container to automatically configure oes components
-    # during startup
-    image: opsmx11/oes-init:v2
+    initContainer:
+      # Image for init container to automatically configure oes components
+      # during startup
+      image: opsmx11/oes-init:v2
 
-    # Max time(in secs) that an init container of oes-ui should wait
-    # to fetch External Load Balancer IP of oes-gate and vice versa
-    externalIpCheckDelay: 180
+      # Max time(in secs) that an init container of oes-ui should wait
+      # to fetch External Load Balancer IP of oes-gate and vice versa
+      externalIpCheckDelay: 180
 
-    # Approximate time(in secs) that it takes for spin-gate service to be up
-    # and running so that sapor can establish connection with spin-gate
-    spinnakerSetupMaxDelay: 1200 # Default 20 mins
+      # Approximate time(in secs) that it takes for spin-gate service to be up
+      # and running so that sapor can establish connection with spin-gate
+      spinnakerSetupMaxDelay: 180 # Default 3 mins
 
   config:
     # Address and credentials for OES to connect with DB

@@ -21,14 +21,14 @@ spec:
         component: sapor
 {{ include "oes.standard-labels" . | indent 8 }}
     spec:
-      {{- if .Values.oes.initContainer.enabled }}
+      {{- if .Values.oes.autoConfiguration.enabled }}
       initContainers:
       - env:
         - name: EXTERNAL_IP_CHECK_DELAY
-          value: "{{ .Values.oes.initContainer.externalIpCheckDelay}}"
+          value: "{{ .Values.oes.autoConfiguration.initContainer.externalIpCheckDelay}}"
         - name: SPINNAKER_SETUP_DELAY
-          value: "{{ .Values.oes.initContainer.spinnakerSetupMaxDelay}}"
-        image: {{ .Values.oes.initContainer.image}}
+          value: "{{ .Values.oes.autoConfiguration.initContainer.spinnakerSetupMaxDelay}}"
+        image: {{ .Values.oes.autoConfiguration.initContainer.image}}
         imagePullPolicy: Always
         name: sapor-init
         command: ["/home/config_endpoint.sh"]
@@ -66,7 +66,7 @@ spec:
       imagePullSecrets:
       - name: regcred
       volumes:
-      {{- if .Values.oes.initContainer.enabled }}
+      {{- if .Values.oes.autoConfiguration.enabled }}
       - configMap:
           name: sapor-config
         name: config-temp
