@@ -5,9 +5,9 @@ metadata:
     app: oes
     component: sapor
 {{ include "oes.standard-labels" . | indent 4 }}
-  name: sapor-svc
+  name: sapor
 spec:
-  type: {{ .Values.k8sServiceType }}
+  type: ClusterIP
   ports:
   - name: "sapor"
     port: 8085

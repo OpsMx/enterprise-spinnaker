@@ -100,6 +100,28 @@ oes:
       tag: v0.202007011835
       pullPolicy: IfNotPresent
 
+  ## This option enables OES to be configured automatically
+  ## Load Balancer IPs will be automatically replaced in the 
+  ## configuration files of oes-gate, oes-ui & sapor
+  autoConfiguration:
+    # Set it to false if OES is being installed on restricted evnironment;
+    # Autoconfiguration assumes Load Balancer is available for oes-gate, oes-ui
+    # and spind-deck and configures accordingly
+    enabled: true
+
+    initContainer:
+      # Image for init container to automatically configure oes components
+      # during startup
+      image: opsmx11/oes-init:v2
+
+      # Max time(in secs) that an init container of oes-ui should wait
+      # to fetch External Load Balancer IP of oes-gate and vice versa
+      externalIpCheckDelay: 180
+
+      # Approximate time(in secs) that it takes for spin-gate service to be up
+      # and running so that sapor can establish connection with spin-gate
+      spinnakerSetupMaxDelay: 180 # Default 3 mins
+
   config:
     # Address and credentials for OES to connect with DB
     #
@@ -116,18 +138,22 @@ oes:
     #
     server:
       enabled: true
-      baseUrl: http://sapor-svc:8085
+      baseUrl: http://sapor:8085
 
     # To allow sapor reach to your spinnaker-gate
     #
     spinnaker:
-      oesGateURL: http://106.51.137.146:31174/  # URL used by oes-ui to reach oes-gate
-      oesUIcors: ^https?://(?:localhost|oes-ui-svc|opsmx.com)(?::[1-9]\d*)?/? # Value of the OES-UI URL regex
-      spinGateURL: http://106.51.137.146:31174/gate # URL used by sapor to connect to Spinnaker
-      spinExternalGateURL: http://106.51.137.146:31174/gate # URL used by OES-UI to access Spinnaker from GUI
+      oesGateURL: http://OES_GATE_IP:8084/  # URL used by oes-ui to reach oes-gate
+      oesUIcors: ^https?://(?:localhost|OES_UI_LOADBALANCER_IP|opsmx.com)(?::[1-9]\d*)?/? # Value of the OES-UI URL regex
+      spinGateURL: http://spin-gate:8084/ # URL used by sapor to connect to Spinnaker-Gate
+      spinExternalGateURL: http://SPIN_GATE_LOADBALANCER_IP_PORT/ # URL used by OES-UI to access Spinnaker-Gate
       spinuser: dummyuser # Value of the Spinnaker Username (Deck)
       spinpasswd: dummypwd # Value of the Spinnaker Password (Deck)
       adminLoginEnabled: false
+
+      ## Used by sapor to know if authentication is enabled in Spinnaker
+      ## Set it to true if authentication is enabled in Spinnaker
+      authnEnabled: false
 
     # Ldap server details that needs to be configured with OES
     #
@@ -137,14 +163,20 @@ oes:
       userDnPattern: cn={0} # Value of ldap.userdn
       basedn: dc=example,dc=org # Value of ldap.base.dn
       pattern: (&(cn=USERNAME)) # Value of ldap.user.filter.pattern
-      # Password for the admin user
-      adminPassword: dummypwd
-      omitClusterIP: true
 
     # Set the below field to true if default java cacert is to be overriden
     #
     caCerts:
       override: false
+
+##################################################
+# Openldap configuration
+##################################################
+openldap:
+  # Password for the admin user; by default it is set to admin
+  adminPassword: admin
+  omitClusterIP: true
+
 ###################################################
 opa:
   enabled: true

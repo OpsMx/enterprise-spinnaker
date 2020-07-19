@@ -32,6 +32,14 @@ autopilot:
     type: LoadBalancer
 
   config:
+    # Data science analysis algorithm
+    # In some cases perl could be used
+    pythonAlgorithm: spell
+
+    # Build Analysis
+    buildAnalysis:
+      enabled: false
+
     # Autopilot Backend URL
     dataSource:
       url: jdbc:postgresql://db-opsmx:5432/opsmx
@@ -54,7 +62,7 @@ autopilot:
       authEnabled: false
       url: ldap://oes-openldap:389
       baseDN: cn=Users,dc=local,dc=opsmx,dc=com
-      userFilterPattern: (&(cn=USERNAME))
+      userFilterPattern: (&(objectclass=person)(cn=USERNAME))
       userGroups: Administrators
 
     # SSL configuration

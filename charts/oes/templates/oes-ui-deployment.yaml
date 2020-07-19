@@ -21,6 +21,24 @@ spec:
         component: oes-ui
 {{ include "oes.standard-labels" . | indent 8 }}
     spec:
+      {{- if .Values.oes.autoConfiguration.enabled }}
+      initContainers:
+      - env:
+        - name: EXTERNAL_IP_CHECK_DELAY
+          value: "{{ .Values.oes.autoConfiguration.initContainer.externalIpCheckDelay}}"
+        - name: SPINNAKER_SETUP_DELAY
+          value: "{{ .Values.oes.autoConfiguration.initContainer.spinnakerSetupMaxDelay}}"
+        image: {{ .Values.oes.autoConfiguration.initContainer.image}}
+        imagePullPolicy: Always
+        name: oes-ui-init
+        command: ["/home/config_endpoint.sh"]
+        args: ["oes-ui"]
+        volumeMounts:
+        - mountPath: /config
+          name: config-temp
+        - mountPath: /var/www/html/assets/config
+          name: config-dir
+      {{- end }}
       containers:
       - image: {{ template "ui.image" . }}
         name: oes-ui
@@ -44,6 +62,16 @@ spec:
       imagePullSecrets:
       - name: {{ .Values.imagePullSecret}}
       volumes:
-        - name: config-dir
-          configMap:
-            name: oes-ui-config
+      {{- if .Values.oes.autoConfiguration.enabled }}
+      - configMap:
+          defaultMode: 420
+          name: oes-ui-config
+        name: config-temp
+      - emptyDir: {}
+        name: config-dir
+      {{- else }}
+      - configMap:
+          defaultMode: 420
+          name: oes-ui-config
+        name: config-dir
+      {{- end }}
