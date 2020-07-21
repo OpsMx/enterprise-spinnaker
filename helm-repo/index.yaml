@@ -1,0 +1,71 @@
+apiVersion: v1
+entries:
+  oes:
+  - apiVersion: v1
+    appVersion: 1.0.0
+    created: "2020-07-19T11:02:40.814303264+05:30"
+    dependencies:
+    - condition: installOpenLdap
+      name: openldap
+      repository: https://kubernetes-charts.storage.googleapis.com/
+      version: ~1.2.1
+    - condition: installSpinnaker
+      name: spinnaker
+      repository: https://kubernetes-charts.storage.googleapis.com/
+      version: ~1.20.2
+    - condition: enableCentralLogging
+      name: elasticsearch
+      repository: ""
+      version: 7.5.0
+    - condition: enableCentralLogging
+      name: kibana
+      repository: ""
+      version: 7.5.0
+    - condition: enableCentralLogging
+      name: fluent-bit
+      repository: https://kubernetes-charts.storage.googleapis.com/
+      version: ^1.9.0
+    description: OES is a non-forked version of OSS spinnaker
+    digest: 128facc5bdd3033b0dfc16e1289cb34418e65679a06a4d821d0060b0db026c0f
+    home: https://www.opsmx.com/
+    icon: https://www.opsmx.com/images/logo.png
+    keywords:
+    - OpsMx
+    - OES
+    maintainers:
+    - email: abhinay.byrisetty@opsmx.io
+      name: abhinaybyrisetty
+    - email: vamsi.krishna@opsmx.io
+      name: vkvamsi
+    - email: nirmalya@opsmx.io
+      name: nirmalyasen
+    - email: srinivas@opsmx.io
+      name: ksrinimba
+    name: oes
+    urls:
+    - https://opsmx.github.io/enterprise-spinnaker/helm-repo/oes-2.0.0.tgz
+    version: 2.0.0
+  opsmx-autopilot:
+  - apiVersion: v1
+    appVersion: 2.9.10
+    created: "2020-07-19T11:02:40.817262262+05:30"
+    description: Autopilot is a release verification platform
+    digest: 73b05b378187d481ff6b7d09fb1a1d6fbab089cef600453b77a647e48a526fa6
+    home: https://www.opsmx.com/
+    icon: https://www.opsmx.com/images/logo.png
+    keywords:
+    - OpsMx
+    - OES
+    - Autopilot
+    maintainers:
+    - email: abhinay.byrisetty@opsmx.io
+      name: abhinaybyrisetty
+    - email: nirmalya@opsmx.io
+      name: nirmalyasen
+    - email: srinivas@opsmx.io
+      name: ksrinimba
+    name: opsmx-autopilot
+    urls:
+    - https://opsmx.github.io/enterprise-spinnaker/helm-repo/opsmx-autopilot-2.0.0.tgz
+    version: 2.0.0
+generated: "2020-07-19T11:02:40.764175783+05:30"
