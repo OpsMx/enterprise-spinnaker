@@ -81,7 +81,7 @@ case "$COMPONENT" in
     if [ -z "$ENDPOINT_IP" ]; then
       ## Fetch the nodePort & nodeport and replace in app-config.js
       ENDPOINT_IP=$(kubectl get ep kubernetes -n default -o jsonpath="{.subsets[].addresses[].ip}")
-      PORT=$(kubectl get svc oes-gate-svc -o jsonpath="{.spec.ports[].nodePort}")
+      PORT=$(kubectl get svc oes-gate -o jsonpath="{.spec.ports[].nodePort}")
       sed -i "s/OES_GATE_IP/$ENDPOINT_IP/g" /var/www/html/assets/config/app-config.json
       sed -i "s/8084/$PORT/g" /var/www/html/assets/config/app-config.json
     else
