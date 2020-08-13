@@ -278,23 +278,23 @@ spinnaker:
           useExecHealthCheck: false
       ## artifactId to override Spinnaker components images with OpsMx custom images
       deck.yml:
-        artifactId: docker.io/devopsmx/ubi8-oes-deck:3.1.2-mj
+        artifactId: docker.io/opsmxdev/ubi8-oes-deck:3.2.0
       clouddriver.yml:
-        artifactId: docker.io/devopsmx/ubi8-oes-clouddriver:6.9.2
+        artifactId: docker.io/opsmxdev/ubi8-oes-clouddriver:6.9.2
       echo.yml:
-        artifactId: docker.io/devopsmx/ubi8-oes-echo:version-2.12.1
+        artifactId: docker.io/opsmxdev/ubi8-oes-echo:version-2.12.1
       fial.yml:
-        artifactId: docker.io/devopsmx/ubi8-oes-fiat:1.11.0
+        artifactId: docker.io/opsmxdev/ubi8-oes-fiat:1.11.0
       front50.yml:
-        artifactId: docker.io/devopsmx/ubi8-oes-front50:spin-1.19.12-opa
+        artifactId: docker.io/opsmxdev/ubi8-oes-front50:0.24.0
       igor.yml:
-        artifactId: docker.io/devopsmx/ubi8-oes-igor:1.10.0
+        artifactId: docker.io/opsmxdev/ubi8-oes-igor:1.10.0
       kayenta.yml:
-        artifactId: docker.io/devopsmx/ubi8-oes-kayenta:0.15.1
+        artifactId: docker.io/opsmxdev/ubi8-oes-kayenta:0.15.1
       orca.yml:
-        artifactId: docker.io/devopsmx/ubi8-oes-orca:2.14.2-mj
+        artifactId: docker.io/opsmxdev/ubi8-oes-orca:2.14.2-mj2
       rosco.yml:
-        artifactId: docker.io/devopsmx/ubi8-oes-rosco:0.19.0
+        artifactId: docker.io/opsmxdev/ubi8-oes-rosco:0.19.0
     ## Uncomment if you want to add extra commands to the init script
     ## run by the init container before halyard is started.
     ## The content will be passed through `tpl`, so value interpolation is supported.
