@@ -203,8 +203,8 @@ Helm v3.x
 
   Example output would be:
 
-  NAME 	     TYPE             CLUSTER-IP   EXTERNAL-IP     PORT(S)          AGE
-  oes        LoadBalancer     10.0.33.110  52.149.54.222   80:30860/TCP     20h
+    NAME 	     TYPE             CLUSTER-IP   EXTERNAL-IP     PORT(S)          AGE
+    oes        LoadBalancer     10.0.33.110  52.149.54.222   80:30860/TCP     20h
 
   Using the EXTERNAL-IP address, go to http://EXTERNAL-IP:80/
 
@@ -231,6 +231,7 @@ Helm v3.x
   In Kibana, go to Discover -> Open -> Spinnaker Logs to see logs from Spinnaker pods.
 
 ## 2. Autopilot Setup Instructions
+
 ### Prerequisites
 
 - Kubernetes cluster 1.13 or later with at least 6 cores and 20 GB memory
