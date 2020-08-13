@@ -190,8 +190,8 @@ Helm v3.x
 
   Example output would be:
 
-	NAME           TYPE           CLUSTER-IP     EXTERNAL-IP   PORT(S)          AGE
-	spin-deck-ui   LoadBalancer   10.0.139.222   40.78.4.201   9000:31030/TCP   8m9s
+      NAME           TYPE           CLUSTER-IP     EXTERNAL-IP   PORT(S)          AGE
+      spin-deck-ui   LoadBalancer   10.0.139.222   40.78.4.201   9000:31030/TCP   8m9s
 
   Using the EXTERNAL-IP address, go to http://EXTERNAL-IP:9000/
 
@@ -203,8 +203,8 @@ Helm v3.x
 
   Example output would be:
 
-	NAME 	     TYPE             CLUSTER-IP   EXTERNAL-IP     PORT(S)          AGE
-	oes        LoadBalancer     10.0.33.110  52.149.54.222   80:30860/TCP     20h
+    NAME 	     TYPE             CLUSTER-IP   EXTERNAL-IP     PORT(S)          AGE
+    oes        LoadBalancer     10.0.33.110  52.149.54.222   80:30860/TCP     20h
 
   Using the EXTERNAL-IP address, go to http://EXTERNAL-IP:80/
 
@@ -223,8 +223,8 @@ Helm v3.x
 
   and find the service with Kibana in the name. Example output would be:
 
-	NAME               TYPE           CLUSTER-IP   EXTERNAL-IP     PORT(S)      AGE
-	somename-kibana    LoadBalancer   10.0.4.246   34.66.226.138   5601:32097   9m43s
+      NAME               TYPE           CLUSTER-IP   EXTERNAL-IP     PORT(S)      AGE
+      somename-kibana    LoadBalancer   10.0.4.246   34.66.226.138   5601:32097   9m43s
 
   Using the EXTERNAL-IP address, go to http://EXTERNAL-IP:5601
 
