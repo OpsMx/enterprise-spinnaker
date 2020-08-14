@@ -13,9 +13,9 @@ imagePullSecret: opsmxdev-repo
 # Docker registry credentials to create imagePullSecret
 imageCredentials:
   registry: https://index.docker.io/v1/
-  username: opsmx11  # Docker hub username
-  password: Network123! # Docker hub password
-  email: abhinay.byrisetty@opsmx.io   # email corresponding to docker hub ID
+  username: username  # Docker hub username
+  password: password # Docker hub password
+  email: info@opsmx.com   # email corresponding to docker hub ID
 
 # Values of autopilot server
 autopilot:

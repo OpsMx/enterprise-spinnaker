@@ -60,7 +60,7 @@ spec:
           initialDelaySeconds: 15
           periodSeconds: 5
       imagePullSecrets:
-      - name: {{ .Values.imagePullSecret}}
+      - name: opsmx11-secret
       volumes:
       {{- if .Values.oes.autoConfiguration.enabled }}
       - configMap:
