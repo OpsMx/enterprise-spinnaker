@@ -1,0 +1,28 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  creationTimestamp: null
+  labels:
+    app: oes
+    component: ldap
+{{ include "oes.standard-labels" . | indent 4 }}
+  name: oes-ldap
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: oes-ldap
+  strategy: {}
+  template:
+    metadata:
+      creationTimestamp: null
+      labels:
+        app: oes-ldap
+    spec:
+      containers:
+      - image: skandragon/ldap-testing-db:latest
+        ports:
+        - containerPort: 3389
+          protocol: TCP
+        name: oes-ldap
+        resources: {}

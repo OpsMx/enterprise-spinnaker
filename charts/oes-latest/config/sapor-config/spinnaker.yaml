@@ -1,0 +1,9 @@
+spinnaker:
+  base-url: {{ .Values.oes.config.spinnaker.spinGateURL }}
+  external-base-url: {{ .Values.oes.config.spinnaker.spinExternalGateURL }}
+  username: {{ .Values.oes.config.spinnaker.spinuser }}
+  password: {{ .Values.oes.config.spinnaker.spinpasswd }}
+  adminLoginEnabled: {{ .Values.oes.config.spinnaker.adminLoginEnabled }}
+  adminUsername:
+  adminPassword:
+  authnEnabled: {{ .Values.oes.config.spinnaker.authnEnabled }}

@@ -1,0 +1,75 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: oes
+    component: oes-gate
+{{ include "oes.standard-labels" . | indent 4 }}
+  name: oes-gate
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: oes
+      component: oes-gate
+  template:
+    metadata:
+      annotations:
+        configmap/checksum: {{ (.Files.Glob "config/*").AsConfig | sha256sum }}
+      labels:
+        app: oes
+        component: oes-gate
+{{ include "oes.standard-labels" . | indent 8 }}
+    spec:
+      {{- if .Values.oes.autoConfiguration.enabled }}
+      initContainers:
+      - env:
+        - name: EXTERNAL_IP_CHECK_DELAY
+          value: "{{ .Values.oes.autoConfiguration.initContainer.externalIpCheckDelay}}"
+        - name: SPINNAKER_SETUP_DELAY
+          value: "{{ .Values.oes.autoConfiguration.initContainer.spinnakerSetupMaxDelay}}"
+        image: {{ .Values.oes.autoConfiguration.initContainer.image}}
+        imagePullPolicy: Always
+        name: oes-gate-init
+        command: ["/home/config_endpoint.sh"]
+        args: ["oes-gate"]
+        volumeMounts:
+        - mountPath: /config
+          name: config-temp
+        - mountPath: /opt/spinnaker/config
+          name: gate-volume
+      {{- end }}
+      containers:
+      - image: {{ template "gate.image" . }}
+        name: oes-gate
+        ports:
+        - containerPort: 8084
+          protocol: TCP
+        volumeMounts:
+        - name: gate-volume
+          mountPath: /opt/spinnaker/config
+        readinessProbe:
+          tcpSocket:
+            port: 8084
+          initialDelaySeconds: 120
+          periodSeconds: 30
+        livenessProbe:
+          httpGet:
+            path: /health
+            port: 8084
+          initialDelaySeconds: 120
+          periodSeconds: 60
+      imagePullSecrets:
+      - name: {{ .Values.imagePullSecret}}
+      volumes:
+      {{- if .Values.oes.autoConfiguration.enabled }}
+      - configMap:
+          name: oes-gate-config
+        name: config-temp
+      - emptyDir: {}
+        name: gate-volume
+      {{- else }}
+      - name: gate-volume
+        configMap:
+          name: oes-gate-config
+      {{- end }}

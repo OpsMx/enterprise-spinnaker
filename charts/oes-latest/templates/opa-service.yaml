@@ -1,0 +1,17 @@
+{{- if .Values.opa.enabled }}
+apiVersion: v1
+kind: Service
+metadata:
+  name: opa
+  labels:
+{{ include "oes.standard-labels" . | indent 4 }}
+spec:
+  selector:
+    app: oes
+    component: opa
+  ports:
+  - protocol: TCP
+    port: 8181
+    targetPort: 8181
+  type: ClusterIP
+{{- end }}

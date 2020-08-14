@@ -1,0 +1,68 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: autopilot
+  labels:
+    app: autopilot
+{{ include "autopilot.standard-labels" . | indent 4 }}
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: autopilot
+  template:
+    metadata:
+      labels:
+        app: autopilot
+{{ include "autopilot.standard-labels" . | indent 8 }}
+      annotations:
+        configmap/checksum: {{ (.Files.Glob "config/*").AsConfig | sha256sum }}
+    spec:
+      volumes:
+        - name: backend-config-volume
+          configMap:
+            name: autopilotbackendconfig
+        - name: frontend-config-volume
+          configMap:
+            name: autopilotfrontendconfig
+        - name: server-config-volume
+          configMap:
+            name: autopilotserverconfig
+      imagePullSecrets:
+        - name: opsmx11-secret
+      containers:
+        - image: {{ template "autopilot.image" . }}
+          imagePullPolicy: {{ .Values.autopilot.image.pullPolicy }}
+          name: autopilot
+          ports:
+            - containerPort: 8090
+              name: backend
+              protocol: TCP
+            - containerPort: 9090
+              name: metricfetcher
+              protocol: TCP
+            - containerPort: 8161
+              name: frontend
+              protocol: TCP
+          volumeMounts:
+          - name: backend-config-volume
+            mountPath: /opt/opsmx/config.properties
+            subPath: config.properties
+          - name: backend-config-volume
+            mountPath: /opt/opsmx/hibernate.cfg.xml
+            subPath: hibernate.cfg.xml
+          - name: frontend-config-volume
+            mountPath: /opt/opsmx/app.config.js
+            subPath: app.config.js
+          - name: server-config-volume
+            mountPath: /opt/apache-tomcat/conf/server.xml
+            subPath: server.xml
+          readinessProbe:
+            tcpSocket:
+              port: 8090
+            initialDelaySeconds: 30
+            periodSeconds: 10
+          command: ["/bin/bash"]
+          args:
+          - -c
+          - "/usr/local/bin/run.sh"

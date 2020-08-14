@@ -1,0 +1,42 @@
+spectator:
+  applicationName: ${spring.application.name}
+  webEndpoint:
+    enabled: true
+server:
+  ssl:
+    enabled: false
+  port: '8084'
+  address: 0.0.0.0
+security:
+  user: {}
+services:
+  opsmx:
+    baseUrl: {{ .Values.oes.config.server.baseUrl }}
+    enabled: {{ .Values.oes.config.server.enabled }}
+  autopilot:
+    baseUrl: http://autopilot:8090
+    enabled: true
+  platform:
+    baseUrl: http://oes-platform:8095
+    userGroupApiPath: /platformservice/v1/users/{username}/userGroups/importAndCache
+    enabled: true
+security:
+  basic:
+    enabled: true
+  user: {}
+cors:
+  allowed-origins-pattern: {{ .Values.oes.config.spinnaker.oesUIcors }}
+ldap:
+  enabled: true
+  url: ldap://oes-ldap:9595/DC=example,DC=com
+  userDnPattern:  uid={0},ou=Users
+authn:
+  mode: token
+google: {}
+logging:
+  level:
+    com.netflix.spinnaker.gate.security: DEBUG
+    org.springframework.security: DEBUG
+    org.springframework.web: DEBUG
+redis:
+  connection: redis://:password@{{ .Release.Name }}-redis-master:6379

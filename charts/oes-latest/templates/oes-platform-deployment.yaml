@@ -1,0 +1,34 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  creationTimestamp: null
+  labels:
+    app: oes-platform
+  name: oes-platform
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: oes-platform
+  strategy: {}
+  template:
+    metadata:
+      creationTimestamp: null
+      labels:
+        app: oes-platform
+    spec:
+      containers:
+      - image: docker.flame.org/opsmx/platform-service:master-202008121503
+        name: platform-service
+        ports:
+        - containerPort: 8095
+          protocol: TCP
+        volumeMounts:
+        - mountPath: /opt/opsmx/application.properties
+          name: platform-config
+      imagePullSecrets:
+      - name: platform-secret
+      volumes:
+      - name: platform-config
+        configMap:
+          name: platformconfig

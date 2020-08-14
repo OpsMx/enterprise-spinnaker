@@ -1,0 +1,84 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: oes
+    component: sapor
+{{ include "oes.standard-labels" . | indent 4 }}
+  name: sapor
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: oes
+      component: sapor
+  template:
+    metadata:
+      annotations:
+        configmap/checksum: {{ (.Files.Glob "config/*").AsConfig | sha256sum }}
+      labels:
+        app: oes
+        component: sapor
+{{ include "oes.standard-labels" . | indent 8 }}
+    spec:
+      {{- if .Values.oes.autoConfiguration.enabled }}
+      initContainers:
+      - env:
+        - name: EXTERNAL_IP_CHECK_DELAY
+          value: "{{ .Values.oes.autoConfiguration.initContainer.externalIpCheckDelay}}"
+        - name: SPINNAKER_SETUP_DELAY
+          value: "{{ .Values.oes.autoConfiguration.initContainer.spinnakerSetupMaxDelay}}"
+        image: {{ .Values.oes.autoConfiguration.initContainer.image}}
+        imagePullPolicy: Always
+        name: sapor-init
+        command: ["/home/config_endpoint.sh"]
+        args: ["sapor"]
+        volumeMounts:
+        - mountPath: /config
+          name: config-temp
+        - mountPath: /opt/opsmx/
+          name: api-volume
+      {{- end }}
+      containers:
+      - image: {{ template "sapor.image" . }}
+        name: sapor
+        ports:
+        - containerPort: 8085
+          protocol: TCP
+        volumeMounts:
+        - name: api-volume
+          mountPath: /opt/opsmx/
+{{- if .Values.oes.config.caCerts.override }}
+        - name: certs-volume
+          mountPath: /etc/pki/ca-trust/extracted/java
+{{- end }}
+        readinessProbe:
+          tcpSocket:
+            port: 8085
+          initialDelaySeconds: 120
+          periodSeconds: 30
+        livenessProbe:
+          httpGet:
+            path: /actuator/health
+            port: 8085
+          initialDelaySeconds: 180
+          periodSeconds: 60
+      imagePullSecrets:
+      - name: regcred
+      volumes:
+      {{- if .Values.oes.autoConfiguration.enabled }}
+      - configMap:
+          name: sapor-config
+        name: config-temp
+      - emptyDir: {}
+        name: api-volume
+      {{- else }}
+      - name: api-volume
+        configMap:
+          name: sapor-config
+      {{- end }}
+{{- if .Values.oes.config.caCerts.override }}
+      - name: certs-volume
+        configMap:
+          name: sapor-certs
+{{- end }}

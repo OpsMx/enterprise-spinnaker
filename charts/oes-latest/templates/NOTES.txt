@@ -1,0 +1,24 @@
+
+Thank you for installing {{ .Chart.Name }}.
+
+Your release is named {{ .Release.Name }}.
+
+To learn more about the release, try:
+
+  $ helm status {{ .Release.Name }} [--namespace <namespace>]
+  $ helm get all {{ .Release.Name }} [--namespace <namespace>]
+
+### Connecting to OpsMx Enterprise Spinnaker Extensions(OES)
+
+  Once the service is up and running, find the service ip address
+
+  	kubectl get svc oes-ui [--namespace mynamespace]
+
+  Example output would be:
+
+  NAME 	     TYPE             CLUSTER-IP   EXTERNAL-IP     PORT(S)          AGE
+  oes-ui     LoadBalancer     10.0.33.110  52.149.54.222   80:30860/TCP     20h
+
+  Using the EXTERNAL-IP address, go to http://EXTERNAL-IP:80/
+
+  You can login with dummysuer/dummypwd

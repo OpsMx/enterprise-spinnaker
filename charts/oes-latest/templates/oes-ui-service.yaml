@@ -1,0 +1,17 @@
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    app: oes
+    component: oes-ui
+{{ include "oes.standard-labels" . | indent 4 }}
+  name: oes-ui
+spec:
+  type: {{ .Values.k8sServiceType }}
+  ports:
+  - name: "oes-ui-service"
+    port: 80
+    targetPort: 80
+  selector:
+    app: oes
+    component: oes-ui

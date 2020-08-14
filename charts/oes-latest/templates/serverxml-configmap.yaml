@@ -1,0 +1,10 @@
+apiVersion: v1
+data:
+  server.xml: >
+    {{- tpl (.Files.Get "config/server.xml") . | nindent 4 }}
+
+kind: ConfigMap
+metadata:
+  name: autopilotserverconfig
+  labels:
+{{ include "autopilot.standard-labels" . | indent 4 }}

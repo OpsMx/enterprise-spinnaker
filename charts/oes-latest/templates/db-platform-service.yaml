@@ -1,0 +1,16 @@
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    app: db-platform
+{{ include "autopilot.standard-labels" . | indent 4 }}
+  name: db-platform
+spec:
+  type: ClusterIP
+  ports:
+  - name: db-platform
+    protocol: TCP
+    port: 5432
+    targetPort: 5432
+  selector:
+    app: db-platform

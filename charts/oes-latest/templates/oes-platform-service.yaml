@@ -1,0 +1,16 @@
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    app: oes-platform
+{{ include "oes.standard-labels" . | indent 4 }}
+  name: oes-platform
+spec:
+  type: ClusterIP
+  ports:
+  - name: oes-platform
+    protocol: TCP
+    port: 8095
+    targetPort: 8095
+  selector:
+    app: oes-platform

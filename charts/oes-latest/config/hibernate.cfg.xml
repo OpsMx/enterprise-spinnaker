@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- <!DOCTYPE hibernate-configuration PUBLIC "-//Hibernate/Hibernate Configuration
+    DTD 3.0//EN" "hibernate-configuration-3.0.dtd"> -->
+<!DOCTYPE hibernate-configuration SYSTEM "classpath:///hibernate-configuration-3.0.dtd">
+<hibernate-configuration>
+        <session-factory>
+               <!-- Settings for a database -->
+               <property name="connection.driver_class">org.postgresql.Driver</property>
+               <!--for kubernet service-->
+               <property name="connection.url">{{ .Values.autopilot.config.dataSource.url }}</property>
+               <property name="connection.username">{{ .Values.autopilot.config.dataSource.username }}</property>
+               <property name="connection.password">{{ .Values.autopilot.config.dataSource.password }}</property>
+
+               <property name="dialect">org.hibernate.dialect.PostgreSQLDialect</property>
+               <property name="hibernate.query.factory_class">org.hibernate.hql.ast.ASTQueryTranslatorFactory</property>
+               <property name="show_sql">false</property>
+               <property name="hbm2ddl.auto">update</property>
+               <!-- <property name="hibernate.cache.use_second_level_cache">true</property>
+               <property name="hibernate.cache.use_query_cache">true</property>
+                --><!-- <property name="hibernate.cache.provider_class">org.hibernate.cache.EhCacheProvider</property>
+               <property name="hibernate.cache.region.factory_class">org.hibernate.cache.ehcache.EhCacheRegionFactory</property>
+               <property name="net.sf.ehcache.configurationResourceName">/hibernate-cache-config.xml</property>
+                --><!-- <property name="hibernate.hbm2ddl.auto">validate</property> -->
+
+               <!-- Disable second-level cache. -->
+               <!-- <property name="cache.provider_class">org.hibernate.cache.NoCacheProvider</property> -->
+
+               <property name="hibernate.temp.use_jdbc_metadata_defaults">true</property>
+
+               <!-- Bind the getCurrentSession() method to the thread. -->
+               <property name="current_session_context_class">thread</property>
+
+               <!-- hibernate c3p0 connection pooling configuration -->
+               <property name="hibernate.c3p0.acquire_increment">1</property>
+               <property name="hibernate.c3p0.idle_test_period">60</property> <!-- seconds -->
+               <property name="hibernate.c3p0.min_size">1</property>
+               <property name="hibernate.c3p0.max_size">10</property>
+               <property name="hibernate.c3p0.max_statements">0</property>
+               <property name="hibernate.c3p0.timeout">0</property> <!-- seconds -->
+               <property name="hibernate.c3p0.acquireRetryAttempts">10</property>
+               <property name="hibernate.c3p0.acquireRetryDelay">15000</property>
+               <property name="hibernate.c3p0.testConnectionOnCheckout">true</property>
+               <property name="hibernate.c3p0.preferredTestQuery">SELECT 1</property>
+
+               <mapping resource="model.hbm.xml" />
+        </session-factory>
+</hibernate-configuration>

@@ -1,0 +1,21 @@
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    app: autopilot
+{{ include "autopilot.standard-labels" . | indent 4 }}
+  name: autopilot
+spec:
+  type: {{ .Values.autopilot.service.type }}
+  ports:
+  - name: "cas-service"
+    port: 8090
+    targetPort: 8090
+  - name: "http"
+    port: 8161
+    targetPort: 8161
+  - name: "monitoring-service"
+    port: 9090
+    targetPort: 9090
+  selector:
+    app: autopilot

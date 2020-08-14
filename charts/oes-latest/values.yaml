@@ -1,0 +1,569 @@
+#####################################################
+# OpsMX Autopilot configuration
+#####################################################
+# Default values for autopilot chart.
+# This is a YAML-formatted file.
+# Declare variables to be passed into your templates.
+
+# Name of the secret for pulling image from docker registry.
+# Change it only if you want to create a secret with
+# different name.
+imagePullSecret: opsmxdev-repo
+
+# Docker registry credentials to create imagePullSecret
+imageCredentials:
+  registry: https://index.docker.io/v1/
+  username: opsmx11  # Docker hub username
+  password: Network123! # Docker hub password
+  email: abhinay.byrisetty@opsmx.io   # email corresponding to docker hub ID
+
+# Values of autopilot server
+autopilot:
+
+  # Image specific details
+  image:
+    registry: opsmx11
+    repository: autopilot
+    tag: master-202008141200
+    pullPolicy: IfNotPresent
+
+  # Type of service overwhich autopilot shall be exposed
+  service:
+    type: ClusterIP
+
+  config:
+    # Data science analysis algorithm
+    # In some cases perl could be used
+    pythonAlgorithm: spell
+
+    # Build Analysis
+    buildAnalysis:
+      enabled: false
+
+    # Autopilot Backend URL
+    dataSource:
+      url: jdbc:postgresql://db-autopilot:5432/opsmx
+      username: postgres
+      password: networks123
+
+    # Spinnaker configuration to trigger pipelines for canary
+    spinnaker:
+      loginAdminEnabled: true
+      spinGateUrl: http://demo1205.opsmx.com/gate
+      spinUsername: admin
+      spinPassword: OpsMx@123
+
+    # Autopilot server URL
+    appConfigJS:
+      autopilotServerUrl: autopilot:8090
+
+    # LDAP configuration
+    ldap:
+      authEnabled: false
+      url: ldap://oes-ldap:3389
+      baseDN: DC=example,DC=com
+      userFilterPattern: (&(objectclass=person)(cn=USERNAME))
+      userGroups: Administrators
+
+    # SSL configuration
+    # Uncomment below lines if SSL configuration is required
+    ssl:
+      enabled: false  # Set it to true if SSL is to be enabled
+      keyStore: keystore.p12
+      keyStorePassword: dummypwd # Provide keystore password
+      keyStoreType: PKCS12
+      keyAlias: tomcat
+
+# Values of OpsMx DB if a separate DB is to be setup for Autopilot.
+# Typically Autopilot uses OpsMx DB provided by OES if installed
+# on a system with OES running already.
+autopilotdb:
+  # Default group to which the default user of a pod belongs
+  securityContext:
+    fsGroup: 1000
+
+  # Strategy to rollout statefulset pods
+  podManagementPolicy: OrderedReady
+
+  # Details related to image of OpsMx DB
+  image:
+    registry: opsmxdev
+    repository: ubi8-autopilot-db
+    tag: v1.5
+    pullPolicy: IfNotPresent
+
+  # storageMountSize is the size with which a PVC is to be created
+  storageMountSize: 8Gi
+
+
+#####################################################
+# OpsMx Enterprise Spinnaker configuration
+#####################################################
+
+# Option to skip installation of spinnaker, if it already exists
+# or if OES is to be connected to existing spinnaker
+#
+installSpinnaker: false
+
+# Set to true to expose spinnaker and deck services as LoadBalancers
+#
+createIngress: false
+
+# Set it to false to skip the installation of Open LDAP server
+#
+installOpenLdap: false
+
+# OES UI service type
+#
+k8sServiceType: LoadBalancer
+
+# Install a seperate Redis for OES if installSpinnaker is set to false
+#
+installRedis: true
+
+# Details of redis-master image for OES
+#
+redis:
+  image:
+    registry: docker.io
+    repository: bitnami/redis
+    ## Bitnami Redis image tag
+    ## ref: https://github.com/bitnami/bitnami-docker-redis#supported-tags-and-respective-dockerfile-links
+    ##
+    tag: 4.0.11-debian-9
+    pullPolicy: IfNotPresent
+
+#######################################################
+#
+oesdb:
+  # Change this to false if OES is installed after opsmx-autopilot
+  # as DB installed by opsmx-autopilot can be re-used by OES
+  #
+  enabled: true
+
+  # Strategy to rollout statefulset pods
+  #
+  podManagementPolicy: OrderedReady
+
+  # Default group to which the default user of a pod belongs
+  #
+  securityContext:
+    fsGroup: 1000
+
+
+  # Details related to image of OpsMx DB
+  #
+  image:
+    registry: opsmxdev
+    repository: ubi8-autopilot-db
+    tag: v1.5
+    pullPolicy: IfNotPresent
+
+  # storageMountSize is the size with which a PVC is to be created
+  #
+  storageMountSize: 8Gi
+#######################################################
+#
+oes:
+  # Details related to image of OES components
+  #
+  image:
+    gate:
+      registry: opsmx11
+      repository: oes-gate
+      tag: v0.202008122029
+      pullPolicy: IfNotPresent
+    sapor:
+      registry: opsmx11
+      repository: sapor
+      tag: v0.202007101007
+      pullPolicy: IfNotPresent
+    ui:
+      registry: opsmx11
+      repository: oes-ui
+      tag: v0.202008071909
+      pullPolicy: IfNotPresent
+
+  ## This option enables OES to be configured automatically
+  ## Load Balancer IPs will be automatically replaced in the
+  ## configuration files of oes-gate, oes-ui & sapor
+  autoConfiguration:
+    # Set it to false if OES is being installed on restricted evnironment;
+    # Autoconfiguration assumes Load Balancer is available for oes-gate, oes-ui
+    # and spind-deck and configures accordingly
+    enabled: true
+
+    initContainer:
+      # Image for init container to automatically configure oes components
+      # during startup
+      image: opsmx11/oes-init:v2
+
+      # Max time(in secs) that an init container of oes-ui should wait
+      # to fetch External Load Balancer IP of oes-gate and vice versa
+      externalIpCheckDelay: 120
+
+      # Approximate time(in secs) that it takes for spin-gate service to be up
+      # and running so that sapor can establish connection with spin-gate
+      spinnakerSetupMaxDelay: 10 # Default 3 mins
+
+  config:
+    # Address and credentials for OES to connect with DB
+    #
+    db:
+      # DB URL, typically it is reachable over db-opsmx service
+      #
+      dbUrl: jdbc:postgresql://db-sapor:5432/oesdb
+      # Username and password to connect with DB
+      #
+      username: postgres
+      password: networks123
+
+    # To allow oes-gate reach sapor
+    #
+    server:
+      enabled: true
+      baseUrl: http://sapor:8085
+
+    # To allow sapor reach to your spinnaker-gate
+    #
+    spinnaker:
+      oesGateURL: http://OES_GATE_IP:8084/  # URL used by oes-ui to reach oes-gate
+      oesUIcors: ^https?://(?:localhost|OES_UI_LOADBALANCER_IP|opsmx.com)(?::[1-9]\d*)?/? # Value of the OES-UI URL regex
+      spinGateURL: http://demo1205.opsmx.com/gate # URL used by sapor to connect to Spinnaker-Gate
+      spinExternalGateURL: http://demo1205.opsmx.com/gate # URL used by OES-UI to access Spinnaker-Gate
+      spinuser: admin # Value of the Spinnaker Username (Deck)
+      spinpasswd: OpsMx@123 # Value of the Spinnaker Password (Deck)
+      adminLoginEnabled: false
+
+      ## Used by sapor to know if authentication is enabled in Spinnaker
+      ## Set it to true if authentication is enabled in Spinnaker
+      authnEnabled: true
+
+    # Ldap server details that needs to be configured with OES
+    #
+    ldap:
+      enabled: true
+      url: ldap://oes-ldap:3389  # Value of ldap.url
+      userDnPattern: uid={0},ou=Users # Value of ldap.userdn
+      basedn: DC=example,DC=com # Value of ldap.base.dn
+      pattern: (&(cn=USERNAME)) # Value of ldap.user.filter.pattern
+
+    # Set the below field to true if default java cacert is to be overriden
+    #
+    caCerts:
+      override: true
+
+##################################################
+# Openldap configuration
+##################################################
+openldap:
+  # Password for the admin user; by default it is set to admin
+  adminPassword: admin
+  omitClusterIP: true
+
+###################################################
+opa:
+  enabled: true
+  image:
+    repository: openpolicyagent/opa
+    tag: latest
+    pullPolicy: IfNotPresent
+###################################################
+
+
+
+#####################################################
+# Centralized Logging Configuration
+#####################################################
+enableCentralLogging: false
+elasticsearch:
+  replicas: 1
+  minimumMasterNodes: 1
+  resources:
+    requests:
+      cpu: "100m"
+      memory: "1Gi"
+
+kibana:
+  service:
+    type: LoadBalancer
+  resources:
+    requests:
+      cpu: "100m"
+      memory: "250Mi"
+  lifecycle:
+    postStart:
+      exec:
+        command:
+          - bash
+          - -c
+          - >
+            until curl localhost:5601; do echo "Waiting for Kibana to be available..."; sleep 5; done;
+            until curl elasticsearch-master:9200; do echo "Waiting for Elasticsearch to be available..."; sleep 5; done;
+            sleep 60;
+            curl https://raw.githubusercontent.com/OpsMx/enterprise-spinnaker/master/scripts/kibana/kibana_objects.ndjson > /tmp/kibana_objects.ndjson;
+            curl -X POST "localhost:5601/api/saved_objects/_import?overwrite=true" -H "kbn-xsrf: true" --form file=@/tmp/kibana_objects.ndjson 2>&1 1> /tmp/postStart.out;
+
+#####################################################
+# Spinnaker instance configuration
+#####################################################
+spinnaker:
+  halyard:
+    spinnakerVersion: 1.20.5
+    image:
+      repository: docker.io/devopsmx/ubi8-oes-operator-halyard
+      tag: 1.20.5
+    # Set to false to disable persistence data volume for halyard
+    persistence:
+      enabled: true
+    # Provide a config map with Hal commands that will be run the core config (storage)
+    # The config map should contain a script in the config.sh key
+    additionalScripts:
+      enabled: false
+      configMapName: my-halyard-config
+      configMapKey: config.sh
+      # If you'd rather do an inline script, set create to true and put the content in the data dict like you would a configmap
+      # The content will be passed through `tpl`, so value interpolation is supported.
+      create: false
+      data: {}
+    additionalSecrets:
+      create: false
+      data: {}
+      ## Uncomment if you want to use a pre-created secret rather than feeding data in via helm.
+      # name:
+    additionalConfigMaps:
+      create: false
+      data: {}
+      ## Uncomment if you want to use a pre-created ConfigMap rather than feeding data in via helm.
+      # name:
+    additionalProfileConfigMaps:
+      data:
+        ## if you're running spinnaker behind a reverse proxy such as a GCE ingress
+        ## you may need the following profile settings for the gate profile.
+        ## see https://github.com/spinnaker/spinnaker/issues/1630
+        ## otherwise its harmless and will likely become default behavior in the future
+        ## According to the linked github issue.
+        gate-local.yml:
+          server:
+            tomcat:
+              protocolHeader: X-Forwarded-Proto
+              remoteIpHeader: X-Forwarded-For
+              internalProxies: .*
+              httpsServerPort: X-Forwarded-Port
+
+    ## Define custom settings for Spinnaker services. Read more for details:
+    ## https://www.spinnaker.io/reference/halyard/custom/#custom-service-settings
+    ## You can use it to add annotations for pods, override the image, etc.
+    additionalServiceSettings:
+      gate.yml:
+        artifactId: docker.io/devopsmx/ubi8-oes-gate:1.16.1
+        healthEndpoint: /health
+        kubernetes:
+          useExecHealthCheck: false
+      ## artifactId to override Spinnaker components images with OpsMx custom images
+      deck.yml:
+        artifactId: docker.io/opsmxdev/ubi8-oes-deck:3.2.0
+      clouddriver.yml:
+        artifactId: docker.io/opsmxdev/ubi8-oes-clouddriver:6.9.2
+      echo.yml:
+        artifactId: docker.io/opsmxdev/ubi8-oes-echo:version-2.12.1
+      fial.yml:
+        artifactId: docker.io/opsmxdev/ubi8-oes-fiat:1.11.0
+      front50.yml:
+        artifactId: docker.io/opsmxdev/ubi8-oes-front50:0.24.0
+      igor.yml:
+        artifactId: docker.io/opsmxdev/ubi8-oes-igor:1.10.0
+      kayenta.yml:
+        artifactId: docker.io/opsmxdev/ubi8-oes-kayenta:0.15.1
+      orca.yml:
+        artifactId: docker.io/opsmxdev/ubi8-oes-orca:2.14.2-mj2
+      rosco.yml:
+        artifactId: docker.io/opsmxdev/ubi8-oes-rosco:0.19.0
+    ## Uncomment if you want to add extra commands to the init script
+    ## run by the init container before halyard is started.
+    ## The content will be passed through `tpl`, so value interpolation is supported.
+    # additionalInitScript: |-
+
+    ## Uncomment if you want to add annotations on halyard and install-using-hal pods
+    # annotations:
+    #   iam.amazonaws.com/role: <role_arn>
+
+    ## Uncomment the following resources definitions to control the cpu and memory
+    # resources allocated for the halyard pod
+    resources: {}
+      # requests:
+      #   memory: "1Gi"
+      #   cpu: "100m"
+      # limits:
+      #   memory: "2Gi"
+      #   cpu: "200m"
+
+    ## Uncomment if you want to set environment variables on the Halyard pod.
+    # env:
+    #   - name: JAVA_OPTS
+    #     value: -Dhttp.proxyHost=proxy.example.com
+    customCerts:
+      ## Enable to override the default cacerts with your own one
+      enabled: false
+      secretName: custom-cacerts
+
+  # Define which registries and repositories you want available in your
+  # Spinnaker pipeline definitions
+  # For more info visit:
+  #   https://www.spinnaker.io/setup/providers/docker-registry/
+
+  # Configure your Docker registries here
+  dockerRegistries:
+  - name: dockerhub
+    address: index.docker.io
+    repositories:
+      - library/alpine
+      - library/ubuntu
+      - library/centos
+      - library/nginx
+  # - name: gcr
+  #   address: https://gcr.io
+  #   username: _json_key
+  #   password: '<INSERT YOUR SERVICE ACCOUNT JSON HERE>'
+  #   email: 1234@5678.com
+
+  # If you don't want to put your passwords into a values file
+  # you can use a pre-created secret instead of putting passwords
+  # (specify secret name in below `dockerRegistryAccountSecret`)
+  # per account above with data in the format:
+  # <name>: <password>
+
+  # dockerRegistryAccountSecret: myregistry-secrets
+
+  kubeConfig:
+    # Use this when you want to register arbitrary clusters with Spinnaker
+    # Upload your ~/kube/.config to a secret
+    enabled: false
+    secretName: my-kubeconfig
+    secretKey: config
+    # List of contexts from the kubeconfig to make available to Spinnaker
+    contexts:
+    - default
+    deploymentContext: default
+    omittedNameSpaces:
+    - kube-system
+    - kube-public
+    onlySpinnakerManaged:
+      enabled: true
+
+  # Change this if youd like to expose Spinnaker outside the cluster
+  ingress:
+    enabled: false
+    # host: spinnaker.example.org
+    # annotations:
+      # ingress.kubernetes.io/ssl-redirect: 'true'
+      # kubernetes.io/ingress.class: nginx
+      # kubernetes.io/tls-acme: "true"
+    # tls:
+    #  - secretName: -tls
+    #    hosts:
+    #      - domain.com
+
+  ingressGate:
+    enabled: false
+    # host: gate.spinnaker.example.org
+    # annotations:
+      # ingress.kubernetes.io/ssl-redirect: 'true'
+      # kubernetes.io/ingress.class: nginx
+      # kubernetes.io/tls-acme: "true"
+    # tls:
+    #  - secretName: -tls
+    #    hosts:
+    #      - domain.com
+
+  # spinnakerFeatureFlags is a list of Spinnaker feature flags to enable
+  # Ref: https://www.spinnaker.io/reference/halyard/commands/#hal-config-features-edit
+  # spinnakerFeatureFlags:
+  #   - artifacts
+  #   - pipeline-templates
+  spinnakerFeatureFlags:
+    - artifacts
+    - pipeline-templates
+    - managed-pipeline-templates-v2-ui
+
+  # Node labels for pod assignment
+  # Ref: https://kubernetes.io/docs/user-guide/node-selection/
+  # nodeSelector to provide to each of the Spinnaker components
+  nodeSelector: {}
+
+  # Redis password to use for the in-cluster redis service
+  # Enable redis to use in-cluster redis
+  redis:
+    enabled: true
+    # External Redis option will be enabled if in-cluster redis is disabled
+    external:
+      host: "<EXTERNAL-REDIS-HOST-NAME>"
+      port: 6379
+      # password: ""
+    password: password
+    nodeSelector: {}
+    cluster:
+      enabled: false
+  # Uncomment if you don't want to create a PVC for redis
+  #  master:
+  #    persistence:
+  #      enabled: false
+
+  # Minio access/secret keys for the in-cluster S3 usage
+  # Minio is not exposed publically
+  minio:
+    enabled: true
+    imageTag: RELEASE.2019-02-13T19-48-27Z
+    serviceType: ClusterIP
+    accessKey: spinnakeradmin
+    secretKey: spinnakeradmin
+    bucket: "spinnaker"
+    nodeSelector: {}
+  # Uncomment if you don't want to create a PVC for minio
+  #  persistence:
+  #    enabled: false
+
+  # Google Cloud Storage
+  gcs:
+    enabled: false
+    project: my-project-name
+    bucket: "<GCS-BUCKET-NAME>"
+    ## if jsonKey is set, will create a secret containing it
+    jsonKey: '<INSERT CLOUD STORAGE JSON HERE>'
+    ## override the name of the secret to use for jsonKey, if `jsonKey`
+    ## is empty, it will not create a secret assuming you are creating one
+    ## external to the chart. the key for that secret should be `key.json`.
+    secretName:
+
+  # AWS Simple Storage Service
+  s3:
+    enabled: false
+    bucket: "<S3-BUCKET-NAME>"
+    # rootFolder: "front50"
+    # region: "us-east-1"
+    # endpoint: ""
+    # accessKey: ""
+    # secretKey: ""
+
+  # Azure Storage Account
+  azs:
+    enabled: false
+  #   storageAccountName: ""
+  #   accessKey: ""
+  #   containerName: "spinnaker"
+
+  rbac:
+    # Specifies whether RBAC resources should be created
+    create: true
+
+  serviceAccount:
+    # Specifies whether a ServiceAccount should be created
+    create: true
+    # The name of the ServiceAccounts to use.
+    # If left blank it is auto-generated from the fullname of the release
+    halyardName:
+    spinnakerName:
+  securityContext:
+    # Specifies permissions to write for user/group
+    runAsUser: 1000
+    fsGroup: 1000
