@@ -65,4 +65,4 @@ spec:
           command: ["/bin/bash"]
           args:
           - -c
-          - "/usr/local/bin/run.sh"
+          - "/opsmx/run.sh"
