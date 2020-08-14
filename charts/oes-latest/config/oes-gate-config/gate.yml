@@ -18,7 +18,7 @@ cors:
 ldap:
   enabled: true
   url: ldap://oes-ldap:9595/DC=example,DC=com
-  userDnPattern:  uid={0},ou=Users
+  userDnPattern: uid={0},ou=Users
 authn:
   mode: token
 google: {}

@@ -1,0 +1,158 @@
+spring:
+  profiles: local
+  datasource:
+    driver-class-name: org.postgresql.Driver
+    hikari:
+      connection-timeout: 30000
+      idle-timeout: 600000
+      max-lifetime: 1000
+      maxLifetime: 1800000
+    test-on-borrow: true
+    testWhileIdle: true
+    url: jdbc:postgresql://db-platform:5432/platformdb
+    username: postgres
+    password: networks123
+  jpa:
+    hibernate:
+      ddl-auto: update
+    propertieshibernate:
+      dialect: org.hibernate.dialect.PostgreSQLDialect
+    show-sql: true
+name: Platform-Service
+userGroup:
+  cache: inMemory
+  source: file
+feign:
+  client:
+    name: oes
+    platformservice:
+      url: http://localhost:8080/
+opsmx:
+  platform:
+    installation:
+      mode: BOTH
+---
+
+spring:
+  profiles: dev
+  datasource:
+    driver-class-name: org.postgresql.Driver
+    hikari:
+      connection-timeout: 30000
+      idle-timeout: 600000
+      max-lifetime: 1000
+      maxLifetime: 1800000
+    test-on-borrow: true
+    testWhileIdle: true
+    url: jdbc:postgresql://db-platform:5432/platformdb
+    username: postgres
+    password: networks123
+  jpa:
+    hibernate:
+      ddl-auto: update
+    propertieshibernate:
+      dialect: org.hibernate.dialect.PostgreSQLDialect
+    show-sql: true
+name: Platform-Service
+userGroup:
+  cache: inMemory
+  source: file
+feign:
+  client:
+    name: oes
+    platformservice:
+      url: http://localhost:8080/
+opsmx:
+  platform:
+    installation:
+      mode: BOTH
+---
+
+spring:
+  profiles: test
+  datasource:
+    driver-class-name: org.postgresql.Driver
+    hikari:
+      connection-timeout: 30000
+      idle-timeout: 600000
+      max-lifetime: 1000
+      maxLifetime: 1800000
+    test-on-borrow: true
+    testWhileIdle: true
+    url: jdbc:postgresql://db-platform:5432/platformdb
+    username: postgres
+    password: networks123
+  jpa:
+    hibernate:
+      ddl-auto: update
+    propertieshibernate:
+      dialect: org.hibernate.dialect.PostgreSQLDialect
+    show-sql: true
+name: Platform-Service
+userGroup:
+  cache: inMemory
+  source: ldap
+feign:
+  client:
+    name: oes
+    platformservice:
+      url: http://localhost:8080/
+ldap:
+  adminDn: cn=admin,dc=example,dc=com
+  adminPassword: adminroot123
+  baseDn: dc=example,dc=com
+  url: ldap://oes-ldap:9595
+  userDisplayName: displayName
+  userFilterPattern: (&(uid=USERNAME))
+  userGroupIdentity: memberOf
+  userIdentity: cn
+  userPrepend: uid=USERNAME,ou=Users
+opsmx:
+  platform:
+    installation:
+      mode: BOTH
+---
+
+spring:
+  profiles: uat
+  datasource:
+    driver-class-name: org.postgresql.Driver
+    hikari:
+      connection-timeout: 30000
+      idle-timeout: 600000
+      max-lifetime: 1000
+      maxLifetime: 1800000
+    test-on-borrow: true
+    testWhileIdle: true
+    url: jdbc:postgresql://db-platform:5432/platformdb
+    username: postgres
+    password: networks123
+  jpa:
+    hibernate:
+      ddl-auto: update
+    propertieshibernate:
+      dialect: org.hibernate.dialect.PostgreSQLDialect
+    show-sql: true
+name: Platform-Service
+userGroup:
+  cache: ldap
+  source: file
+feign:
+  client:
+    name: oes
+    platformservice:
+      url: http://localhost:8080/
+ldap:
+  adminDn: cn=admin,dc=example,dc=com
+  adminPassword: adminroot123
+  baseDn: dc=example,dc=com
+  url: ldap://oes-ldap:9595
+  userDisplayName: displayName
+  userFilterPattern: (&(uid=USERNAME))
+  userGroupIdentity: memberOf
+  userIdentity: cn
+  userPrepend: uid=USERNAME,ou=Users
+opsmx:
+  platform:
+    installation:
+      mode: BOTH

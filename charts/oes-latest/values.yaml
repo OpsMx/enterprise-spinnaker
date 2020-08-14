@@ -181,7 +181,7 @@ oes:
     ui:
       registry: opsmx11
       repository: oes-ui
-      tag: v0.202008071909
+      tag: v0.202008142056
       pullPolicy: IfNotPresent
 
   ## This option enables OES to be configured automatically

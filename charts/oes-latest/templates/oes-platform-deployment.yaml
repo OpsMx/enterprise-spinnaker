@@ -18,14 +18,21 @@ spec:
         app: oes-platform
     spec:
       containers:
-      - image: docker.flame.org/opsmx/platform-service:master-202008121503
+      - image: docker.flame.org/opsmx/platform-service:master-202008141529
         name: platform-service
         ports:
         - containerPort: 8095
           protocol: TCP
+        env:
+        - name: conf-dir
+          value: /opt/opsmx
         volumeMounts:
-        - mountPath: /opt/opsmx/application.properties
+        - mountPath: /opt/opsmx/application.yml
           name: platform-config
+          subPath: application.yml
+        - mountPath: /opt/opsmx/userGroups.yml
+          name: platform-config
+          subPath: userGroups.yml
       imagePullSecrets:
       - name: platform-secret
       volumes:
