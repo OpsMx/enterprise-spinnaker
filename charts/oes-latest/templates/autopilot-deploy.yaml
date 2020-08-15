@@ -62,7 +62,3 @@ spec:
               port: 8090
             initialDelaySeconds: 30
             periodSeconds: 10
-          command: ["/bin/bash"]
-          args:
-          - -c
-          - "/opsmx/run.sh"
