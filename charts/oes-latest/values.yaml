@@ -176,7 +176,7 @@ oes:
     sapor:
       registry: opsmx11
       repository: sapor
-      tag: v0.202007101007
+      tag: v0.202008051708
       pullPolicy: IfNotPresent
     ui:
       registry: opsmx11
@@ -229,8 +229,8 @@ oes:
     spinnaker:
       oesGateURL: http://OES_GATE_IP:8084/  # URL used by oes-ui to reach oes-gate
       oesUIcors: ^https?://(?:localhost|OES_UI_LOADBALANCER_IP|opsmx.com)(?::[1-9]\d*)?/? # Value of the OES-UI URL regex
-      spinGateURL: http://demo1205.opsmx.com/gate # URL used by sapor to connect to Spinnaker-Gate
-      spinExternalGateURL: http://demo1205.opsmx.com/gate # URL used by OES-UI to access Spinnaker-Gate
+      spinGateURL: https://demo1205.opsmx.com/gate # URL used by sapor to connect to Spinnaker-Gate
+      spinExternalGateURL: https://demo1205.opsmx.com/gate # URL used by OES-UI to access Spinnaker-Gate
       spinuser: admin # Value of the Spinnaker Username (Deck)
       spinpasswd: OpsMx@123 # Value of the Spinnaker Password (Deck)
       adminLoginEnabled: false
