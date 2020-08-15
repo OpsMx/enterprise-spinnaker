@@ -24,13 +24,13 @@ spec:
         - containerPort: 8095
           protocol: TCP
         env:
-        - name: conf-dir
-          value: /opt/opsmx
+        - name: CONF_DIR
+          value: /opsmx/conf/
         volumeMounts:
-        - mountPath: /opt/opsmx/application.yml
+        - mountPath: /opsmx/conf/application.yml
           name: platform-config
           subPath: application.yml
-        - mountPath: /opt/opsmx/userGroups.yml
+        - mountPath: /opsmx/conf/userGroups.yml
           name: platform-config
           subPath: userGroups.yml
       imagePullSecrets:
