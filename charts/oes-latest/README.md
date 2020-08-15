@@ -4,7 +4,7 @@
 
 	cd enterprise-spinnaker
 
-	git checkout remotes/origin/autopilot3.0
+	git checkout remotes/origin/oes-v3
 
 	cd charts/oes-latest
 
