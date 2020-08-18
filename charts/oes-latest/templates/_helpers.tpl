@@ -44,6 +44,26 @@ Return the proper SAPOR image name
 {{- end -}}
 
 {{/*
+Return the proper platform image name
+*/}}
+{{- define "platform.image" -}}
+{{- $registryName := .Values.oes.image.platform.registry -}}
+{{- $repositoryName := .Values.oes.image.platform.repository -}}
+{{- $tag := .Values.oes.image.platform.tag | toString -}}
+{{- printf "%s/%s:%s" $registryName $repositoryName $tag -}}
+{{- end -}}
+
+{{/*
+Return the proper dashboard image name
+*/}}
+{{- define "dashboard.image" -}}
+{{- $registryName := .Values.oes.image.dashboard.registry -}}
+{{- $repositoryName := .Values.oes.image.dashboard.repository -}}
+{{- $tag := .Values.oes.image.dashboard.tag | toString -}}
+{{- printf "%s/%s:%s" $registryName $repositoryName $tag -}}
+{{- end -}}
+
+{{/*
 Return the proper sapor-db image name
 */}}
 {{- define "oesdb.image" -}}

@@ -1,0 +1,13 @@
+apiVersion: v1
+data:
+  application.yml: |
+    {{- tpl (.Files.Get "config/dashboard/application.yml") . | nindent 4 }}
+
+  userGroups.yml: |
+    {{- tpl (.Files.Get "config/dashboard/userGroups.yml") . | nindent 4 }}
+
+kind: ConfigMap
+metadata:
+  name: dashboardconfig
+  labels:
+{{ include "autopilot.standard-labels" . | indent 4 }}

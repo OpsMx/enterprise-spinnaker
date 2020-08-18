@@ -1,0 +1,10 @@
+userGroups:
+  - name: group1
+    users:
+      - user1
+      - user2
+  - name: group2
+    users:
+      - user2
+      - user3
+      - user4

@@ -1,41 +1,39 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  creationTimestamp: null
   labels:
-    app: oes-platform
-  name: oes-platform
+    app: oes-dashboard
+  name: oes-dashboard
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: oes-platform
+      app: oes-dashboard
   strategy: {}
   template:
     metadata:
-      creationTimestamp: null
       labels:
-        app: oes-platform
+        app: oes-dashboard
     spec:
       containers:
-      - image: {{ template "platform.image" . }}
-        name: platform-service
+      - image: {{ template "dashboard.image" . }}
+        name: dashboard-service
         ports:
-        - containerPort: 8095
+        - containerPort: 8094
           protocol: TCP
         env:
         - name: CONF_DIR
           value: /opsmx/conf/
         volumeMounts:
         - mountPath: /opsmx/conf/application.yml
-          name: platform-config
+          name: dashboard-config
           subPath: application.yml
         - mountPath: /opsmx/conf/userGroups.yml
-          name: platform-config
+          name: dashboard-config
           subPath: userGroups.yml
       imagePullSecrets:
       - name: platform-secret
       volumes:
-      - name: platform-config
+      - name: dashboard-config
         configMap:
-          name: platformconfig
+          name: dashboardconfig

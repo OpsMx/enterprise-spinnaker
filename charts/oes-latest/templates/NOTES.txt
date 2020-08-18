@@ -21,4 +21,4 @@ To learn more about the release, try:
 
   Using the EXTERNAL-IP address, go to http://EXTERNAL-IP:80/
 
-  You can login with dummysuer/dummypwd
+    You can login with user2/user2password

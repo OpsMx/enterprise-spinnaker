@@ -181,7 +181,17 @@ oes:
     ui:
       registry: opsmx11
       repository: oes-ui
-      tag: v0.202008142056
+      tag: v0.202008181853
+      pullPolicy: IfNotPresent
+    platform:
+      registry: docker.flame.org/opsmx
+      repository: platform-service
+      tag: master-202008141529
+      pullPolicy: IfNotPresent
+    dashboard:
+      registry: docker.flame.org/opsmx
+      repository: dashboard-service
+      tag: master-202008181025
       pullPolicy: IfNotPresent
 
   ## This option enables OES to be configured automatically
@@ -229,8 +239,8 @@ oes:
     spinnaker:
       oesGateURL: http://OES_GATE_IP:8084/  # URL used by oes-ui to reach oes-gate
       oesUIcors: ^https?://(?:localhost|OES_UI_LOADBALANCER_IP|opsmx.com)(?::[1-9]\d*)?/? # Value of the OES-UI URL regex
-      spinGateURL: https://demo1205.opsmx.com/gate # URL used by sapor to connect to Spinnaker-Gate
-      spinExternalGateURL: https://demo1205.opsmx.com/gate # URL used by OES-UI to access Spinnaker-Gate
+      spinGateURL: https://demo.opsmx.com/gate # URL used by sapor to connect to Spinnaker-Gate
+      spinExternalGateURL: https://demo.opsmx.com/gate # URL used by OES-UI to access Spinnaker-Gate
       spinuser: admin # Value of the Spinnaker Username (Deck)
       spinpasswd: OpsMx@123 # Value of the Spinnaker Password (Deck)
       adminLoginEnabled: false
