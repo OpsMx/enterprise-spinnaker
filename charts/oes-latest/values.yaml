@@ -48,8 +48,8 @@ autopilot:
 
     # Spinnaker configuration to trigger pipelines for canary
     spinnaker:
-      loginAdminEnabled: true
-      spinGateUrl: http://demo1205.opsmx.com/gate
+      loginAdminEnabled: false
+      spinGateUrl: http://40.91.86.174:9000/gate
       spinUsername: admin
       spinPassword: OpsMx@123
 
@@ -239,15 +239,15 @@ oes:
     spinnaker:
       oesGateURL: http://OES_GATE_IP:8084/  # URL used by oes-ui to reach oes-gate
       oesUIcors: ^https?://(?:localhost|OES_UI_LOADBALANCER_IP|opsmx.com)(?::[1-9]\d*)?/? # Value of the OES-UI URL regex
-      spinGateURL: https://demo.opsmx.com/gate # URL used by sapor to connect to Spinnaker-Gate
-      spinExternalGateURL: https://demo.opsmx.com/gate # URL used by OES-UI to access Spinnaker-Gate
+      spinGateURL: http://40.91.86.174:9000/gate # URL used by sapor to connect to Spinnaker-Gate
+      spinExternalGateURL: http://40.91.86.174:9000/gate # URL used by OES-UI to access Spinnaker-Gate
       spinuser: admin # Value of the Spinnaker Username (Deck)
       spinpasswd: OpsMx@123 # Value of the Spinnaker Password (Deck)
       adminLoginEnabled: false
 
       ## Used by sapor to know if authentication is enabled in Spinnaker
       ## Set it to true if authentication is enabled in Spinnaker
-      authnEnabled: true
+      authnEnabled: false
 
     # Ldap server details that needs to be configured with OES
     #
