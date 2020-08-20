@@ -85,23 +85,23 @@ oes:
   #
   image:
     gate:
-      registry: opsmx11
+      registry: opsmxdev
       repository: oes-gate
       tag: v0.202007101453
       pullPolicy: IfNotPresent
     sapor:
-      registry: opsmx11
+      registry: opsmxdev
       repository: sapor
       tag: v0.202007101007
       pullPolicy: IfNotPresent
     ui:
-      registry: opsmx11
+      registry: opsmxdev
       repository: oes-ui
       tag: v0.202007011835
       pullPolicy: IfNotPresent
 
   ## This option enables OES to be configured automatically
-  ## Load Balancer IPs will be automatically replaced in the 
+  ## Load Balancer IPs will be automatically replaced in the
   ## configuration files of oes-gate, oes-ui & sapor
   autoConfiguration:
     # Set it to false if OES is being installed on restricted evnironment;
@@ -112,7 +112,7 @@ oes:
     initContainer:
       # Image for init container to automatically configure oes components
       # during startup
-      image: opsmx11/oes-init:v2
+      image: opsmxdev/oes-init:v2
 
       # Max time(in secs) that an init container of oes-ui should wait
       # to fetch External Load Balancer IP of oes-gate and vice versa
