@@ -7,7 +7,7 @@ services:
     enabled: true
   platform:
     baseUrl: http://oes-platform:8095
-    userGroupApiPath: /platformservice/v1/users/{username}/userGroups/importAndCache
+    userGroupApiPath: /platformservice/v1/users/{username}/usergroups/importAndCache
     enabled: true
 security:
   basic:
@@ -28,4 +28,4 @@ logging:
     org.springframework.security: DEBUG
     org.springframework.web: DEBUG
 redis:
-  connection: redis://:password@{{ .Release.Name }}-redis-master:6379
+  connection: redis://{{ .Release.Name }}-redis-master:6379

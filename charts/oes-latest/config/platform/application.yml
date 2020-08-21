@@ -11,7 +11,7 @@ spring:
     testWhileIdle: true
     url: jdbc:postgresql://db-opsmx:5432/platformdb
     username: postgres
-    password: networks123
+    password: postgres
   jpa:
     hibernate:
       ddl-auto: update
@@ -21,16 +21,8 @@ spring:
 name: Platform-Service
 userGroup:
   cache: inMemory
+user:
   source: file
-feign:
-  client:
-    name: oes
-    platformservice:
-      url: http://localhost:8080/
-opsmx:
-  platform:
-    installation:
-      mode: BOTH
 ---
 
 spring:
@@ -56,16 +48,8 @@ spring:
 name: Platform-Service
 userGroup:
   cache: inMemory
+user:
   source: file
-feign:
-  client:
-    name: oes
-    platformservice:
-      url: http://localhost:8080/
-opsmx:
-  platform:
-    installation:
-      mode: BOTH
 ---
 
 spring:
@@ -90,13 +74,9 @@ spring:
     show-sql: true
 name: Platform-Service
 userGroup:
-  cache: inMemory
+  cache: redis
+user:
   source: ldap
-feign:
-  client:
-    name: oes
-    platformservice:
-      url: http://localhost:8080/
 ldap:
   adminDn: cn=admin,dc=example,dc=com
   adminPassword: adminroot123
@@ -107,10 +87,9 @@ ldap:
   userGroupIdentity: memberOf
   userIdentity: cn
   userPrepend: uid=USERNAME,ou=Users
-opsmx:
-  platform:
-    installation:
-      mode: BOTH
+redis:
+  hostname: {{ .Release.Name }}-redis-master
+  port: 6379
 ---
 
 spring:
@@ -135,13 +114,9 @@ spring:
     show-sql: true
 name: Platform-Service
 userGroup:
-  cache: ldap
-  source: file
-feign:
-  client:
-    name: oes
-    platformservice:
-      url: http://localhost:8080/
+  cache: redis
+user:
+  source: ldap
 ldap:
   adminDn: cn=admin,dc=example,dc=com
   adminPassword: adminroot123
@@ -152,7 +127,3 @@ ldap:
   userGroupIdentity: memberOf
   userIdentity: cn
   userPrepend: uid=USERNAME,ou=Users
-opsmx:
-  platform:
-    installation:
-      mode: BOTH
