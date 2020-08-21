@@ -1,0 +1,1481 @@
+---
+# Source: oes/templates/imagepull-secret.yaml
+apiVersion: v1
+kind: Secret
+metadata:
+  name: opsmxdev-repo
+type: kubernetes.io/dockerconfigjson
+data:
+  .dockerconfigjson: eyJhdXRocyI6eyJodHRwczovL2luZGV4LmRvY2tlci5pby92MS8iOnsidXNlcm5hbWUiOiJvcHNteDExIiwicGFzc3dvcmQiOiJOZXR3b3JrMTIzISIsImVtYWlsIjoiaW5mb0BvcHNteC5jb20iLCJhdXRoIjoiYjNCemJYZ3hNVHBPWlhSM2IzSnJNVEl6SVE9PSJ9fX0=
+---
+# Source: oes/templates/oes-redis-secret.yaml
+apiVersion: v1
+data:
+  redis-password: cGFzc3dvcmQ=
+kind: Secret
+metadata:
+  labels:
+    app: redis
+  name: redis-secret
+type: Opaque
+---
+# Source: oes/templates/opsmx11-imagepull-secret.yaml
+apiVersion: v1
+data:
+  .dockerconfigjson: eyJhdXRocyI6eyJodHRwczovL2luZGV4LmRvY2tlci5pby92MS8iOnsidXNlcm5hbWUiOiJvcHNteDExIiwicGFzc3dvcmQiOiJOZXR3b3JrMTIzISIsImF1dGgiOiJiM0J6YlhneE1UcE9aWFIzYjNKck1USXpJUT09In19fQ==
+kind: Secret
+metadata:
+  creationTimestamp: null
+  name: opsmx11-secret
+type: kubernetes.io/dockerconfigjson
+---
+# Source: oes/templates/platform-imagepull-secret.yaml
+apiVersion: v1
+data:
+  .dockerconfigjson: eyJhdXRocyI6eyJodHRwOi8vZG9ja2VyLmZsYW1lLm9yZy8iOnsidXNlcm5hbWUiOiJvcHNteC1wdXNocHVsbCIsInBhc3N3b3JkIjoiVVdlRm5pZEpCRlR6WkJldmViUjZCdGhMIiwiYXV0aCI6ImIzQnpiWGd0Y0hWemFIQjFiR3c2VlZkbFJtNXBaRXBDUmxSNldrSmxkbVZpVWpaQ2RHaE0ifX19
+kind: Secret
+metadata:
+  creationTimestamp: null
+  name: platform-secret
+type: kubernetes.io/dockerconfigjson
+---
+# Source: oes/templates/backend-configmap.yaml
+apiVersion: v1
+data:
+  config.properties: |
+    #########################################################################################################
+    #                                      Application configuration
+    #########################################################################################################
+
+    management.endpoints.web.base-path=/mgmt
+    management.endpoint.health.show-details=always
+    management.endpoint.health.show-components=always
+
+    kubernetes.prometheus.metric.label=__name__
+    kubernetes.prometheus.host.tagname=exported_container_label_io_kubernetes_pod_name
+    kubernetes.prometheus.tomcat.host.tagname=container_label_io_kubernetes_pod_name
+
+    aws.prometheus.host.tagname=destination_workload
+    aws.prometheus.baseline.host.tagvalue=version2a
+    aws.prometheus.canary.host.tagvalue=version2b
+
+    prometheus.metrics.api.path=/api/v1/label/__name__/values
+    prometheus.metrics.aggregator=avg
+    prometheus.metrics.sampling.value=10
+    prometheus.metrics.rate.duration=60s
+    #true always taking cluster name, false always taking pod names
+    prometheus.cluster.name=false
+    isPodFinderEnabled=false
+
+    prometheus.services=apache,haproxy,http,tomcat
+    prometheus.configured.service=istio
+    stackdriver.services=tomcat
+    stackdriver.metrics.template.path=/opt/opsmx/base-templates/stackdriver/tomcat-metrics.json
+    elastic.search.services=apache,tomcat
+    #datadog.services=tomcat (datadog services are being read from datadog api by truncating the prefix of each metric name
+    #custom.service.dropdown.value=Custom service
+
+    # Reading hibernate.cfg.xml from file system
+    hibernate.configFilePath=/opt/opsmx/hibernate.cfg.xml
+
+    #aws.prometheus.hostname=
+
+    # Data science micro service configuration parameters
+    python.server.protocol=https://
+    python.analysis.url=localhost:5005
+
+    # Data Science Microservice Properties
+    datascience.workers.count=4
+    datascience.server.address=0.0.0.0:5005
+
+    server.protocol=http://
+    reporting.server.url=/opsmx-analysis/public/canaryAnalysis.html#/analysis/
+    casservice.baseurl=localhost:8090
+    metricservice.baseurl=localhost:9090
+
+    elastic.search.metrics.template.path=/opt/opsmx/elasticsearch_template_format.json
+    elasticsearch.metrics.sampling.value=10
+    elastic.search.query.template.path=/opt/opsmx/elasticsearch_metric_query_template.json
+    elastic.search.metrics.index.path=/opt/opsmx/elasticsearch_index_template.json
+    elastic.search.kibana.url=http://34.211.233.166:5601/app/kibana#/discover?_g=()&_a=(columns:!(_source),index:METRIC_INDEX,interval:auto,query:(language:lucene,query:''),sort:!('@timestamp',desc))
+
+    # Required details for log analysis
+    home.directory=/home/ubuntu/
+    logfiles.base.path=/home/ubuntu/logdata/
+    logfiles.aca.path=/home/ubuntu/acainputs/
+    logfiles.feedback.path=/home/ubuntu/logdata/feedback/
+    logfiles.pca.path=/home/ubuntu/ScoringAndPCA/
+    java.logs.path=/home/ubuntu/logs/
+    k8.logpulling.url=https://api-opsmxcluster-k8s-loca-fsgjhv-1527274479.us-east-2.elb.amazonaws.com/api/v1/namespaces/kube-system/services/elasticsearch-logging/proxy/logstash-*/fluentd/_search
+    k8.logpulling.username=admin
+    k8.logpulling.password=eX2uNGR55k98mCqobEwUzMIX63Aknm0D
+    k8.query.keyword=kubernetes.pod_name.keyword
+    k8.config.filepath=/home/ubuntu/.kube/
+    elasticsearch.k8.log.query.file.path=/opt/opsmx/base-templates/elasticsearch/elasticsearch_log_query.json
+    elasticsearch.log.query.file.path=/opt/opsmx/base-templates/elasticsearch/elasticsearch_log_query.json
+    elasticsearch.logpulling.url=/_search?scroll=2m
+    dockerswarm.logpulling.scroll.url=/_search/scroll
+    dockerswarm.query.file.path=/opt/opsmx/base-templates/elasticsearch/elasticsearch_swarmlog_query.json
+    elasticsearch.query.keyword=container_id.keyword
+    elasticsearch.response.keywords=message,exception.exception_message,log
+    elasticsearch.log.filesize.in.MB=100
+
+    # Sumologic detials
+
+    sumologic.logpulling.url1=https://api.
+    sumologic.logpulling.url2=.sumologic.com/api/v1/search/jobs
+    sumologic.logpulling.us1=https://api.sumologic.com/api/v1/search/jobs
+    sumologic.log.query.file.path=/opt/opsmx/base-templates/sumologic/sumologic_log_query.json
+    sumologic.response.keywords=message,exception.exception_message,log
+    sumologic.log.filesize.in.MB=100
+    sumologic.accessid.keyword=dummyaccessid
+    sumologic.accesskey.keyword=dummyaccesskey
+    sumologic.zone.keyword=us2
+    sumologic.query.keyword=container_id.keyword
+    sumologic.query.url=https://service.<zone>.sumologic.com/ui/#/search/@<starttime>,<endtime>@_sourceCategory=<pod>
+    sumologic.query.url.us1=https://service.sumologic.com/ui/#/search/@<starttime>,<endtime>@_sourceCategory=<pod>
+    sumologic.query.data=/messages?offset=0&limit=10000
+
+    # Stackdriver details
+    stackdriver.services=tomcat
+    stackdriver.metrics.template.path=/opt/opsmx/base-templates/stackdriver/apm.json
+    stackdriver.query.url=https://console.cloud.google.com/logs/#/search/@<logfilter>
+
+    # Kibana details
+    kibana.query.url=/app/kibana#/discover?_g=(refreshInterval:(pause:!t,value:0),time:(from:'<starttime>',mode:absolute,to:'<endtime>'))&_a=(columns:!(_source),filters:!(('$state':(store:appState),meta:(alias:!n,disabled:!f,index:'<index>',key:_index,negate:!f,params:(query:'<indexvalue>',type:phrase),type:phrase,value:'<indexvalue>'),query:(match:(_index:(query:'<indexvalue>',type:phrase)))),('$state':(store:appState),meta:(alias:!n,disabled:!f,index:'<index>',key:<scope>,negate:!f,params:!('<scopevalue>'),type:phrases,value:'<scopevalue>'),query:(bool:(minimum_should_match:1,should:!((match_phrase:(<scope>:'<scopevalue>'))))))),index:'<index>',interval:auto,query:(language:lucene,query:''),sort:!('@timestamp',desc))
+
+    kibana.query=/app/kibana#/discover?_g=()&_a=(columns:!(_source),index:<index>,interval:auto,query:(language:lucene,query:''),sort:!('@timestamp',desc))
+
+    elasticsearch.index=logstash-pipeline-*
+    log.template=log-template
+    metric.template=metric-template
+    log.analysis.file=/home/ubuntu/logdata/logAnalysis.py
+    canary.analysis.filepath=/home/ubuntu/Python-code/canary/canaryplusversion.py
+    log.feedback.analysis.file=/home/ubuntu/logdata/feedbackAnalysis.py
+    python.version=python
+
+    # Retry the log query attributes
+    totalDurationInMinutes=6
+    intervalDurationInSeconds=60
+
+    newrelic.metric.template.filter.params=WebTransaction(.*)GET(.*),WebTransaction(.+)POST(.*),WebTransaction(.+)PUT(.*),WebTransaction(.+)DELETE(.*),WebTransaction(.+)PATCH(.*)
+    newrelic.metrics.template.path=/opt/opsmx/base-templates/newrelic/newrelic-apm-rest.json
+    #newrelic.metric.template.filter.param=/greeting
+    newrelic.group.metric.delimiter=;
+
+    #datadog metric analysis required details
+    datadog.metric.tag=host
+    datadog.metrics.template.path=/opt/opsmx/base-templates/datadog/
+    datadog.infra.metrics.template.path=/opt/opsmx/base-templates/datadog/infra.json
+    datadog.timeseries.metricdata.client.url=https://api.datadoghq.com/api/v1/query
+    datadog.apm.metrics.template.path=/opt/opsmx/base-templates/datadog/apm.json
+    datadog.timeseries.metricdata.host=api.datadoghq.com
+    datadog.application.weeks=1
+
+    canary.default.minscore=80
+    canary.default.maxscore=90
+    metricdata.fetcher.url=http://localhost:9090/metricdata
+    monitoring.service.baseurl=http://localhost:9090
+
+    basedata.filepath=/home/ubuntu/BaseData/USER_NAME_PLACE_HOLDER/TEMPLATE_NAME_PLACE_HOLDER/Data
+    #time period is in hours
+    basedata.time.period=-24
+    system.r.path=/usr/bin/Rscript
+    weights.computation.filepath=/home/ubuntu/long_term_weights.R
+
+    sonar.metrics.file.path=/opt/opsmx/base-templates/sonar/sonar_metrics.json
+    auditEnabled=false
+
+    # timing parameters for analysis retries.
+    opsmx.job.refreshMilliseconds=30000
+    opsmx.job.timeoutMilliseconds=120000
+    opsmx.job.restartJobLimit=5
+    opxmx.job.staleCheckMilliseconds=60000
+
+    #Thread limit for calls to analysis servicec
+    analysis.threadpool.size=4
+
+    # metric multi service constants
+    multiservice.monitoring.service.url=localhost:9090/metricdatapath
+
+    #######################################################################################
+    #           Additional configuration that can be changed via values.yaml
+    #######################################################################################
+
+    # Data science analysis algorithm, typically spell/perl are specified
+    python.algorithm=spell
+
+    # Spinnaker information
+    spinnaker.login.admin.enabled=false
+    spinnaker.baseurl=http://40.91.86.174:9000/gate
+    spinnaker.login.admin.username=admin
+    spinnaker.login.admin.password=OpsMx@123
+
+    # Data source attributes
+    spring.datasource.url=jdbc:postgresql://db-opsmx:5432/opsmx
+    spring.datasource.username=postgres
+    spring.datasource.password=networks123
+
+    # LDAP login attributes
+    isLdapAuthEnabled=
+    ldap.url=ldap://oes-ldap:3389
+    ldap.base.dn=DC=example,DC=com
+    ldap.user.filter.pattern=(&(objectclass=person)(cn=USERNAME))
+    ldap.admin.user.groups=Administrators
+
+    # Enable Build Analysis
+    build.analysis=false
+
+
+  hibernate.cfg.xml: |
+    <?xml version="1.0" encoding="UTF-8"?>
+    <!-- <!DOCTYPE hibernate-configuration PUBLIC "-//Hibernate/Hibernate Configuration
+        DTD 3.0//EN" "hibernate-configuration-3.0.dtd"> -->
+    <!DOCTYPE hibernate-configuration SYSTEM "classpath:///hibernate-configuration-3.0.dtd">
+    <hibernate-configuration>
+            <session-factory>
+                   <!-- Settings for a database -->
+                   <property name="connection.driver_class">org.postgresql.Driver</property>
+                   <!--for kubernet service-->
+                   <property name="connection.url">jdbc:postgresql://db-opsmx:5432/opsmx</property>
+                   <property name="connection.username">postgres</property>
+                   <property name="connection.password">networks123</property>
+
+                   <property name="dialect">org.hibernate.dialect.PostgreSQLDialect</property>
+                   <property name="hibernate.query.factory_class">org.hibernate.hql.ast.ASTQueryTranslatorFactory</property>
+                   <property name="show_sql">false</property>
+                   <property name="hbm2ddl.auto">update</property>
+                   <!-- <property name="hibernate.cache.use_second_level_cache">true</property>
+                   <property name="hibernate.cache.use_query_cache">true</property>
+                    --><!-- <property name="hibernate.cache.provider_class">org.hibernate.cache.EhCacheProvider</property>
+                   <property name="hibernate.cache.region.factory_class">org.hibernate.cache.ehcache.EhCacheRegionFactory</property>
+                   <property name="net.sf.ehcache.configurationResourceName">/hibernate-cache-config.xml</property>
+                    --><!-- <property name="hibernate.hbm2ddl.auto">validate</property> -->
+
+                   <!-- Disable second-level cache. -->
+                   <!-- <property name="cache.provider_class">org.hibernate.cache.NoCacheProvider</property> -->
+
+                   <property name="hibernate.temp.use_jdbc_metadata_defaults">true</property>
+
+                   <!-- Bind the getCurrentSession() method to the thread. -->
+                   <property name="current_session_context_class">thread</property>
+
+                   <!-- hibernate c3p0 connection pooling configuration -->
+                   <property name="hibernate.c3p0.acquire_increment">1</property>
+                   <property name="hibernate.c3p0.idle_test_period">60</property> <!-- seconds -->
+                   <property name="hibernate.c3p0.min_size">1</property>
+                   <property name="hibernate.c3p0.max_size">10</property>
+                   <property name="hibernate.c3p0.max_statements">0</property>
+                   <property name="hibernate.c3p0.timeout">0</property> <!-- seconds -->
+                   <property name="hibernate.c3p0.acquireRetryAttempts">10</property>
+                   <property name="hibernate.c3p0.acquireRetryDelay">15000</property>
+                   <property name="hibernate.c3p0.testConnectionOnCheckout">true</property>
+                   <property name="hibernate.c3p0.preferredTestQuery">SELECT 1</property>
+
+                   <mapping resource="model.hbm.xml" />
+            </session-factory>
+    </hibernate-configuration>
+
+
+kind: ConfigMap
+metadata:
+  name: autopilotbackendconfig
+---
+# Source: oes/templates/dashboard-configmap.yaml
+apiVersion: v1
+data:
+  application.yml: |
+    spring:
+      profiles: test
+    name: Dashboard-Service
+    feign:
+      client:
+        config:
+          default:
+            connectTimeout: 5000
+            readTimeout: 5000
+            loggerLevel: basic
+        oes:
+          url: http://sapor:8085
+        autopilot:
+          url: http://autopilot:8090
+        name: dashboardservice
+        platformservice:
+          url: http://oes-platform:8095/
+
+
+    opsmx:
+      dashboard:
+        installation:
+          mode: OES-AP
+
+
+  userGroups.yml: |
+    userGroups:
+      - name: group1
+        users:
+          - user1
+          - user2
+      - name: group2
+        users:
+          - user2
+          - user3
+          - user4
+
+
+kind: ConfigMap
+metadata:
+  name: dashboardconfig
+---
+# Source: oes/templates/frontend-configmap.yaml
+apiVersion: v1
+data:
+  app.config.js: |
+    var AppConfig = {
+    	getBaseUrl:function() {
+    		return "//autopilot:8090";
+    	}
+    }
+
+
+kind: ConfigMap
+metadata:
+  name: autopilotfrontendconfig
+---
+# Source: oes/templates/oes-gate-cm.yaml
+apiVersion: v1
+data:
+  gate-local.yml: |
+    server:
+      tomcat:
+        httpsServerPort: X-Forwarded-Port
+        internalProxies: .*
+        protocolHeader: X-Forwarded-Proto
+        remoteIpHeader: X-Forwarded-For
+  gate.yml: |
+    services:
+      opsmx:
+        baseUrl: http://sapor:8085
+        enabled: true
+      autopilot:
+        baseUrl: http://autopilot:8090
+        enabled: true
+      platform:
+        baseUrl: http://oes-platform:8095
+        userGroupApiPath: /platformservice/v1/users/{username}/userGroups/importAndCache
+        enabled: true
+    security:
+      basic:
+        enabled: true
+      user: {}
+    cors:
+      allowed-origins-pattern: ^https?://(?:localhost|OES_UI_LOADBALANCER_IP|opsmx.com)(?::[1-9]\d*)?/?
+    ldap:
+      enabled: true
+      url: ldap://oes-ldap:9595/DC=example,DC=com
+      userDnPattern: uid={0},ou=Users
+    authn:
+      mode: token
+    google: {}
+    logging:
+      level:
+        com.netflix.spinnaker.gate.security: DEBUG
+        org.springframework.security: DEBUG
+        org.springframework.web: DEBUG
+    redis:
+      connection: redis://:password@RELEASE-NAME-redis-master:6379
+
+kind: ConfigMap
+metadata:
+  name: oes-gate-config
+---
+# Source: oes/templates/oes-sapor-config-cm.yaml
+apiVersion: v1
+data:
+  audit.yml: |
+    services:
+      audit:
+        applicationRefreshIntervalMs: 50000
+  oes.yml: |
+    server:
+      port: 8085
+      compression:
+        enabled: true
+    feign:
+      client:
+        config:
+          default:
+            connectTimeout: 5000
+            readTimeout: 5000
+            loggerLevel: basic
+        platformservice:
+          name: platformservice
+          url: http://oes-platform:8095/
+  persistence.yml: |
+    spring:
+      datasource:
+        url: jdbc:postgresql://db-opsmx:5432/oesdb
+        username: postgres
+        password: networks123
+        driver-class-name: org.postgresql.Driver
+        testWhileIdle: true
+        test-on-borrow: true
+        hikari:
+          connection-timeout: 30000
+          idle-timeout: 600000
+          max-lifetime: 1000
+          maxLifetime: 1800000
+      jpa:
+        show-sql: true
+        hibernate:
+          ddl-auto: update # delete this property after table creation
+        properties:
+          hibernate:
+            dialect: org.hibernate.dialect.PostgreSQLDialect
+
+    logging:
+      level:
+        com:
+          zaxxer:
+            hikari: DEBUG
+  spinnaker.yaml: |
+    spinnaker:
+      base-url: http://40.91.86.174:9000/gate
+      external-base-url: http://40.91.86.174:9000/gate
+      username: admin
+      password: OpsMx@123
+      adminLoginEnabled: false
+      adminUsername:
+      adminPassword:
+      authnEnabled: false
+
+kind: ConfigMap
+metadata:
+  name: sapor-config
+---
+# Source: oes/templates/oes-ui-cm.yaml
+apiVersion: v1
+data:
+  app-config.json: |
+    {
+        "endPointUrl":"http://OES_GATE_IP:8084/"
+    }
+
+kind: ConfigMap
+metadata:
+  name: oes-ui-config
+---
+# Source: oes/templates/platform-configmap.yaml
+apiVersion: v1
+data:
+  application.yml: |
+    spring:
+      profiles: local
+      datasource:
+        driver-class-name: org.postgresql.Driver
+        hikari:
+          connection-timeout: 30000
+          idle-timeout: 600000
+          max-lifetime: 1000
+          maxLifetime: 1800000
+        test-on-borrow: true
+        testWhileIdle: true
+        url: jdbc:postgresql://db-opsmx:5432/platformdb
+        username: postgres
+        password: networks123
+      jpa:
+        hibernate:
+          ddl-auto: update
+        propertieshibernate:
+          dialect: org.hibernate.dialect.PostgreSQLDialect
+        show-sql: true
+    name: Platform-Service
+    userGroup:
+      cache: inMemory
+      source: file
+    feign:
+      client:
+        name: oes
+        platformservice:
+          url: http://localhost:8080/
+    opsmx:
+      platform:
+        installation:
+          mode: BOTH
+    ---
+
+    spring:
+      profiles: dev
+      datasource:
+        driver-class-name: org.postgresql.Driver
+        hikari:
+          connection-timeout: 30000
+          idle-timeout: 600000
+          max-lifetime: 1000
+          maxLifetime: 1800000
+        test-on-borrow: true
+        testWhileIdle: true
+        url: jdbc:postgresql://db-platform:5432/platformdb
+        username: postgres
+        password: networks123
+      jpa:
+        hibernate:
+          ddl-auto: update
+        propertieshibernate:
+          dialect: org.hibernate.dialect.PostgreSQLDialect
+        show-sql: true
+    name: Platform-Service
+    userGroup:
+      cache: inMemory
+      source: file
+    feign:
+      client:
+        name: oes
+        platformservice:
+          url: http://localhost:8080/
+    opsmx:
+      platform:
+        installation:
+          mode: BOTH
+    ---
+
+    spring:
+      profiles: test
+      datasource:
+        driver-class-name: org.postgresql.Driver
+        hikari:
+          connection-timeout: 30000
+          idle-timeout: 600000
+          max-lifetime: 1000
+          maxLifetime: 1800000
+        test-on-borrow: true
+        testWhileIdle: true
+        url: jdbc:postgresql://db-platform:5432/platformdb
+        username: postgres
+        password: networks123
+      jpa:
+        hibernate:
+          ddl-auto: update
+        propertieshibernate:
+          dialect: org.hibernate.dialect.PostgreSQLDialect
+        show-sql: true
+    name: Platform-Service
+    userGroup:
+      cache: inMemory
+      source: ldap
+    feign:
+      client:
+        name: oes
+        platformservice:
+          url: http://localhost:8080/
+    ldap:
+      adminDn: cn=admin,dc=example,dc=com
+      adminPassword: adminroot123
+      baseDn: dc=example,dc=com
+      url: ldap://oes-ldap:9595
+      userDisplayName: displayName
+      userFilterPattern: (&(uid=USERNAME))
+      userGroupIdentity: memberOf
+      userIdentity: cn
+      userPrepend: uid=USERNAME,ou=Users
+    opsmx:
+      platform:
+        installation:
+          mode: BOTH
+    ---
+
+    spring:
+      profiles: uat
+      datasource:
+        driver-class-name: org.postgresql.Driver
+        hikari:
+          connection-timeout: 30000
+          idle-timeout: 600000
+          max-lifetime: 1000
+          maxLifetime: 1800000
+        test-on-borrow: true
+        testWhileIdle: true
+        url: jdbc:postgresql://db-platform:5432/platformdb
+        username: postgres
+        password: networks123
+      jpa:
+        hibernate:
+          ddl-auto: update
+        propertieshibernate:
+          dialect: org.hibernate.dialect.PostgreSQLDialect
+        show-sql: true
+    name: Platform-Service
+    userGroup:
+      cache: ldap
+      source: file
+    feign:
+      client:
+        name: oes
+        platformservice:
+          url: http://localhost:8080/
+    ldap:
+      adminDn: cn=admin,dc=example,dc=com
+      adminPassword: adminroot123
+      baseDn: dc=example,dc=com
+      url: ldap://oes-ldap:9595
+      userDisplayName: displayName
+      userFilterPattern: (&(uid=USERNAME))
+      userGroupIdentity: memberOf
+      userIdentity: cn
+      userPrepend: uid=USERNAME,ou=Users
+    opsmx:
+      platform:
+        installation:
+          mode: BOTH
+
+
+  userGroups.yml: |
+    userGroups:
+      - name: group1
+        users:
+          - user1
+          - user2
+      - name: group2
+        users:
+          - user2
+          - user3
+          - user4
+
+
+kind: ConfigMap
+metadata:
+  name: platformconfig
+---
+# Source: oes/templates/serverxml-configmap.yaml
+apiVersion: v1
+data:
+  server.xml: >
+    <?xml version='1.0' encoding='utf-8'?>
+    <!--
+    Licensed to the Apache Software Foundation (ASF) under one or more
+    contributor license agreements.  See the NOTICE file distributed with
+    this work for additional information regarding copyright ownership.
+    The ASF licenses this file to You under the Apache License, Version 2.0
+    (the "License"); you may not use this file except in compliance with
+    the License.  You may obtain a copy of the License at
+
+     http://www.apache.org/licenses/LICENSE-2.0
+
+    Unless required by applicable law or agreed to in writing, software
+    distributed under the License is distributed on an "AS IS" BASIS,
+    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+    See the License for the specific language governing permissions and
+    limitations under the License.
+    -->
+    <Server port="8005" shutdown="SHUTDOWN">
+    <Listener className="org.apache.catalina.startup.VersionLoggerListener" />
+    <!-- Security listener. Documentation at /docs/config/listeners.html
+    <Listener className="org.apache.catalina.security.SecurityListener" />
+    -->
+    <!--APR library loader. Documentation at /docs/apr.html -->
+    <Listener className="org.apache.catalina.core.AprLifecycleListener" SSLEngine="on" />
+    <!--Initialize Jasper prior to webapps are loaded. Documentation at /docs/jasper-howto.html
+    <Listener className="org.apache.catalina.core.JasperListener" /> -->
+    <!-- Prevent memory leaks due to use of particular java/javax APIs-->
+    <Listener className="org.apache.catalina.core.JreMemoryLeakPreventionListener" />
+    <Listener className="org.apache.catalina.mbeans.GlobalResourcesLifecycleListener" />
+    <Listener className="org.apache.catalina.core.ThreadLocalLeakPreventionListener" />
+
+    <!-- Global JNDI resources
+      Documentation at /docs/jndi-resources-howto.html
+    -->
+    <GlobalNamingResources>
+      <!-- Editable user database that can also be used by
+        UserDatabaseRealm to authenticate users
+      -->
+      <Resource name="UserDatabase" auth="Container"
+             type="org.apache.catalina.UserDatabase"
+             description="User database that can be updated and saved"
+             factory="org.apache.catalina.users.MemoryUserDatabaseFactory"
+             pathname="conf/tomcat-users.xml" />
+    </GlobalNamingResources>
+     <Service name="Catalina">
+
+      <!--The connectors can use a shared executor, you can define one or more named thread pools-->
+      <!--
+      <Executor name="tomcatThreadPool" namePrefix="catalina-exec-"
+       maxThreads="150" minSpareThreads="4"/>
+      -->
+      <Connector port="8161"
+              SSLEnabled="false"
+              protocol="org.apache.coyote.http11.Http11NioProtocol" scheme="http"
+              connectionTimeout="20000"
+              keystoreFile="/home/ubuntu/keystore.p12"
+              keystorePass="OpsMx@123"
+              redirectPort="8443" />
+      <!--
+      <Connector executor="tomcatThreadPool"
+              port="8161" protocol="HTTP/1.1"
+              connectionTimeout="20000"
+              redirectPort="8443" />
+      -->
+     <!--    <Connector port="8443" protocol="org.apache.coyote.http11.Http11Protocol"
+              maxThreads="150" SSLEnabled="true" scheme="https" secure="true"
+              clientAuth="false" sslProtocol="TLS" />
+     -->
+
+      <!-- Define an AJP 1.3 Connector on port 8009 -->
+      <Connector port="8009" protocol="AJP/1.3" redirectPort="8443" />
+      <Engine name="Catalina" defaultHost="localhost">
+        <Realm className="org.apache.catalina.realm.LockOutRealm">
+          <Realm className="org.apache.catalina.realm.UserDatabaseRealm"
+              resourceName="UserDatabase"/>
+        </Realm>
+        <Host name="localhost"  appBase="webapps"
+           unpackWARs="true" autoDeploy="true">
+          <Context path="" docBase="opsmx-analysis" />
+          <Valve className="org.apache.catalina.valves.AccessLogValve" directory="logs"
+              prefix="localhost_access_log." suffix=".txt"
+              pattern="%h %l %u %t &quot;%r&quot; %s %b" />
+        </Host>
+      </Engine>
+     </Service>
+    </Server>
+
+
+kind: ConfigMap
+metadata:
+  name: autopilotserverconfig
+---
+# Source: oes/templates/rbac/oes-init-rolebinding.yaml
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: oes-access
+  namespace: autopilot
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: view
+subjects:
+- namespace: autopilot
+  kind: ServiceAccount
+  name: default
+---
+# Source: oes/templates/autopilot-service.yaml
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    app: autopilot
+  name: autopilot
+spec:
+  type: ClusterIP
+  ports:
+  - name: "cas-service"
+    port: 8090
+    targetPort: 8090
+  - name: "http"
+    port: 8161
+    targetPort: 8161
+  - name: "monitoring-service"
+    port: 9090
+    targetPort: 9090
+  selector:
+    app: autopilot
+---
+# Source: oes/templates/db-autopilot-service.yaml
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    app: db-opsmx
+  name: db-opsmx
+spec:
+  type: ClusterIP
+  ports:
+  - name: db-opsmx
+    protocol: TCP
+    port: 5432
+    targetPort: 5432
+  selector:
+    app: db-opsmx
+---
+# Source: oes/templates/oes-dashboard-service.yaml
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    app: oes-dashboard
+  name: oes-dashboard
+spec:
+  type: ClusterIP
+  ports:
+  - name: oes-dashboard
+    protocol: TCP
+    port: 8094
+    targetPort: 8094
+  selector:
+    app: oes-dashboard
+---
+# Source: oes/templates/oes-gate-service.yaml
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    app: oes
+    component: oes-gate
+  name: oes-gate
+spec:
+  type: LoadBalancer
+  ports:
+  - name: "oes-gate-service"
+    port: 8084
+    protocol: TCP
+    targetPort: 8084
+  selector:
+    app: oes
+    component: oes-gate
+---
+# Source: oes/templates/oes-ldap-service.yaml
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    app: oes-ldap
+  name: oes-ldap
+spec:
+  type: ClusterIP
+  ports:
+  - name: oes-ldap
+    protocol: TCP
+    port: 9595
+    targetPort: 3389
+  selector:
+    app: oes-ldap
+---
+# Source: oes/templates/oes-platform-service.yaml
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    app: oes-platform
+  name: oes-platform
+spec:
+  type: ClusterIP
+  ports:
+  - name: oes-platform
+    protocol: TCP
+    port: 8095
+    targetPort: 8095
+  selector:
+    app: oes-platform
+---
+# Source: oes/templates/oes-redis-service.yaml
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    app: redis
+  name: RELEASE-NAME-redis-master
+spec:
+  ports:
+  - name: redis
+    port: 6379
+    protocol: TCP
+    targetPort: 6379
+  selector:
+    app: redis
+  type: ClusterIP
+---
+# Source: oes/templates/oes-sapor-service.yaml
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    app: oes
+    component: sapor
+  name: sapor
+spec:
+  type: ClusterIP
+  ports:
+  - name: "sapor"
+    port: 8085
+    targetPort: 8085
+  selector:
+    app: oes
+    component: sapor
+---
+# Source: oes/templates/oes-ui-service.yaml
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    app: oes
+    component: oes-ui
+  name: oes-ui
+spec:
+  type: LoadBalancer
+  ports:
+  - name: "oes-ui-service"
+    port: 80
+    targetPort: 80
+  selector:
+    app: oes
+    component: oes-ui
+---
+# Source: oes/templates/opa-service.yaml
+apiVersion: v1
+kind: Service
+metadata:
+  name: opa
+  labels:
+spec:
+  selector:
+    app: oes
+    component: opa
+  ports:
+  - protocol: TCP
+    port: 8181
+    targetPort: 8181
+  type: ClusterIP
+---
+# Source: oes/templates/autopilot-deploy.yaml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: autopilot
+  labels:
+    app: autopilot
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: autopilot
+  template:
+    metadata:
+      labels:
+        app: autopilot
+    spec:
+      volumes:
+        - name: backend-config-volume
+          configMap:
+            name: autopilotbackendconfig
+        - name: frontend-config-volume
+          configMap:
+            name: autopilotfrontendconfig
+        - name: server-config-volume
+          configMap:
+            name: autopilotserverconfig
+      imagePullSecrets:
+        - name: opsmx11-secret
+      containers:
+        - image: opsmx11/autopilot:master-202008210408
+          imagePullPolicy: IfNotPresent
+          name: autopilot
+          ports:
+            - containerPort: 8090
+              name: backend
+              protocol: TCP
+            - containerPort: 9090
+              name: metricfetcher
+              protocol: TCP
+            - containerPort: 8161
+              name: frontend
+              protocol: TCP
+          volumeMounts:
+          - name: backend-config-volume
+            mountPath: /opt/opsmx/config.properties
+            subPath: config.properties
+          - name: backend-config-volume
+            mountPath: /opt/opsmx/hibernate.cfg.xml
+            subPath: hibernate.cfg.xml
+          - name: frontend-config-volume
+            mountPath: /opt/opsmx/app.config.js
+            subPath: app.config.js
+          - name: server-config-volume
+            mountPath: /opt/apache-tomcat/conf/server.xml
+            subPath: server.xml
+          readinessProbe:
+            tcpSocket:
+              port: 8090
+            initialDelaySeconds: 30
+            periodSeconds: 10
+---
+# Source: oes/templates/oes-dashboard-deployment.yaml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: oes-dashboard
+  name: oes-dashboard
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: oes-dashboard
+  strategy: {}
+  template:
+    metadata:
+      labels:
+        app: oes-dashboard
+    spec:
+      containers:
+      - image: docker.flame.org/opsmx/dashboard-service:master-202008200759
+        name: dashboard-service
+        ports:
+        - containerPort: 8094
+          protocol: TCP
+        env:
+        - name: CONF_DIR
+          value: /opsmx/conf/
+        volumeMounts:
+        - mountPath: /opsmx/conf/application.yml
+          name: dashboard-config
+          subPath: application.yml
+        - mountPath: /opsmx/conf/userGroups.yml
+          name: dashboard-config
+          subPath: userGroups.yml
+      imagePullSecrets:
+      - name: platform-secret
+      volumes:
+      - name: dashboard-config
+        configMap:
+          name: dashboardconfig
+---
+# Source: oes/templates/oes-gate-deployment.yaml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: oes
+    component: oes-gate
+  name: oes-gate
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: oes
+      component: oes-gate
+  template:
+    metadata:
+      labels:
+        app: oes
+        component: oes-gate
+    spec:
+      initContainers:
+      - env:
+        - name: EXTERNAL_IP_CHECK_DELAY
+          value: "120"
+        - name: SPINNAKER_SETUP_DELAY
+          value: "10"
+        image: opsmx11/oes-init:v2
+        imagePullPolicy: Always
+        name: oes-gate-init
+        command: ["/home/config_endpoint.sh"]
+        args: ["oes-gate"]
+        volumeMounts:
+        - mountPath: /config
+          name: config-temp
+        - mountPath: /opt/spinnaker/config
+          name: gate-volume
+      containers:
+      - image: opsmx11/oes-gate:v0.202008122029
+        name: oes-gate
+        ports:
+        - containerPort: 8084
+          protocol: TCP
+        volumeMounts:
+        - name: gate-volume
+          mountPath: /opt/spinnaker/config
+        readinessProbe:
+          tcpSocket:
+            port: 8084
+          initialDelaySeconds: 120
+          periodSeconds: 30
+        livenessProbe:
+          httpGet:
+            path: /health
+            port: 8084
+          initialDelaySeconds: 120
+          periodSeconds: 60
+      imagePullSecrets:
+      - name: opsmx11-secret
+      volumes:
+      - configMap:
+          name: oes-gate-config
+        name: config-temp
+      - emptyDir: {}
+        name: gate-volume
+---
+# Source: oes/templates/oes-ldap-deployment.yaml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  creationTimestamp: null
+  labels:
+    app: oes
+    component: ldap
+    heritage: "Helm"
+    release: "RELEASE-NAME"
+    chart: "oes-3.0.0"
+  name: oes-ldap
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: oes-ldap
+  strategy: {}
+  template:
+    metadata:
+      creationTimestamp: null
+      labels:
+        app: oes-ldap
+    spec:
+      containers:
+      - image: skandragon/ldap-testing-db:latest
+        ports:
+        - containerPort: 3389
+          protocol: TCP
+        name: oes-ldap
+        resources: {}
+---
+# Source: oes/templates/oes-platform-deployment.yaml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  creationTimestamp: null
+  labels:
+    app: oes-platform
+  name: oes-platform
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: oes-platform
+  strategy: {}
+  template:
+    metadata:
+      creationTimestamp: null
+      labels:
+        app: oes-platform
+    spec:
+      containers:
+      - image: docker.flame.org/opsmx/platform-service:master-202008200815
+        name: platform-service
+        ports:
+        - containerPort: 8095
+          protocol: TCP
+        env:
+        - name: CONF_DIR
+          value: /opsmx/conf/
+        volumeMounts:
+        - mountPath: /opsmx/conf/application.yml
+          name: platform-config
+          subPath: application.yml
+        - mountPath: /opsmx/conf/userGroups.yml
+          name: platform-config
+          subPath: userGroups.yml
+      imagePullSecrets:
+      - name: platform-secret
+      volumes:
+      - name: platform-config
+        configMap:
+          name: platformconfig
+---
+# Source: oes/templates/oes-sapor-deployment.yaml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: oes
+    component: sapor
+    heritage: "Helm"
+    release: "RELEASE-NAME"
+    chart: "oes-3.0.0"
+  name: sapor
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: oes
+      component: sapor
+  template:
+    metadata:
+      labels:
+        app: oes
+        component: sapor
+    spec:
+      initContainers:
+      - env:
+        - name: EXTERNAL_IP_CHECK_DELAY
+          value: "120"
+        - name: SPINNAKER_SETUP_DELAY
+          value: "10"
+        image: opsmx11/oes-init:v2
+        imagePullPolicy: Always
+        name: sapor-init
+        command: ["/home/config_endpoint.sh"]
+        args: ["sapor"]
+        volumeMounts:
+        - mountPath: /config
+          name: config-temp
+        - mountPath: /opt/opsmx/
+          name: api-volume
+      containers:
+      - image: opsmx11/sapor:v0.202008202206
+        name: sapor
+        ports:
+        - containerPort: 8085
+          protocol: TCP
+        volumeMounts:
+        - name: api-volume
+          mountPath: /opt/opsmx/
+        readinessProbe:
+          tcpSocket:
+            port: 8085
+          initialDelaySeconds: 120
+          periodSeconds: 30
+        livenessProbe:
+          httpGet:
+            path: /actuator/health
+            port: 8085
+          initialDelaySeconds: 180
+          periodSeconds: 60
+      imagePullSecrets:
+      - name: opsmx11-secret
+      volumes:
+      - configMap:
+          name: sapor-config
+        name: config-temp
+      - emptyDir: {}
+        name: api-volume
+---
+# Source: oes/templates/oes-ui-deployment.yaml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: oes
+    component: oes-ui
+  name: oes-ui
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: oes
+      component: oes-ui
+  template:
+    metadata:
+      labels:
+        app: oes
+        component: oes-ui
+    spec:
+      initContainers:
+      - env:
+        - name: EXTERNAL_IP_CHECK_DELAY
+          value: "120"
+        - name: SPINNAKER_SETUP_DELAY
+          value: "10"
+        image: opsmx11/oes-init:v2
+        imagePullPolicy: Always
+        name: oes-ui-init
+        command: ["/home/config_endpoint.sh"]
+        args: ["oes-ui"]
+        volumeMounts:
+        - mountPath: /config
+          name: config-temp
+        - mountPath: /var/www/html/assets/config
+          name: config-dir
+      containers:
+      - image: opsmx11/oes-ui:v0.202008211005
+        name: oes-ui
+        ports:
+        - containerPort: 80
+          protocol: TCP
+        volumeMounts:
+        - name: config-dir
+          mountPath: /var/www/html/assets/config
+        readinessProbe:
+          tcpSocket:
+            port: 80
+          initialDelaySeconds: 15
+          periodSeconds: 5
+        livenessProbe:
+          httpGet:
+            path: /health
+            port: 80
+          initialDelaySeconds: 15
+          periodSeconds: 5
+      imagePullSecrets:
+      - name: opsmx11-secret
+      volumes:
+      - configMap:
+          defaultMode: 420
+          name: oes-ui-config
+        name: config-temp
+      - emptyDir: {}
+        name: config-dir
+---
+# Source: oes/templates/opa-deploy.yaml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: oes
+    component: opa
+  name: opa
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: oes
+      component: opa
+  template:
+    metadata:
+      labels:
+        app: oes
+        component: opa
+      name: opa
+    spec:
+      containers:
+        - name: opa
+          image: openpolicyagent/opa:latest
+          args:
+            - "run"
+            - "--server"
+---
+# Source: oes/templates/db-autopilot-statefulset.yaml
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  labels:
+    app: db-opsmx
+  name: db-opsmx
+spec:
+  podManagementPolicy: OrderedReady
+  replicas: 1
+  serviceName: db-opsmx
+  selector:
+    matchLabels:
+      app: db-opsmx
+  template:
+    metadata:
+      labels:
+        app: db-opsmx
+    spec:
+      imagePullSecrets:
+        - name: opsmx11-secret
+      containers:
+      - image: opsmxdev/ubi8-autopilot-db:v1.5
+        imagePullPolicy: IfNotPresent
+        name: db-opsmx
+        ports:
+        - containerPort: 5432
+          protocol: TCP
+        volumeMounts:
+        - mountPath: "/var/lib/pgsql-pv"
+          name: db-autopilot-postgresql
+        readinessProbe:
+          tcpSocket:
+            port: 5432
+          initialDelaySeconds: 10
+          periodSeconds: 5
+      securityContext:
+        fsGroup: 1000
+  volumeClaimTemplates:
+  - metadata:
+      creationTimestamp: null
+      labels:
+        app: db-opsmx
+      name: db-opsmx-postgresql
+    spec:
+      accessModes:
+      - ReadWriteOnce
+      resources:
+        requests:
+          storage: 8Gi
+      volumeMode: Filesystem
+---
+# Source: oes/templates/oes-redis-statefulset.yaml
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  labels:
+    app: redis
+  name: redis-master
+spec:
+  podManagementPolicy: OrderedReady
+  replicas: 1
+  selector:
+    matchLabels:
+      app: redis
+  serviceName: redis-master
+  template:
+    metadata:
+      labels:
+        app: redis
+    spec:
+      containers:
+      - env:
+        - name: REDIS_REPLICATION_MODE
+          value: master
+        - name: REDIS_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              key: redis-password
+              name: redis-secret
+        - name: REDIS_DISABLE_COMMANDS
+          value: FLUSHDB,FLUSHALL
+        image: docker.io/bitnami/redis:4.0.11-debian-9
+        imagePullPolicy: IfNotPresent
+        livenessProbe:
+          exec:
+            command:
+            - redis-cli
+            - ping
+          failureThreshold: 5
+          initialDelaySeconds: 30
+          periodSeconds: 10
+          successThreshold: 1
+          timeoutSeconds: 5
+        name: redis
+        ports:
+        - containerPort: 6379
+          name: redis
+          protocol: TCP
+        readinessProbe:
+          exec:
+            command:
+            - redis-cli
+            - ping
+          failureThreshold: 5
+          initialDelaySeconds: 5
+          periodSeconds: 10
+          successThreshold: 1
+          timeoutSeconds: 1
+        resources: {}
+        terminationMessagePath: /dev/termination-log
+        terminationMessagePolicy: File
+        volumeMounts:
+        - mountPath: /bitnami/redis/data
+          name: redis-data
+      dnsPolicy: ClusterFirst
+      restartPolicy: Always
+      schedulerName: default-scheduler
+      securityContext:
+        fsGroup: 1001
+        runAsUser: 1001
+      serviceAccount: default
+      serviceAccountName: default
+      terminationGracePeriodSeconds: 30
+  updateStrategy:
+    type: OnDelete
+  volumeClaimTemplates:
+  - metadata:
+      creationTimestamp: null
+      labels:
+        app: redis
+      name: redis-data
+    spec:
+      accessModes:
+      - ReadWriteOnce
+      resources:
+        requests:
+          storage: 8Gi
+      volumeMode: Filesystem

@@ -13,8 +13,8 @@ imagePullSecret: opsmxdev-repo
 # Docker registry credentials to create imagePullSecret
 imageCredentials:
   registry: https://index.docker.io/v1/
-  username: username  # Docker hub username
-  password: password # Docker hub password
+  username: opsmx11  # Docker hub username
+  password: Network123! # Docker hub password
   email: info@opsmx.com   # email corresponding to docker hub ID
 
 # Values of autopilot server
@@ -24,7 +24,7 @@ autopilot:
   image:
     registry: opsmx11
     repository: autopilot
-    tag: master-202008141200
+    tag: master-202008210408
     pullPolicy: IfNotPresent
 
   # Type of service overwhich autopilot shall be exposed
@@ -42,7 +42,7 @@ autopilot:
 
     # Autopilot Backend URL
     dataSource:
-      url: jdbc:postgresql://db-autopilot:5432/opsmx
+      url: jdbc:postgresql://db-opsmx:5432/opsmx
       username: postgres
       password: networks123
 
@@ -73,28 +73,6 @@ autopilot:
       keyStorePassword: dummypwd # Provide keystore password
       keyStoreType: PKCS12
       keyAlias: tomcat
-
-# Values of OpsMx DB if a separate DB is to be setup for Autopilot.
-# Typically Autopilot uses OpsMx DB provided by OES if installed
-# on a system with OES running already.
-autopilotdb:
-  # Default group to which the default user of a pod belongs
-  securityContext:
-    fsGroup: 1000
-
-  # Strategy to rollout statefulset pods
-  podManagementPolicy: OrderedReady
-
-  # Details related to image of OpsMx DB
-  image:
-    registry: opsmxdev
-    repository: ubi8-autopilot-db
-    tag: v1.5
-    pullPolicy: IfNotPresent
-
-  # storageMountSize is the size with which a PVC is to be created
-  storageMountSize: 8Gi
-
 
 #####################################################
 # OpsMx Enterprise Spinnaker configuration
@@ -176,22 +154,22 @@ oes:
     sapor:
       registry: opsmx11
       repository: sapor
-      tag: v0.202008051708
+      tag: v0.202008202206
       pullPolicy: IfNotPresent
     ui:
       registry: opsmx11
       repository: oes-ui
-      tag: v0.202008181853
+      tag: v0.202008211005
       pullPolicy: IfNotPresent
     platform:
       registry: docker.flame.org/opsmx
       repository: platform-service
-      tag: master-202008141529
+      tag: master-202008200815
       pullPolicy: IfNotPresent
     dashboard:
       registry: docker.flame.org/opsmx
       repository: dashboard-service
-      tag: master-202008181025
+      tag: master-202008200759
       pullPolicy: IfNotPresent
 
   ## This option enables OES to be configured automatically
@@ -222,7 +200,7 @@ oes:
     db:
       # DB URL, typically it is reachable over db-opsmx service
       #
-      dbUrl: jdbc:postgresql://db-sapor:5432/oesdb
+      dbUrl: jdbc:postgresql://db-opsmx:5432/oesdb
       # Username and password to connect with DB
       #
       username: postgres
@@ -261,7 +239,7 @@ oes:
     # Set the below field to true if default java cacert is to be overriden
     #
     caCerts:
-      override: true
+      override: false
 
 ##################################################
 # Openldap configuration

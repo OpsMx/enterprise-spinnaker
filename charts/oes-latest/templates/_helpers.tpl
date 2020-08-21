@@ -91,13 +91,3 @@ Return the proper Autopilot image name
 {{- $tag := .Values.autopilot.image.tag | toString -}}
 {{- printf "%s/%s:%s" $registryName $repositoryName $tag -}}
 {{- end -}}
-
-{{/*
-Return the proper OpsMx-DB image name
-*/}}
-{{- define "autopilotdb.image" -}}
-{{- $registryName := .Values.autopilotdb.image.registry -}}
-{{- $repositoryName := .Values.autopilotdb.image.repository -}}
-{{- $tag := .Values.autopilotdb.image.tag | toString -}}
-{{- printf "%s/%s:%s" $registryName $repositoryName $tag -}}
-{{- end -}}

@@ -2,34 +2,34 @@ apiVersion: apps/v1
 kind: StatefulSet
 metadata:
   labels:
-    app: db-sapor
-{{ include "oes.standard-labels" . | indent 4 }}
-  name: db-sapor
+    app: db-opsmx
+{{ include "autopilot.standard-labels" . | indent 4 }}
+  name: db-opsmx
 spec:
   podManagementPolicy: {{ .Values.oesdb.podManagementPolicy }}
   replicas: 1
-  serviceName: db-sapor
+  serviceName: db-opsmx
   selector:
     matchLabels:
-      app: db-sapor
+      app: db-opsmx
   template:
     metadata:
       labels:
-        app: db-sapor
-{{ include "oes.standard-labels" . | indent 8 }}
+        app: db-opsmx
+{{ include "autopilot.standard-labels" . | indent 8 }}
     spec:
       imagePullSecrets:
         - name: opsmx11-secret
       containers:
       - image: {{ template "oesdb.image" . }}
         imagePullPolicy: {{ .Values.oesdb.image.pullPolicy }}
-        name: db-sapor
+        name: db-opsmx
         ports:
         - containerPort: 5432
           protocol: TCP
         volumeMounts:
         - mountPath: "/var/lib/pgsql-pv"
-          name: db-sapor-postgresql
+          name: db-opsmx-postgresql
         readinessProbe:
           tcpSocket:
             port: 5432
@@ -41,9 +41,8 @@ spec:
   - metadata:
       creationTimestamp: null
       labels:
-        app: db-sapor
-{{ include "oes.standard-labels" . | indent 8 }}
-      name: db-sapor-postgresql
+        app: db-opsmx
+      name: db-opsmx-postgresql
     spec:
       accessModes:
       - ReadWriteOnce

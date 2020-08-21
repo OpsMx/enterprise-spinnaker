@@ -9,7 +9,7 @@ spring:
       maxLifetime: 1800000
     test-on-borrow: true
     testWhileIdle: true
-    url: jdbc:postgresql://db-platform:5432/platformdb
+    url: jdbc:postgresql://db-opsmx:5432/platformdb
     username: postgres
     password: networks123
   jpa:
