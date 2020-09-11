@@ -15,8 +15,8 @@ imagePullSecret: opsmxdev-secret
 ##
 imageCredentials:
   registry: https://index.docker.io/v1/
-  username: opsmx11  # Docker hub username
-  password: Network123! # Docker hub password
+  username: dockerID  # Docker hub username
+  password: dockerPassword # Docker hub password
   email: info@opsmx.com   # email corresponding to docker hub ID
 
 rbac:
@@ -60,6 +60,13 @@ ldap:
   userDnPattern: cn={0}
   basedn: dc=example,dc=org # Value of ldap.base.dn
   pattern: (&(cn=USERNAME)) # Value of ldap.user.filter.pattern
+  adminDn: cn=admin,dc=example,dc=com
+  adminPassword: adminroot123
+  userDisplayName: displayName
+  userFilterPattern: (&(uid=USERNAME))
+  userGroupIdentity: memberOf
+  userIdentity: cn
+  userPrepend: uid=USERNAME,ou=Users
 
 ####################################################
 ## Redis configuration
@@ -95,7 +102,7 @@ db:
 
   ## Change the default configuration when above option is set to false
   ## Below url and credentials are used by Autopilot & Sapor
-  url: postgresql://oes-db:5432/opsmx
+  url: jdbc:postgresql://oes-db:5432/opsmx
   username: postgres
   password: networks123
 
@@ -151,7 +158,6 @@ autopilot:
       keyStorePassword: dummypwd # Provide keystore password
       keyStoreType: PKCS12
       keyAlias: tomcat
-
 ###############################################################################
 ##
 ## Values of OES Dashboard
@@ -197,6 +203,10 @@ gate:
     ## Regex of OES-UI URL to prevent cross origin attacks
     oesUIcors: ^https?://(?:localhost|OES_UI_LOADBALANCER_IP|opsmx.com)(?::[1-9]\d*)?/?
 
+    ## Set it to true to disable LDAP authentication and enable file based authentication
+    ## Reach out over support@opsmx.com for pre-configured user credentials
+    fileBasedAuthentication: false
+
 ###############################################################################
 ##
 ## Values of OES Platform
@@ -211,7 +221,30 @@ platform:
     pullPolicy: IfNotPresent
 
   config:
+    ## DB configuration; change it any other external DB is to be used
+    ## Refer it above, under DB configuration section
+    ##
 
+    ## RBAC Configuration
+    ## Refer the RBAC create option at the top
+    ##
+
+    ## Admin Groups available in ldap
+    ##
+    adminGroups: admin, Administrators
+
+    ## Source of Users for authorization
+    ## Supported sources:- ldap, file
+    userSource: ldap
+
+    ## LDAP Configuration will be used if above userSource is set to ldap
+    ## Refer above, under LDAP configuration section
+    ##
+
+    ## Redis Endpoint
+    ## Uses the URL specified under redis.url above,
+    ## under Redis Configuration section
+    ##
 
 ###############################################################################
 ##

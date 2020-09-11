@@ -22,7 +22,7 @@ ldap:
   basedn: {{ .Values.ldap.basedn }}
   pattern: {{ .Values.ldap.pattern }}
 file:
-  enabled: false
+  enabled: {{ . Values.gate.config.fileBasedAuthentication }}
   url: /platformservice/v1/users/authenticate
 authn:
   mode: session

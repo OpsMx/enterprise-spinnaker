@@ -1,0 +1,22 @@
+spring:
+  datasource:
+    url: {{ .Values.db.url }}
+    username: {{ .Values.db.username }}
+    password: {{ .Values.db.username }}
+rbacEnabled: {{ .Values.rbac.create }}
+userGroup:
+  adminGroups: {{ .Values.platform.config.adminGroups }}
+user:
+  source: {{ .Values.platform.config.userSource }}
+ldap:
+  adminDn: {{ .Values.ldap.adminDn }}
+  adminPassword: {{ .Values.ldap.adminPassword }}
+  baseDn: {{ .Values.ldap.basedn }}
+  url: {{ .Values.ldap.url }}
+  userDisplayName: {{ .Values.ldap.userDisplayName }}
+  userFilterPattern: {{ .Values.ldap.userFilterPattern }}
+  userGroupIdentity: {{ .Values.ldap.userGroupIdentity }}
+  userIdentity: {{ .Values.ldap.userIdentity }}
+  userPrepend: {{ .Values.ldap.userPrepend }}
+redis:
+  url: {{ .Values.redis.url }}
