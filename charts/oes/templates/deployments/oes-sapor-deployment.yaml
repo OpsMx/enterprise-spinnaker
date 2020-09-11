@@ -5,7 +5,7 @@ metadata:
     app: oes
     component: sapor
 {{ include "oes.standard-labels" . | indent 4 }}
-  name: sapor
+  name: oes-sapor
 spec:
   replicas: 1
   selector:
@@ -15,43 +15,37 @@ spec:
   template:
     metadata:
       annotations:
-        configmap/checksum: {{ (.Files.Glob "config/oes-sapor/*").AsConfig | sha256sum }}
+        configmap/checksum: {{ (.Files.Glob "config/oes-sapor/application.yml").AsConfig | sha256sum }}
       labels:
         app: oes
         component: sapor
 {{ include "oes.standard-labels" . | indent 8 }}
     spec:
-      {{- if .Values.autoConfiguration.enabled }}
       initContainers:
-      - env:
-        - name: EXTERNAL_IP_CHECK_DELAY
-          value: "{{ .Values.autoConfiguration.initContainer.externalIpCheckDelay}}"
-        - name: SPINNAKER_SETUP_DELAY
-          value: "{{ .Values.autoConfiguration.initContainer.spinnakerSetupMaxDelay}}"
-        image: {{ .Values.autoConfiguration.initContainer.image}}
-        imagePullPolicy: Always
-        name: sapor-init
-        command: ["/home/config_endpoint.sh"]
-        args: ["sapor"]
-        volumeMounts:
-        - mountPath: /config
-          name: config-temp
-        - mountPath: /opt/opsmx/
-          name: api-volume
-      {{- end }}
+      - name: db-check
+        image: busybox:1.28
+        command: ['sh', '-c', "sleep 30;until nslookup oes-db.$(cat /var/run/secrets/kubernetes.io/serviceaccount/namespace).svc.cluster.local; do echo waiting for db-opsmx to be up and running; sleep 2; done"]
       containers:
       - image: {{ template "sapor.image" . }}
-        name: sapor
+        name: oes-sapor
         ports:
         - containerPort: 8085
           protocol: TCP
         volumeMounts:
-        - name: api-volume
-          mountPath: /opt/opsmx/
+        - name: sapor-config-volume
+          mountPath: /opt/opsmx/application.yml
+          subPath: application.yml
 {{- if .Values.sapor.config.caCerts.override }}
         - name: certs-volume
           mountPath: /etc/pki/ca-trust/extracted/java
 {{- end }}
+        resources:
+          requests:
+            memory: "100Mi"
+            cpu: "1000m"
+          limits:
+            memory: "500Mi"
+            cpu: "2000m"
         readinessProbe:
           tcpSocket:
             port: 8085
@@ -66,17 +60,9 @@ spec:
       imagePullSecrets:
       - name: {{ .Values.imagePullSecret}}
       volumes:
-      {{- if .Values.autoConfiguration.enabled }}
       - configMap:
           name: oes-sapor-config
-        name: config-temp
-      - emptyDir: {}
-        name: api-volume
-      {{- else }}
-      - name: api-volume
-        configMap:
-          name: oes-sapor-config
-      {{- end }}
+        name: sapor-config-volume
 {{- if .Values.sapor.config.caCerts.override }}
       - name: certs-volume
         configMap:

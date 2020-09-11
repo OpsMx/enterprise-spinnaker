@@ -3,7 +3,7 @@ kind: Deployment
 metadata:
   labels:
     app: oes
-    component: oes-gate
+    component: gate
 {{ include "oes.standard-labels" . | indent 4 }}
   name: oes-gate
 spec:
@@ -11,14 +11,14 @@ spec:
   selector:
     matchLabels:
       app: oes
-      component: oes-gate
+      component: gate
   template:
     metadata:
       annotations:
-        configmap/checksum: {{ (.Files.Glob "config/oes-gate/*").AsConfig | sha256sum }}
+        configmap/checksum: {{ (.Files.Glob "config/oes-gate/gate.yml").AsConfig | sha256sum }}
       labels:
         app: oes
-        component: oes-gate
+        component: gate
 {{ include "oes.standard-labels" . | indent 8 }}
     spec:
       {{- if .Values.autoConfiguration.enabled }}
@@ -26,16 +26,15 @@ spec:
       - env:
         - name: EXTERNAL_IP_CHECK_DELAY
           value: "{{ .Values.autoConfiguration.initContainer.externalIpCheckDelay}}"
-        - name: SPINNAKER_SETUP_DELAY
-          value: "{{ .Values.autoConfiguration.initContainer.spinnakerSetupMaxDelay}}"
         image: {{ .Values.autoConfiguration.initContainer.image}}
         imagePullPolicy: Always
         name: oes-gate-init
         command: ["/home/config_endpoint.sh"]
         args: ["oes-gate"]
         volumeMounts:
-        - mountPath: /config
+        - mountPath: /config/gate.yml
           name: config-temp
+          subPath: gate.yml
         - mountPath: /opt/spinnaker/config
           name: gate-volume
       {{- end }}
@@ -45,6 +44,13 @@ spec:
         ports:
         - containerPort: 8084
           protocol: TCP
+        resources:
+          requests:
+            memory: "500Mi"
+            cpu: "500m"
+          limits:
+            memory: "1500Mi"
+            cpu: "1500m"
         volumeMounts:
         - name: gate-volume
           mountPath: /opt/spinnaker/config

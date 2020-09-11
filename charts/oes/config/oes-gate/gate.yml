@@ -17,12 +17,12 @@ cors:
   allowed-origins-pattern: {{ .Values.gate.config.oesUIcors }}
 ldap:
   enabled: {{ .Values.ldap.enabled }}
-  url: {{ .Values.ldap.url }}
+  url: {{ tpl .Values.ldap.url . }}
   userDnPattern: {{ .Values.ldap.userDnPattern }}
   basedn: {{ .Values.ldap.basedn }}
   pattern: {{ .Values.ldap.pattern }}
 file:
-  enabled: {{ . Values.gate.config.fileBasedAuthentication }}
+  enabled: {{ .Values.gate.config.fileBasedAuthentication.enabled }}
   url: /platformservice/v1/users/authenticate
 authn:
   mode: session
@@ -33,4 +33,4 @@ logging:
     org.springframework.security: DEBUG
     org.springframework.web: DEBUG
 redis:
-  connection: {{ .Values.redis.url }}
+  connection: {{ tpl .Values.redis.url . }}

@@ -2,7 +2,8 @@ apiVersion: apps/v1
 kind: StatefulSet
 metadata:
   labels:
-    app: oes-db
+    app: oes
+    component: db
 {{ include "oes.standard-labels" . | indent 4 }}
   name: oes-db
 spec:
@@ -11,15 +12,17 @@ spec:
   serviceName: oes-db
   selector:
     matchLabels:
-      app: oes-db
+      app: oes
+      component: db
   template:
     metadata:
       labels:
-        app: oes-db
+        app: oes
+        component: db
 {{ include "oes.standard-labels" . | indent 8 }}
     spec:
       imagePullSecrets:
-        - name: {{ .Values.imagePullSecret}}
+        - name: {{ .Values.imagePullSecret }}
       containers:
       - image: {{ template "db.image" . }}
         imagePullPolicy: {{ .Values.db.image.pullPolicy }}
@@ -41,7 +44,8 @@ spec:
   - metadata:
       creationTimestamp: null
       labels:
-        app: oes-db
+        app: oes
+        component: db
       name: oes-db-postgresql
     spec:
       accessModes:

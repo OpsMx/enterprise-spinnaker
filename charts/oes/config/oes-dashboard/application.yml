@@ -19,7 +19,7 @@ feign:
 opsmx:
   dashboard:
     installation:
-      mode: { .Values.installationMode }
+      mode: {{ .Values.installationMode }}
 
 management:
   endpoints:

@@ -14,6 +14,6 @@ spinnaker:
   {{- end }}
 spring:
   datasource:
-    url: jdbc:{{ .Values.db.url }}
+    url: {{ .Values.db.url }}/oesdb
     username: {{ .Values.db.username }}
     password: {{ .Values.db.password }}

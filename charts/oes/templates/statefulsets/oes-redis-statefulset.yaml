@@ -23,11 +23,6 @@ spec:
       - env:
         - name: REDIS_REPLICATION_MODE
           value: master
-        - name: REDIS_PASSWORD
-          valueFrom:
-            secretKeyRef:
-              key: redis-password
-              name: redis-secret
         - name: REDIS_DISABLE_COMMANDS
           value: FLUSHDB,FLUSHALL
         image: {{ .Values.redis.image.registry }}/{{ .Values.redis.image.repository }}:{{ .Values.redis.image.tag }}

@@ -1,9 +1,11 @@
 apiVersion: v1
 data:
-{{ (tpl (.Files.Glob "config/oes-gate-config/gate.yml").AsConfig . ) | indent 2 }}
-
+  gate.yml: |
+    {{- tpl (.Files.Get "config/oes-gate/gate.yml") . | nindent 4 }}
 kind: ConfigMap
 metadata:
   name: oes-gate-config
   labels:
+    app: oes
+    component: gate
 {{ include "oes.standard-labels" . | indent 4 }}

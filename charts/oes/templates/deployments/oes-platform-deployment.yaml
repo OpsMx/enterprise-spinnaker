@@ -17,28 +17,50 @@ spec:
   template:
     metadata:
       annotations:
-        configmap/checksum: {{ (.Files.Glob "config/oes-platform/*").AsConfig | sha256sum }}
+        configmap/checksum: {{ (.Files.Glob "config/oes-platform/platform.yml").AsConfig | sha256sum }}
       labels:
         app: oes
         component: platform
 {{ include "oes.standard-labels" . | indent 8 }}
     spec:
+      initContainers:
+      - name: db-check
+        image: busybox:1.28
+        command: ['sh', '-c', "sleep 30;until nslookup oes-db.$(cat /var/run/secrets/kubernetes.io/serviceaccount/namespace).svc.cluster.local; do echo waiting for db-opsmx to be up and running; sleep 2; done"]
       containers:
       - image: {{ template "platform.image" . }}
-        name: platform-service
+        name: oes-platform
         ports:
         - containerPort: 8095
           protocol: TCP
         env:
         - name: CONF_DIR
           value: /opsmx/conf/
+        resources:
+          requests:
+            memory: "500Mi"
+            cpu: "500m"
+          limits:
+            memory: "1500Mi"
+            cpu: "1500m"
+        readinessProbe:
+          tcpSocket:
+            port: 8095
+          initialDelaySeconds: 10
+          periodSeconds: 5
+        livenessProbe:
+          httpGet:
+            path: /mgmt/health
+            port: 8095
+          initialDelaySeconds: 60
+          periodSeconds: 60
         volumeMounts:
-        - mountPath: /opsmx/conf/application.yml
-          name: platform-config
-          subPath: application.yml
+        - mountPath: /opsmx/conf/platform.yml
+          name: platform-config-volume
+          subPath: platform.yml
       imagePullSecrets:
       - name: {{ .Values.imagePullSecret}}
       volumes:
-      - name: platform-config
+      - name: platform-config-volume
         configMap:
-          name: platformconfig
+          name: oes-platform-config
