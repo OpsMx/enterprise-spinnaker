@@ -34,8 +34,6 @@ spec:
         - containerPort: 8095
           protocol: TCP
         env:
-        - name: CONF_DIR
-          value: /opsmx/conf/
         resources:
           requests:
             memory: "500Mi"

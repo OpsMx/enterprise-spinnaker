@@ -57,17 +57,14 @@ openldap:
 ldap:
   enabled: true
   url: ldap://{{ .Release.Name }}-openldap:389/dc=example,dc=org
-  #url: ldap://{{ .Release.Name }}-openldap:389/dc=example,dc=org
   userDnPattern: cn={0}
   basedn: dc=example,dc=org # Value of ldap.base.dn
-  pattern: (&(cn=USERNAME)) # Value of ldap.user.filter.pattern
-  adminDn: cn=admin,dc=example,dc=com
-  adminPassword: adminroot123
+  adminDn: cn=admin,dc=example,dc=org
+  adminPassword: admin
   userDisplayName: displayName
-  userFilterPattern: (&(uid=USERNAME))
+  pattern: (&(uid=USERNAME))
   userGroupIdentity: memberOf
   userIdentity: cn
-  userPrepend: uid=USERNAME,ou=Users
 
 ####################################################
 ## Redis configuration
@@ -220,7 +217,7 @@ platform:
   image:
     registry: opsmx11
     repository: platform-service
-    tag: master-202009101215
+    tag: master-202009110803
     pullPolicy: IfNotPresent
 
   config:
@@ -238,7 +235,7 @@ platform:
 
     ## Source of Users for authorization
     ## Supported sources:- ldap, file
-    userSource: file
+    userSource: ldap
 
     ## LDAP Configuration will be used if above userSource is set to ldap
     ## Refer above, under LDAP configuration section

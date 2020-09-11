@@ -2,7 +2,7 @@ spring:
   datasource:
     url: {{ .Values.db.url }}/platformdb
     username: {{ .Values.db.username }}
-    password: {{ .Values.db.username }}
+    password: {{ .Values.db.password }}
 rbacEnabled: {{ .Values.rbac.create }}
 userGroup:
   adminGroups: {{ .Values.platform.config.adminGroups }}
@@ -14,10 +14,10 @@ ldap:
   baseDn: {{ .Values.ldap.basedn }}
   url: {{ tpl .Values.ldap.url . }}
   userDisplayName: {{ .Values.ldap.userDisplayName }}
-  userFilterPattern: {{ .Values.ldap.userFilterPattern }}
+  userFilterPattern: {{ .Values.ldap.pattern }}
   userGroupIdentity: {{ .Values.ldap.userGroupIdentity }}
   userIdentity: {{ .Values.ldap.userIdentity }}
-  userPrepend: {{ .Values.ldap.userPrepend }}
+  userPrepend: {{ .Values.ldap.userDnPattern }}
 redis:
-  hostname: redis-master
+  hostname: {{ .Release.Name }}-redis-master
   port: 6379

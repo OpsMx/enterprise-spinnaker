@@ -29,8 +29,6 @@ spec:
         - containerPort: 8094
           protocol: TCP
         env:
-        - name: CONF_DIR
-          value: /opsmx/conf/
         volumeMounts:
         - mountPath: /opsmx/conf/application.yml
           name: dashboard-config
