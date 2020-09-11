@@ -281,12 +281,10 @@ sapor:
       spinGateURL: http://spin-gate:8084
 
       ## Set the external IP address of spin-gate, this is used to redirect to
-      ## the spinnaker pipelines from OES-UI. Automatically configured when
-      ## autoConfiguration.enabled is set to true and if spinnaker is installed
-      ## in the same namespace
+      ## the spinnaker pipelines from OES-UI.
       ## Note: Trailing / is not required
       ##
-      spinExternalGateURL: http://SPIN_GATE_LOADBALANCER_IP_PORT
+      spinExternalGateURL: http://spin-gate:8084
 
       ## Spinnaker user credentials
       ##
