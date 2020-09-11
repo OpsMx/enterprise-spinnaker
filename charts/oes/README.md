@@ -104,14 +104,12 @@ Parameter | Description | Default
 `ldap.url` | URL of LDAP server | `ldap://{{ .Release.Name }}-openldap:389/dc=example,dc=org`
 `ldap.userDnPattern` | DN Pattern for Open LDAP | `cn={0}`
 `ldap.basedn` | Base DN value | `dc=example,dc=org`
-`ldap.pattern` | Base DN filter pattern | `(&(cn=USERNAME))`
 `ldap.adminDn` | Admin DN value | `cn=admin,dc=example,dc=com`
 `ldap.adminPassword` | Admin password | `adminroot123`
 `ldap.userDisplayName` | Display name of the user | `displayName`
-`ldap.userFilterPattern` | Filter pattern of the user | `(&(uid=USERNAME))`
+`ldap.pattern` | Base DN filter pattern | `(&(cn=USERNAME))`
 `ldap.GroupIdentity` | User group identity | `memberOf`
 `ldap.userIdentity` | User identity | `cn`
-`ldap.userPrepend` | User prepend | `uid=USERNAME,ou=Users`
 `installRedis` | If false, OES will uninstall its own Redis for caching | `true`
 `redis.image.registry` | Registry to be used for docker images when installRedis is set to true | `docker.io`
 `redis.image.repository` | Repository to be used for docker images when installRedis is set to true | `redis`
@@ -162,7 +160,7 @@ Parameter | Description | Default
 `sapor.image.pullPolicy` | Image pull policy for OES SAPOR image | `IfNotPresent`
 `sapor.config.spinnaker.authnEnabled` | Set it to true if authentication is enabled in Spinnaker | `false`
 `sapor.config.spinnaker.spinGateURL` | URL of Spinnaker Gate | `http://spin-gate.oes-spin:8084`
-`sapor.config.spinnaker.spinExternalGateURL` | Set the external IP address of spin-gate, this is used to redirect to the spinnaker pipelines from OES-UI | `http://40.125.102.163:8084`
+`sapor.config.spinnaker.spinExternalGateURL` | Set the external IP address of spin-gate, this is used to redirect to the spinnaker pipelines from OES-UI | `http://spin-gate.oes-spin:8084`
 `sapor.config.spinnaker.spinuser` | Spinnaker username | `admin`
 `sapor.config.spinnaker.spinpasswd` | Spinnaker username | `opsmx@123`
 `sapor.config.spinnaker.spinAdminLoginEnabled` | Enable to override spinnaker user credentials as an admin user | `false`
@@ -176,15 +174,15 @@ Parameter | Description | Default
 `ui.config.oesGateURL` | Endpoint of oes-gate to be used by oes-ui | `http://OES_GATE_IP:8084/`
 `ui.config.setApplicationRefreshInterval` | Interval at which UI refreshes application dashboard | `16000`
 `autoConfiguration.enabled` | Option enables OES to be configured automatically. Load Balancer IPs will be automatically replaced in the configuration files of oes-gate, oes-ui & sapor. Set it to false if OES is being installed on restricted environment. | `true`
-`autoConfiguration.initContainer.image` | Image to be used by Init container for auto configuration | `opsmx11/oes-init:v2`
+`autoConfiguration.initContainer.image` | Image to be used by Init container for auto configuration | `opsmx11/oes-init:v3`
 `autoConfiguration.initContainer.externalIpCheckDelay` | Expected delay in assigning load balancer IPs to oes-ui & oes-gate in secs | `120`
-`autoConfiguration.initContainer.spinnakerSetupMaxDelay` | Expected time in secs that it takes for Spinnaker to be up & running | `10`
 `opa.enabled` | Enable OPA with OES | `true`
 `opa.image.repository` | OPA image repository | `openpolicyagent/opa`
 `opa.image.tag` | Tag to pull OPA image | `latest`
 `opa.image.pullPolicy` | Image pull policy | `IfNotPresent`
 
 > **Tip**: Refer to values.yaml for detailed comments
+
 > **Tip**: Refer to Spinnaker helm chart & EFK helm chart for their configuration details.
 
 Specify each parameter using the `--set key=value[,key=value]` argument to `helm install`. For example,
@@ -230,8 +228,8 @@ Helm v3.x
 
   Example output would be:
 
-    NAME 	     TYPE             CLUSTER-IP   EXTERNAL-IP     PORT(S)          AGE
-    oes-ui     LoadBalancer     10.0.33.110  52.149.54.222   80:30860/TCP     20m
+    NAME        TYPE              CLUSTER-IP      EXTERNAL-IP     PORT(S)         AGE
+    oes-ui      LoadBalancer      10.0.33.110     52.149.54.222   80:30860/TCP    20m
 
   Using the EXTERNAL-IP address, go to http://EXTERNAL-IP:80/
 
