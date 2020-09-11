@@ -1,0 +1,4 @@
+{
+    "endPointUrl":"{{ .Values.ui.config.oesGateURL }}",
+    "setApplicationInterval": {{ .Values.ui.config.setApplicationRefreshInterval }}
+}

@@ -1,3 +1,0 @@
-services:
-  audit:
-    applicationRefreshIntervalMs: 50000

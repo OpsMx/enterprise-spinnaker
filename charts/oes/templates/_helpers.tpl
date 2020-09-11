@@ -17,9 +17,9 @@ chart: "{{ .Chart.Name }}-{{ .Chart.Version }}"
 Return the proper UI image name
 */}}
 {{- define "ui.image" -}}
-{{- $registryName := .Values.oes.image.ui.registry -}}
-{{- $repositoryName := .Values.oes.image.ui.repository -}}
-{{- $tag := .Values.oes.image.ui.tag | toString -}}
+{{- $registryName := .Values.ui.image.registry -}}
+{{- $repositoryName := .Values.ui.image.repository -}}
+{{- $tag := .Values.ui.image.tag | toString -}}
 {{- printf "%s/%s:%s" $registryName $repositoryName $tag -}}
 {{- end -}}
 
@@ -27,9 +27,9 @@ Return the proper UI image name
 Return the proper GATE image name
 */}}
 {{- define "gate.image" -}}
-{{- $registryName := .Values.oes.image.gate.registry -}}
-{{- $repositoryName := .Values.oes.image.gate.repository -}}
-{{- $tag := .Values.oes.image.gate.tag | toString -}}
+{{- $registryName := .Values.gate.image.registry -}}
+{{- $repositoryName := .Values.gate.image.repository -}}
+{{- $tag := .Values.gate.image.tag | toString -}}
 {{- printf "%s/%s:%s" $registryName $repositoryName $tag -}}
 {{- end -}}
 
@@ -37,18 +37,48 @@ Return the proper GATE image name
 Return the proper SAPOR image name
 */}}
 {{- define "sapor.image" -}}
-{{- $registryName := .Values.oes.image.sapor.registry -}}
-{{- $repositoryName := .Values.oes.image.sapor.repository -}}
-{{- $tag := .Values.oes.image.sapor.tag | toString -}}
+{{- $registryName := .Values.sapor.image.registry -}}
+{{- $repositoryName := .Values.sapor.image.repository -}}
+{{- $tag := .Values.sapor.image.tag | toString -}}
 {{- printf "%s/%s:%s" $registryName $repositoryName $tag -}}
 {{- end -}}
 
 {{/*
-Return the proper OpsMx-DB image name
+Return the proper platform image name
 */}}
-{{- define "opsmxdb.image" -}}
-{{- $registryName := .Values.opsmxdb.image.registry -}}
-{{- $repositoryName := .Values.opsmxdb.image.repository -}}
-{{- $tag := .Values.opsmxdb.image.tag | toString -}}
+{{- define "platform.image" -}}
+{{- $registryName := .Values.platform.image.registry -}}
+{{- $repositoryName := .Values.platform.image.repository -}}
+{{- $tag := .Values.platform.image.tag | toString -}}
+{{- printf "%s/%s:%s" $registryName $repositoryName $tag -}}
+{{- end -}}
+
+{{/*
+Return the proper dashboard image name
+*/}}
+{{- define "dashboard.image" -}}
+{{- $registryName := .Values.dashboard.image.registry -}}
+{{- $repositoryName := .Values.dashboard.image.repository -}}
+{{- $tag := .Values.dashboard.image.tag | toString -}}
+{{- printf "%s/%s:%s" $registryName $repositoryName $tag -}}
+{{- end -}}
+
+{{/*
+Return the proper sapor-db image name
+*/}}
+{{- define "db.image" -}}
+{{- $registryName := .Values.db.image.registry -}}
+{{- $repositoryName := .Values.db.image.repository -}}
+{{- $tag := .Values.db.image.tag | toString -}}
+{{- printf "%s/%s:%s" $registryName $repositoryName $tag -}}
+{{- end -}}
+
+{{/*
+Return the proper Autopilot image name
+*/}}
+{{- define "autopilot.image" -}}
+{{- $registryName := .Values.autopilot.image.registry -}}
+{{- $repositoryName := .Values.autopilot.image.repository -}}
+{{- $tag := .Values.autopilot.image.tag | toString -}}
 {{- printf "%s/%s:%s" $registryName $repositoryName $tag -}}
 {{- end -}}

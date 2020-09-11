@@ -1,192 +1,329 @@
 #####################################################
-# OpsMx Enterprise Spinnaker configuration
+## OpsMx Enterprise for Spinnaker configuration
 #####################################################
+# Default values for OES chart.
+## This is a YAML-formatted file.
+## Declare variables to be passed into your templates.
 
-# Option to skip installation of spinnaker, if it already exists
-# or if OES is to be connected to existing spinnaker
-#
-installSpinnaker: true
+## Name of the secret for pulling image from docker registry.
+## Change it only if you want to create a secret with
+## different name.
+##
+imagePullSecret: opsmxdev-secret
 
-# Set to true to expose spinnaker and deck services as LoadBalancers
-#
-createIngress: false
-
-# Set it to false to skip the installation of Open LDAP server
-#
-installOpenLdap: true
-
-# OES UI service type
-#
-k8sServiceType: LoadBalancer
-
-# Name of the secret for pulling image from docker registry.
-# Change it only if you want to create a secret with
-# different name.
-#
-imagePullSecret: oes-repo
-
-# Docker registry credentials to create imagePullSecret
-#
+## Docker registry credentials to create imagePullSecret
+##
 imageCredentials:
   registry: https://index.docker.io/v1/
-  username: dockerHubId  # Docker hub username
-  password: dockerHubPwd # Docker hub password
-  email: abc@xyz.com   # email corresponding to docker hub ID
+  username: opsmx11  # Docker hub username
+  password: Network123! # Docker hub password
+  email: info@opsmx.com   # email corresponding to docker hub ID
 
-# Install a seperate Redis for OES if installSpinnaker is set to false
-#
-installRedis: false
+rbac:
+  create: true
 
-# Details of redis-master image for OES
-#
-redis:
-  image:
-    registry: docker.io
-    repository: bitnami/redis
-    ## Bitnami Redis image tag
-    ## ref: https://github.com/bitnami/bitnami-docker-redis#supported-tags-and-respective-dockerfile-links
-    ##
-    tag: 4.0.11-debian-9
-    pullPolicy: IfNotPresent
+## Option to skip installation of spinnaker, if it already exists
+## or if OES is to be connected to existing spinnaker
+##
+installSpinnaker: false
 
-#######################################################
-#
-opsmxdb:
-  # Change this to false if OES is installed after opsmx-autopilot
-  # as DB installed by opsmx-autopilot can be re-used by OES
-  #
-  enabled: true
+## Installation mode
+## Available installation modes OES-AP, OES, AP
+##
+installationMode: OES-AP
 
-  # Strategy to rollout statefulset pods
-  #
-  podManagementPolicy: OrderedReady
+## Set to true to expose spinnaker and deck services as LoadBalancers
+##
+createIngress: false
 
-  # Default group to which the default user of a pod belongs
-  #
-  securityContext:
-    fsGroup: 1000
+## OES UI & Gate service type
+##
+serviceType: LoadBalancer
 
-
-  # Details related to image of OpsMx DB
-  #
-  image:
-    registry: opsmxdev
-    repository: ubi8-autopilot-db
-    tag: v1.3.0
-    pullPolicy: IfNotPresent
-
-  # storageMountSize is the size with which a PVC is to be created
-  #
-  storageMountSize: 8Gi
-#######################################################
-#
-oes:
-  # Details related to image of OES components
-  #
-  image:
-    gate:
-      registry: opsmxdev
-      repository: oes-gate
-      tag: v0.202007101453
-      pullPolicy: IfNotPresent
-    sapor:
-      registry: opsmxdev
-      repository: sapor
-      tag: v0.202007101007
-      pullPolicy: IfNotPresent
-    ui:
-      registry: opsmxdev
-      repository: oes-ui
-      tag: v0.202007011835
-      pullPolicy: IfNotPresent
-
-  ## This option enables OES to be configured automatically
-  ## Load Balancer IPs will be automatically replaced in the
-  ## configuration files of oes-gate, oes-ui & sapor
-  autoConfiguration:
-    # Set it to false if OES is being installed on restricted evnironment;
-    # Autoconfiguration assumes Load Balancer is available for oes-gate, oes-ui
-    # and spind-deck and configures accordingly
-    enabled: true
-
-    initContainer:
-      # Image for init container to automatically configure oes components
-      # during startup
-      image: opsmxdev/oes-init:v2
-
-      # Max time(in secs) that an init container of oes-ui should wait
-      # to fetch External Load Balancer IP of oes-gate and vice versa
-      externalIpCheckDelay: 180
-
-      # Approximate time(in secs) that it takes for spin-gate service to be up
-      # and running so that sapor can establish connection with spin-gate
-      spinnakerSetupMaxDelay: 180 # Default 3 mins
-
-  config:
-    # Address and credentials for OES to connect with DB
-    #
-    db:
-      # DB URL, typically it is reachable over db-opsmx service
-      #
-      dbUrl: jdbc:postgresql://db-opsmx:5432/oesdb
-      # Username and password to connect with DB
-      #
-      username: postgres
-      password: networks123
-
-    # To allow oes-gate reach sapor
-    #
-    server:
-      enabled: true
-      baseUrl: http://sapor:8085
-
-    # To allow sapor reach to your spinnaker-gate
-    #
-    spinnaker:
-      oesGateURL: http://OES_GATE_IP:8084/  # URL used by oes-ui to reach oes-gate
-      oesUIcors: ^https?://(?:localhost|OES_UI_LOADBALANCER_IP|opsmx.com)(?::[1-9]\d*)?/? # Value of the OES-UI URL regex
-      spinGateURL: http://spin-gate:8084/ # URL used by sapor to connect to Spinnaker-Gate
-      spinExternalGateURL: http://SPIN_GATE_LOADBALANCER_IP_PORT/ # URL used by OES-UI to access Spinnaker-Gate
-      spinuser: dummyuser # Value of the Spinnaker Username (Deck)
-      spinpasswd: dummypwd # Value of the Spinnaker Password (Deck)
-      adminLoginEnabled: false
-
-      ## Used by sapor to know if authentication is enabled in Spinnaker
-      ## Set it to true if authentication is enabled in Spinnaker
-      authnEnabled: false
-
-    # Ldap server details that needs to be configured with OES
-    #
-    ldap:
-      enabled: true
-      url: ldap://{{ .Release.Name }}-openldap:389  # Value of ldap.url
-      userDnPattern: cn={0} # Value of ldap.userdn
-      basedn: dc=example,dc=org # Value of ldap.base.dn
-      pattern: (&(cn=USERNAME)) # Value of ldap.user.filter.pattern
-
-    # Set the below field to true if default java cacert is to be overriden
-    #
-    caCerts:
-      override: false
-
-##################################################
-# Openldap configuration
-##################################################
+####################################################
+## LDAP configuration
+####################################################
+## Set it to false if own LDAP is to be configured
+##
+installOpenLdap: false
 openldap:
   # Password for the admin user; by default it is set to admin
   adminPassword: admin
+  #configPassword: config
   omitClusterIP: true
 
-###################################################
+## ldap configuration used in oes-gate & oes-platform for authentication
+## and authorization
+ldap:
+  enabled: true
+  url: ldap://{{ .Release.Name }}-openldap:389/dc=example,dc=org
+  userDnPattern: cn={0}
+  basedn: dc=example,dc=org # Value of ldap.base.dn
+  pattern: (&(cn=USERNAME)) # Value of ldap.user.filter.pattern
+
+####################################################
+## Redis configuration
+####################################################
+## Install a seperate Redis for OES if installSpinnaker is set to false
+## If Spinnaker is being installed, redis installed by spinnaker chart can
+## be re-used
+##
+installRedis: true
+
+###############################################################################
+## Details of redis-master image for OES
+##
+redis:
+  image:
+    registry: docker.io
+    repository: redis
+    tag: latest
+    pullPolicy: IfNotPresent
+
+  ## Redis endpoint that is used by oes-gate and oes-platform for caching;
+  ## Change this to custom URL if installRedis is set to false
+  url: redis://{{ .Release.Name }}-redis-master:6379
+
+###############################################################################
+##
+## Values of OES Database
+##
+db:
+  ## Set it to false if any external database is to be used
+  ##
+  enabled: true
+
+  ## Change the default configuration when above option is set to false
+  ## Below url and credentials are used by Autopilot & Sapor
+  url: postgresql://oes-db:5432/opsmx
+  username: postgres
+  password: networks123
+
+  ## Image specific details
+  ##
+  image:
+    registry: opsmxdev
+    repository: ubi8-autopilot-db
+    tag: v1.5
+    pullPolicy: IfNotPresent
+
+  ## Strategy to rollout statefulset pods
+  ##
+  podManagementPolicy: OrderedReady
+
+  ## Default group to which the default user of a pod belongs
+  ##
+  securityContext:
+    fsGroup: 1000
+
+  ## storageMountSize is the size with which a PVC is to be created
+  ##
+  storageMountSize: 8Gi
+
+###############################################################################
+##
+## Values of OES Autopilot
+##
+autopilot:
+  ## Image specific details
+  ##
+  image:
+    registry: opsmx11
+    repository: autopilot
+    tag: master-202008210408
+    pullPolicy: IfNotPresent
+
+  config:
+    ## Build Analysis
+    ##
+    buildAnalysis:
+      enabled: false
+
+    ## DB configuration; change it any other external DB is to be used
+    ## Refer it above, under DB configuration section
+    ##
+
+    ## SSL configuration
+    ##
+    ssl:
+      enabled: false  # Set it to true if SSL is to be enabled
+      keyStore: keystore.p12
+      keyStorePassword: dummypwd # Provide keystore password
+      keyStoreType: PKCS12
+      keyAlias: tomcat
+
+###############################################################################
+##
+## Values of OES Dashboard
+##
+dashboard:
+  ## Image specific details
+  ##
+  image:
+    registry: opsmx11
+    repository: dashboard-service
+    tag: master-202009100512
+    pullPolicy: IfNotPresent
+
+  config:
+    ## Installation mode
+    ## OES supports three modes of installation,
+    ## Uses the mode configured above, under Installation mode
+    ##
+
+###############################################################################
+##
+## Values of OES Gate
+##
+gate:
+  ## Image specific details
+  ##
+  image:
+    registry: opsmx11
+    repository: oes-gate
+    tag: v0.202009031444
+    pullPolicy: IfNotPresent
+
+  config:
+    ## LDAP Configuration
+    ## Refer above, under LDAP configuration section
+    ##
+
+    ## Redis Endpoint
+    ## Uses the URL specified under redis.url above,
+    ## under Redis Configuration section
+    ##
+
+    ## Regex of OES-UI URL to prevent cross origin attacks
+    oesUIcors: ^https?://(?:localhost|OES_UI_LOADBALANCER_IP|opsmx.com)(?::[1-9]\d*)?/?
+
+###############################################################################
+##
+## Values of OES Platform
+##
+platform:
+  ## Image specific details
+  ##
+  image:
+    registry: opsmx11
+    repository: platform-service
+    tag: master-202009100512
+    pullPolicy: IfNotPresent
+
+  config:
+
+
+###############################################################################
+##
+## Values of OES Sapor (Security Audit Policy Onboarding & Release)
+##
+sapor:
+  ## Image specific details
+  ##
+  image:
+    registry: opsmx11
+    repository: sapor
+    tag: v0.202009111046
+    pullPolicy: IfNotPresent
+
+  config:
+    ## RBAC Configuration
+    ## Refer the RBAC create option at the top
+    ##
+
+    spinnaker:
+      ## Spinnaker configuration
+      ## Necessary details needed by Sapor to
+      ## integrate with Spinnaker
+      ##
+      ## Set it to true if authentication is enabled in Spinnaker
+      ##
+      authnEnabled: false
+
+      ## URL of Spinnaker Gate
+      ## FQDN of spin-gate if Spinnaker is installed in same K8s cluster, else
+      ## set the url with the external IP address of spin-gate
+      ## Note: Don't put a trailing /
+      ##
+      spinGateURL: http://spin-gate.oes-spin:8084
+
+      ## Set the external IP address of spin-gate, this is used to redirect to
+      ## the spinnaker pipelines from OES-UI
+      ## Note: Don't put a trailing /
+      ##
+      spinExternalGateURL: http://40.125.102.163:8084
+
+      ## Spinnaker user credentials
+      ##
+      spinuser: admin
+      spinpasswd: opsmx@123
+
+      ## Spinnaker admin credentials
+      ## When provided, will override above credentials and operate spinnaker
+      ## as an admin user
+      ##
+      spinAdminLoginEnabled: false
+      spinAdminUsername: admin
+      spinAdminPassword: admin
+
+    ## Set the below field to true if default java cacert is to be overriden
+    ##
+    caCerts:
+      override: false
+
+###############################################################################
+##
+## Values of OES UI
+##
+ui:
+  ## Image specific details
+  ##
+  image:
+    registry: opsmx11
+    repository: oes-ui
+    tag: v0.202009101444
+    pullPolicy: IfNotPresent
+
+  config:
+    ## Endpoint of oes-gate to be used by oes-ui
+    ##
+    oesGateURL: http://OES_GATE_IP:8084/
+
+    ## Interval at which UI refreshes application dashboard
+    setApplicationRefreshInterval: 16000
+
+###############################################################################
+## This option enables OES to be configured automatically
+## Load Balancer IPs will be automatically replaced in the
+## configuration files of oes-gate, oes-ui & sapor
+autoConfiguration:
+  # Set it to false if OES is being installed on restricted evnironment;
+  # Autoconfiguration assumes Load Balancer is available for oes-gate, oes-ui
+  # and spind-deck and configures accordingly
+  enabled: true
+
+  initContainer:
+    # Image for init container to automatically configure oes components
+    # during startup
+    image: opsmx11/oes-init:v2
+
+    # Max time(in secs) that an init container of oes-ui should wait
+    # to fetch External Load Balancer IP of oes-gate and vice versa
+    externalIpCheckDelay: 120
+
+    # Approximate time(in secs) that it takes for spin-gate service to be up
+    # and running so that sapor can establish connection with spin-gate
+    spinnakerSetupMaxDelay: 10 # Default 3 mins
+
+#####################################################
+## OPA configuration
+#####################################################
 opa:
   enabled: true
   image:
     repository: openpolicyagent/opa
     tag: latest
     pullPolicy: IfNotPresent
-###################################################
-
-
 
 #####################################################
 # Centralized Logging Configuration

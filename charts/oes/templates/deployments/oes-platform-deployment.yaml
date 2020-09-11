@@ -1,0 +1,44 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  creationTimestamp: null
+  labels:
+    app: oes
+    component: platform
+{{ include "oes.standard-labels" . | indent 4 }}
+  name: oes-platform
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: oes
+      component: platform
+  strategy: {}
+  template:
+    metadata:
+      annotations:
+        configmap/checksum: {{ (.Files.Glob "config/oes-platform/*").AsConfig | sha256sum }}
+      labels:
+        app: oes
+        component: platform
+{{ include "oes.standard-labels" . | indent 8 }}
+    spec:
+      containers:
+      - image: {{ template "platform.image" . }}
+        name: platform-service
+        ports:
+        - containerPort: 8095
+          protocol: TCP
+        env:
+        - name: CONF_DIR
+          value: /opsmx/conf/
+        volumeMounts:
+        - mountPath: /opsmx/conf/application.yml
+          name: platform-config
+          subPath: application.yml
+      imagePullSecrets:
+      - name: {{ .Values.imagePullSecret}}
+      volumes:
+      - name: platform-config
+        configMap:
+          name: platformconfig

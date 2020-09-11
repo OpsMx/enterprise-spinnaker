@@ -1,0 +1,10 @@
+apiVersion: v1
+data:
+  application.yml: |
+    {{- tpl (.Files.Get "config/platform/application.yml") . | nindent 4 }}
+
+kind: ConfigMap
+metadata:
+  name: oes-platform-config
+  labels:
+{{ include "oes.standard-labels" . | indent 4 }}

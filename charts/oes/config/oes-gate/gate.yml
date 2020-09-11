@@ -1,0 +1,36 @@
+services:
+  opsmx:
+    baseUrl: http://oes-sapor:8085
+    enabled: true
+  autopilot:
+    baseUrl: http://oes-autopilot:8090
+    enabled: true
+  platform:
+    baseUrl: http://oes-platform:8095
+    userGroupApiPath: /platformservice/v1/users/{username}/usergroups/importAndCache
+    enabled: true
+  dashboard:
+    baseUrl: http://oes-dashboard:8094
+    enabled: true
+  user: {}
+cors:
+  allowed-origins-pattern: {{ .Values.gate.config.oesUIcors }}
+ldap:
+  enabled: {{ .Values.ldap.enabled }}
+  url: {{ .Values.ldap.url }}
+  userDnPattern: {{ .Values.ldap.userDnPattern }}
+  basedn: {{ .Values.ldap.basedn }}
+  pattern: {{ .Values.ldap.pattern }}
+file:
+  enabled: false
+  url: /platformservice/v1/users/authenticate
+authn:
+  mode: session
+google: {}
+logging:
+  level:
+    com.netflix.spinnaker.gate.security: DEBUG
+    org.springframework.security: DEBUG
+    org.springframework.web: DEBUG
+redis:
+  connection: {{ .Values.redis.url }}

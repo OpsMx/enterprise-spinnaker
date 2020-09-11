@@ -1,3 +1,0 @@
-{
-    "endPointUrl":"{{ .Values.oes.config.spinnaker.oesGateURL }}"
-}
