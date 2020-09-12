@@ -25,6 +25,8 @@ spec:
           value: master
         - name: REDIS_DISABLE_COMMANDS
           value: FLUSHDB,FLUSHALL
+        - name: ALLOW_EMPTY_PASSWORD
+          value: "yes"
         image: {{ .Values.redis.image.registry }}/{{ .Values.redis.image.repository }}:{{ .Values.redis.image.tag }}
         imagePullPolicy: {{ .Values.redis.image.pullPolicy }}
         livenessProbe:

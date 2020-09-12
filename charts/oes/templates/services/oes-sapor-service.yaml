@@ -5,7 +5,7 @@ metadata:
     app: oes
     component: sapor
 {{ include "oes.standard-labels" . | indent 4 }}
-  name: sapor
+  name: oes-sapor
 spec:
   type: ClusterIP
   ports:

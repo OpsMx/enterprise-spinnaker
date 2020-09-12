@@ -28,7 +28,7 @@ spec:
           value: "{{ .Values.autoConfiguration.initContainer.externalIpCheckDelay}}"
         image: {{ .Values.autoConfiguration.initContainer.image}}
         imagePullPolicy: Always
-        name: oes-ui-init
+        name: ui-autoconfig
         command: ["/home/config_endpoint.sh"]
         args: ["oes-ui"]
         volumeMounts:

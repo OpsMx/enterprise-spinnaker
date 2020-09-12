@@ -28,7 +28,7 @@ spec:
           value: "{{ .Values.autoConfiguration.initContainer.externalIpCheckDelay}}"
         image: {{ .Values.autoConfiguration.initContainer.image}}
         imagePullPolicy: Always
-        name: oes-gate-init
+        name: gate-autoconfig
         command: ["/home/config_endpoint.sh"]
         args: ["oes-gate"]
         volumeMounts:

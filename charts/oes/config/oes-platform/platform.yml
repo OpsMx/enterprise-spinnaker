@@ -17,7 +17,7 @@ ldap:
   userFilterPattern: {{ .Values.ldap.pattern }}
   userGroupIdentity: {{ .Values.ldap.userGroupIdentity }}
   userIdentity: {{ .Values.ldap.userIdentity }}
-  userPrepend: {{ .Values.ldap.userDnPattern }}
+  userPrepend: {{ .Values.ldap.userPrepend }}
 redis:
   hostname: {{ .Release.Name }}-redis-master
   port: 6379
