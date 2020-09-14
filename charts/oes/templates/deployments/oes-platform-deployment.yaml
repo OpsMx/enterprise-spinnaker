@@ -57,7 +57,7 @@ spec:
           name: platform-config-volume
           subPath: platform.yml
       imagePullSecrets:
-      - name: {{ .Values.imagePullSecret}}
+      - name: {{ .Values.imagePullSecret }}
       volumes:
       - name: platform-config-volume
         configMap:

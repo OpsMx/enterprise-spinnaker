@@ -19,5 +19,4 @@ ldap:
   userIdentity: {{ .Values.ldap.userIdentity }}
   userPrepend: {{ .Values.ldap.userPrepend }}
 redis:
-  hostname: {{ .Release.Name }}-redis-master
-  port: 6379
+  connection: {{ tpl .Values.redis.url . }}
