@@ -8,7 +8,7 @@ For more information, visit https://www.opsmx.com
 Install OpsMx Enterprise for Spinnaker
   ```console
   $ helm repo add opsmx https://helmcharts.opsmx.com/
-  $ helm install <release-name> opsmx/oes
+  $ helm install <release-name> opsmx/oes --set imageCredentials.username=<dockerID> --set imageCredentials.password=<dockerPassword>
   ```
 
 ## Spinnaker + OpsMx Enterprise for Spinnaker Extensions (OES) Setup Instructions
@@ -38,7 +38,7 @@ Install OpsMx Enterprise for Spinnaker
    $ helm repo add opsmx https://helmcharts.opsmx.com/
    ```
 
-- Docker registry credentials is setup as a secret in Kubernetes. Before you install Autopilot, please send an email to support@opsmx.com requesting access to the Autopilot images with your Dockerhub id. You can proceed with installation once your Dockerhub id has been granted access.
+- Docker registry credentials is setup as a secret in Kubernetes. Before you install OES, please send an email to support@opsmx.com requesting access to the OES images with your Dockerhub id. You can proceed with installation once your Dockerhub id has been granted access.
 
   To be able to fetch OES docker images, username and password shall be set in values.yaml or use --set imageCredentials.username=<username> --set imageCredentials.password=<password> while running helm install.
 
@@ -210,7 +210,7 @@ Helm v3.x
   $ helm install my-release opsmx/oes -f values.yaml
   ```
 
-### Connecting to Spinnaker and OpsMx Enterprise Enterprise Extensions
+### Connecting to Spinnaker and OpsMx Enterprise Extensions
 
 #### Connecting to Spinnaker
 
