@@ -1,3 +1,4 @@
+{{ if or (eq .Values.installationMode "OES-AP") (eq .Values.installationMode "AP") }}
 apiVersion: v1
 kind: Service
 metadata:
@@ -18,3 +19,4 @@ spec:
   selector:
     app: oes
     component: autopilot
+{{ end }}

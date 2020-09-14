@@ -15,8 +15,8 @@ imagePullSecret: opsmxdev-secret
 ##
 imageCredentials:
   registry: https://index.docker.io/v1/
-  username: opsmx11  # Docker hub username
-  password: Network123! # Docker hub password
+  username: username  # Docker hub username
+  password: password # Docker hub password
   email: info@opsmx.com   # email corresponding to docker hub ID
 
 rbac:
@@ -39,83 +39,6 @@ createIngress: false
 ## OES UI & Gate service type
 ##
 k8sServiceType: LoadBalancer
-
-####################################################
-## LDAP configuration
-####################################################
-## Set it to false if own LDAP is to be configured
-##
-installOpenLdap: true
-## OpenLDAP custom configuration; will override default configuration of
-## openldap helm chart
-##
-openldap:
-  # Password for the admin user; by default it is set to admin
-  adminPassword: opsmxadmin123
-  configPassword: opsmxconfig123
-  omitClusterIP: true
-  persistence:
-    enabled: true
-  env:
-    LDAP_REMOVE_CONFIG_AFTER_SETUP: "false"
-
-  customLdifFiles:
-    01-memberof.ldif: |-
-      dn: cn=module,cn=config
-      cn: module
-      objectClass: olcModuleList
-      olcModuleLoad: memberof.la
-      olcModulePath: /usr/lib/ldap
-
-      dn: olcOverlay={0}memberof,olcDatabase={1}hdb,cn=config
-      objectClass: olcConfig
-      objectClass: olcMemberOf
-      objectClass: olcOverlayConfig
-      objectClass: top
-      olcOverlay: memberof
-      olcMemberOfDangling: ignore
-      olcMemberOfRefInt: TRUE
-      olcMemberOfGroupOC: groupOfNames
-      olcMemberOfMemberAD: member
-      olcMemberOfMemberOfAD: memberOf
-    02-refint1.ldif: |-
-      dn: cn=module{1},cn=config
-      changetype: modify
-      add: olcmoduleload
-      olcmoduleload: refint.la
-    03-refint2.ldif: |-
-      dn: olcOverlay={1}refint,olcDatabase={1}hdb,cn=config
-      objectClass: olcConfig
-      objectClass: olcOverlayConfig
-      objectClass: olcRefintConfig
-      objectClass: top
-      olcOverlay: {1}refint
-      olcRefintAttribute: memberof member manager owner
-    04-add_ou.ldif: |-
-      dn: ou=groups,dc=example,dc=org
-      objectClass: organizationalUnit
-      ou: Groups
-    05-admin.ldif: |-
-      dn: cn=admin,ou=groups,dc=example,dc=org
-      objectClass: groupofnames
-      cn: admin
-      description: read write and execute group
-      member: cn=admin,dc=example,dc=org
-
-## ldap configuration used in oes-gate & oes-platform for authentication
-## and authorization
-ldap:
-  enabled: true
-  url: ldap://{{ .Release.Name }}-openldap:389
-  userDnPattern: cn={0}
-  basedn: dc=example,dc=org # Value of ldap.base.dn
-  adminDn: cn=admin,dc=example,dc=org
-  adminPassword: opsmxadmin123
-  userDisplayName: displayName
-  pattern: (&(cn=USERNAME))
-  userGroupIdentity: memberOf
-  userIdentity: cn
-  userPrepend: cn=USERNAME
 
 ####################################################
 ## Redis configuration
@@ -405,6 +328,83 @@ opa:
     repository: openpolicyagent/opa
     tag: latest
     pullPolicy: IfNotPresent
+
+####################################################
+## LDAP configuration
+####################################################
+## Set it to false if own LDAP is to be configured
+##
+installOpenLdap: true
+## OpenLDAP custom configuration; will override default configuration of
+## openldap helm chart
+##
+openldap:
+  # Password for the admin user; by default it is set to admin
+  adminPassword: opsmxadmin123
+  configPassword: opsmxconfig123
+  omitClusterIP: true
+  persistence:
+    enabled: true
+  env:
+    LDAP_REMOVE_CONFIG_AFTER_SETUP: "false"
+
+  customLdifFiles:
+    01-memberof.ldif: |-
+      dn: cn=module,cn=config
+      cn: module
+      objectClass: olcModuleList
+      olcModuleLoad: memberof.la
+      olcModulePath: /usr/lib/ldap
+
+      dn: olcOverlay={0}memberof,olcDatabase={1}hdb,cn=config
+      objectClass: olcConfig
+      objectClass: olcMemberOf
+      objectClass: olcOverlayConfig
+      objectClass: top
+      olcOverlay: memberof
+      olcMemberOfDangling: ignore
+      olcMemberOfRefInt: TRUE
+      olcMemberOfGroupOC: groupOfNames
+      olcMemberOfMemberAD: member
+      olcMemberOfMemberOfAD: memberOf
+    02-refint1.ldif: |-
+      dn: cn=module{1},cn=config
+      changetype: modify
+      add: olcmoduleload
+      olcmoduleload: refint.la
+    03-refint2.ldif: |-
+      dn: olcOverlay={1}refint,olcDatabase={1}hdb,cn=config
+      objectClass: olcConfig
+      objectClass: olcOverlayConfig
+      objectClass: olcRefintConfig
+      objectClass: top
+      olcOverlay: {1}refint
+      olcRefintAttribute: memberof member manager owner
+    04-add_ou.ldif: |-
+      dn: ou=groups,dc=example,dc=org
+      objectClass: organizationalUnit
+      ou: Groups
+    05-admin.ldif: |-
+      dn: cn=admin,ou=groups,dc=example,dc=org
+      objectClass: groupofnames
+      cn: admin
+      description: read write and execute group
+      member: cn=admin,dc=example,dc=org
+
+## ldap configuration used in oes-gate & oes-platform for authentication
+## and authorization
+ldap:
+  enabled: true
+  url: ldap://{{ .Release.Name }}-openldap:389
+  userDnPattern: cn={0}
+  basedn: dc=example,dc=org # Value of ldap.base.dn
+  adminDn: cn=admin,dc=example,dc=org
+  adminPassword: opsmxadmin123
+  userDisplayName: displayName
+  pattern: (&(cn=USERNAME))
+  userGroupIdentity: memberOf
+  userIdentity: cn
+  userPrepend: cn=USERNAME
 
 #####################################################
 # Centralized Logging Configuration

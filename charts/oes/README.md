@@ -97,25 +97,12 @@ Parameter | Description | Default
 `installationMode` | The installation mode. Available installation modes are **OES-AP** (both OES 3.0 and Autopilot), **OES** (Only OES 3.0) and **AP** (Only Autopilot) | `OES-AP`
 `createIngress` | If true, exposes Spinnaker deck & gate services over Ingress | `false`
 `k8sServiceType` | Service Type of oes-ui, oes-gate, spin-deck-ui, spin-gate | `LoadBalancer`
-`installOpenLdap` | If true, installs Open LDAP server | `false`
-`openldap.adminPassword` | Password to be set for admin user of LDAP | `admin`
-`openldap.omitClusterIP` | Set to true to omit ClusterIP for openldap service | `true`
-`ldap.enabled` | Set it to true if LDAP is to be enabled for OES | `true`
-`ldap.url` | URL of LDAP server | `ldap://{{ .Release.Name }}-openldap:389/dc=example,dc=org`
-`ldap.userDnPattern` | DN Pattern for Open LDAP | `cn={0}`
-`ldap.basedn` | Base DN value | `dc=example,dc=org`
-`ldap.adminDn` | Admin DN value | `cn=admin,dc=example,dc=com`
-`ldap.adminPassword` | Admin password | `adminroot123`
-`ldap.userDisplayName` | Display name of the user | `displayName`
-`ldap.pattern` | Base DN filter pattern | `(&(cn=USERNAME))`
-`ldap.GroupIdentity` | User group identity | `memberOf`
-`ldap.userIdentity` | User identity | `cn`
 `installRedis` | If false, OES will uninstall its own Redis for caching | `true`
 `redis.image.registry` | Registry to be used for docker images when installRedis is set to true | `docker.io`
 `redis.image.repository` | Repository to be used for docker images when installRedis is set to true | `redis`
 `redis.image.tag` | Tag to be used for docker images when installRedis is set to true | `true`
 `redis.image.pullPolicy` | Redis image pull policy | `IfNotPresent`
-`redis.image.url` | Set custom URL if installRedis is set to false | `redis://{{ .Release.Name }}-redis-master:6379`
+`redis.url` | Set custom URL if installRedis is set to false | `redis://{{ .Release.Name }}-redis-master:6379`
 `db.enabled` | Set it to false if OpsMx DB is already installed on cluster or if any external database is to be used.| `true`
 `db.url` | URL of the external DB if not using OpsMx DB.| `jdbc:postgresql://oes-db:5432/opsmx`
 `db.username` | Username of the DB.| `postgres`
@@ -180,6 +167,24 @@ Parameter | Description | Default
 `opa.image.repository` | OPA image repository | `openpolicyagent/opa`
 `opa.image.tag` | Tag to pull OPA image | `latest`
 `opa.image.pullPolicy` | Image pull policy | `IfNotPresent`
+`installOpenLdap` | If true, installs Open LDAP server | `false`
+`openldap.adminPassword` | Password to be set for admin user of LDAP | `opsmxadmin123`
+`openldap.configPassword` | Password to be set for config user of LDAP | `opsmxconfig123`
+`openldap.omitClusterIP` | Set to true to omit ClusterIP for openldap service | `true`
+`openldap.persistence.enabled` | Enable persistent storage for open LDAP | `true`
+`openldap.env.LDAP_REMOVE_CONFIG_AFTER_SETUP` | Option to remove configuration of LDAP after setup | `false`
+`openldap.customLdifFiles` | Custom LDIF file for user and group creation of LDAP | ``
+`ldap.enabled` | Set it to true if LDAP is to be enabled for OES | `true`
+`ldap.url` | URL of LDAP server | `ldap://{{ .Release.Name }}-openldap:389`
+`ldap.userDnPattern` | DN Pattern for Open LDAP | `cn={0}`
+`ldap.basedn` | Base DN value | `dc=example,dc=org`
+`ldap.adminDn` | Admin DN value | `cn=admin,dc=example,dc=org`
+`ldap.adminPassword` | Admin password | `opsmxadmin123`
+`ldap.userDisplayName` | Display name of the user | `displayName`
+`ldap.pattern` | Base DN filter pattern | `(&(cn=USERNAME))`
+`ldap.GroupIdentity` | User group identity | `memberOf`
+`ldap.userIdentity` | User identity | `cn`
+`ldap.userPrepend` | User Prepend | `cn=USERNAME`
 
 > **Tip**: Refer to values.yaml for detailed comments
 

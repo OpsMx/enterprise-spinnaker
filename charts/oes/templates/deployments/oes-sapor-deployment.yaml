@@ -1,3 +1,4 @@
+{{ if or (eq .Values.installationMode "OES-AP") (eq .Values.installationMode "OES") }}
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -68,3 +69,4 @@ spec:
         configMap:
           name: sapor-certs
 {{- end }}
+{{ end }}
