@@ -501,7 +501,7 @@ spinnaker:
         artifactId: docker.io/opsmxdev/ubi8-oes-clouddriver:6.9.2
       echo.yml:
         artifactId: docker.io/opsmxdev/ubi8-oes-echo:version-2.12.1
-      fial.yml:
+      fiat.yml:
         artifactId: docker.io/opsmxdev/ubi8-oes-fiat:1.11.0
       front50.yml:
         artifactId: docker.io/opsmxdev/ubi8-oes-front50:0.24.0
