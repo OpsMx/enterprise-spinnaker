@@ -53,9 +53,9 @@ spec:
           initialDelaySeconds: 60
           periodSeconds: 60
         volumeMounts:
-        - mountPath: /opsmx/conf/platform.yml
+        - mountPath: /opsmx/conf/platform-local.yml
           name: platform-config-volume
-          subPath: platform.yml
+          subPath: platform-local.yml
       imagePullSecrets:
       - name: {{ .Values.imagePullSecret }}
       volumes:

@@ -30,9 +30,8 @@ spec:
           protocol: TCP
         env:
         volumeMounts:
-        - mountPath: /opsmx/conf/application.yml
+        - mountPath: /opsmx/conf/
           name: dashboard-config
-          subPath: application.yml
         resources:
           requests:
             memory: "500Mi"
