@@ -111,7 +111,7 @@ autopilot:
   image:
     registry: opsmx11
     repository: autopilot
-    tag: master-202009141153
+    tag: master-202009200233
     pullPolicy: IfNotPresent
 
   config:
@@ -142,7 +142,7 @@ dashboard:
   image:
     registry: opsmx11
     repository: dashboard-service
-    tag: master-202009110542
+    tag: master-202009200232
     pullPolicy: IfNotPresent
 
   config:
@@ -161,7 +161,7 @@ gate:
   image:
     registry: opsmx11
     repository: oes-gate
-    tag: v0.202009111247
+    tag: v0.202009200802
     pullPolicy: IfNotPresent
 
   config:
@@ -192,7 +192,7 @@ platform:
   image:
     registry: opsmx11
     repository: platform-service
-    tag: master-202009141257
+    tag: master-202009200232
     pullPolicy: IfNotPresent
 
   config:
@@ -231,7 +231,7 @@ sapor:
   image:
     registry: opsmx11
     repository: sapor
-    tag: v0.202009111254
+    tag: v0.202009200802
     pullPolicy: IfNotPresent
 
   config:
@@ -289,7 +289,7 @@ ui:
   image:
     registry: opsmx11
     repository: oes-ui
-    tag: v0.202009111020
+    tag: v0.202009200802
     pullPolicy: IfNotPresent
 
   config:
