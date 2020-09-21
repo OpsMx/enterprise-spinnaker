@@ -17,7 +17,7 @@ spec:
   template:
     metadata:
       annotations:
-        configmap/checksum: {{ (.Files.Glob "config/oes-platform/platform.yml").AsConfig | sha256sum }}
+        configmap/checksum: {{ (.Files.Glob "config/oes-platform/platform-local.yml").AsConfig | sha256sum }}
       labels:
         app: oes
         component: platform

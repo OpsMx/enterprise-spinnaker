@@ -16,7 +16,7 @@ spec:
   template:
     metadata:
       annotations:
-        configmap/checksum: {{ (.Files.Glob "config/oes-dashboard/*").AsConfig | sha256sum }}
+        configmap/checksum: {{ (.Files.Glob "config/oes-dashboard/dashboard-local.yml").AsConfig | sha256sum }}
       labels:
         app: oes
         component: dashboard
