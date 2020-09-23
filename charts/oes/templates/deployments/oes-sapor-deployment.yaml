@@ -59,7 +59,7 @@ spec:
           initialDelaySeconds: 180
           periodSeconds: 60
       imagePullSecrets:
-      - name: {{ .Values.imagePullSecret}}
+      - name: {{ .Values.imagePullSecret }}
       volumes:
       - configMap:
           name: oes-sapor-config

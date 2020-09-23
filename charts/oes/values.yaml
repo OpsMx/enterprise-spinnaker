@@ -231,7 +231,7 @@ sapor:
   image:
     registry: opsmx11
     repository: oes-sapor
-    tag: v3.0.0-rc1-202009211012
+    tag: v3.0.0-rc1-202009231111
     pullPolicy: IfNotPresent
 
   config:
