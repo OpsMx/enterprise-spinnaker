@@ -1,0 +1,72 @@
+{{ if or (eq .Values.installationMode "OES-AP") (eq .Values.installationMode "OES") }}
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: oes
+    component: sapor
+{{ include "oes.standard-labels" . | indent 4 }}
+  name: oes-sapor
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: oes
+      component: sapor
+  template:
+    metadata:
+      annotations:
+        configmap/checksum: {{ (.Files.Glob "config/oes-sapor/application.yml").AsConfig | sha256sum }}
+      labels:
+        app: oes
+        component: sapor
+{{ include "oes.standard-labels" . | indent 8 }}
+    spec:
+      initContainers:
+      - name: db-check
+        image: busybox:1.28
+        command: ['sh', '-c', "sleep 60;until nslookup oes-db.$(cat /var/run/secrets/kubernetes.io/serviceaccount/namespace).svc.cluster.local; do echo waiting for db-opsmx to be up and running; sleep 2; done"]
+      containers:
+      - image: {{ template "sapor.image" . }}
+        name: oes-sapor
+        ports:
+        - containerPort: 8085
+          protocol: TCP
+        volumeMounts:
+        - name: sapor-config-volume
+          mountPath: /opt/opsmx/application.yml
+          subPath: application.yml
+{{- if .Values.sapor.config.caCerts.override }}
+        - name: certs-volume
+          mountPath: /etc/pki/ca-trust/extracted/java
+{{- end }}
+        resources:
+          requests:
+            memory: "100Mi"
+            cpu: "500m"
+          limits:
+            memory: "2000Mi"
+            cpu: "1500m"
+        readinessProbe:
+          tcpSocket:
+            port: 8085
+          initialDelaySeconds: 120
+          periodSeconds: 30
+        livenessProbe:
+          httpGet:
+            path: /actuator/health
+            port: 8085
+          initialDelaySeconds: 180
+          periodSeconds: 60
+      imagePullSecrets:
+      - name: {{ .Values.imagePullSecret }}
+      volumes:
+      - configMap:
+          name: oes-sapor-config
+        name: sapor-config-volume
+{{- if .Values.sapor.config.caCerts.override }}
+      - name: certs-volume
+        configMap:
+          name: sapor-certs
+{{- end }}
+{{ end }}

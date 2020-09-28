@@ -108,6 +108,7 @@ case "$COMPONENT" in
     fi
     ;;
   sapor)
+    ## Unused code block in oes-init:v3; sapor is not automatically configured!!!
     cp /config/* /opt/opsmx/
 
     ENDPOINT_IP=""
@@ -121,11 +122,11 @@ case "$COMPONENT" in
       ## Fetch the nodePort IP and replace in spinnaker.yaml
       ENDPOINT_IP=$(kubectl get ep kubernetes -n default -o jsonpath="{.subsets[].addresses[].ip}")
       PORT=$(kubectl get svc spin-gate -o jsonpath="{.spec.ports[].nodePort}")
-      sed -i "s/SPIN_GATE_LOADBALANCER_IP_PORT/$ENDPOINT_IP:$PORT/g" /opt/opsmx/spinnaker.yaml
+      sed -i "s/SPIN_GATE_LOADBALANCER_IP_PORT/$ENDPOINT_IP:$PORT/g" /opt/opsmx/application.yml
       #sed -i "s/spin-gate:8084/$ENDPOINT_IP:$PORT/g" /opt/opsmx/spinnaker.yaml
     else
       ## Substitute spin-deck external IP in spinnaker.yaml
-      sed -i "s/SPIN_GATE_LOADBALANCER_IP_PORT/$ENDPOINT_IP:$PORT/g" /opt/opsmx/spinnaker.yaml
+      sed -i "s/SPIN_GATE_LOADBALANCER_IP_PORT/$ENDPOINT_IP:$PORT/g" /opt/opsmx/application.yml
     fi
     ;;
   *)

@@ -6,7 +6,7 @@ metadata:
   labels:
     app: spin
     stack: gate
-  name: spin-gate-ui
+  name: spin-gate-np
 spec:
   {{- if .Values.createIngress }}
   type: NodePort
@@ -27,7 +27,7 @@ metadata:
   labels:
     app: spin
     stack: deck
-  name: spin-deck-ui
+  name: spin-deck-np
 spec:
   {{- if .Values.createIngress }}
   type: NodePort

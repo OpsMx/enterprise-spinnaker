@@ -1,0 +1,76 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: oes
+    component: ui
+{{ include "oes.standard-labels" . | indent 4 }}
+  name: oes-ui
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: oes
+      component: ui
+  template:
+    metadata:
+      annotations:
+        configmap/checksum: {{ (.Files.Glob "config/oes-ui/app-config.json").AsConfig | sha256sum }}
+      labels:
+        app: oes
+        component: ui
+{{ include "oes.standard-labels" . | indent 8 }}
+    spec:
+      {{- if .Values.autoConfiguration.enabled }}
+      initContainers:
+      - env:
+        - name: EXTERNAL_IP_CHECK_DELAY
+          value: "{{ .Values.autoConfiguration.initContainer.externalIpCheckDelay}}"
+        image: {{ .Values.autoConfiguration.initContainer.image}}
+        imagePullPolicy: Always
+        name: ui-autoconfig
+        command: ["/home/config_endpoint.sh"]
+        args: ["oes-ui"]
+        volumeMounts:
+        - mountPath: /config/app-config.json
+          name: config-temp
+          subPath: app-config.json
+        - mountPath: /var/www/html/assets/config
+          name: config-dir
+      {{- end }}
+      containers:
+      - image: {{ template "ui.image" . }}
+        name: oes-ui
+        ports:
+        - containerPort: 80
+          protocol: TCP
+        volumeMounts:
+        - name: config-dir
+          mountPath: /var/www/html/assets/config
+        readinessProbe:
+          tcpSocket:
+            port: 80
+          initialDelaySeconds: 15
+          periodSeconds: 5
+        livenessProbe:
+          httpGet:
+            path: /health
+            port: 80
+          initialDelaySeconds: 15
+          periodSeconds: 5
+      imagePullSecrets:
+      - name: {{ .Values.imagePullSecret}}
+      volumes:
+      {{- if .Values.autoConfiguration.enabled }}
+      - configMap:
+          defaultMode: 420
+          name: oes-ui-config
+        name: config-temp
+      - emptyDir: {}
+        name: config-dir
+      {{- else }}
+      - configMap:
+          defaultMode: 420
+          name: oes-ui-config
+        name: config-dir
+      {{- end }}
