@@ -3,7 +3,7 @@ entries:
   oes:
   - apiVersion: v1
     appVersion: 3.0.0
-    created: "2020-09-12T23:05:04.259130907+05:30"
+    created: "2020-09-28T13:51:28.380052796+05:30"
     dependencies:
     - condition: installOpenLdap
       name: openldap
@@ -26,7 +26,7 @@ entries:
       repository: https://kubernetes-charts.storage.googleapis.com/
       version: ^1.9.0
     description: OES is a non-forked version of OSS spinnaker
-    digest: f98df253ecc1d0264912f3a0e81eebec1d6131f5100ea77794ba8bdf8abf3449
+    digest: 7fd1e1294593806f37c63309e6d8c1736b264130395ed51ae7d8b5ac100c33e4
     home: https://www.opsmx.com/
     icon: https://www.opsmx.com/images/logo.png
     keywords:
@@ -48,7 +48,7 @@ entries:
     version: 3.0.0
   - apiVersion: v1
     appVersion: 1.0.0
-    created: "2020-09-12T23:05:04.24437725+05:30"
+    created: "2020-09-28T13:51:28.365002153+05:30"
     dependencies:
     - condition: installOpenLdap
       name: openldap
@@ -93,7 +93,7 @@ entries:
   opsmx-autopilot:
   - apiVersion: v1
     appVersion: 2.9.10
-    created: "2020-09-12T23:05:04.259926551+05:30"
+    created: "2020-09-28T13:51:28.380801349+05:30"
     description: Autopilot is a release verification platform
     digest: 73b05b378187d481ff6b7d09fb1a1d6fbab089cef600453b77a647e48a526fa6
     home: https://www.opsmx.com/
@@ -113,4 +113,4 @@ entries:
     urls:
     - https://opsmx.github.io/enterprise-spinnaker/helm-repo/opsmx-autopilot-2.0.0.tgz
     version: 2.0.0
-generated: "2020-09-12T23:05:04.230719486+05:30"
+generated: "2020-09-28T13:51:28.35204861+05:30"
