@@ -653,9 +653,10 @@ spinnaker:
     secretKey: spinnakeradmin
     bucket: "spinnaker"
     nodeSelector: {}
-  # Uncomment if you don't want to create a PVC for minio
-  #  persistence:
-  #    enabled: false
+
+    persistence:
+      enabled: true
+      size: 10Gi
 
   # Google Cloud Storage
   gcs:
