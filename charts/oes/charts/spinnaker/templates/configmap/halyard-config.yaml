@@ -12,6 +12,8 @@ data:
     export DAEMON_ENDPOINT=http://{{ template "spinnaker.fullname" . }}-halyard:8064
     export HAL_COMMAND="hal --daemon-endpoint $DAEMON_ENDPOINT"
     until $HAL_COMMAND --ready; do sleep 10 ; done
+   
+    {{- if not .Values.gitopsHalyardInit.enabled }}
 
     bash -xe /opt/halyard/scripts/config.sh
 
@@ -24,6 +26,7 @@ data:
     bash -xe /opt/halyard/additionalScripts/{{ $index }}
     {{- end }}
     {{- end }}
+    {{- end }} # End of gitOpsHalyardInit
 
     $HAL_COMMAND deploy apply
     {{- if .Values.halyard.additionalInstallParameters }} \

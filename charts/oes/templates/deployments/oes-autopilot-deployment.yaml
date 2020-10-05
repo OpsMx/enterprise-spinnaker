@@ -34,7 +34,7 @@ spec:
           name: oes-autopilot
           resources:
             requests:
-              memory: "8Gi"
+              memory: "2Gi"
               cpu: "1"
             limits:
               memory: "8Gi"

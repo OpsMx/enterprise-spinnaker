@@ -40,10 +40,23 @@ spec:
     {{- end }}
       initContainers:
       - name: "create-halyard-local"
+      {{- if .Values.gitopsHalyardInit.enabled }}
+        image: alpine/git:v2.26.2
+      {{- else }}
         image: {{ .Values.halyard.image.repository }}:{{ .Values.halyard.image.tag }}
+      {{- end }}
         command:
+        {{- if .Values.gitopsHalyardInit.enabled }}
+        - sh
+        {{- else }}
         - bash
+        {{- end }}
         - /tmp/initscript/init.sh
+        env:
+        - name: SPINNAKER_NAMESPACE
+          valueFrom:
+            fieldRef:
+              fieldPath: metadata.namespace
         volumeMounts:
         - name: halyard-config
           mountPath: /tmp/config
@@ -73,7 +86,7 @@ spec:
 {{ toYaml .Values.halyard.env | indent 8 }}
         {{- end }}
       volumes:
-      {{- if not .Values.halyard.persistence.enabled }}
+      {{- if or .Values.gitopsHalyardInit.enabled (not .Values.halyard.persistence.enabled) }}
       - name: halyard-home
         emptyDir: {}
       {{- end }}
@@ -202,7 +215,7 @@ spec:
         env:
 {{ toYaml .Values.halyard.env | indent 8 }}
         {{- end }}
-{{- if .Values.halyard.persistence.enabled }}
+{{- if and (not .Values.gitopsHalyardInit.enabled) .Values.halyard.persistence.enabled }}
   volumeClaimTemplates:
   - metadata:
       name: halyard-home

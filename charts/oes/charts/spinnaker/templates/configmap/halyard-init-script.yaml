@@ -6,6 +6,7 @@ metadata:
 {{ include "spinnaker.standard-labels" . | indent 4 }}
 data:
   init.sh: |
+    {{- if not .Values.gitopsHalyardInit.enabled }}
     #!/bin/bash
 
     # Override Halyard daemon's listen address
@@ -43,3 +44,11 @@ data:
     # additionalInitScript
     {{ tpl .Values.halyard.additionalInitScript $ | indent 4 }}
     {{- end }}
+    {{- else }}
+    #!/bin/bash
+    git clone https://ksrinimba:7586a4f2a537d89e78854bac5b70be92e63e704d@github.com/ksrinimba/gitops-haldir.git /tmp/spinnaker/.hal
+    sed -i  s/SPINNAKER_NAMESPACE/${SPINNAKER_NAMESPACE}/ /tmp/spinnaker/.hal/config
+    printf 'server.address: 0.0.0.0\n' > /tmp/config/halyard-local.yml
+    cp /tmp/spinnaker/.hal/halyard.yaml /tmp/config
+    {{- end }}
+
