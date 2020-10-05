@@ -6,7 +6,10 @@ dependencies:
   - name: spinnaker
     version: ~2.2.1
     repository: https://kubernetes-charts.storage.googleapis.com/
-    condition: installSpinnaker
+    condition: installSpinnaker.enabled
+  - name: redis
+    version: 10.5.3
+    condition: installRedis
   - name: elasticsearch
     version: 7.5.0
     condition: enableCentralLogging

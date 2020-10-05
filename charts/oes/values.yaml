@@ -22,13 +22,18 @@ imageCredentials:
 rbac:
   create: true
 
-## Option to skip installation of spinnaker, if it already exists
-## or if OES is to be connected to existing spinnaker
-##
-installSpinnaker: true
+## Option to skip installation of OpsMx Spinnaker
+## Setting this to true, will ensure custom ubi8 images of Spinnaker
+installSpinnaker:
+  ## If this is enabled, installRedis must be set to false
+  enabled: false
+
+  ## There are two supported variants; opensource & opsmx
+  ## "opsmx" variant will install customized images (ubi8) of spinnaker
+  variant: opsmx
 
 ## Installation mode
-## Available installation modes OES-AP, OES, AP
+## Available installation modes OES-AP, OES, AP, None
 ##
 installationMode: OES
 
@@ -47,17 +52,12 @@ k8sServiceType: LoadBalancer
 ## If Spinnaker is being installed, redis installed by spinnaker chart can
 ## be re-used
 ##
-installRedis: false
+installRedis: true
 
 ###############################################################################
 ## Details of redis-master image for OES
 ##
 redis:
-  image:
-    registry: docker.io
-    repository: bitnami/redis
-    tag: 4.0.11-debian-9
-    pullPolicy: IfNotPresent
 
   ## Redis endpoint that is used by oes-gate and oes-platform for caching;
   ## Change this to custom URL if installRedis is set to false
@@ -653,9 +653,9 @@ spinnaker:
     secretKey: spinnakeradmin
     bucket: "spinnaker"
     nodeSelector: {}
-  # Uncomment if you don't want to create a PVC for minio
-  #  persistence:
-  #    enabled: false
+    persistence:
+      enabled: true
+      size: 10Gi
 
   # Google Cloud Storage
   gcs:
