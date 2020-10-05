@@ -52,11 +52,18 @@ spec:
         - bash
         {{- end }}
         - /tmp/initscript/init.sh
+        {{- if .Values.gitopsHalyardInit.enabled }}
         env:
         - name: SPINNAKER_NAMESPACE
           valueFrom:
             fieldRef:
               fieldPath: metadata.namespace
+        - name: GIT_CLONE_PARAM
+          valueFrom:
+            secretKeyRef:
+              name: {{ .Values.gitopsHalyardInit.secretName }}
+              key: gitcloneparam
+        {{- end }}
         volumeMounts:
         - name: halyard-config
           mountPath: /tmp/config

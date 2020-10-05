@@ -704,5 +704,5 @@ spinnaker:
   #Initialize gitOps style Halyard
   gitopsHalyardInit:
     enabled: true
-    repo-type: git # git, S3, vault
-    secretName: TBD
+    repo-type: git # git, S3, vault, only git support at this point
+    secretName: opsmx-gitops-auth
