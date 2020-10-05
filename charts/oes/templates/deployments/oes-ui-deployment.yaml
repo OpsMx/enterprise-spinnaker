@@ -22,7 +22,7 @@ spec:
         component: ui
 {{ include "oes.standard-labels" . | indent 8 }}
     spec:
-      {{- if .Values.autoConfiguration.enabled -}}
+      {{- if .Values.autoConfiguration.enabled }}
       initContainers:
       - env:
         - name: EXTERNAL_IP_CHECK_DELAY
@@ -38,7 +38,7 @@ spec:
           subPath: app-config.json
         - mountPath: /var/www/html/assets/config
           name: config-dir
-      {{- end -}}
+      {{- end }}
       containers:
       - image: {{ template "ui.image" . }}
         name: oes-ui
@@ -62,17 +62,17 @@ spec:
       imagePullSecrets:
       - name: {{ .Values.imagePullSecret}}
       volumes:
-      {{- if .Values.autoConfiguration.enabled -}}
+      {{- if .Values.autoConfiguration.enabled }}
       - configMap:
           defaultMode: 420
           name: oes-ui-config
         name: config-temp
       - emptyDir: {}
         name: config-dir
-      {{- else -}}
+      {{- else }}
       - configMap:
           defaultMode: 420
           name: oes-ui-config
         name: config-dir
-      {{- end -}}
+      {{- end }}
 {{- end -}}
