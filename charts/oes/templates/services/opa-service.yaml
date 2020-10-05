@@ -1,5 +1,5 @@
-{{- if .Values.opa.enabled }}
-{{ if or (eq .Values.installationMode "OES-AP") (eq .Values.installationMode "OES") }}
+{{- if .Values.opa.enabled -}}
+{{- if or (eq .Values.installationMode "OES-AP") (eq .Values.installationMode "OES") -}}
 apiVersion: v1
 kind: Service
 metadata:
@@ -14,5 +14,5 @@ spec:
     port: 8181
     targetPort: 8181
   type: ClusterIP
-{{ end }}
-{{- end }}
+{{- end -}}
+{{- end -}}
