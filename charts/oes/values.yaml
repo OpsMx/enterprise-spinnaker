@@ -24,13 +24,7 @@ rbac:
 
 ## Option to skip installation of OpsMx Spinnaker
 ## Setting this to true, will ensure custom ubi8 images of Spinnaker
-installSpinnaker:
-  ## If this is enabled, installRedis must be set to false
-  enabled: false
-
-  ## There are two supported variants; opensource & opsmx
-  ## "opsmx" variant will install customized images (ubi8) of spinnaker
-  variant: opsmx
+installSpinnaker: true
 
 ## Installation mode
 ## Available installation modes OES-AP, OES, AP, None
@@ -52,7 +46,7 @@ k8sServiceType: LoadBalancer
 ## If Spinnaker is being installed, redis installed by spinnaker chart can
 ## be re-used
 ##
-installRedis: true
+installRedis: false
 
 ###############################################################################
 ## Details of redis-master image for OES
@@ -489,12 +483,12 @@ spinnaker:
     ## https://www.spinnaker.io/reference/halyard/custom/#custom-service-settings
     ## You can use it to add annotations for pods, override the image, etc.
     additionalServiceSettings:
+    ## artifactId to override Spinnaker components images with OpsMx custom images
       gate.yml:
-        artifactId: docker.io/devopsmx/ubi8-oes-gate:1.16.1
         healthEndpoint: /health
         kubernetes:
           useExecHealthCheck: false
-      ## artifactId to override Spinnaker components images with OpsMx custom images
+        artifactId: docker.io/devopsmx/ubi8-oes-gate:1.16.1
       deck.yml:
         artifactId: docker.io/opsmxdev/ubi8-oes-deck:3.2.0
       clouddriver.yml:
@@ -703,6 +697,6 @@ spinnaker:
     fsGroup: 1000
   #Initialize gitOps style Halyard
   gitopsHalyardInit:
-    enabled: true
+    enabled: false
     repo-type: git # git, S3, vault, only git support at this point
     secretName: opsmx-gitops-auth

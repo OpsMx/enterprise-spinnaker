@@ -6,7 +6,7 @@ dependencies:
   - name: spinnaker
     version: ~2.2.1
     repository: https://kubernetes-charts.storage.googleapis.com/
-    condition: installSpinnaker.enabled
+    condition: installSpinnaker
   - name: redis
     version: 10.5.3
     condition: installRedis
