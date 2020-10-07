@@ -657,10 +657,10 @@ spinnaker:
       enabled: true
       size: 10Gi
     # Use ubi8 custom images
-    image:
-      repository: devopsmx/ubi8-oes-minio
-      tag: RELEASE.2019-09-18T21-55-05Z
-      pullPolicy: IfNotPresent
+    #image:
+    #  repository: devopsmx/ubi8-oes-minio
+    #  tag: RELEASE.2019-09-18T21-55-05Z
+    #  pullPolicy: IfNotPresent
 
   # Google Cloud Storage
   gcs:
