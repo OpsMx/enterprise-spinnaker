@@ -63,6 +63,16 @@ spec:
             secretKeyRef:
               name: {{ .Values.gitopsHalyardInit.secretName }}
               key: gitcloneparam
+        - name: GIT_USER
+          valueFrom:
+            secretKeyRef:
+              name: {{ .Values.gitopsHalyardInit.secretName }}
+              key: gituser
+        - name: GIT_TOKEN
+          valueFrom:
+            secretKeyRef:
+              name: {{ .Values.gitopsHalyardInit.secretName }}
+              key: gittoken
         {{- end }}
         volumeMounts:
         - name: halyard-config
