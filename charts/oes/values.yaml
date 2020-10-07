@@ -632,6 +632,15 @@ spinnaker:
     nodeSelector: {}
     cluster:
       enabled: false
+
+    # Use ubi8 custom images
+    image:
+      registry: docker.io
+      repository: devopsmx/ubi8-oes-redis
+      ## Bitnami Redis image tag
+      ## ref: https://github.com/bitnami/bitnami-docker-redis#supported-tags-and-respective-dockerfile-links
+      ##
+      tag: 4.0.14
   # Uncomment if you don't want to create a PVC for redis
   #  master:
   #    persistence:
@@ -650,6 +659,11 @@ spinnaker:
     persistence:
       enabled: true
       size: 10Gi
+    # Use ubi8 custom images
+    image:
+      repository: devopsmx/ubi8-oes-minio
+      tag: RELEASE.2019-09-18T21-55-05Z
+      pullPolicy: IfNotPresent
 
   # Google Cloud Storage
   gcs:
