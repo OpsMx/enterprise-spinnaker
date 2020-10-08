@@ -493,7 +493,19 @@ spinnaker:
         artifactId: docker.io/opsmxdev/ubi8-oes-deck:3.2.0
       clouddriver.yml:
         artifactId: docker.io/opsmxdev/ubi8-oes-clouddriver:6.9.2
+      clouddriver-caching.yml:
+        artifactId: docker.io/opsmxdev/ubi8-oes-clouddriver:6.9.2
+      clouddriver-rw.yml:
+        artifactId: docker.io/opsmxdev/ubi8-oes-clouddriver:6.9.2
+      clouddriver-ro.yml:
+        artifactId: docker.io/opsmxdev/ubi8-oes-clouddriver:6.9.2
+      clouddriver-ro-deck.yml:
+        artifactId: docker.io/opsmxdev/ubi8-oes-clouddriver:6.9.2
       echo.yml:
+        artifactId: docker.io/opsmxdev/ubi8-oes-echo:version-2.12.1
+      echo-scheduler.yml:
+        artifactId: docker.io/opsmxdev/ubi8-oes-echo:version-2.12.1
+      echo-worker.yml:
         artifactId: docker.io/opsmxdev/ubi8-oes-echo:version-2.12.1
       fiat.yml:
         artifactId: docker.io/opsmxdev/ubi8-oes-fiat:1.11.0
