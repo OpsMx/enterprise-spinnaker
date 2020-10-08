@@ -102,11 +102,62 @@ spec:
         env:
 {{ toYaml .Values.halyard.env | indent 8 }}
         {{- end }}
+      {{- if .Values.gitopsHalyardInit.enabled }}
+      - name: "halyard-overrideurl"
+        command:
+        - sh
+        - /tmp/autoconfig/call_overrides.sh
+        env:
+        - name: NODE_IP
+          valueFrom:
+            fieldRef:
+              apiVersion: v1
+              fieldPath: status.hostIP
+        image: bitnami/kubectl:1.18.5
+        imagePullPolicy: IfNotPresent
+        resources: {}
+        volumeMounts:
+        - name: halyard-config
+          mountPath: /tmp/config
+        - name: service-settings
+          mountPath: /tmp/service-settings
+        {{- if .Values.halyard.serviceConfigs }}
+        - name: service-configs
+          mountPath: /tmp/service-configs
+        {{- end }}
+        - name: halyard-home
+          mountPath: /tmp/spinnaker
+        - name: additional-profile-config-maps
+          mountPath: /tmp/additionalProfileConfigMaps
+        {{- if .Values.halyard.bom }}
+        - name: halyard-bom
+          mountPath: /tmp/halyard-bom
+        {{- end }}
+        - name: halyard-initscript
+          mountPath: /tmp/initscript
+        {{- if .Values.halyard.customCerts.enabled }}
+        - mountPath: /etc/ssl/certs/java/cacerts
+          subPath: cacerts
+          name: cacerts
+        {{- end }}
+        - mountPath: /tmp/autoconfig
+          name: halyard-overrideurl
+        {{- if .Values.halyard.env }}
+        env:
+{{ toYaml .Values.halyard.env | indent 8 }}
+        {{- end }}
+      {{- end }}
       volumes:
       {{- if or .Values.gitopsHalyardInit.enabled (not .Values.halyard.persistence.enabled) }}
       - name: halyard-home
         emptyDir: {}
       {{- end }}
+      {{- if .Values.gitopsHalyardInit.enabled }}
+      - name: halyard-overrideurl
+        configMap:
+          name: {{ template "spinnaker.fullname" . }}-halyard-overrideurl
+      {{- end }}
+
       {{- if and .Values.kubeConfig.enabled .Values.kubeConfig.secretName }}
       - name: kube-config
         secret:

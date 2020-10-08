@@ -708,6 +708,6 @@ spinnaker:
     fsGroup: 1000
   #Initialize gitOps style Halyard
   gitopsHalyardInit:
-    enabled: false
+    enabled: true
     repo-type: git # git, S3, vault, only git support at this point
     secretName: opsmx-gitops-auth

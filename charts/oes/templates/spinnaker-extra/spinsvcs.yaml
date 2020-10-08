@@ -1,5 +1,4 @@
 {{- if .Values.installSpinnaker }}
-{{- if .Values.createIngress }}
 apiVersion: v1
 kind: Service
 metadata:
@@ -19,7 +18,6 @@ spec:
      protocol: TCP
   selector:
     cluster: "spin-gate"
-{{- end }}
 ---
 apiVersion: v1
 kind: Service
