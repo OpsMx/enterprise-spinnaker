@@ -135,7 +135,7 @@ case "$COMPONENT" in
 
   spin-gate)
     ENDPOINT_IP=""
-    PORT=9000
+    PORT=8084
 
     ## Wait for $EXTERNAL_IP_CHECK_DELAY till K8s assins a load Balancer IP to oes-gate
     #check_for_spinnakerGate_loadBalancer spin-gate-np $SPINNAKER_SETUP_DELAY
@@ -156,7 +156,7 @@ case "$COMPONENT" in
 
   spin-deck)
     ENDPOINT_IP=""
-    PORT=8084
+    PORT=9000
 
     ## Wait for $EXTERNAL_IP_CHECK_DELAY till K8s assins a load Balancer IP to oes-gate
     check_for_loadBalancer spin-deck-np
@@ -178,5 +178,3 @@ case "$COMPONENT" in
     echo "Invalid input:$COMPONENT"
     ;;
 esac
-
-

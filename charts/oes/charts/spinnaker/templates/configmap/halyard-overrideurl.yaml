@@ -55,7 +55,7 @@ data:
     /opt/opsmx/spinnaker.yaml\n    else\n      ## Substitute spin-deck external IP
     in spinnaker.yaml\n      sed -i \"s/SPIN_GATE_LOADBALANCER_IP_PORT/$ENDPOINT_IP:$PORT/g\"
     /opt/opsmx/application.yml\n    fi\n    ;;\n\n\n  spin-gate)\n    ENDPOINT_IP=\"\"\n
-    \   PORT=9000\n\n    ## Wait for $EXTERNAL_IP_CHECK_DELAY till K8s assins a load
+    \   PORT=8084\n\n    ## Wait for $EXTERNAL_IP_CHECK_DELAY till K8s assins a load
     Balancer IP to oes-gate\n    #check_for_spinnakerGate_loadBalancer spin-gate-np
     $SPINNAKER_SETUP_DELAY\n    check_for_loadBalancer spin-gate-np\n\n    ## If external
     IP is not available\n    if [ -z \"$ENDPOINT_IP\" ]; then\n      ## Fetch the
@@ -65,7 +65,7 @@ data:
     \     sed -i  s/OVERRIDE_API_URL/$ENDPOINT_IP:$PORT/g /tmp/spinnaker/.hal/config\n
     \   else\n      ## Substitute spin-deck external IP in spinnaker.yaml\n      sed
     -i  s/OVERRIDE_API_URL/$ENDPOINT_IP:$PORT/g /tmp/spinnaker/.hal/config\n    fi\n
-    \   ;;\n\n  spin-deck)\n    ENDPOINT_IP=\"\"\n    PORT=8084\n\n    ## Wait for
+    \   ;;\n\n  spin-deck)\n    ENDPOINT_IP=\"\"\n    PORT=9000\n\n    ## Wait for
     $EXTERNAL_IP_CHECK_DELAY till K8s assins a load Balancer IP to oes-gate\n    check_for_loadBalancer
     spin-deck-np\n\n    ## If external IP is not available\n    if [ -z \"$ENDPOINT_IP\"
     ]; then\n      ## Fetch the nodePort & nodeport and replace in app-config.js\n
