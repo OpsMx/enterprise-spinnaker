@@ -27,15 +27,6 @@ data:
     {{- end }}
     {{- end }}
     {{- else }}
-    # Storage
-    {{- if .Values.minio.enabled }}
-    echo {{ .Values.minio.secretKey }} | $HAL_COMMAND config storage s3 edit \
-        --endpoint http://{{ .Release.Name }}-minio:9000 \
-        --access-key-id {{ .Values.minio.accessKey }} \
-        --secret-access-key --bucket {{ .Values.minio.defaultBucket.name }} \
-        --path-style-access true
-    $HAL_COMMAND config storage edit --type s3
-    {{ end }}
     {{- end }} # End of gitOpsHalyardInit
 
     $HAL_COMMAND deploy apply
