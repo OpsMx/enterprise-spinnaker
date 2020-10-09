@@ -1,7 +1,7 @@
 apiVersion: v1
 data:
   call_overrides.sh: "echo $SPINNAKER_NAMESPACE\nsh /tmp/autoconfig/config_overrideurl.sh
-    spin-deck \nsh /tmp/autoconfig/config_overrideurl.sh spin-gate\nsleep 3600\n"
+    spin-deck \nsh /tmp/autoconfig/config_overrideurl.sh spin-gate\nsleep 60\n"
   config_overrideurl.sh: "#!/bin/bash -x\n\nif [ $# -gt 1 ]\nthen\n   echo \"Invalid
     input, only one argument expected\"\n   exit\nfi\n\nCOMPONENT=$1\n#EXTERNAL_IP_CHECK_DELAY=${EXTERNAL_IP_CHECK_DELAY:10}\nEXTERNAL_IP_CHECK_DELAY=10\n\ncheck_for_loadBalancer()\n{\n
     \   ## Wait for $EXTERNAL_IP_CHECK_DELAY till K8s assins a load Balancer IP to

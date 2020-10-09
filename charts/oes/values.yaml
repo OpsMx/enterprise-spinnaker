@@ -29,7 +29,7 @@ installSpinnaker: true
 ## Installation mode
 ## Available installation modes OES-AP, OES, AP, None
 ##
-installationMode: OES
+installationMode: None
 
 ## Set to true to expose spinnaker and deck services as LoadBalancers
 ##
