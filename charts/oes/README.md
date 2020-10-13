@@ -42,7 +42,7 @@ Install OpsMx Enterprise for Spinnaker
 
   To be able to fetch OES docker images, username and password shall be set in values.yaml or use --set imageCredentials.username=<username> --set imageCredentials.password=<password> while running helm install.
 
-- Your Kubernetes cluster supports persistent volumes and loadbalancer service type.
+- Your Kubernetes cluster shall support persistent volumes and loadbalancer service type.
 
 - Helm v3 expects the namespace to be present before helm install command is run. If it does not exists,
 
@@ -216,12 +216,12 @@ Helm v3.x
 
   Once the service is up and running, find the service ip address
 
-  	kubectl get svc spin-deck-ui [--namespace mynamespace]
+  	kubectl get svc spin-deck-np [--namespace mynamespace]
 
   Example output would be:
 
       NAME           TYPE           CLUSTER-IP     EXTERNAL-IP   PORT(S)          AGE
-      spin-deck-ui   LoadBalancer   10.0.139.222   40.78.4.201   9000:31030/TCP   8m9s
+      spin-deck-np   LoadBalancer   10.0.139.222   40.78.4.201   9000:31030/TCP   8m9s
 
   Using the EXTERNAL-IP address, go to http://EXTERNAL-IP:9000/
 

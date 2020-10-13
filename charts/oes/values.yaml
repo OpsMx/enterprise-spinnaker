@@ -15,8 +15,8 @@ imagePullSecret: opsmxdev-secret
 ##
 imageCredentials:
   registry: https://index.docker.io/v1/
-  username: opsmx11  # Docker hub username
-  password: Network123! # Docker hub password
+  username: username  # Docker hub username
+  password: password # Docker hub password
   email: info@opsmx.com   # email corresponding to docker hub ID
 
 rbac:
@@ -29,7 +29,7 @@ installSpinnaker: true
 ## Installation mode
 ## Available installation modes OES-AP, OES, AP, None
 ##
-installationMode: None
+installationMode: OES-AP
 
 ## Set to true to expose spinnaker and deck services as LoadBalancers
 ##
@@ -58,6 +58,7 @@ redis:
   ## url: redis://{{ .Release.Name }}-redis-master:6379
   ##
   url: redis://:password@{{ .Release.Name }}-redis-master:6379
+  password: password
 
 ###############################################################################
 ##
@@ -253,7 +254,7 @@ sapor:
       ## the spinnaker pipelines from OES-UI.
       ## Note: Trailing / is not required
       ##
-      spinExternalGateURL: http://192.168.3.69:8084
+      spinExternalGateURL: http://spin-gate:8084
 
       ## Spinnaker user credentials
       ##
@@ -720,6 +721,6 @@ spinnaker:
     fsGroup: 1000
   #Initialize gitOps style Halyard
   gitopsHalyardInit:
-    enabled: true
+    enabled: false
     repo-type: git # git, S3, vault, only git support at this point
     secretName: opsmx-gitops-auth
