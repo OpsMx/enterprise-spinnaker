@@ -1,3 +1,4 @@
+{{- if or (eq .Values.installationMode "OES-AP") (eq .Values.installationMode "AP") (eq .Values.installationMode "OES") -}}
 apiVersion: apps/v1
 kind: StatefulSet
 metadata:
@@ -54,3 +55,4 @@ spec:
         requests:
           storage: {{ .Values.db.storageMountSize }}
       volumeMode: Filesystem
+{{- end -}}

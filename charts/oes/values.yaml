@@ -22,13 +22,12 @@ imageCredentials:
 rbac:
   create: true
 
-## Option to skip installation of spinnaker, if it already exists
-## or if OES is to be connected to existing spinnaker
-##
-installSpinnaker: false
+## Option to skip installation of OpsMx Spinnaker
+## Setting this to true, will ensure custom ubi8 images of Spinnaker
+installSpinnaker: true
 
 ## Installation mode
-## Available installation modes OES-AP, OES, AP
+## Available installation modes OES-AP, OES, AP, None
 ##
 installationMode: OES-AP
 
@@ -47,23 +46,19 @@ k8sServiceType: LoadBalancer
 ## If Spinnaker is being installed, redis installed by spinnaker chart can
 ## be re-used
 ##
-installRedis: true
+installRedis: false
 
 ###############################################################################
 ## Details of redis-master image for OES
 ##
 redis:
-  image:
-    registry: docker.io
-    repository: bitnami/redis
-    tag: 4.0.11-debian-9
-    pullPolicy: IfNotPresent
 
   ## Redis endpoint that is used by oes-gate and oes-platform for caching;
   ## Change this to custom URL if installRedis is set to false
   ## url: redis://{{ .Release.Name }}-redis-master:6379
   ##
   url: redis://:password@{{ .Release.Name }}-redis-master:6379
+  password: password
 
 ###############################################################################
 ##
@@ -175,7 +170,7 @@ gate:
     ##
 
     ## Regex of OES-UI URL to prevent cross origin attacks
-    oesUIcors: ^https?://(?:localhost|OES_UI_LOADBALANCER_IP|opsmx.com)(?::[1-9]\d*)?/?
+    oesUIcors: ^https?://(?:localhost|OES_UI_LOADBALANCER_IP|opsmx.com|192.168.3.69)(?::[1-9]\d*)?/?
 
     ## Set it to true to disable LDAP authentication and enable file based authentication
     ## Reach out over support@opsmx.com for pre-configured user credentials
@@ -489,17 +484,29 @@ spinnaker:
     ## https://www.spinnaker.io/reference/halyard/custom/#custom-service-settings
     ## You can use it to add annotations for pods, override the image, etc.
     additionalServiceSettings:
+    ## artifactId to override Spinnaker components images with OpsMx custom images
       gate.yml:
-        artifactId: docker.io/devopsmx/ubi8-oes-gate:1.16.1
         healthEndpoint: /health
         kubernetes:
           useExecHealthCheck: false
-      ## artifactId to override Spinnaker components images with OpsMx custom images
+        artifactId: docker.io/devopsmx/ubi8-oes-gate:1.16.1
       deck.yml:
         artifactId: docker.io/opsmxdev/ubi8-oes-deck:3.2.0
       clouddriver.yml:
         artifactId: docker.io/opsmxdev/ubi8-oes-clouddriver:6.9.2
+      clouddriver-caching.yml:
+        artifactId: docker.io/opsmxdev/ubi8-oes-clouddriver:6.9.2
+      clouddriver-rw.yml:
+        artifactId: docker.io/opsmxdev/ubi8-oes-clouddriver:6.9.2
+      clouddriver-ro.yml:
+        artifactId: docker.io/opsmxdev/ubi8-oes-clouddriver:6.9.2
+      clouddriver-ro-deck.yml:
+        artifactId: docker.io/opsmxdev/ubi8-oes-clouddriver:6.9.2
       echo.yml:
+        artifactId: docker.io/opsmxdev/ubi8-oes-echo:version-2.12.1
+      echo-scheduler.yml:
+        artifactId: docker.io/opsmxdev/ubi8-oes-echo:version-2.12.1
+      echo-worker.yml:
         artifactId: docker.io/opsmxdev/ubi8-oes-echo:version-2.12.1
       fiat.yml:
         artifactId: docker.io/opsmxdev/ubi8-oes-fiat:1.11.0
@@ -638,6 +645,12 @@ spinnaker:
     nodeSelector: {}
     cluster:
       enabled: false
+
+    # Use ubi8 custom images
+    #image:
+    #  registry: docker.io
+    #  repository: devopsmx/ubi8-oes-redis
+    #  tag: 4.0.14
   # Uncomment if you don't want to create a PVC for redis
   #  master:
   #    persistence:
@@ -653,10 +666,14 @@ spinnaker:
     secretKey: spinnakeradmin
     bucket: "spinnaker"
     nodeSelector: {}
-
     persistence:
       enabled: true
       size: 10Gi
+    # Use ubi8 custom images
+    #image:
+    #  repository: devopsmx/ubi8-oes-minio
+    #  tag: RELEASE.2019-09-18T21-55-05Z
+    #  pullPolicy: IfNotPresent
 
   # Google Cloud Storage
   gcs:
@@ -702,3 +719,8 @@ spinnaker:
     # Specifies permissions to write for user/group
     runAsUser: 1000
     fsGroup: 1000
+  #Initialize gitOps style Halyard
+  gitopsHalyardInit:
+    enabled: false
+    repo-type: git # git, S3, vault, only git support at this point
+    secretName: opsmx-gitops-auth

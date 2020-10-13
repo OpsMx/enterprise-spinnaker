@@ -9,7 +9,7 @@ spec:
   ports:
   - port: 8064
     name: daemon
-  clusterIP: None
+  type: ClusterIP
   selector:
     app: {{ template "spinnaker.fullname" . }}
     component: halyard

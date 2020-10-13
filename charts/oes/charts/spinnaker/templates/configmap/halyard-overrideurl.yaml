@@ -1,0 +1,80 @@
+apiVersion: v1
+data:
+  call_overrides.sh: "echo $SPINNAKER_NAMESPACE\nsh /tmp/autoconfig/config_overrideurl.sh
+    spin-deck \nsh /tmp/autoconfig/config_overrideurl.sh spin-gate\n"
+  config_overrideurl.sh: "#!/bin/bash -x\n\nif [ $# -gt 1 ]\nthen\n   echo \"Invalid
+    input, only one argument expected\"\n   exit\nfi\n\nCOMPONENT=$1\n#EXTERNAL_IP_CHECK_DELAY=${EXTERNAL_IP_CHECK_DELAY:10}\nEXTERNAL_IP_CHECK_DELAY=120\n\ncheck_for_loadBalancer()\n{\n
+    \   ## Wait for $EXTERNAL_IP_CHECK_DELAY till K8s assins a load Balancer IP to
+    oes-gate\n    iter=0\n    lapsedTime=0\n    while [ $iter -lt 36 ]\n    do\n      ENDPOINT_IP=$(kubectl
+    get svc $1 -o jsonpath=\"{.status.loadBalancer.ingress[].ip}\")\n      if [ !
+    -z \"$ENDPOINT_IP\" ];\n      then\n        echo \"Found LoadBalancer IP for\"
+    $1\n        break\n      fi\n      sleep 5\n      lapsedTime=`expr $lapsedTime
+    + 5`\n      if [ $lapsedTime -gt $EXTERNAL_IP_CHECK_DELAY ];\n      then\n\techo
+    \"Time Lapsed\" $lapsedTime\n        echo \"Timeout! Fetching nodeport IP alternatively\"\n
+    \       break\n      fi\n      echo \"Time Lapsed\" $lapsedTime\n      iter=`expr
+    $iter + 1`\n    done\n}\n\ncheck_for_spinnakerGate_loadBalancer()\n{\n    ## Wait
+    for $EXTERNAL_IP_CHECK_DELAY till K8s assins a load Balancer IP to oes-gate\n
+    \   iter=0\n    lapsedTime=0\n    while [ $iter -lt 36 ]\n    do\n      # Check
+    if loadBalancer is directly assinged to spin-deck or spin-deck-ui service\n      ENDPOINT_IP=$(kubectl
+    get svc spin-deck -o jsonpath=\"{.status.loadBalancer.ingress[].ip}\")\n\n      if
+    [ -z \"$ENDPOINT_IP\" ];\n      then\n        ENDPOINT_IP=$(kubectl get svc spin-deck-ui
+    -o jsonpath=\"{.status.loadBalancer.ingress[].ip}\")\n      fi\n\n      if [ !
+    -z \"$ENDPOINT_IP\" ];\n      then\n        echo \"Found LoadBalancer IP for\"
+    $1\n        break\n      fi\n      sleep 5\n      lapsedTime=`expr $lapsedTime
+    + 5`\n      #if [ $lapsedTime -eq $2 ];\n      if [ $lapsedTime -gt $EXTERNAL_IP_CHECK_DELAY
+    ];\n      then\n        echo \"Time Lapsed\" $lapsedTime\n        echo \"Timeout!
+    Fetching nodeport IP alternatively\"\n        break\n      fi\n      echo \"Time
+    Lapsed\" $lapsedTime\n      iter=`expr $iter + 1`\n    done\n}\n\ncase \"$COMPONENT\"
+    in\n  oes-ui)\n    cp /config/* /var/www/html/assets/config/\n\n    ENDPOINT_IP=\"\"\n\n
+    \   ## Wait for $EXTERNAL_IP_CHECK_DELAY till K8s assins a load Balancer IP to
+    oes-gate\n    check_for_loadBalancer oes-gate\n\n    ## If external IP is not
+    available\n    if [ -z \"$ENDPOINT_IP\" ]; then\n      ## Fetch the nodePort &
+    nodeport and replace in app-config.js\n      ENDPOINT_IP=$(kubectl get ep kubernetes
+    -n default  -o jsonpath=\"{.subsets[].addresses[].ip}\")\n      PORT=$(kubectl
+    get svc oes-gate -o jsonpath=\"{.spec.ports[].nodePort}\")\n      sed -i \"s/OES_GATE_IP/$ENDPOINT_IP/g\"
+    /var/www/html/assets/config/app-config.json\n      sed -i \"s/8084/$PORT/g\" /var/www/html/assets/config/app-config.json\n
+    \   else\n      ## Substitute oes-gate external IP in app-config.js\n      sed
+    -i \"s/OES_GATE_IP/$ENDPOINT_IP/g\" /var/www/html/assets/config/app-config.json\n
+    \   fi\n    ;;\n  oes-gate)\n    cp /config/* /opt/spinnaker/config/\n\n    ENDPOINT_IP=\"\"\n\n
+    \   ## Wait for $EXTERNAL_IP_CHECK_DELAY till K8s assins a load Balancer IP to
+    oes-gate\n    check_for_loadBalancer oes-ui\n\n    ## If external IP is not available\n
+    \   if [ -z \"$ENDPOINT_IP\" ]; then\n      ## Fetch the nodePort IP and replace
+    in gate.yml\n      ENDPOINT_IP=$(kubectl get ep kubernetes -n default -o jsonpath=\"{.subsets[].addresses[].ip}\")\n
+    \     sed -i \"s/OES_UI_LOADBALANCER_IP/$ENDPOINT_IP/g\" /opt/spinnaker/config/gate.yml\n
+    \   else\n      ## Substitute oes-ui external IP in gate.yml\n      sed -i \"s/OES_UI_LOADBALANCER_IP/$ENDPOINT_IP/g\"
+    /opt/spinnaker/config/gate.yml\n    fi\n    ;;\n  sapor)\n    ## Unused code block
+    in oes-init:v3; sapor is not automatically configured!!!\n    cp /config/* /opt/opsmx/\n\n
+    \   ENDPOINT_IP=\"\"\n\n    ## Wait for $EXTERNAL_IP_CHECK_DELAY till K8s assins
+    a load Balancer IP to oes-gate\n    check_for_spinnakerGate_loadBalancer spin-deck
+    $SPINNAKER_SETUP_DELAY\n    PORT=9000\n\n    ## If external IP is not available\n
+    \   if [ -z \"$ENDPOINT_IP\" ]; then\n      ## Fetch the nodePort IP and replace
+    in spinnaker.yaml\n      ENDPOINT_IP=$(kubectl get ep kubernetes -n default -o
+    jsonpath=\"{.subsets[].addresses[].ip}\")\n      PORT=$(kubectl get svc spin-gate
+    -o jsonpath=\"{.spec.ports[].nodePort}\")\n      sed -i \"s/SPIN_GATE_LOADBALANCER_IP_PORT/$ENDPOINT_IP:$PORT/g\"
+    /opt/opsmx/application.yml\n      #sed -i \"s/spin-gate:8084/$ENDPOINT_IP:$PORT/g\"
+    /opt/opsmx/spinnaker.yaml\n    else\n      ## Substitute spin-deck external IP
+    in spinnaker.yaml\n      sed -i \"s/SPIN_GATE_LOADBALANCER_IP_PORT/$ENDPOINT_IP:$PORT/g\"
+    /opt/opsmx/application.yml\n    fi\n    ;;\n\n\n  spin-gate)\n    ENDPOINT_IP=\"\"\n
+    \   PORT=8084\n\n    ## Wait for $EXTERNAL_IP_CHECK_DELAY till K8s assins a load
+    Balancer IP to oes-gate\n    #check_for_spinnakerGate_loadBalancer spin-gate-np
+    $SPINNAKER_SETUP_DELAY\n    check_for_loadBalancer spin-gate-np\n\n    ## If external
+    IP is not available\n    if [ -z \"$ENDPOINT_IP\" ]; then\n      ## Fetch the
+    nodePort IP and replace in spinnaker.yaml\n      #ENDPOINT_IP=$(kubectl get ep
+    kubernetes -n default -o jsonpath=\"{.subsets[].addresses[].ip}\")\n      ENDPOINT_IP=$NODE_IP\n
+    \     PORT=$(kubectl get svc spin-gate-np -o jsonpath=\"{.spec.ports[].nodePort}\")\n
+    \     sed -i  s/OVERRIDE_API_URL/$ENDPOINT_IP:$PORT/g /tmp/spinnaker/.hal/config\n
+    \   else\n      ## Substitute spin-deck external IP in spinnaker.yaml\n      sed
+    -i  s/OVERRIDE_API_URL/$ENDPOINT_IP:$PORT/g /tmp/spinnaker/.hal/config\n    fi\n
+    \   ;;\n\n  spin-deck)\n    ENDPOINT_IP=\"\"\n    PORT=9000\n\n    ## Wait for
+    $EXTERNAL_IP_CHECK_DELAY till K8s assins a load Balancer IP to oes-gate\n    check_for_loadBalancer
+    spin-deck-np\n\n    ## If external IP is not available\n    if [ -z \"$ENDPOINT_IP\"
+    ]; then\n      ## Fetch the nodePort & nodeport and replace in app-config.js\n
+    \     ENDPOINT_IP=$NODE_IP\n      PORT=$(kubectl get svc spin-deck-np -o jsonpath=\"{.spec.ports[].nodePort}\")\n
+    \     sed -i  s/OVERRIDE_DECK_URL/$ENDPOINT_IP:$PORT/g /tmp/spinnaker/.hal/config\n
+    \   else\n      ## Substitute oes-gate external IP in app-config.js\n      sed
+    -i  s/OVERRIDE_DECK_URL/$ENDPOINT_IP:$PORT/g /tmp/spinnaker/.hal/config\n    fi\n
+    \   ;;\n\n  *)\n    echo  COMP=$COMPONENT\n    echo \"Invalid input:$COMPONENT\"\n
+    \   ;;\nesac\n\n\n"
+kind: ConfigMap
+metadata:
+  name: {{ template "spinnaker.fullname" . }}-halyard-overrideurl

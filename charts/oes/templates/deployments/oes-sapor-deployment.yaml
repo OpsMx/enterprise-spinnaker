@@ -1,4 +1,4 @@
-{{ if or (eq .Values.installationMode "OES-AP") (eq .Values.installationMode "OES") }}
+{{- if or (eq .Values.installationMode "OES-AP") (eq .Values.installationMode "OES") -}}
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -36,10 +36,10 @@ spec:
         - name: sapor-config-volume
           mountPath: /opt/opsmx/application.yml
           subPath: application.yml
-{{- if .Values.sapor.config.caCerts.override }}
+        {{- if .Values.sapor.config.caCerts.override }}
         - name: certs-volume
           mountPath: /etc/pki/ca-trust/extracted/java
-{{- end }}
+        {{- end }}
         resources:
           requests:
             memory: "100Mi"
@@ -64,9 +64,9 @@ spec:
       - configMap:
           name: oes-sapor-config
         name: sapor-config-volume
-{{- if .Values.sapor.config.caCerts.override }}
+      {{- if .Values.sapor.config.caCerts.override -}}
       - name: certs-volume
         configMap:
           name: sapor-certs
-{{- end }}
-{{ end }}
+      {{- end -}}
+{{- end -}}

@@ -1,3 +1,4 @@
+{{- if or (eq .Values.installationMode "OES-AP") (eq .Values.installationMode "AP") (eq .Values.installationMode "OES") -}}
 {{- if .Values.sapor.config.caCerts.override }}
 apiVersion: v1
 binaryData:
@@ -5,4 +6,5 @@ binaryData:
 kind: ConfigMap
 metadata:
   name: sapor-certs
-{{- end }}
+{{- end -}}
+{{- end -}}

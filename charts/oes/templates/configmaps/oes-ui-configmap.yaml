@@ -1,3 +1,4 @@
+{{ if or (eq .Values.installationMode "OES-AP") (eq .Values.installationMode "AP") (eq .Values.installationMode "OES") }}
 apiVersion: v1
 data:
 {{ (tpl (.Files.Glob "config/oes-ui/app-config.json").AsConfig . ) | indent 2 }}
@@ -9,3 +10,4 @@ metadata:
     app: oes
     component: ui
 {{ include "oes.standard-labels" . | indent 4 }}
+{{ end }}
