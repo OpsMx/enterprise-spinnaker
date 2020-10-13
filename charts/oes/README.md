@@ -185,6 +185,9 @@ Parameter | Description | Default
 `ldap.GroupIdentity` | User group identity | `memberOf`
 `ldap.userIdentity` | User identity | `cn`
 `ldap.userPrepend` | User Prepend | `cn=USERNAME`
+`spinnaker.gitopsHalyardInit.enabled` | Enable gitops style halyard & account config | `false`
+`spinnaker.gitopsHalyardInit.repo-type` | Repo type; git, s3, vault | `git`
+`spinnaker.gitopsHalyardInit.secretName` | Secret in which git credentials shall be specified, sample secret found under templates/secrets/ | `opsmx-gitops-auth`
 
 > **Tip**: Refer to values.yaml for detailed comments
 
