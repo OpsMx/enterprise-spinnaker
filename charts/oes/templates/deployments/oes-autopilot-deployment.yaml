@@ -1,0 +1,64 @@
+{{- if or (eq .Values.installationMode "OES-AP") (eq .Values.installationMode "AP") -}}
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: oes-autopilot
+  labels:
+    app: oes
+    component: autopilot
+{{ include "oes.standard-labels" . | indent 4 }}
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: oes
+      component: autopilot
+  template:
+    metadata:
+      labels:
+        app: oes
+        component: autopilot
+{{ include "oes.standard-labels" . | indent 8 }}
+      annotations:
+        configmap/checksum: {{ (.Files.Glob "config/autopilot/autopilot.properties").AsConfig | sha256sum }}
+    spec:
+      volumes:
+        - name: autopilot-config-volume
+          configMap:
+            name: oes-autopilot-config
+      imagePullSecrets:
+        - name: {{ .Values.imagePullSecret}}
+      containers:
+        - image: {{ template "autopilot.image" . }}
+          imagePullPolicy: {{ .Values.autopilot.image.pullPolicy }}
+          name: oes-autopilot
+          resources:
+            requests:
+              memory: "2Gi"
+              cpu: "1"
+            limits:
+              memory: "8Gi"
+              cpu: "2"
+          ports:
+            - containerPort: 8090
+              name: backend
+              protocol: TCP
+            - containerPort: 9090
+              name: metricfetcher
+              protocol: TCP
+          volumeMounts:
+          - name: autopilot-config-volume
+            mountPath: /opsmx/conf/autopilot.properties
+            subPath: autopilot.properties
+          readinessProbe:
+            tcpSocket:
+              port: 8090
+            initialDelaySeconds: 60
+            periodSeconds: 10
+          livenessProbe:
+            httpGet:
+              path: /mgmt/health
+              port: 8090
+            initialDelaySeconds: 120
+            periodSeconds: 60
+{{- end -}}

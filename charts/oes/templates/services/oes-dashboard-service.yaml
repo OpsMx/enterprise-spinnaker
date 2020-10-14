@@ -1,0 +1,20 @@
+{{- if or (eq .Values.installationMode "OES-AP") (eq .Values.installationMode "AP") (eq .Values.installationMode "OES") -}}
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    app: oes
+    component: dashboard
+{{ include "oes.standard-labels" . | indent 4 }}
+  name: oes-dashboard
+spec:
+  type: ClusterIP
+  ports:
+  - name: dashboard
+    protocol: TCP
+    port: 8094
+    targetPort: 8094
+  selector:
+    app: oes
+    component: dashboard
+{{- end -}}

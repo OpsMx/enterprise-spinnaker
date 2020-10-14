@@ -1,0 +1,58 @@
+{{- if or (eq .Values.installationMode "OES-AP") (eq .Values.installationMode "AP") (eq .Values.installationMode "OES") -}}
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  labels:
+    app: oes
+    component: db
+{{ include "oes.standard-labels" . | indent 4 }}
+  name: oes-db
+spec:
+  podManagementPolicy: {{ .Values.db.podManagementPolicy }}
+  replicas: 1
+  serviceName: oes-db
+  selector:
+    matchLabels:
+      app: oes
+      component: db
+  template:
+    metadata:
+      labels:
+        app: oes
+        component: db
+{{ include "oes.standard-labels" . | indent 8 }}
+    spec:
+      imagePullSecrets:
+        - name: {{ .Values.imagePullSecret }}
+      containers:
+      - image: {{ template "db.image" . }}
+        imagePullPolicy: {{ .Values.db.image.pullPolicy }}
+        name: oes-db
+        ports:
+        - containerPort: 5432
+          protocol: TCP
+        volumeMounts:
+        - mountPath: "/var/lib/pgsql-pv"
+          name: oes-db-postgresql
+        readinessProbe:
+          tcpSocket:
+            port: 5432
+          initialDelaySeconds: 10
+          periodSeconds: 5
+      securityContext:
+        fsGroup: {{ .Values.db.securityContext.fsGroup }}
+  volumeClaimTemplates:
+  - metadata:
+      creationTimestamp: null
+      labels:
+        app: oes
+        component: db
+      name: oes-db-postgresql
+    spec:
+      accessModes:
+      - ReadWriteOnce
+      resources:
+        requests:
+          storage: {{ .Values.db.storageMountSize }}
+      volumeMode: Filesystem
+{{- end -}}

@@ -1,12 +1,12 @@
-{{- if .Values.installSpinnaker }}
-{{- if .Values.createIngress }}
+{{- if (.Values.installSpinnaker) }}
+{{- if (.Values.spinnaker.gitopsHalyardInit.enabled) }}
 apiVersion: v1
 kind: Service
 metadata:
   labels:
     app: spin
     stack: gate
-  name: spin-gate-ui
+  name: spin-gate-np
 spec:
   {{- if .Values.createIngress }}
   type: NodePort
@@ -19,7 +19,7 @@ spec:
      protocol: TCP
   selector:
     cluster: "spin-gate"
-{{- end }}
+{{ end }}
 ---
 apiVersion: v1
 kind: Service
@@ -27,7 +27,7 @@ metadata:
   labels:
     app: spin
     stack: deck
-  name: spin-deck-ui
+  name: spin-deck-np
 spec:
   {{- if .Values.createIngress }}
   type: NodePort

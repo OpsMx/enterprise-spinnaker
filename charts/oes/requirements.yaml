@@ -1,12 +1,15 @@
 dependencies:
   - name: openldap
-    version: ~1.2.1
+    version: 1.2.1
     repository: https://kubernetes-charts.storage.googleapis.com/
     condition: installOpenLdap
   - name: spinnaker
-    version: ~1.20.2
+    version: ~2.2.1
     repository: https://kubernetes-charts.storage.googleapis.com/
     condition: installSpinnaker
+  - name: redis
+    version: 10.5.3
+    condition: installRedis
   - name: elasticsearch
     version: 7.5.0
     condition: enableCentralLogging

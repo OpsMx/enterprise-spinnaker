@@ -1,0 +1,4 @@
+opsmx:
+  dashboard:
+    installation:
+      mode: {{ .Values.installationMode }}

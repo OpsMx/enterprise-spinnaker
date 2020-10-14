@@ -1,0 +1,19 @@
+oes:
+  rbac:
+    enabled: true
+spinnaker:
+  authnEnabled: {{ .Values.sapor.config.spinnaker.authnEnabled }}
+  baseurl: {{ .Values.sapor.config.spinnaker.spinGateURL }}
+  username: {{ .Values.sapor.config.spinnaker.spinuser }}
+  password: {{ .Values.sapor.config.spinnaker.spinpasswd }}
+  externalBaseUrl: {{ .Values.sapor.config.spinnaker.spinExternalGateURL }}
+  adminLoginEnabled: {{ .Values.sapor.config.spinnaker.spinAdminLoginEnabled }}
+  {{- if .Values.sapor.config.spinnaker.spinAdminLoginEnabled }}
+  adminUsername: {{ .Values.sapor.config.spinnaker.spinAdminUsername }}
+  adminPassword: {{ .Values.sapor.config.spinnaker.spinAdminPassword }}
+  {{- end }}
+spring:
+  datasource:
+    url: {{ .Values.db.url }}/oesdb
+    username: {{ .Values.db.username }}
+    password: {{ .Values.db.password }}

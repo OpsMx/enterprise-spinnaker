@@ -1,0 +1,22 @@
+{{- if or (eq .Values.installationMode "OES-AP") (eq .Values.installationMode "AP") -}}
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    app: oes
+    component: autopilot
+{{ include "oes.standard-labels" . | indent 4 }}
+  name: oes-autopilot
+spec:
+  type: ClusterIP
+  ports:
+  - name: "cas-service"
+    port: 8090
+    targetPort: 8090
+  - name: "monitoring-service"
+    port: 9090
+    targetPort: 9090
+  selector:
+    app: oes
+    component: autopilot
+{{- end -}}

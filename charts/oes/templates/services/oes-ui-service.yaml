@@ -1,0 +1,19 @@
+{{- if or (eq .Values.installationMode "OES-AP") (eq .Values.installationMode "AP") (eq .Values.installationMode "OES") -}}
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    app: oes
+    component: ui
+{{ include "oes.standard-labels" . | indent 4 }}
+  name: oes-ui
+spec:
+  type: {{ .Values.k8sServiceType }}
+  ports:
+  - name: "oes-ui-service"
+    port: 80
+    targetPort: 80
+  selector:
+    app: oes
+    component: ui
+{{- end -}}

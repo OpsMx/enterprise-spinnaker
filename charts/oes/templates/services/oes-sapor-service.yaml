@@ -1,0 +1,19 @@
+{{- if or (eq .Values.installationMode "OES-AP") (eq .Values.installationMode "OES") -}}
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    app: oes
+    component: sapor
+{{ include "oes.standard-labels" . | indent 4 }}
+  name: oes-sapor
+spec:
+  type: ClusterIP
+  ports:
+  - name: "sapor"
+    port: 8085
+    targetPort: 8085
+  selector:
+    app: oes
+    component: sapor
+{{- end -}}

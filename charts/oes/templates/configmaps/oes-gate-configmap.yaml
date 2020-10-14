@@ -1,0 +1,13 @@
+{{- if or (eq .Values.installationMode "OES-AP") (eq .Values.installationMode "AP") (eq .Values.installationMode "OES") -}}
+apiVersion: v1
+data:
+  gate.yml: |
+    {{- tpl (.Files.Get "config/oes-gate/gate.yml") . | nindent 4 }}
+kind: ConfigMap
+metadata:
+  name: oes-gate-config
+  labels:
+    app: oes
+    component: gate
+{{ include "oes.standard-labels" . | indent 4 }}
+{{- end -}}

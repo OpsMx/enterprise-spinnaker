@@ -1,0 +1,13 @@
+{{- if or (eq .Values.installationMode "OES-AP") (eq .Values.installationMode "AP") (eq .Values.installationMode "OES") -}}
+apiVersion: v1
+data:
+  platform-local.yml: |
+    {{- tpl (.Files.Get "config/oes-platform/platform-local.yml") . | nindent 4 }}
+kind: ConfigMap
+metadata:
+  name: oes-platform-config
+  labels:
+    app: oes
+    component: platform
+{{ include "oes.standard-labels" . | indent 4 }}
+{{- end -}}

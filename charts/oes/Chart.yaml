@@ -1,8 +1,20 @@
 apiVersion: v1
-name: OpsMx
-version: 1.0.0
-appVersion: 1.0.0
+name: oes
+version: 3.0.0
+appVersion: 3.0.0
+description: OES is a non-forked version of OSS spinnaker
+icon: https://www.opsmx.com/images/logo.png
+maintainers:
+- email: abhinay.byrisetty@opsmx.io
+  name: abhinaybyrisetty
+- email: vamsi.krishna@opsmx.io
+  name: vkvamsi
+- email: nirmalya@opsmx.io
+  name: nirmalyasen
+- email: srinivas@opsmx.io
+  name: ksrinimba
 keywords:
   - OpsMx
   - OES
+  - Autopilot
 home: https://www.opsmx.com/
