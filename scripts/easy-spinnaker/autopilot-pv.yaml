@@ -13,7 +13,7 @@ spec:
   - ReadWriteOnce
   persistentVolumeReclaimPolicy: Retain
   claimRef:
-    name: db-lib-postgresql
+    name: oes-db-postgresql-oes-db-0
     namespace: oes
   hostPath:
     path: "/home/vagrant/PVDIR/LIB-POSTGRESQL"
