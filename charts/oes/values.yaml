@@ -15,8 +15,8 @@ imagePullSecret: opsmxdev-secret
 ##
 imageCredentials:
   registry: https://index.docker.io/v1/
-  username: username  # Docker hub username
-  password: password # Docker hub password
+  username: opsmx11  # Docker hub username
+  password: Network123! # Docker hub password
   email: info@opsmx.com   # email corresponding to docker hub ID
 
 rbac:
@@ -29,7 +29,7 @@ installSpinnaker: true
 ## Installation mode
 ## Available installation modes OES-AP, OES, AP, None
 ##
-installationMode: OES-AP
+installationMode: None
 
 ## Set to true to expose spinnaker and deck services as LoadBalancers
 ##
@@ -264,7 +264,7 @@ sapor:
       ## the spinnaker pipelines from OES-UI.
       ## Note: Trailing / is not required
       ##
-      spinExternalGateURL: http://spin-gate:8084
+      spinExternalGateURL: http://192.168.3.69:8084
 
       ## Spinnaker user credentials
       ##
@@ -328,7 +328,7 @@ autoConfiguration:
 ## OPA configuration
 #####################################################
 opa:
-  enabled: true
+  enabled: false
   image:
     repository: openpolicyagent/opa
     tag: latest
@@ -442,6 +442,11 @@ kibana:
             sleep 60;
             curl https://raw.githubusercontent.com/OpsMx/enterprise-spinnaker/master/scripts/kibana/kibana_objects.ndjson > /tmp/kibana_objects.ndjson;
             curl -X POST "localhost:5601/api/saved_objects/_import?overwrite=true" -H "kbn-xsrf: true" --form file=@/tmp/kibana_objects.ndjson 2>&1 1> /tmp/postStart.out;
+
+#####################################################
+# Centralized Logging Configuration
+#####################################################
+enableCentralMonitoring: true
 
 #####################################################
 # Spinnaker instance configuration
@@ -648,13 +653,13 @@ spinnaker:
     enabled: true
     # External Redis option will be enabled if in-cluster redis is disabled
     external:
-      host: "<EXTERNAL-REDIS-HOST-NAME>"
+      host: "ext-redis-master.redis.svc.cluster.local"
       port: 6379
-      # password: ""
+      password: "password"
     password: password
     nodeSelector: {}
     cluster:
-      enabled: false
+      enabled: true
 
     # Use ubi8 custom images
     #image:
@@ -731,6 +736,6 @@ spinnaker:
     fsGroup: 1000
   #Initialize gitOps style Halyard
   gitopsHalyardInit:
-    enabled: false
+    enabled: true
     repo-type: git # git, S3, vault, only git support at this point
     secretName: opsmx-gitops-auth
