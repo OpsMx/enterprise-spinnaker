@@ -42,7 +42,7 @@ Install OpsMx Enterprise for Spinnaker
 
   To be able to fetch OES docker images, username and password shall be set in values.yaml or use --set imageCredentials.username=<username> --set imageCredentials.password=<password> while running helm install.
 
-- Your Kubernetes cluster supports persistent volumes and loadbalancer service type.
+- Your Kubernetes cluster shall support persistent volumes and loadbalancer service type.
 
 - Helm v3 expects the namespace to be present before helm install command is run. If it does not exists,
 
@@ -114,9 +114,9 @@ Parameter | Description | Default
 `db.podManagementPolicy` | Rollout strategy for DB(statefulset) pods  | `OrderedReady`
 `db.securityContext.fsGroup` | FSGroup that owns the DB pod's volumes | `1000`
 `db.storageMountSize` | Storage to be allocated to OpsMx DB | `8Gi`
-`autopilot.image.registry` | Registry to be used for Autopilot docker images | `opsmx11`
-`autopilot.image.repository` | Repository to be used for Autopilot docker images | `autopilot`
-`autopilot.image.tag` | Tag to be used for Autopilot docker images | `master-202008210408`
+`autopilot.image.registry` | Registry to be used for Autopilot docker images | `opsmxdev`
+`autopilot.image.repository` | Repository to be used for Autopilot docker images | `ubi8-oes-autopilot`
+`autopilot.image.tag` | Tag to be used for Autopilot docker images | `v3.1-202010191958`
 `autopilot.image.pullPolicy` | Image pull policy for Autopilot image | `IfNotPresent`
 `autopilot.config.buildAnalysis.enabled` | Set it to false to disable build analysis | `false`
 `autopilot.config.ssl.enabled` | Set it to true to enable SSL | `false`
@@ -124,26 +124,26 @@ Parameter | Description | Default
 `autopilot.config.ssl.keyStorePassword` | SSL keystore password | `dummypwd`
 `autopilot.config.ssl.keyStoreType` | SSL keystore type | `PKCS12`
 `autopilot.config.ssl.keyAlias` | SSL key alias | `tomcat`
-`dashboard.image.registry` | Registry to be used for dashboard images | `opsmx11`
-`dashboard.image.registry` | Registry to be used for dashboard images | `opsmx11`
-`dashboard.image.repository` | Repository to be used for dashboard images | `dashboard-service`
-`dashboard.image.tag` | Tag to be used for dashboard images | `master-202009100512`
+`dashboard.image.registry` | Registry to be used for dashboard images | `opsmxdev`
+`dashboard.image.repository` | Repository to be used for dashboard images | `ubi8-oes-dashboard`
+`dashboard.image.tag` | Tag to be used for dashboard images | `v3.1-202010192021`
 `dashboard.image.pullPolicy` | Image pull policy for dashboard image | `IfNotPresent`
-`gate.image.registry` | Registry to be used for OES Gate docker images | `opsmx11`
-`gate.image.repository` | Repository to be used for OES Gate docker images | `oes-gate`
-`gate.image.tag` | Tag to be used for OES Gate docker images | `v0.202009031444`
+`gate.image.registry` | Registry to be used for OES Gate docker images | `opsmxdev`
+`gate.image.repository` | Repository to be used for OES Gate docker images | `ubi8-oes-gate`
+`gate.image.tag` | Tag to be used for OES Gate docker images | `v3.1-202010191958`
 `gate.image.pullPolicy` | Image pull policy for OES Gate image | `IfNotPresent`
 `gate.config.oesUIcors` | Regex of OES-UI URL to prevent cross origin attacks | `^https?://(?:localhost|OES_UI_LOADBALANCER_IP|opsmx.com)(?::[1-9]\d*)?/?`
 `gate.config.fileBasedAuthentication` | Set it to true to disable LDAP authentication and enable file based authentication | `false`
-`platform.image.registry` | Registry to be used for platform docker images | `opsmx11`
-`platform.image.repository` | Repository to be used for platform docker images | `platform-service`
-`platform.image.tag` | Tag to be used for platform docker images | `master-202009100512`
+`platform.image.registry` | Registry to be used for platform docker images | `opsmxdev`
+`platform.image.repository` | Repository to be used for platform docker images | `ubi8-oes-platform`
+`platform.image.tag` | Tag to be used for platform docker images | `v3.1-202010191959`
 `platform.image.pullPolicy` | Image pull policy for OES platform | `IfNotPresent`
 `platform.config.adminGroups` | Admin groups available | `admin, Administrators`
 `platform.config.userSource` | Source of Users for authorization | `ldap`
-`sapor.image.registry` | Registry to be used for OES SAPOR docker images | `opsmx11`
-`sapor.image.repository` | Repository to be used for OES SAPOR docker images | `sapor`
-`sapor.image.tag` | Tag to be used for OES SAPOR docker images | `v0.202009111046`
+`platform.config.supportedFeatures` | List of featues to be supported by OES | `[deployment-verification, services, releases, policies]`
+`sapor.image.registry` | Registry to be used for OES SAPOR docker images | `opsmxdev`
+`sapor.image.repository` | Repository to be used for OES SAPOR docker images | `ubi8-oes-sapor`
+`sapor.image.tag` | Tag to be used for OES SAPOR docker images | `v3.1-202010191959`
 `sapor.image.pullPolicy` | Image pull policy for OES SAPOR image | `IfNotPresent`
 `sapor.config.spinnaker.authnEnabled` | Set it to true if authentication is enabled in Spinnaker | `false`
 `sapor.config.spinnaker.spinGateURL` | URL of Spinnaker Gate | `http://spin-gate.oes-spin:8084`
@@ -154,9 +154,9 @@ Parameter | Description | Default
 `sapor.config.spinnaker.spinAdminUsername` | Spinnaker admin username | `admin`
 `sapor.config.spinnaker.spinAdminPassword` | Spinnaker admin password | `admin`
 `sapor.config.caCerts.override` | If default java certs are to be overwritten, create custom config map 'oes-sapor-cacerts.yaml' under templates and set this option to true | `false`
-`ui.image.registry` | Registry to be used for OES UI docker images | `opsmx11`
-`ui.image.repository` | Repository to be used for OES UI docker images | `oes-ui`
-`ui.image.tag` | Tag to be used for OES UI docker images | `v0.202009101444`
+`ui.image.registry` | Registry to be used for OES UI docker images | `opsmxdev`
+`ui.image.repository` | Repository to be used for OES UI docker images | `ubi8-oes-ui`
+`ui.image.tag` | Tag to be used for OES UI docker images | `v3.1-202010191957`
 `ui.image.pullPolicy` | Image pull policy for OES UI image | `IfNotPresent`
 `ui.config.oesGateURL` | Endpoint of oes-gate to be used by oes-ui | `http://OES_GATE_IP:8084/`
 `ui.config.setApplicationRefreshInterval` | Interval at which UI refreshes application dashboard | `16000`
@@ -185,6 +185,9 @@ Parameter | Description | Default
 `ldap.GroupIdentity` | User group identity | `memberOf`
 `ldap.userIdentity` | User identity | `cn`
 `ldap.userPrepend` | User Prepend | `cn=USERNAME`
+`spinnaker.gitopsHalyardInit.enabled` | Enable gitops style halyard & account config | `false`
+`spinnaker.gitopsHalyardInit.repo-type` | Repo type; git, s3, vault | `git`
+`spinnaker.gitopsHalyardInit.secretName` | Secret in which git credentials shall be specified, sample secret found under templates/secrets/ | `opsmx-gitops-auth`
 
 > **Tip**: Refer to values.yaml for detailed comments
 
@@ -216,12 +219,12 @@ Helm v3.x
 
   Once the service is up and running, find the service ip address
 
-  	kubectl get svc spin-deck-ui [--namespace mynamespace]
+      kubectl get svc spin-deck-np [--namespace mynamespace]
 
   Example output would be:
 
       NAME           TYPE           CLUSTER-IP     EXTERNAL-IP   PORT(S)          AGE
-      spin-deck-ui   LoadBalancer   10.0.139.222   40.78.4.201   9000:31030/TCP   8m9s
+      spin-deck-np   LoadBalancer   10.0.139.222   40.78.4.201   9000:31030/TCP   8m9s
 
   Using the EXTERNAL-IP address, go to http://EXTERNAL-IP:9000/
 
