@@ -2,8 +2,57 @@ apiVersion: v1
 entries:
   oes:
   - apiVersion: v1
+    appVersion: 3.1.0
+    created: "2020-10-20T10:50:55.816995061+05:30"
+    dependencies:
+    - condition: installOpenLdap
+      name: openldap
+      repository: https://kubernetes-charts.storage.googleapis.com/
+      version: 1.2.1
+    - condition: installSpinnaker
+      name: spinnaker
+      repository: https://kubernetes-charts.storage.googleapis.com/
+      version: ~2.2.1
+    - condition: installRedis
+      name: redis
+      repository: ""
+      version: 10.5.3
+    - condition: enableCentralLogging
+      name: elasticsearch
+      repository: ""
+      version: 7.5.0
+    - condition: enableCentralLogging
+      name: kibana
+      repository: ""
+      version: 7.5.0
+    - condition: enableCentralLogging
+      name: fluent-bit
+      repository: https://kubernetes-charts.storage.googleapis.com/
+      version: ^1.9.0
+    description: OES is a non-forked version of OSS spinnaker
+    digest: cf41c90febde53f7e868b656c7be32696197096479ae9aaf2ae58a170b50fd33
+    home: https://www.opsmx.com/
+    icon: https://www.opsmx.com/images/logo.png
+    keywords:
+    - OpsMx
+    - OES
+    - Autopilot
+    maintainers:
+    - email: abhinay.byrisetty@opsmx.io
+      name: abhinaybyrisetty
+    - email: vamsi.krishna@opsmx.io
+      name: vkvamsi
+    - email: nirmalya@opsmx.io
+      name: nirmalyasen
+    - email: srinivas@opsmx.io
+      name: ksrinimba
+    name: oes
+    urls:
+    - https://opsmx.github.io/enterprise-spinnaker/helm-repo/oes-3.1.0.tgz
+    version: 3.1.0
+  - apiVersion: v1
     appVersion: 3.0.0
-    created: "2020-09-28T13:51:28.380052796+05:30"
+    created: "2020-10-20T10:50:55.7719152+05:30"
     dependencies:
     - condition: installOpenLdap
       name: openldap
@@ -48,7 +97,7 @@ entries:
     version: 3.0.0
   - apiVersion: v1
     appVersion: 1.0.0
-    created: "2020-09-28T13:51:28.365002153+05:30"
+    created: "2020-10-20T10:50:55.73555975+05:30"
     dependencies:
     - condition: installOpenLdap
       name: openldap
@@ -93,7 +142,7 @@ entries:
   opsmx-autopilot:
   - apiVersion: v1
     appVersion: 2.9.10
-    created: "2020-09-28T13:51:28.380801349+05:30"
+    created: "2020-10-20T10:50:55.819362479+05:30"
     description: Autopilot is a release verification platform
     digest: 73b05b378187d481ff6b7d09fb1a1d6fbab089cef600453b77a647e48a526fa6
     home: https://www.opsmx.com/
@@ -113,4 +162,4 @@ entries:
     urls:
     - https://opsmx.github.io/enterprise-spinnaker/helm-repo/opsmx-autopilot-2.0.0.tgz
     version: 2.0.0
-generated: "2020-09-28T13:51:28.35204861+05:30"
+generated: "2020-10-20T10:50:55.684813516+05:30"

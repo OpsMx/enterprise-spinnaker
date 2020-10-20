@@ -104,9 +104,9 @@ autopilot:
   ## Image specific details
   ##
   image:
-    registry: opsmx11
-    repository: oes-autopilot
-    tag: v3.0.0-rc1-202009211021
+    registry: opsmxdev
+    repository: ubi8-oes-autopilot
+    tag: v3.1-202010191958
     pullPolicy: IfNotPresent
 
   config:
@@ -135,9 +135,9 @@ dashboard:
   ## Image specific details
   ##
   image:
-    registry: opsmx11
-    repository: oes-dashboard
-    tag: v3.0.0-rc1-202009210948
+    registry: opsmxdev
+    repository: ubi8-oes-dashboard
+    tag: v3.1-202010192021
     pullPolicy: IfNotPresent
 
   config:
@@ -154,9 +154,9 @@ gate:
   ## Image specific details
   ##
   image:
-    registry: opsmx11
-    repository: oes-gate
-    tag: v3.0.0-rc1-202009211015
+    registry: opsmxdev
+    repository: ubi8-oes-gate
+    tag: v3.1-202010191958
     pullPolicy: IfNotPresent
 
   config:
@@ -185,9 +185,9 @@ platform:
   ## Image specific details
   ##
   image:
-    registry: opsmx11
-    repository: oes-platform
-    tag: v3.0.0-rc1-202009211008
+    registry: opsmxdev
+    repository: ubi8-oes-platform
+    tag: v3.1-202010191959
     pullPolicy: IfNotPresent
 
   config:
@@ -216,6 +216,14 @@ platform:
     ## under Redis Configuration section
     ##
 
+    ## List of features to be supported by OES
+    ##
+    supportedFeatures:
+      - deployment-verification
+      - services
+      - releases
+      - policies
+
 ###############################################################################
 ##
 ## Values of OES Sapor (Security Audit Policy Onboarding & Release)
@@ -224,9 +232,9 @@ sapor:
   ## Image specific details
   ##
   image:
-    registry: opsmx11
-    repository: oes-sapor
-    tag: v3.0.0-rc1-202009231111
+    registry: opsmxdev
+    repository: ubi8-oes-sapor
+    tag: v3.1-202010191959
     pullPolicy: IfNotPresent
 
   config:
@@ -282,9 +290,9 @@ ui:
   ## Image specific details
   ##
   image:
-    registry: opsmx11
-    repository: oes-ui
-    tag: v3.0.0-rc1-202009210956
+    registry: opsmxdev
+    repository: ubi8-oes-ui
+    tag: v3.1-202010191957
     pullPolicy: IfNotPresent
 
   config:
