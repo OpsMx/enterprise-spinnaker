@@ -24,7 +24,7 @@ rbac:
 
 ## Option to skip installation of OpsMx Spinnaker
 ## Setting this to true, will ensure custom ubi8 images of Spinnaker
-installSpinnaker: false
+installSpinnaker: true
 
 ## Installation mode
 ## Available installation modes OES-AP, OES, AP, None
@@ -46,7 +46,7 @@ k8sServiceType: LoadBalancer
 ## If Spinnaker is being installed, redis installed by spinnaker chart can
 ## be re-used
 ##
-installRedis: true
+installRedis: false
 
 ###############################################################################
 ## Details of redis-master image for OES
