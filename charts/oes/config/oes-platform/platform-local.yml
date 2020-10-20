@@ -4,6 +4,8 @@ spring:
     username: {{ .Values.db.username }}
     password: {{ .Values.db.password }}
 rbacEnabled: {{ .Values.rbac.create }}
+supportedFeatures:
+{{ toYaml .Values.platform.config.supportedFeatures | indent 2 }}
 userGroup:
   adminGroups: {{ .Values.platform.config.adminGroups }}
 user:
