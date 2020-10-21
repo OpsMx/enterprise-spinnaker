@@ -59,6 +59,8 @@ redis:
   ##
   url: redis://:password@{{ .Release.Name }}-redis-master:6379
   password: password
+  cluster:
+    enabled: false
 
 ###############################################################################
 ##
