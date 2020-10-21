@@ -1189,6 +1189,209 @@ serverFiles:
 
   ## Alerts configuration
   ## Ref: https://prometheus.io/docs/prometheus/latest/configuration/alerting_rules/
+    groups:
+    - name: spinnaker-services-is-down
+      rules:
+      - alert: clouddriver-is-down
+        expr: absent(up{job="opsmx_spinnaker_metrics", service="spin-clouddriver-rw", namespace="oes" }) == 1 
+        annotations:
+          description: "Service {{$labels.service}} in namespace {{$labels.namespace}} is not responding"
+          summary: One or more Spinnaker services are down 
+        labels:
+          severity: critical
+      - alert: gate-is-down
+        expr: absent(up{job="opsmx_spinnaker_metrics", service="spin-gate", namespace="oes" }) == 1 
+        annotations:
+          description: "Service {{$labels.service}} in namespace {{$labels.namespace}} is not responding"
+          summary: One or more Spinnaker services are down 
+        labels:
+          severity: critical
+      - alert: orca-is-down
+        expr: absent(up{job="opsmx_spinnaker_metrics", service="spin-orca", namespace="oes" }) == 1
+        annotations:
+          description: "Service {{$labels.service}} in namespace {{$labels.namespace}} is not responding"
+          summary: One or more Spinnaker services are down 
+        labels:
+          severity: critical
+      - alert: igor-is-down
+        expr: absent(up{job="opsmx_spinnaker_metrics", service="spin-igor", namespace="oes" }) == 1
+        annotations:
+          description: "Service {{$labels.service}} in namespace {{$labels.namespace}} is not responding"
+          summary: One or more Spinnaker services are down 
+        labels:
+          severity: critical
+      - alert: echo-is-down
+        expr: absent(up{job="opsmx_spinnaker_metrics", service="spin-echo", namespace="oes" }) == 1
+        annotations:
+          description: "Service {{$labels.service}} in namespace {{$labels.namespace}} is not responding"
+          summary: One or more Spinnaker services are down 
+        labels:
+          severity: critical
+      - alert: front50-is-down
+        expr: absent(up{job="opsmx_spinnaker_metrics", service="spin-front50", namespace="oes" }) == 1
+        annotations:
+          description: "Service {{$labels.service}} in namespace {{$labels.namespace}} is not responding"
+          summary: One or more Spinnaker services are down 
+        labels:
+          severity: critical
+    - name: latency-too-high
+      rules:
+      - alert: latency-too-high
+        expr: sum(irate(clouddriver-rw:executionCount_total{status="success", namespace="oes"}[1m])) by (instance) > .5 
+        for: 5m
+        labels:
+          severity: warning
+        annotations:
+          description: "Service {{$labels.service}} in namespace {{$labels.namespace}} is slow ({{$value}} per minute)"
+          summary: latency of a service is too high
+      - alert: latency-too-high
+        expr: sum(irate(gate:executionCount_total{status="success", namespace="oes"}[1m])) by (instance) > .5 
+        labels:
+          severity: warning
+        annotations:
+          description: "Service {{$labels.service}} in namespace {{$labels.namespace}} is slow ({{$value}} per minute)"
+          summary: latency of a service is too high
+      - alert: latency-too-high
+        expr: sum(irate(orca:executionCount_total{status="success", namespace="oes"}[1m])) by (instance) > .5 
+        labels:
+          severity: warning
+        annotations:
+          description: "Service {{$labels.service}} in namespace {{$labels.namespace}} is slow ({{$value}} per minute)"
+          summary: latency of a service is too high
+      - alert: latency-too-high
+        expr: sum(irate(igor:executionCount_total{status="success", namespace="oes"}[1m])) by (instance) > .5 
+        labels:
+          severity: warning
+        annotations:
+          description: "Service {{$labels.service}} in namespace {{$labels.namespace}} is slow ({{$value}} per minute)"
+          summary: latency of a service is too high
+      - alert: latency-too-high
+        expr: sum(irate(echo:executionCount_total{status="success", namespace="oes"}[1m])) by (instance) > .5 
+        labels:
+          severity: warning
+        annotations:
+          description: "Service {{$labels.service}} in namespace {{$labels.namespace}} is slow ({{$value}} per minute)"
+          summary: latency of a service is too high
+      - alert: latency-too-high
+        expr: sum(irate(front50:executionCount_total{status="success", namespace="oes"}[1m])) by (instance) > .5 
+        labels:
+          severity: warning
+        annotations:
+          description: "Service {{$labels.service}} in namespace {{$labels.namespace}} is slow ({{$value}} per minute)"
+          summary: latency of a service is too high
+    - name: failure-rate
+      rules:
+      - alert: clouddriver-failure-rate
+        expr: sum(irate(clouddriver-rw:executionCount_total{status="failed", namespace="oes"}[5m])) by (instance) > 5
+        labels:
+          severity: warning
+        annotations:
+          description: "Service {{$labels.service}} in namespace {{$labels.namespace}} has more than 5 failures({{$value}}) in 5 min"
+          summary: Unacceptable failure rate
+      - alert: gate-failure-rate
+        expr: sum(irate(gate:executionCount_total{status="failed", namespace="oes"}[5m])) by (instance) > 5
+        labels:
+          severity: warning
+        annotations:
+          description: "Service {{$labels.service}} in namespace {{$labels.namespace}} has more than 5 failures({{$value}}) in 5 min"
+          summary: Unacceptable failure rate
+      - alert: orca-failure-rate
+        expr: sum(irate(orca:executionCount_total{status="failed", namespace="oes"}[5m])) by (instance) > 5
+        labels:
+          severity: warning
+        annotations:
+          description: "Service {{$labels.service}} in namespace {{$labels.namespace}} has more than 5 failures({{$value}}) in 5 min"
+          summary: Unacceptable failure rate
+      - alert: echo-failure-rate
+        expr: sum(irate(echo:executionCount_total{status="failed", namespace="oes"}[5m])) by (instance) > 5
+        labels:
+          severity: warning
+        annotations:
+          description: "Service {{$labels.service}} in namespace {{$labels.namespace}} has more than 5 failures({{$value}}) in 5 min"
+          summary: Unacceptable failure rate
+      - alert: front50-failure-rate
+        expr: sum(irate(front50:executionCount_total{status="failed", namespace="oes"}[5m])) by (instance) > 5
+        labels:
+          severity: warning
+        annotations:
+          description: "Service {{$labels.service}} in namespace {{$labels.namespace}} has more than 5 failures({{$value}}) in 5 min"
+          summary: Unacceptable failure rate
+      - alert: igor-failure-rate
+        expr: sum(irate(igor:executionCount_total{status="failed", namespace="oes"}[5m])) by (instance) > 5
+        labels:
+          severity: warning
+        annotations:
+          description: "Service {{$labels.service}} in namespace {{$labels.namespace}} has more than 5 failures({{$value}}) in 5 min"
+          summary: Unacceptable failure rate
+    - name: jvm-too-high
+      rules:
+      - alert: pod-may-be-evicted-soon 
+        expr: (sum(clouddriver-rw:jvm:memory:used{ namespace="oes"}) by (instance) / sum(clouddriver:jvm:memory:max{ namespace="oes"}) by (instance)) > .9
+        labels:
+          severity: warning
+        annotations:
+          description: "Service {{$labels.service}} in namespace {{$labels.namespace}} may be evicted soon"
+          summary: 
+      - alert: pod-may-be-evicted-soon 
+        expr: (sum(gate:jvm:memory:used{ namespace="oes"}) by (instance) / sum(gate:jvm:memory:max{ namespace="oes"}) by (instance)) > .9
+        labels:
+          severity: warning
+        annotations:
+          description: "Service {{$labels.service}} in namespace {{$labels.namespace}} may be evicted soon"
+          summary: 
+      - alert: pod-may-be-evicted-soon 
+        expr: (sum(orca:jvm:memory:used{ namespace="oes"}) by (instance) / sum(orca:jvm:memory:max{ namespace="oes"}) by (instance)) > .9
+        labels:
+          severity: warning
+        annotations:
+          description: "Service {{$labels.service}} in namespace {{$labels.namespace}} may be evicted soon"
+          summary: 
+      - alert: pod-may-be-evicted-soon 
+        expr: (sum(igor:jvm:memory:used{ namespace="oes"}) by (instance) / sum(igor:jvm:memory:max{ namespace="oes"}) by (instance)) > .9
+        labels:
+          severity: warning
+        annotations:
+          description: "Service {{$labels.service}} in namespace {{$labels.namespace}} may be evicted soon"
+          summary: 
+      - alert: pod-may-be-evicted-soon 
+        expr: (sum(echo:jvm:memory:used{ namespace="oes"}) by (instance) / sum(echo:jvm:memory:max{ namespace="oes"}) by (instance)) > .9
+        labels:
+          severity: warning
+        annotations:
+          description: "Service {{$labels.service}} in namespace {{$labels.namespace}} may be evicted soon"
+          summary: 
+      - alert: pod-may-be-evicted-soon 
+        expr: (sum(front50:jvm:memory:used{ namespace="oes"}) by (instance) / sum(front50:jvm:memory:max{ namespace="oes"}) by (instance)) > .9
+        labels:
+          severity: warning
+        annotations:
+          description: "Service {{$labels.service}} in namespace {{$labels.namespace}} may be evicted soon"
+          summary: 
+    - name: orca-queue-issue
+      rules:
+      - alert: orca-queue-depth-high
+        expr: (sum(orca:queue:ready:depth{namespace="oes"}) by (instance) ) > 10
+        labels:
+          severity: warning
+        annotations:
+          description: "Service {{$labels.service}} in namespace {{$labels.namespace}} may be evicted soon"
+          summary: Orca queue depth is high
+      - alert: orca-queue-lag-high
+        expr: sum(rate (orca:controller:invocations__totalTime_total{ namespace="oes"}[1m]) ) by (instance)  / sum(rate(orca:controller:invocations__count_total{ namespace="oes"}[1m])) by (instance) > 0.5
+        labels:
+          severity: warning
+        annotations:
+          description: "Lag = {{$value}}"
+          summary: Orca queue lag is high
+    - name: igor-needs-attention
+      rules:
+      - alert: igor-needs-attention
+        expr: igor:pollingMonitor:itemsOverThreshold{namespace="oes"} > 0
+        labels:
+          severity: crtical
+        annotations:
+          description: "Igor in namespace {{$labels.namespace}} needs human help"
+          summary: Igor needs attention
   alerting_rules.yml: {}
   # groups:
   #   - name: Instances
@@ -1219,6 +1422,46 @@ serverFiles:
       - /etc/config/alerts
 
     scrape_configs:
+    # A scrape configuration for Spinnaker services 
+    - job_name: opsmx_spinnaker_metrics
+      honor_labels: true
+      metrics_path: /prometheus_metrics
+      kubernetes_sd_configs:
+      - role: endpoints
+      relabel_configs:
+        - action: keep
+          source_labels:
+          - __meta_kubernetes_service_label_app
+          regex: spin
+        - action: keep
+          source_labels:
+          - __meta_kubernetes_pod_container_port_number
+          regex: "8008"
+        - source_labels:
+          - __meta_kubernetes_endpoint_address_target_kind
+          - __meta_kubernetes_endpoint_address_target_name
+          separator: ;
+          regex: Node;(.*)
+          replacement: ${1}
+          target_label: node
+        - source_labels:
+          - __meta_kubernetes_endpoint_address_target_kind
+          - __meta_kubernetes_endpoint_address_target_name
+          separator: ;
+          regex: Pod;(.*)
+          replacement: ${1}
+          target_label: pod
+        - source_labels:
+          - __meta_kubernetes_namespace
+          target_label: namespace
+        - source_labels:
+          - __meta_kubernetes_service_name
+          target_label: service
+        - source_labels:
+          - __meta_kubernetes_pod_name
+          target_label: pod
+        - target_label: endpoint
+          replacement: "8008"
       - job_name: prometheus
         static_configs:
           - targets:
