@@ -52,10 +52,6 @@ Install OpsMx Enterprise for Spinnaker
 
 - To install the chart with the release name `my-release`:
 
-  Helm v2.x
-  ```console
-  $ helm install --name my-release opsmx/oes [--namespace mynamespace]
-  ```
 	Helm v3.x
   ```console
   $ helm install my-release opsmx/oes [--namespace mynamespace]
@@ -68,11 +64,6 @@ The command deploys OES on the Kubernetes cluster in the default configuration. 
 ### Uninstalling the Chart
 
 To uninstall/delete the `my-release` deployment:
-
-Helm v2.x
-  ```console
-  $ helm delete my-release [--namespace mynamespace]
-  ```
 
 Helm v3.x
   ```console
@@ -204,10 +195,6 @@ Alternatively, a YAML file that specifies the values for the above parameters ca
 
 wget https://raw.githubusercontent.com/opsmx/enterprise-spinnaker/oes3.0/charts/oes/values.yaml
 
-Helm v2.x
-  ```console
-  $ helm install opsmx/oes --name my-release -f values.yaml
-  ```
 Helm v3.x
   ```console
   $ helm install my-release opsmx/oes -f values.yaml
