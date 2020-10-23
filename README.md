@@ -20,15 +20,7 @@ Install OpsMx Enterprise for Spinnaker
   ```console
   $ helm version
   ```
-  If helm is not setup, follow <https://helm.sh/docs/using_helm/#install-helm> to install helm.
-
-  If you are using helm v2.x, you need to initialize the Kubernetes to work with helm. If using helm v2.x, the helm version command should return both the client and server versions. If it does not return both client and server versions, you can follow these three simple steps to initialize helm v2.x in the kubernetes cluster:
-
-  ```console
-  $ kubectl create serviceaccount -n kube-system tiller
-  $ kubectl create clusterrolebinding tiller-binding --clusterrole=cluster-admin --serviceaccount kube-system:tiller
-  $ helm init --service-account tiller --wait
-  ```
+  If helm is not setup, follow <https://helm.sh/docs/intro/install/> to install helm.
 
 ### Installing the OpsMx Enterprise for Spinnaker Extensions (OES) Spinnaker Chart
 
@@ -193,7 +185,7 @@ Specify each parameter using the `--set key=value[,key=value]` argument to `helm
 
 Alternatively, a YAML file that specifies the values for the above parameters can be provided while installing the chart. For example, OES values.yaml can be first downloaded using below command and then customized.
 
-wget https://raw.githubusercontent.com/opsmx/enterprise-spinnaker/oes3.0/charts/oes/values.yaml
+wget https://raw.githubusercontent.com/opsmx/enterprise-spinnaker/master/charts/oes/values.yaml
 
 Helm v3.x
   ```console
