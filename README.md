@@ -5,11 +5,14 @@ OpsMx Enterprise for Spinnaker is an installation bundle that includes the open 
 For more information, visit https://www.opsmx.com
 
 ## TL;DR;
-Install OpsMx Enterprise for Spinnaker
+Install OpsMx Enterprise for Spinnaker, quick steps:
   ```console
   $ helm repo add opsmx https://helmcharts.opsmx.com/
   $ helm install <release-name> opsmx/oes --set imageCredentials.username=<dockerID> --set imageCredentials.password=<dockerPassword>
   ```
+
+Follow details in the next section for options available and step by step instructions.
+
 
 ## Spinnaker + OpsMx Enterprise for Spinnaker Extensions (OES) Setup Instructions
 
