@@ -264,7 +264,7 @@ sapor:
       ## the spinnaker pipelines from OES-UI.
       ## Note: Trailing / is not required
       ##
-      spinExternalGateURL: http://192.168.3.69:8084
+      spinExternalGateURL: http://spin-gate:8084
 
       ## Spinnaker user credentials
       ##
@@ -328,7 +328,7 @@ autoConfiguration:
 ## OPA configuration
 #####################################################
 opa:
-  enabled: false
+  enabled: true
   image:
     repository: openpolicyagent/opa
     tag: latest
@@ -649,13 +649,13 @@ spinnaker:
     enabled: true
     # External Redis option will be enabled if in-cluster redis is disabled
     external:
-      host: "ext-redis-master.redis.svc.cluster.local"
+      host: "<EXTERNAL-REDIS-HOST-NAME>"
       port: 6379
-      password: "password"
+      # password: ""
     password: password
     nodeSelector: {}
     cluster:
-      enabled: true
+      enabled: false
 
     # Use ubi8 custom images
     #image:
@@ -731,9 +731,9 @@ spinnaker:
     runAsUser: 1000
     fsGroup: 1000
   ## Centralized Monitoring enable for Prometheus
-  enableCentralMonitoring: true
+  enableCentralMonitoring: false
   #Initialize gitOps style Halyard
   gitopsHalyardInit:
-    enabled: true
+    enabled: false
     repo-type: git # git, S3, vault, only git support at this point
     secretName: opsmx-gitops-auth
