@@ -3,7 +3,7 @@ entries:
   oes:
   - apiVersion: v1
     appVersion: 3.1.0
-    created: "2020-10-20T10:50:55.816995061+05:30"
+    created: "2020-10-26T23:29:36.008004941+05:30"
     dependencies:
     - condition: installOpenLdap
       name: openldap
@@ -52,7 +52,7 @@ entries:
     version: 3.1.0
   - apiVersion: v1
     appVersion: 3.0.0
-    created: "2020-10-20T10:50:55.7719152+05:30"
+    created: "2020-10-26T23:29:35.943677703+05:30"
     dependencies:
     - condition: installOpenLdap
       name: openldap
@@ -97,7 +97,7 @@ entries:
     version: 3.0.0
   - apiVersion: v1
     appVersion: 1.0.0
-    created: "2020-10-20T10:50:55.73555975+05:30"
+    created: "2020-10-26T23:29:35.889270591+05:30"
     dependencies:
     - condition: installOpenLdap
       name: openldap
@@ -142,7 +142,7 @@ entries:
   opsmx-autopilot:
   - apiVersion: v1
     appVersion: 2.9.10
-    created: "2020-10-20T10:50:55.819362479+05:30"
+    created: "2020-10-26T23:29:36.011161938+05:30"
     description: Autopilot is a release verification platform
     digest: 73b05b378187d481ff6b7d09fb1a1d6fbab089cef600453b77a647e48a526fa6
     home: https://www.opsmx.com/
@@ -162,4 +162,38 @@ entries:
     urls:
     - https://opsmx.github.io/enterprise-spinnaker/helm-repo/opsmx-autopilot-2.0.0.tgz
     version: 2.0.0
-generated: "2020-10-20T10:50:55.684813516+05:30"
+  spinnaker:
+  - apiVersion: v1
+    appVersion: 1.16.2
+    created: "2020-10-26T23:29:36.031683394+05:30"
+    dependencies:
+    - condition: redis.enabled
+      name: redis
+      repository: https://kubernetes-charts.storage.googleapis.com/
+      version: 10.5.3
+    - condition: minio.enabled
+      name: minio
+      repository: https://kubernetes-charts.storage.googleapis.com/
+      version: 5.0.9
+    description: Open source, multi-cloud continuous delivery platform for releasing
+      software changes with high velocity and confidence.
+    digest: d54ad041f3c5c2519fb56d9697fd814b7ce8db473e7047554af98c53fdb94497
+    home: http://spinnaker.io/
+    icon: https://pbs.twimg.com/profile_images/669205226994319362/O7OjwPrh_400x400.png
+    maintainers:
+    - email: viglesias@google.com
+      name: viglesiasce
+    - email: ezimanyi@google.com
+      name: ezimanyi
+    - email: hello@dwardu.com
+      name: dwardu89
+    - email: username.taken@gmail.com
+      name: paulczar
+    name: spinnaker
+    sources:
+    - https://github.com/spinnaker
+    - https://github.com/viglesiasce/images
+    urls:
+    - https://opsmx.github.io/enterprise-spinnaker/helm-repo/spinnaker-2.2.3.tgz
+    version: 2.2.3
+generated: "2020-10-26T23:29:35.841923657+05:30"
