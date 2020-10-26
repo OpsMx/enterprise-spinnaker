@@ -24,14 +24,14 @@ data:
     {{- if  and .Values.halyard.additionalScripts.create .Values.halyard.additionalScripts.data }}
     {{- range $index, $script := .Values.halyard.additionalScripts.data }}
     bash -xe /opt/halyard/additionalScripts/{{ $index }}
-    {{- end }}
-    {{- end }}
-    {{- else }}
+    {{- end }} # Range
+    {{- end }} # if-additionalScipts
+    {{- end }} # if-gitops
+
     {{- if .Values.enableCentralMonitoring }}
     #Enable prometheus
     $HAL_COMMAND config metric-stores prometheus enable
     {{- end }}
-    {{- end }} # End of gitOpsHalyardInit
 
     $HAL_COMMAND deploy apply
     {{- if .Values.halyard.additionalInstallParameters }} \

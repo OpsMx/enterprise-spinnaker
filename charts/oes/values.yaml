@@ -443,10 +443,6 @@ kibana:
             curl https://raw.githubusercontent.com/OpsMx/enterprise-spinnaker/master/scripts/kibana/kibana_objects.ndjson > /tmp/kibana_objects.ndjson;
             curl -X POST "localhost:5601/api/saved_objects/_import?overwrite=true" -H "kbn-xsrf: true" --form file=@/tmp/kibana_objects.ndjson 2>&1 1> /tmp/postStart.out;
 
-#####################################################
-# Centralized Logging Configuration
-#####################################################
-enableCentralMonitoring: true
 
 #####################################################
 # Spinnaker instance configuration
@@ -734,6 +730,8 @@ spinnaker:
     # Specifies permissions to write for user/group
     runAsUser: 1000
     fsGroup: 1000
+  ## Centralized Monitoring enable for Prometheus
+  enableCentralMonitoring: true
   #Initialize gitOps style Halyard
   gitopsHalyardInit:
     enabled: true
