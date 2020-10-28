@@ -56,8 +56,8 @@ echo "Installing OES using Helm, this make take 10-mins or more depending on the
 #/vagrant/helm install oes . --namespace oes --set enableCentralLogging=true
 
 # Comment this line if you want only OES without kibana
-echo "/vagrant/helm install oes . --namespace oes --set imageCredentials.username=$DOCKER_USERNAME --set imageCredentials.password=$DOCKER_PASSWORD"
-/vagrant/helm install oes . --namespace oes --set imageCredentials.username=$DOCKER_USERNAME --set imageCredentials.password=$DOCKER_PASSWORD
+echo "/vagrant/helm install oes . --namespace oes --set installationMode=None --set imageCredentials.username=$DOCKER_USERNAME --set imageCredentials.password=$DOCKER_PASSWORD"
+/vagrant/helm install oes . --namespace oes --set installationMode=None --set imageCredentials.username=$DOCKER_USERNAME --set imageCredentials.password=$DOCKER_PASSWORD
 
 exit 0
 
