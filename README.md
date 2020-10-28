@@ -83,7 +83,7 @@ Parameter | Description | Default
 `imageCredentials.email` | Email associated with docker account | `info@opsmx.com`
 `rbac.create` | Enable or disable rbac | `true`
 `installSpinnaker` | If true, install Spinnaker along with OES Extensions | `false`
-`installationMode` | The installation mode. Available installation modes are **OES-AP** (both OES 3.0 and Autopilot), **OES** (Only OES 3.0) and **AP** (Only Autopilot) | `OES-AP`
+`installationMode` | The installation mode. Available installation modes are **OES-AP** (both OES 3.0 and Autopilot), **OES** (Only OES 3.0), **AP** (Only Autopilot) and **None**(Skip OES installation) | `OES-AP`
 `createIngress` | If true, exposes Spinnaker deck & gate services over Ingress | `false`
 `k8sServiceType` | Service Type of oes-ui, oes-gate, spin-deck-ui, spin-gate | `LoadBalancer`
 `installRedis` | If false, OES will uninstall its own Redis for caching | `true`
