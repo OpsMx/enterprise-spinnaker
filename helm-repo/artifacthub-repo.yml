@@ -1,0 +1,9 @@
+# Artifact Hub repository metadata file
+repositoryID: opsmx
+owners: 
+  - name: OpsMx
+    email: artifacthub-account@opsmx.io
+  - name: abhinaybyrisetty
+    email: abhinay.byrisetty@opsmx.io
+  - name: nirmalyasen
+    email: nirmalya@opsmx.io
