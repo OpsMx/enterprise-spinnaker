@@ -1,0 +1,22 @@
+# OpsMx : 11=Dec-2019
+# Sample PV for satisfying the PVC from oes-openldap pod
+---
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: pv-oes-openldap
+spec:
+  capacity:
+    storage: 8Gi
+  volumeMode: Filesystem
+  accessModes:
+  - ReadWriteOnce
+  persistentVolumeReclaimPolicy: Retain
+  claimRef:
+    name: oes-openldap
+    namespace: oes
+  hostPath:
+    path: "/home/vagrant/PVDIR/OPENLDAP"
+
+
+

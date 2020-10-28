@@ -20,7 +20,6 @@ export KUBECONFIG=/home/vagrant/.kube/config
 
 #kubectl taint nodes $(hostname) node-role.kubernetes.io/master:NoSchedule-
 kubectl create ns oes
-kubectl create secret docker-registry oes-repo --docker-username=$DOCKER_USERNAME --docker-password=$DOCKER_PASSWORD --docker-email=opsmx@example.com --namespace oes
 kubectl create secret generic my-kubeconfig -n oes --from-file=config=/vagrant/admin.conf
 
 kubectl delete -f /vagrant/oes-pv.yaml  2>&1 > /dev/null
@@ -36,6 +35,7 @@ mkdir -p PVDIR/minio
 mkdir -p PVDIR/redis
 mkdir -p PVDIR/halyard
 mkdir -p PVDIR/ELASTICSEARCH
+mkdir -p PVDIR/OPENLDAP
 chmod -R 777 PVDIR
 
 # Create PVs as required
@@ -43,6 +43,7 @@ chmod -R 777 PVDIR
 kubectl apply -f /vagrant/autopilot-pv.yaml
 kubectl apply -f /vagrant/oes-pv.yaml
 kubectl apply -f /vagrant/spin-gate-svc.yaml -n oes
+kubectl apply -f /vagrant/openldap-pv.yaml -n oes
 
 rm -rf enterprise-spinnaker 2>&1 > /dev/null
 git clone https://github.com/OpsMx/enterprise-spinnaker.git 
@@ -55,8 +56,8 @@ echo "Installing OES using Helm, this make take 10-mins or more depending on the
 #/vagrant/helm install oes . --namespace oes --set enableCentralLogging=true
 
 # Comment this line if you want only OES without kibana
-echo "/vagrant/helm install oes . --namespace oes "
-/vagrant/helm install oes . --namespace oes 
+echo "/vagrant/helm install oes . --namespace oes --set imageCredentials.username=$DOCKER_USERNAME --set imageCredentials.password=$DOCKER_PASSWORD"
+/vagrant/helm install oes . --namespace oes --set imageCredentials.username=$DOCKER_USERNAME --set imageCredentials.password=$DOCKER_PASSWORD
 
 exit 0
 
