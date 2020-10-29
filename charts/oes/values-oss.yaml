@@ -352,6 +352,34 @@ openldap:
       cn: admin
       description: read write and execute group
       member: cn=admin,dc=example,dc=org
+    06-developer.ldif: |-
+      dn: cn=developers,ou=groups,dc=example,dc=org
+      objectClass: groupofnames
+      cn: developers
+      description: read only users
+      member: cn=admin,dc=example,dc=org
+      member: cn=developer,dc=example,dc=org
+    07-qa.ldif: |-
+      dn: cn=QA,ou=groups,dc=example,dc=org
+      objectClass: groupofnames
+      cn: QA
+      description: read only users
+      member: cn=admin,dc=example,dc=org
+      member: cn=qa,dc=example,dc=org
+    08-manager.ldif: |-
+      dn: cn=managers,ou=groups,dc=example,dc=org
+      objectClass: groupofnames
+      cn: managers
+      description: read and execute group
+      member: cn=admin,dc=example,dc=org
+      member: cn=manager,dc=example,dc=org
+    09-IT-manager.ldif: |-
+      dn: cn=ITManagers,ou=groups,dc=example,dc=org
+      objectClass: groupofnames
+      cn: ITManagers
+      description: read and execute group
+      member: cn=admin,dc=example,dc=org
+      member: cn=ITManager,dc=example,dc=org
 
 ## ldap configuration used in oes-gate & oes-platform for authentication
 ## and authorization

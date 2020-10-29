@@ -6,6 +6,7 @@ metadata:
   labels:
     app: spin
     stack: gate
+{{ include "oes.standard-labels" . | indent 4 }}
   name: spin-gate-np
 spec:
   {{- if .Values.createIngress }}
@@ -27,6 +28,7 @@ metadata:
   labels:
     app: spin
     stack: deck
+{{ include "oes.standard-labels" . | indent 4 }}
   name: spin-deck-np
 spec:
   {{- if .Values.createIngress }}
