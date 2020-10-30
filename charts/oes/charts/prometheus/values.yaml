@@ -937,7 +937,7 @@ server:
     loadBalancerSourceRanges: []
     servicePort: 80
     sessionAffinity: None
-    type: NodePort
+    type: ClusterIP
 
     ## Enable gRPC port on service to allow auto discovery with thanos-querier
     gRPC:
