@@ -1,0 +1,10 @@
+apiVersion: v1
+data:
+  node_alerting_rules.yml: | {{ .Files.Get "config/node_alerting_rules.yml" | nindent 4 }}
+  spin_alerting_rules.yml: | {{ .Files.Get "config/spin_alerting_rules.yml" | nindent 4 }}
+kind: ConfigMap
+metadata:
+  name: spinnaker-alerts
+  labels:
+    {{- include "prometheus.server.labels" . | nindent 4 }}
+{{ include "prometheus.namespace" . | indent 2 }}

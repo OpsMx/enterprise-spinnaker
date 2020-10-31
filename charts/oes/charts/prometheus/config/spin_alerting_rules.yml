@@ -1,0 +1,248 @@
+groups:
+- name: spinnaker-service-is-down
+  rules:
+  - alert: clouddriver-rw-is-down
+    annotations:
+      description: Service {{$labels.service}} in namespace {{$labels.namespace}}
+        is not responding
+      summary: Clouddriver-rw Spinnaker service is down
+    expr: absent(up{service="spin-clouddriver-rw"}) == 1
+    labels:
+      severity: critical
+  - alert: clouddriver-ro-is-down
+    annotations:
+      description: Service {{$labels.service}} in namespace {{$labels.namespace}}
+        is not responding
+      summary: Clouddriver-ro Spinnaker service is down
+    expr: absent(up{service="spin-clouddriver-ro"}) == 1
+    labels:
+      severity: critical
+  - alert: clouddriver-caching-is-down
+    annotations:
+      description: Service {{$labels.service}} in namespace {{$labels.namespace}}
+        is not responding
+      summary: Clouddriver-caching Spinnaker service is down
+    expr: absent(up{service="spin-clouddriver-caching"}) == 1
+    labels:
+      severity: critical
+  - alert: gate-is-down
+    annotations:
+      description: Service {{$labels.service}} in namespace {{$labels.namespace}}
+        is not responding
+      summary: Gate Spinnaker services is down
+    expr: absent(up{service="spin-gate"}) == 1
+    labels:
+      severity: critical
+  - alert: orca-is-down
+    annotations:
+      description: Service {{$labels.service}} in namespace {{$labels.namespace}}
+        is not responding
+      summary: Orca Spinnaker service is down
+    expr: absent(up{job="opsmx_spinnaker_metrics", service="spin-orca"}) == 1
+    labels:
+      severity: critical
+  - alert: igor-is-down
+    annotations:
+      description: Service {{$labels.service}} in namespace {{$labels.namespace}}
+        is not responding
+      summary: Igor Spinnaker service is down
+    expr: absent(up{service="spin-igor"}) == 1
+    labels:
+      severity: critical
+  - alert: echo-scheduler-is-down
+    annotations:
+      description: Service {{$labels.service}} in namespace {{$labels.namespace}}
+        is not responding
+      summary: Echo-Scheduler Spinnaker service is down
+    expr: absent(up{service="spin-echo-scheduler" }) == 1
+    labels:
+      severity: critical
+  - alert: echo-worker-is-down
+    annotations:
+      description: Service {{$labels.service}} in namespace {{$labels.namespace}}
+        is not responding
+      summary: Echo-worker Spinnaker service is down
+    expr: absent(up{service="spin-echo-worker" }) == 1
+    labels:
+      severity: critical
+  - alert: front50-is-down
+    annotations:
+      description: Service {{$labels.service}} in namespace {{$labels.namespace}}
+        is not responding
+      summary: Front50 Spinnaker service is down
+    expr: absent(up{service="spin-front50" }) == 1
+    labels:
+      severity: critical
+- name: latency-too-high
+  rules:
+  - alert: clouddriver-ro-latency-too-high
+    expr: sum(rate(clouddriver_ro:controller:invocations__count_total{service="spin-clouddriver-ro",statusCode="200"}[2m])) by (instance, method)/ sum(rate(clouddriver_ro:controller:invocations__total{service="spin-clouddriver-ro",statusCode="200"}[2m])) by (instance, method) > 200
+    for: 5m
+    labels:
+      severity: warning
+    annotations:
+      description: "Service {{$labels.service}} is slow ({{$value}} per minute)"
+      summary: latency of clouddriver-ro is too high
+  - alert: clouddriver-rw-latency-too-high
+    expr: sum(rate(clouddriver_rw:controller:invocations__count_total{service="spin-clouddriver-rw",statusCode="200"}[2m])) by (instance, method)/ sum(rate(clouddriver_rw:controller:invocations__total{service="spin-clouddriver-rw",statusCode="200"}[2m])) by (instance, method) > 200
+    for: 5m
+    labels:
+      severity: warning
+    annotations:
+      description: "Service {{$labels.service}} is slow ({{$value}} per minute)"
+      summary: latency of clouddriver-rw is too high
+  - alert: clouddriver-caching-latency-too-high
+    expr: sum(rate(clouddriver_caching:controller:invocations__count_total{service="spin-clouddriver-caching",statusCode="200"}[2m])) by (instance, method)/ sum(rate(clouddriver_caching:controller:invocations__total{service="spin-clouddriver-caching",statusCode="200"}[2m])) by (instance, method) > 300
+    for: 5m
+    labels:
+      severity: warning
+    annotations:
+      description: "Service {{$labels.service}} is slow ({{$value}} per minute)"
+      summary: latency clouddriver-caching is too high
+  - alert: gate-latency-too-high
+    expr: sum(rate(gate:controller:invocations__count_total{service="spin-gate",statusCode="200"}[2m])) by (instance, method)/ sum(rate(gate:controller:invocations__total{service="spin-gate",statusCode="200"}[2m])) by (instance, method) > 200
+    for: 5m
+    labels:
+      severity: warning
+    annotations:
+      description: "Service {{$labels.service}} is slow ({{$value}} per minute)"
+      summary: latency of gate is too high
+  - alert: orca-latency-too-high
+    expr: sum(rate(orca:controller:invocations__count_total{service="spin-orca",statusCode="200"}[2m])) by (instance, method)/ sum(rate(orca:controller:invocations__total{service="spin-orca",statusCode="200"}[2m])) by (instance, method) > 2000
+    for: 5m
+    labels:
+      severity: warning
+    annotations:
+      description: "Service {{$labels.service}} is slow ({{$value}} per minute)"
+      summary: latency of orca is too high
+  - alert: igor-latency-too-high
+    expr: sum(rate(igor:controller:invocations__count_total{service="spin-igor",statusCode="200"}[2m])) by (instance, method)/ sum(rate(igor:controller:invocations__total{service="spin-igor",statusCode="200"}[2m])) by (instance, method) > 10000
+    for: 5m
+    labels:
+      severity: warning
+    annotations:
+      description: "Service {{$labels.service}} is slow ({{$value}} per minute)"
+      summary: latency of igor is too high
+  - alert: echo_scheduler-latency-too-high
+    expr: sum(rate(echo_scheduler:controller:invocations__count_total{service="spin-echo-scheduler",statusCode="200"}[2m])) by (instance, method)/ sum(rate(echo_scheduler:controller:invocations__total{service="spin-echo-scheduler",statusCode="200"}[2m])) by (instance, method) > 300
+    for: 5m
+    labels:
+      severity: warning
+    annotations:
+      description: "Service {{$labels.service}} is slow ({{$value}} per minute)"
+      summary: latency of echo-scheduler is too high
+  - alert: echo_worker-latency-too-high
+    expr: sum(rate(echo_worker:controller:invocations__count_total{service="spin-echo-worker",statusCode="200"}[2m])) by (instance, method)/ sum(rate(echo_worker:controller:invocations__total{service="spin-echo-worker",statusCode="200"}[2m])) by (instance, method) > 2000
+    for: 5m
+    labels:
+      severity: warning
+    annotations:
+      description: "Service {{$labels.service}} is slow ({{$value}} per minute)"
+      summary: latency of echo-worker is too high
+  - alert: front50-latency-too-high
+    expr: sum(rate(front50:controller:invocations__count_total{service="spin-front50",statusCode="200"}[2m])) by (instance, method)/ sum(rate(front50:controller:invocations__total{service="spin-front50",statusCode="200"}[2m])) by (instance, method) > 600
+    for: 5m
+    labels:
+      severity: warning
+    annotations:
+      description: "Service {{$labels.service}} is slow ({{$value}} per minute)"
+      summary: latency of front50 is too high
+- name: jvm-too-high
+  rules:
+  - alert: clouddriver-rw-pod-may-be-evicted-soon
+    annotations:
+      description: Service {{$labels.service}} in namespace {{$labels.namespace}}
+        may be evicted soon
+      summary: Clouddriver-rw JVM memory too high
+    expr: (sum(clouddriver_rw:jvm:memory:used__value) by (instance, area) / sum(clouddriver_rw:jvm:memory:max__value) by (instance, area)) > .9
+    labels:
+      severity: warning
+  - alert: clouddriver-ro-pod-may-be-evicted-soon
+    annotations:
+      description: Service {{$labels.service}} in namespace {{$labels.namespace}}
+        may be evicted soon
+      summary: Clouddriver-ro JVM memory too high
+    expr: (sum(clouddriver_ro:jvm:memory:used__value) by (instance, area) / sum(clouddriver_ro:jvm:memory:max__value) by (instance, area)) > .9
+    labels:
+      severity: warning
+  - alert: clouddriver-caching-pod-may-be-evicted-soon
+    annotations:
+      description: Service {{$labels.service}} in namespace {{$labels.namespace}}
+        may be evicted soon
+      summary: Clouddriver-caching JVM memory too high
+    expr: (sum(clouddriver_caching:jvm:memory:used__value) by (instance, area) / sum(clouddriver_caching:jvm:memory:max__value) by (instance, area)) > .9
+    labels:
+      severity: warning
+  - alert: gate-pod-may-be-evicted-soon
+    annotations:
+      description: Service {{$labels.service}} in namespace {{$labels.namespace}} may be evicted soon
+      summary: gate JVM memory too high
+    expr: (sum(gate:jvm:memory:used__value) by (instance, area) / sum(gate:jvm:memory:max__value) by (instance, area)) > .9
+    labels:
+      severity: warning
+  - alert: orca-pod-may-be-evicted-soon
+    annotations:
+      description: Service {{$labels.service}} in namespace {{$labels.namespace}}
+        may be evicted soon
+      summary: orca JVM memory too high
+    expr: (sum(orca:jvm:gc:liveDataSize__value) by (instance, area) / sum(orca:jvm:gc:maxDataSize__value) by (instance, area)) > .9
+    labels:
+      severity: warning
+  - alert: igor-pod-may-be-evicted-soon
+    annotations:
+      description: Service {{$labels.service}} in namespace {{$labels.namespace}}
+        may be evicted soon
+      summary: igor JVM memory too high
+    expr: (sum(igor:jvm:memory:used__value) by (instance, area) / sum(igor:jvm:memory:max__value) by (instance, area)) > .9
+    labels:
+      severity: warning
+  - alert: echo-scheduler-pod-may-be-evicted-soon
+    annotations:
+      description: Service {{$labels.service}} in namespace {{$labels.namespace}}
+        may be evicted soon
+      summary: echo-scheduler JVM memory too high
+    expr: (sum(echo_scheduler:jvm:memory:used__value) by (instance, area) / sum(echo_scheduler:jvm:memory:max__value) by (instance, area)) > .9
+    labels:
+      severity: warning
+  - alert: echo-worker-pod-may-be-evicted-soon
+    annotations:
+      description: Service {{$labels.service}} in namespace {{$labels.namespace}}
+        may be evicted soon
+      summary: echo-worker JVM memory too high
+    expr: (sum(echo_worker:jvm:memory:used__value) by (instance, area) / sum(echo_worker:jvm:memory:max__value) by (instance, area)) > .9
+    labels:
+      severity: warning
+  - alert: front50-pod-may-be-evicted-soon
+    annotations:
+      description: Service {{$labels.service}} in namespace {{$labels.namespace}}
+        may be evicted soon
+      summary: Front50 JVM memory too high
+    expr: (sum(front50:jvm:memory:used__value) by (instance, area) / sum(front50:jvm:memory:max__value) by (instance, area)) > .9
+    labels:
+      severity: warning
+- name: orca-queue-issue
+  rules:
+  - alert: orca-queue-depth-high
+    annotations:
+      description: Service {{$labels.service}} in namespace {{$labels.namespace}}
+        may be evicted soon
+      summary: Orca queue depth is high
+    expr: (sum(orca:queue:ready:depth{namespace="oes"}) by (instance) ) > 10
+    labels:
+      severity: warning
+  - alert: orca-queue-lag-high
+    annotations:
+      description: Lag = {{$value}}
+      summary: Orca queue lag is high
+    expr: sum(rate (orca:controller:invocations__totalTime_total[2m])) by (instance)  / sum(rate(orca:controller:invocations__count_total[2m])) by (instance) > 0.5
+    labels:
+      severity: warning
+- name: igor-needs-attention
+  rules:
+  - alert: igor-needs-attention
+    annotations:
+      description: Igor in namespace {{$labels.namespace}} needs human help
+      summary: Igor needs attention
+    expr: igor:pollingMonitor:itemsOverThreshold > 0
+    labels:
+      severity: crtical

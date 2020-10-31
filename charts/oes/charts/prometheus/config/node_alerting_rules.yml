@@ -1,0 +1,32 @@
+groups:
+- name: pod_cpu_usage_is_high
+  rules:
+    - alert: CPUISHIGH
+      expr: sum(rate(container_cpu_usage_seconds_total{container_name!="POD",pod_name!=""}[5m])) by (pod_name)  > 0.1
+      for: 1m
+      labels:
+        severity: critical
+      annotations:
+        description: 'POD {{ $labels.pod }} cpu is high'
+        summary: 'pod cpu is high'
+
+- name: node_cpu_greater_than_80
+  rules:
+    - alert: NODECPUISHIGH
+      expr: (avg by(instance) (irate(node_cpu_seconds_total{mode="idle"}[5m])) * 100) > 80
+      for: 1m
+      labels:
+        severity: critical
+      annotations:
+        description: 'node {{ $labels.node }} cpu is high'
+        summary: 'node cpu is greater than 80 precent'
+- name: node_memory_left_lessser_than_10
+  rules:
+    - alert: NODEMEMORY
+      expr: node_memory_MemAvailable_bytes / node_memory_MemTotal_bytes * 100 < 10
+      for: 1m
+      labels:
+        severity: critical
+      annotations:
+        description: 'node {{ $labels.node }} memory left is low'
+        summary: 'node memory left is lesser than 10 precent'
