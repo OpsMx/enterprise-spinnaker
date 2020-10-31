@@ -5,3 +5,6 @@ data:
 kind: ConfigMap
 metadata:
   name: spinnaker-alerts
+  labels:
+    {{- include "prometheus.server.labels" . | nindent 4 }}
+{{ include "prometheus.namespace" . | indent 2 }}
