@@ -765,3 +765,6 @@ spinnaker:
     enabled: false
     repo-type: git # git, S3, vault, only git support at this point
     secretName: opsmx-gitops-auth
+    # Max time(in secs) that an init container of halyard should wait
+    # to fetch External Load Balancer IP of spin-deck and spin-gate
+    spinnakerLBCheckDelay: 180
