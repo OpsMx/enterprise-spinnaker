@@ -2,8 +2,61 @@ apiVersion: v1
 entries:
   oes:
   - apiVersion: v1
+    appVersion: 3.2.0
+    created: "2020-11-03T16:27:13.995382615+05:30"
+    dependencies:
+    - condition: installOpenLdap
+      name: openldap
+      repository: https://kubernetes-charts.storage.googleapis.com/
+      version: 1.2.1
+    - condition: installSpinnaker
+      name: spinnaker
+      repository: https://kubernetes-charts.storage.googleapis.com/
+      version: ~2.2.1
+    - condition: installRedis
+      name: redis
+      repository: ""
+      version: 10.5.3
+    - condition: enableCentralLogging
+      name: elasticsearch
+      repository: ""
+      version: 7.5.0
+    - condition: enableCentralLogging
+      name: kibana
+      repository: ""
+      version: 7.5.0
+    - condition: enableCentralLogging
+      name: fluent-bit
+      repository: https://kubernetes-charts.storage.googleapis.com/
+      version: ^1.9.0
+    - condition: spinnaker.enableCentralMonitoring
+      name: prometheus
+      repository: ""
+      version: 11.16.2
+    description: OES is a non-forked version of OSS spinnaker
+    digest: 707ec61fba4ec5c4a40e12204e540f814fa00afc75705637be0a4f79ee289ce3
+    home: https://www.opsmx.com/
+    icon: https://www.opsmx.com/images/logo.png
+    keywords:
+    - OpsMx
+    - OES
+    - Autopilot
+    maintainers:
+    - email: abhinay.byrisetty@opsmx.io
+      name: abhinaybyrisetty
+    - email: vamsi.krishna@opsmx.io
+      name: vkvamsi
+    - email: nirmalya@opsmx.io
+      name: nirmalyasen
+    - email: srinivas@opsmx.io
+      name: ksrinimba
+    name: oes
+    urls:
+    - https://opsmx.github.io/enterprise-spinnaker/helm-repo/oes-3.2.0.tgz
+    version: 3.2.0
+  - apiVersion: v1
     appVersion: 3.1.0
-    created: "2020-11-02T12:23:18.070529663+05:30"
+    created: "2020-11-03T16:27:13.974531799+05:30"
     dependencies:
     - condition: installOpenLdap
       name: openldap
@@ -52,7 +105,7 @@ entries:
     version: 3.1.0
   - apiVersion: v1
     appVersion: 3.0.0
-    created: "2020-11-02T12:23:18.053357601+05:30"
+    created: "2020-11-03T16:27:13.957907647+05:30"
     dependencies:
     - condition: installOpenLdap
       name: openldap
@@ -97,7 +150,7 @@ entries:
     version: 3.0.0
   - apiVersion: v1
     appVersion: 1.0.0
-    created: "2020-11-02T12:23:18.038341837+05:30"
+    created: "2020-11-03T16:27:13.943356691+05:30"
     dependencies:
     - condition: installOpenLdap
       name: openldap
@@ -142,7 +195,7 @@ entries:
   opsmx-autopilot:
   - apiVersion: v1
     appVersion: 2.9.10
-    created: "2020-11-02T12:23:18.071324093+05:30"
+    created: "2020-11-03T16:27:13.996606796+05:30"
     description: Autopilot is a release verification platform
     digest: 73b05b378187d481ff6b7d09fb1a1d6fbab089cef600453b77a647e48a526fa6
     home: https://www.opsmx.com/
@@ -165,7 +218,7 @@ entries:
   spinnaker:
   - apiVersion: v1
     appVersion: 1.16.2
-    created: "2020-11-02T12:23:18.078683107+05:30"
+    created: "2020-11-03T16:27:14.003690111+05:30"
     dependencies:
     - condition: redis.enabled
       name: redis
@@ -196,4 +249,4 @@ entries:
     urls:
     - https://opsmx.github.io/enterprise-spinnaker/helm-repo/spinnaker-2.2.3.tgz
     version: 2.2.3
-generated: "2020-11-02T12:23:17.994189892+05:30"
+generated: "2020-11-03T16:27:13.919999093+05:30"
