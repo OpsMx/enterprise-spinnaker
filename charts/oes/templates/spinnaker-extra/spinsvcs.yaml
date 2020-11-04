@@ -1,25 +1,5 @@
 {{- if (.Values.installSpinnaker) }}
-apiVersion: v1
-kind: Service
-metadata:
-  labels:
-    app: spin
-    stack: gate
-{{ include "oes.standard-labels" . | indent 4 }}
-  name: spin-gate-np
-spec:
-  {{- if .Values.createIngress }}
-  type: NodePort
-  {{- else }}
-  type: {{ .Values.k8sServiceType }}
-  {{- end }}
-  ports:
-  -  name: http
-     port: 8084
-     protocol: TCP
-  selector:
-    cluster: spin-gate
----
+{{- if not (.Values.spinnaker.gitopsHalyardInit.enabled) }}
 apiVersion: v1
 kind: Service
 metadata:
@@ -29,7 +9,7 @@ metadata:
 {{ include "oes.standard-labels" . | indent 4 }}
   name: spin-deck-np
 spec:
-  {{- if .Values.createIngress }}
+  {{- if .Values.spinnaker.createIngress }}
   type: NodePort
   {{- else }}
   type: {{ .Values.k8sServiceType }}
@@ -40,4 +20,25 @@ spec:
      protocol: TCP
   selector:
     cluster: spin-deck
+{{- end }}
+---
+{{- if (.Values.spinnaker.gatex509.enabled) }}
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    app: spin
+    cluster: spin-gate
+  name: spin-x509gate
+spec:
+  ports:
+  - port: 8085
+    protocol: TCP
+    targetPort: 8085
+  selector:
+    app: spin
+    cluster: spin-gate
+  sessionAffinity: None
+  type: LoadBalancer
+{{- end }}
 {{- end }}

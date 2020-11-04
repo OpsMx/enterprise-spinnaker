@@ -2,8 +2,13 @@ apiVersion: v1
 data:
   call_overrides.sh: |
     echo $SPINNAKER_NAMESPACE
+    {{- if not .Values.createIngress }}
     sh /tmp/autoconfig/config_overrideurl.sh spin-deck
     sh /tmp/autoconfig/config_overrideurl.sh spin-gate
+    {{- else }}
+    sh /tmp/autoconfig/config_overrideurl.sh spin-deck-ingress
+    sh /tmp/autoconfig/config_overrideurl.sh spin-gate-ingress
+    {{- end }}
   config_overrideurl.sh: |
     #!/bin/bash -x
 
@@ -218,6 +223,14 @@ data:
           ## Run hal config edit command to override deck url
           $HAL_COMMAND config security ui edit --no-validate --override-base-url http://$ENDPOINT_IP:$PORT
         fi
+      spin-gate-ingress)
+        ## Configured ingress host url as override url
+          sed -i 's,http://OVERRIDE_API_URL,https://{{ .Values.ingressGate.host }},g' /tmp/spinnaker/.hal/config
+        ;;
+
+      spin-deck-ingress)
+        ## Configured ingress host url as override url
+          sed -i 's,http://OVERRIDE_DECK_URL,https://{{ .Values.ingress.host }},g' /tmp/spinnaker/.hal/config
         ;;
       *)
         echo  COMP=$COMPONENT

@@ -23,3 +23,6 @@ dependencies:
   - name: prometheus
     version: 11.16.2
     condition: spinnaker.enableCentralMonitoring
+  - name: ingress-nginx
+    version: 3.7.1
+    condition: installIngressController
