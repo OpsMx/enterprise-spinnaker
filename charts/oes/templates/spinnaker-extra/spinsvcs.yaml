@@ -1,5 +1,4 @@
 {{- if (.Values.installSpinnaker) }}
-{{- if (.Values.spinnaker.gitopsHalyardInit.enabled) }}
 apiVersion: v1
 kind: Service
 metadata:
@@ -19,8 +18,7 @@ spec:
      port: 8084
      protocol: TCP
   selector:
-    cluster: "spin-gate"
-{{ end }}
+    cluster: spin-gate
 ---
 apiVersion: v1
 kind: Service
@@ -41,5 +39,5 @@ spec:
      port: 9000
      protocol: TCP
   selector:
-    cluster: "spin-deck"
+    cluster: spin-deck
 {{- end }}
