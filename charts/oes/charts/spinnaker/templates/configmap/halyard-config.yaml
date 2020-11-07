@@ -26,6 +26,14 @@ data:
     bash -xe /opt/halyard/additionalScripts/{{ $index }}
     {{- end }} # Range
     {{- end }} # if-additionalScipts
+    {{- else }}
+    # Create secrets and certs necessary for mTLS
+    cd /tmp/
+    kubectl get secret mtlscerts-pkcs12 -o jsonpath='{.data.ca\.crt}'| base64 -d > ca.crt
+    #keytool -delete -alias ca -keystore cacerts -storepass changeit -noprompt
+    keytool -importcert -keystore  cacerts -alias ca -file ca.crt -storepass changeit -noprompt
+    kubectl create secret generic cacerts --from-file cacerts
+    cd -
     {{- end }} # if-gitops
 
     {{- if .Values.enableCentralMonitoring }}

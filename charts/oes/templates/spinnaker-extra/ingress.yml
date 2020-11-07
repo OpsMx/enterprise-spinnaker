@@ -6,6 +6,10 @@ metadata:
   annotations:
     cert-manager.io/issuer: letsencrypt-prod
     kubernetes.io/ingress.class: nginx
+    nginx.ingress.kubernetes.io/backend-protocol: HTTPS
+    nginx.ingress.kubernetes.io/proxy-ssl-secret: {{ .Release.Namespace }}/mtlscerts-pkcs12
+    nginx.ingress.kubernetes.io/proxy-ssl-server-name: spin-deck.{{ .Release.Namespace }}.svc
+    nginx.ingress.kubernetes.io/ssl-redirect: "true"
     "helm.sh/hook": post-install
     "helm.sh/hook-delete-policy": before-hook-creation
   name: spinnaker-deck-ingress
@@ -21,7 +25,7 @@ spec:
   tls:
   - hosts:
     - {{ .Values.spinnaker.ingress.host }}
-    secretName: ui-tls
+    secretName: ui-{{ .Release.Name }}-tls
 ---
 apiVersion: extensions/v1beta1
 kind: Ingress
@@ -29,6 +33,10 @@ metadata:
   annotations:
     cert-manager.io/issuer: letsencrypt-prod
     kubernetes.io/ingress.class: nginx
+    nginx.ingress.kubernetes.io/backend-protocol: HTTPS
+    nginx.ingress.kubernetes.io/proxy-ssl-secret: {{ .Release.Namespace }}/mtlscerts-pkcs12
+    nginx.ingress.kubernetes.io/proxy-ssl-server-name: spin-gate.{{ .Release.Namespace }}.svc
+    nginx.ingress.kubernetes.io/ssl-redirect: "true"
     "helm.sh/hook": post-install
     "helm.sh/hook-delete-policy": before-hook-creation
   name: spinnaker-gate-ingress
@@ -52,7 +60,7 @@ spec:
   tls:
   - hosts:
     - {{ .Values.spinnaker.ingressGate.host }}
-    secretName: api-tls
+    secretName: api-{{ .Release.Name }}-tls
 ---
 {{- else }}
 apiVersion: extensions/v1beta1

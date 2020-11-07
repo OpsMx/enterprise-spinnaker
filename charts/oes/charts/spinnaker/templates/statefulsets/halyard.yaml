@@ -161,8 +161,10 @@ spec:
       - name: halyard-overrideurl
         configMap:
           name: {{ template "spinnaker.fullname" . }}-halyard-overrideurl
+      - name: sslcerts
+        secret:
+          secretName: mtlscerts-pkcs12
       {{- end }}
-
       {{- if and .Values.kubeConfig.enabled .Values.kubeConfig.secretName }}
       - name: kube-config
         secret:
@@ -283,6 +285,14 @@ spec:
         - mountPath: /etc/ssl/certs/java/cacerts
           subPath: cacerts
           name: cacerts
+        {{- end }}
+        {{- if .Values.gitopsHalyardInit.enabled }}
+        - mountPath: /home/spinnaker/.hal/default/tls.crt
+          subPath: tls.crt
+          name: sslcerts
+        - mountPath: /home/spinnaker/.hal/default/tls.key
+          subPath: tls.key
+          name: sslcerts
         {{- end }}
         {{- if .Values.halyard.env }}
         env:
