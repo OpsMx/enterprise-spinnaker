@@ -251,7 +251,7 @@ sapor:
       ##
       ## Set it to true if authentication is enabled in Spinnaker
       ##
-      authnEnabled: false
+      authnEnabled: true
 
       ## URL of Spinnaker Gate
       ## FQDN of spin-gate if Spinnaker is installed in same K8s cluster, else
@@ -269,7 +269,7 @@ sapor:
       ## Spinnaker user credentials
       ##
       spinuser: admin
-      spinpasswd: opsmx@123
+      spinpasswd: opsmxadmin123
 
       ## Spinnaker admin credentials
       ## When provided, will override above credentials and operate spinnaker

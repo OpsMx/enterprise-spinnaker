@@ -88,6 +88,9 @@ spec:
         secret:
           secretName: {{ template "spinnaker.fullname" .}}-s3
       {{- end }}
+      - name: override-baseurl
+        configMap:
+          name: {{ template "spinnaker.fullname" . }}-halyard-overrideurl
       {{- if .Values.halyard.pullSecrets }}
       imagePullSecrets:
         {{- range .Values.halyard.image.pullSecrets }}
@@ -132,7 +135,15 @@ spec:
         - name: kube-config
           mountPath: /opt/kube
         {{- end }}
+        - name: override-baseurl
+          mountPath: /opt/halyard/additionalScripts
         command:
         - bash
         - -xe
         - "/opt/halyard/scripts/install.sh"
+        env:
+        - name: NODE_IP
+          valueFrom:
+            fieldRef:
+              apiVersion: v1
+              fieldPath: status.hostIP

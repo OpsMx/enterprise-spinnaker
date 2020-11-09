@@ -140,8 +140,13 @@ data:
     {{- end }}
     $HAL_COMMAND config deploy edit --account-name {{ .Values.kubeConfig.deploymentContext }} --type distributed \
                            --location {{ .Release.Namespace }}
+    # Enable Authentication by default
+    $HAL_COMMAND config security authn ldap edit --user-dn-pattern="cn={0}" --url=ldap://{{ .Release.Name }}-openldap:389/dc=example,dc=org
+    $HAL_COMMAND config security authn ldap enable
     # Use Deck to route to Gate
-    $HAL_COMMAND config security api edit --no-validate --override-base-url /gate
+    # Fetch Deck, Gate Load Balancer IPs and override base url
+    bash -x /opt/halyard/additionalScripts/config_overrideurl.sh override-gate-url
+    bash -x /opt/halyard/additionalScripts/config_overrideurl.sh override-deck-url
     {{- range $index, $feature := .Values.spinnakerFeatureFlags }}
     $HAL_COMMAND config features edit --{{ $feature }} true
     {{- end }}
