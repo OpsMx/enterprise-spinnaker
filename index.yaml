@@ -3,7 +3,60 @@ entries:
   oes:
   - apiVersion: v1
     appVersion: 3.2.0
-    created: "2020-11-06T23:27:33.465852821+05:30"
+    created: "2020-11-09T22:41:15.497430489+05:30"
+    dependencies:
+    - condition: installOpenLdap
+      name: openldap
+      repository: https://kubernetes-charts.storage.googleapis.com/
+      version: 1.2.1
+    - condition: installSpinnaker
+      name: spinnaker
+      repository: https://kubernetes-charts.storage.googleapis.com/
+      version: ~2.2.1
+    - condition: installRedis
+      name: redis
+      repository: ""
+      version: 10.5.3
+    - condition: enableCentralLogging
+      name: elasticsearch
+      repository: ""
+      version: 7.5.0
+    - condition: enableCentralLogging
+      name: kibana
+      repository: ""
+      version: 7.5.0
+    - condition: enableCentralLogging
+      name: fluent-bit
+      repository: https://kubernetes-charts.storage.googleapis.com/
+      version: ^1.9.0
+    - condition: spinnaker.enableCentralMonitoring
+      name: prometheus
+      repository: ""
+      version: 11.16.2
+    description: OES is a non-forked version of OSS spinnaker
+    digest: 5f61a0b8b7f46ecfe49377b4884edfabd6716c94cd7f404ffad0e64ee01fca12
+    home: https://www.opsmx.com/
+    icon: https://www.opsmx.com/images/logo.png
+    keywords:
+    - OpsMx
+    - OES
+    - Autopilot
+    maintainers:
+    - email: abhinay.byrisetty@opsmx.io
+      name: abhinaybyrisetty
+    - email: vamsi.krishna@opsmx.io
+      name: vkvamsi
+    - email: nirmalya@opsmx.io
+      name: nirmalyasen
+    - email: srinivas@opsmx.io
+      name: ksrinimba
+    name: oes
+    urls:
+    - https://opsmx.github.io/enterprise-spinnaker/helm-repo/oes-3.2.1.tgz
+    version: 3.2.1
+  - apiVersion: v1
+    appVersion: 3.2.0
+    created: "2020-11-09T22:41:15.476416001+05:30"
     dependencies:
     - condition: installOpenLdap
       name: openldap
@@ -56,7 +109,7 @@ entries:
     version: 3.2.0
   - apiVersion: v1
     appVersion: 3.1.1
-    created: "2020-11-06T23:27:33.438584333+05:30"
+    created: "2020-11-09T22:41:15.45562657+05:30"
     dependencies:
     - condition: installOpenLdap
       name: openldap
@@ -87,7 +140,7 @@ entries:
       repository: ""
       version: 11.16.2
     description: OES is a non-forked version of OSS spinnaker
-    digest: 77ccf7feabd305f606fa9548be9b9195d45cc581d596cf881a3eb1ee6ed148e8
+    digest: 218daf1e5ab05a7f661dfe96e8f4990bfea334ca26f9955e64b2f7cf55536223
     home: https://www.opsmx.com/
     icon: https://www.opsmx.com/images/logo.png
     keywords:
@@ -109,7 +162,7 @@ entries:
     version: 3.1.1
   - apiVersion: v1
     appVersion: 3.1.0
-    created: "2020-11-06T23:27:33.411191655+05:30"
+    created: "2020-11-09T22:41:15.435263627+05:30"
     dependencies:
     - condition: installOpenLdap
       name: openldap
@@ -158,7 +211,7 @@ entries:
     version: 3.1.0
   - apiVersion: v1
     appVersion: 3.0.0
-    created: "2020-11-06T23:27:33.388603995+05:30"
+    created: "2020-11-09T22:41:15.417296403+05:30"
     dependencies:
     - condition: installOpenLdap
       name: openldap
@@ -203,7 +256,7 @@ entries:
     version: 3.0.0
   - apiVersion: v1
     appVersion: 1.0.0
-    created: "2020-11-06T23:27:33.368776189+05:30"
+    created: "2020-11-09T22:41:15.400331279+05:30"
     dependencies:
     - condition: installOpenLdap
       name: openldap
@@ -248,7 +301,7 @@ entries:
   opsmx-autopilot:
   - apiVersion: v1
     appVersion: 2.9.10
-    created: "2020-11-06T23:27:33.466718918+05:30"
+    created: "2020-11-09T22:41:15.498206082+05:30"
     description: Autopilot is a release verification platform
     digest: 73b05b378187d481ff6b7d09fb1a1d6fbab089cef600453b77a647e48a526fa6
     home: https://www.opsmx.com/
@@ -271,7 +324,7 @@ entries:
   spinnaker:
   - apiVersion: v1
     appVersion: 1.16.2
-    created: "2020-11-06T23:27:33.475129061+05:30"
+    created: "2020-11-09T22:41:15.504809093+05:30"
     dependencies:
     - condition: redis.enabled
       name: redis
@@ -302,4 +355,4 @@ entries:
     urls:
     - https://opsmx.github.io/enterprise-spinnaker/helm-repo/spinnaker-2.2.3.tgz
     version: 2.2.3
-generated: "2020-11-06T23:27:33.350561024+05:30"
+generated: "2020-11-09T22:41:15.370104297+05:30"
