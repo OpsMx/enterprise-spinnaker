@@ -7,15 +7,14 @@ then
 fi
 
 COMPONENT=$1
-#EXTERNAL_IP_CHECK_DELAY=${EXTERNAL_IP_CHECK_DELAY:10}
-EXTERNAL_IP_CHECK_DELAY=10
+EXTERNAL_IP_CHECK_DELAY=$EXTERNAL_IP_CHECK_DELAY
 
 check_for_loadBalancer()
 {
     ## Wait for $EXTERNAL_IP_CHECK_DELAY till K8s assins a load Balancer IP to oes-gate
     iter=0
     lapsedTime=0
-    while [ $iter -lt 36 ]
+    while [ $iter -lt 100 ]
     do
       ENDPOINT_IP=$(kubectl get svc $1 -o jsonpath="{.status.loadBalancer.ingress[].ip}")
       if [ ! -z "$ENDPOINT_IP" ];
