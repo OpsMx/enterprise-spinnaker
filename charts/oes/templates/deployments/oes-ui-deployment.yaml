@@ -28,7 +28,7 @@ spec:
         - name: EXTERNAL_IP_CHECK_DELAY
           value: "{{ .Values.autoConfiguration.initContainer.externalIpCheckDelay}}"
         image: {{ .Values.autoConfiguration.initContainer.image}}
-        imagePullPolicy: Always
+        imagePullPolicy: {{ .Values.autoConfiguration.initContainer.pullPolicy}}
         name: ui-autoconfig
         command: ["/home/config_endpoint.sh"]
         args: ["oes-ui"]
