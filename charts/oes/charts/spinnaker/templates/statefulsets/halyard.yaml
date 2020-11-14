@@ -73,6 +73,11 @@ spec:
             secretKeyRef:
               name: {{ .Values.gitopsHalyardInit.secretName }}
               key: gittoken
+        - name: DYNAMIC_ACCOUNTS_REPO
+          valueFrom:
+            secretKeyRef:
+              name: {{ .Values.gitopsHalyardInit.secretName }}
+              key: dynamicaccountsgituri
         {{- end }}
         volumeMounts:
         - name: halyard-config

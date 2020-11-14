@@ -3,7 +3,60 @@ entries:
   oes:
   - apiVersion: v1
     appVersion: 3.2.0
-    created: "2020-11-10T11:33:26.447147915+05:30"
+    created: "2020-11-14T09:36:36.763029983+05:30"
+    dependencies:
+    - condition: installOpenLdap
+      name: openldap
+      repository: https://kubernetes-charts.storage.googleapis.com/
+      version: 1.2.1
+    - condition: installSpinnaker
+      name: spinnaker
+      repository: https://kubernetes-charts.storage.googleapis.com/
+      version: ~2.2.1
+    - condition: installRedis
+      name: redis
+      repository: ""
+      version: 10.5.3
+    - condition: enableCentralLogging
+      name: elasticsearch
+      repository: ""
+      version: 7.5.0
+    - condition: enableCentralLogging
+      name: kibana
+      repository: ""
+      version: 7.5.0
+    - condition: enableCentralLogging
+      name: fluent-bit
+      repository: https://kubernetes-charts.storage.googleapis.com/
+      version: ^1.9.0
+    - condition: spinnaker.enableCentralMonitoring
+      name: prometheus
+      repository: ""
+      version: 11.16.2
+    description: OES is a non-forked version of OSS spinnaker
+    digest: 6cddcd0f694068ab8d0600d15c6b31a8ab71c6262d4b4745fdf83e33f1515f45
+    home: https://www.opsmx.com/
+    icon: https://www.opsmx.com/images/logo.png
+    keywords:
+    - OpsMx
+    - OES
+    - Autopilot
+    maintainers:
+    - email: abhinay.byrisetty@opsmx.io
+      name: abhinaybyrisetty
+    - email: vamsi.krishna@opsmx.io
+      name: vkvamsi
+    - email: nirmalya@opsmx.io
+      name: nirmalyasen
+    - email: srinivas@opsmx.io
+      name: ksrinimba
+    name: oes
+    urls:
+    - https://opsmx.github.io/enterprise-spinnaker/helm-repo/oes-3.2.2.tgz
+    version: 3.2.2
+  - apiVersion: v1
+    appVersion: 3.2.0
+    created: "2020-11-14T09:36:36.742145389+05:30"
     dependencies:
     - condition: installOpenLdap
       name: openldap
@@ -56,7 +109,7 @@ entries:
     version: 3.2.1
   - apiVersion: v1
     appVersion: 3.2.0
-    created: "2020-11-10T11:33:26.425967896+05:30"
+    created: "2020-11-14T09:36:36.721538242+05:30"
     dependencies:
     - condition: installOpenLdap
       name: openldap
@@ -109,7 +162,7 @@ entries:
     version: 3.2.0
   - apiVersion: v1
     appVersion: 3.1.1
-    created: "2020-11-10T11:33:26.40459474+05:30"
+    created: "2020-11-14T09:36:36.700310966+05:30"
     dependencies:
     - condition: installOpenLdap
       name: openldap
@@ -162,7 +215,7 @@ entries:
     version: 3.1.1
   - apiVersion: v1
     appVersion: 3.1.0
-    created: "2020-11-10T11:33:26.383576213+05:30"
+    created: "2020-11-14T09:36:36.678874815+05:30"
     dependencies:
     - condition: installOpenLdap
       name: openldap
@@ -211,7 +264,7 @@ entries:
     version: 3.1.0
   - apiVersion: v1
     appVersion: 3.0.0
-    created: "2020-11-10T11:33:26.366654242+05:30"
+    created: "2020-11-14T09:36:36.662442855+05:30"
     dependencies:
     - condition: installOpenLdap
       name: openldap
@@ -256,7 +309,7 @@ entries:
     version: 3.0.0
   - apiVersion: v1
     appVersion: 1.0.0
-    created: "2020-11-10T11:33:26.351137954+05:30"
+    created: "2020-11-14T09:36:36.646701609+05:30"
     dependencies:
     - condition: installOpenLdap
       name: openldap
@@ -301,7 +354,7 @@ entries:
   opsmx-autopilot:
   - apiVersion: v1
     appVersion: 2.9.10
-    created: "2020-11-10T11:33:26.447927579+05:30"
+    created: "2020-11-14T09:36:36.763777911+05:30"
     description: Autopilot is a release verification platform
     digest: 73b05b378187d481ff6b7d09fb1a1d6fbab089cef600453b77a647e48a526fa6
     home: https://www.opsmx.com/
@@ -324,7 +377,7 @@ entries:
   spinnaker:
   - apiVersion: v1
     appVersion: 1.16.2
-    created: "2020-11-10T11:33:26.455261873+05:30"
+    created: "2020-11-14T09:36:36.77105995+05:30"
     dependencies:
     - condition: redis.enabled
       name: redis
@@ -355,4 +408,4 @@ entries:
     urls:
     - https://opsmx.github.io/enterprise-spinnaker/helm-repo/spinnaker-2.2.3.tgz
     version: 2.2.3
-generated: "2020-11-10T11:33:26.338384485+05:30"
+generated: "2020-11-14T09:36:36.616374173+05:30"
