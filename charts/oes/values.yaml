@@ -634,7 +634,7 @@ spinnaker:
   # Change this if youd like to expose Spinnaker outside the cluster
   ingress:
     enabled: false
-    host: spindeck.engineering.opsmx.net
+    host: spindeck.engineering.opsmx.net  # Also, used by OES to create ingress by default
     # annotations:
       # ingress.kubernetes.io/ssl-redirect: 'true'
       # kubernetes.io/ingress.class: nginx
@@ -646,7 +646,7 @@ spinnaker:
 
   ingressGate:
     enabled: false
-    host: spingate.engineering.opsmx.net
+    host: spingate.engineering.opsmx.net  # Also, used by OES to create ingress by default
     # annotations:
       # ingress.kubernetes.io/ssl-redirect: 'true'
       # kubernetes.io/ingress.class: nginx
@@ -655,6 +655,10 @@ spinnaker:
     #  - secretName: -tls
     #    hosts:
     #      - domain.com
+
+  gatex509:
+    enabled: true
+    host: spingate-x509.engineering.opsmx.net
 
   # spinnakerFeatureFlags is a list of Spinnaker feature flags to enable
   # Ref: https://www.spinnaker.io/reference/halyard/commands/#hal-config-features-edit

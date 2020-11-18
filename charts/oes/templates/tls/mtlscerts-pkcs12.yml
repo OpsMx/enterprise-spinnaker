@@ -28,6 +28,9 @@ spec:
   - spin-fiat.{{ .Release.Namespace }}.svc
   - spin-deck.{{ .Release.Namespace }}.svc
   - "*.{{ .Release.Namespace }}.svc"
+{{- if .Values.spinnaker.gatex509.enabled }}
+  - {{ .Values.spinnaker.gatex509.host }}
+{{- end }}
   - localhost
   usages:
   - digital signature
