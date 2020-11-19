@@ -764,7 +764,7 @@ spinnaker:
     fsGroup: 1000
   ## Centralized Monitoring enable for Prometheus
   enableCentralMonitoring: false
-  ## Set to true to expose spinnaker and deck services over ingress Domains
+  ## Set to true to expose spinnaker and deck services over ingress
   ##
   createIngress: true
   #Initialize gitOps style Halyard
@@ -775,3 +775,12 @@ spinnaker:
     # Max time(in secs) that an init container of halyard should wait
     # to fetch External Load Balancer IP of spin-deck and spin-gate
     spinnakerLBCheckDelay: 180
+
+  pipelinePromotion:
+    enabled: true
+    ## Namespace in which pipeline promotion job need to run
+    # TODO: Implementation pending; currently default namespace is hardcoded
+    executionNamespace: default
+    ## Spinnaker kubernetes account to use for job execution
+    # TODO: Implementation pending; currently default namespace is hardcoded
+    executionAccountName: default
