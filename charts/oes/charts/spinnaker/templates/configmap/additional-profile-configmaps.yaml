@@ -49,6 +49,7 @@ Render profiles for each service by merging predefined defaults with values pass
 
 data:
 {{ $profiles | toYaml | indent 2 }}
+{{- if .Values.pipelinePromotion.enabled }}
   # Custom stage for pipeline promotion;
   # same configuration can be put in a repo for gitops style
   orca-local.yml: |-
@@ -289,3 +290,4 @@ data:
                           secretName: local-spin-cli-config
                       restartPolicy: Never
                       serviceAccountName: default
+{{- end }}

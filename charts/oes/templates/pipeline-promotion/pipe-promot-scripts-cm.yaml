@@ -1,3 +1,4 @@
+{{- if .Values.spinnaker.pipelinePromotion.enabled }}
 apiVersion: v1
 kind: ConfigMap
 metadata:
@@ -500,3 +501,4 @@ data:
           $paramFull.default                  # else simply return the current value
        end
     )
+{{- end }}
