@@ -26,9 +26,6 @@ rbac:
 ## Setting this to true, will ensure custom ubi8 images of Spinnaker
 installSpinnaker: true
 
-## Install Ingress Controller
-installIngressController: false
-
 ## Installation mode
 ## Available installation modes OES-AP, OES, AP, None
 ##
