@@ -2,12 +2,12 @@ apiVersion: v1
 data:
   call_overrides.sh: |
     echo $SPINNAKER_NAMESPACE
-    {{- if not .Values.createIngress }}
-    sh /tmp/autoconfig/config_overrideurl.sh spin-deck
-    sh /tmp/autoconfig/config_overrideurl.sh spin-gate
-    {{- else }}
+    {{- if .Values.enableMTLS }}
     sh /tmp/autoconfig/config_overrideurl.sh spin-deck-ingress
     sh /tmp/autoconfig/config_overrideurl.sh spin-gate-ingress
+    {{- else }}
+    sh /tmp/autoconfig/config_overrideurl.sh spin-deck
+    sh /tmp/autoconfig/config_overrideurl.sh spin-gate
     {{- end }}
   config_overrideurl.sh: |
     #!/bin/bash -x

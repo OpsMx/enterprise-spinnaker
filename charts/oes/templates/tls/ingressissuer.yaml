@@ -1,4 +1,4 @@
-{{- if (.Values.spinnaker.gitopsHalyardInit.enabled) }}
+{{- if and (.Values.spinnaker.enableMTLS) (.Values.spinnaker.gitopsHalyardInit.enabled) }}
 apiVersion: cert-manager.io/v1
 kind: Issuer
 metadata:

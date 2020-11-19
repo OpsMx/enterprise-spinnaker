@@ -1,5 +1,5 @@
 {{- if and (.Values.installSpinnaker) (.Values.spinnaker.createIngress) }}
-{{- if (.Values.spinnaker.gitopsHalyardInit.enabled) }}
+{{- if .Values.spinnaker.enableMTLS }}
 apiVersion: extensions/v1beta1
 kind: Ingress
 metadata:

@@ -26,7 +26,7 @@ data:
     bash -xe /opt/halyard/additionalScripts/{{ $index }}
     {{- end }} # Range
     {{- end }} # if-additionalScipts
-    {{- else }}
+    {{- else if .Values.enableMTLS }}
     # Create secrets and certs necessary for mTLS
     cd /tmp/
     kubectl get secret mtlscerts-pkcs12 -o jsonpath='{.data.ca\.crt}'| base64 -d > ca.crt
@@ -34,7 +34,7 @@ data:
     keytool -importcert -keystore  cacerts -alias ca -file ca.crt -storepass changeit -noprompt
     kubectl create secret generic cacerts --from-file cacerts
     cd -
-    {{- end }} # if-gitops
+    {{- end }} # end of if not gitops
 
     {{- if .Values.enableCentralMonitoring }}
     #Enable prometheus

@@ -1,3 +1,4 @@
+{{- if and (.Values.spinnaker.enableMTLS) (.Values.spinnaker.gitopsHalyardInit.enabled) }}
 apiVersion: cert-manager.io/v1
 kind: Certificate
 metadata:
@@ -24,7 +25,8 @@ spec:
   - spin-fiat.{{ .Release.Namespace }}.svc
   - spin-deck.{{ .Release.Namespace }}.svc
   - "*.{{ .Release.Namespace }}.svc"
+  - localhost
 {{- if .Values.spinnaker.gatex509.enabled }}
   - {{ .Values.spinnaker.gatex509.host }}
 {{- end }}
-  - localhost
+{{- end }}

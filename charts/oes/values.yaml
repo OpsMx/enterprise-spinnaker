@@ -653,10 +653,6 @@ spinnaker:
     #    hosts:
     #      - domain.com
 
-  gatex509:
-    enabled: true
-    host: spingate-x509.engineering.opsmx.net
-
   # spinnakerFeatureFlags is a list of Spinnaker feature flags to enable
   # Ref: https://www.spinnaker.io/reference/halyard/commands/#hal-config-features-edit
   # spinnakerFeatureFlags:
@@ -761,9 +757,19 @@ spinnaker:
     fsGroup: 1000
   ## Centralized Monitoring enable for Prometheus
   enableCentralMonitoring: false
+
+  ## Enable mTLS for Spinnaker Services and SSL for Deck and Gate
+  enableMTLS: true
+
   ## Set to true to expose spinnaker and deck services over ingress
   ##
-  createIngress: true
+  createIngress: false
+
+  ## x509 authentication for Spinnaker Gate
+  gatex509:
+    enabled: false
+    host: spingate-x509.engineering.opsmx.net
+
   #Initialize gitOps style Halyard
   gitopsHalyardInit:
     enabled: true

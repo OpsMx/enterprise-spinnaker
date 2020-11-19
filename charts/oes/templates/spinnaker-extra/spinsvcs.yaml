@@ -1,5 +1,5 @@
 {{- if (.Values.installSpinnaker) }}
-{{- if not (.Values.spinnaker.gitopsHalyardInit.enabled) }}
+{{- if not (.Values.spinnaker.enableMTLS) }}
 apiVersion: v1
 kind: Service
 metadata:
@@ -20,26 +20,6 @@ spec:
      protocol: TCP
   selector:
     cluster: spin-deck
-{{- end }}
----
-{{- if (.Values.spinnaker.gatex509.enabled) }}
-apiVersion: v1
-kind: Service
-metadata:
-  labels:
-    app: spin
-    cluster: spin-gate
-  name: spin-x509gate
-spec:
-  ports:
-  - port: 8085
-    protocol: TCP
-    targetPort: 8085
-  selector:
-    app: spin
-    cluster: spin-gate
-  sessionAffinity: None
-  type: LoadBalancer
 {{- end }}
 ---
 {{- if (.Values.spinnaker.gatex509.enabled) }}

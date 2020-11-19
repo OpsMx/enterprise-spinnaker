@@ -172,7 +172,7 @@ spinnaker:
   # Change this if youd like to expose Spinnaker outside the cluster
   ingress:
     enabled: false
-    # host: spinnaker.example.org
+    host: spindeck.engineering.opsmx.net  # Also, used by OES to create ingress by default
     # annotations:
       # ingress.kubernetes.io/ssl-redirect: 'true'
       # kubernetes.io/ingress.class: nginx
@@ -184,7 +184,7 @@ spinnaker:
 
   ingressGate:
     enabled: false
-    # host: gate.spinnaker.example.org
+    host: spingate.engineering.opsmx.net  # Also, used by OES to create ingress by default
     # annotations:
       # ingress.kubernetes.io/ssl-redirect: 'true'
       # kubernetes.io/ingress.class: nginx
@@ -285,11 +285,39 @@ spinnaker:
     # Specifies permissions to write for user/group
     runAsUser: 1000
     fsGroup: 1000
+
+  ## Centralized Monitoring enable for Prometheus
+  enableCentralMonitoring: false
+
+  ## Enable mTLS for Spinnaker Services and SSL for Deck and Gate
+  enableMTLS: true
+
+  ## Set to true to expose spinnaker and deck services over ingress
+  ##
+  createIngress: false
+
+  ## x509 authentication for Spinnaker Gate
+  gatex509:
+    enabled: false
+    host: spingate-x509.engineering.opsmx.net
+
   #Initialize gitOps style Halyard
   gitopsHalyardInit:
-    enabled: false
+    enabled: true
     repo-type: git # git, S3, vault, only git support at this point
     secretName: opsmx-gitops-auth
+    # Max time(in secs) that an init container of halyard should wait
+    # to fetch External Load Balancer IP of spin-deck and spin-gate
+    spinnakerLBCheckDelay: 180
+
+  pipelinePromotion:
+    enabled: true
+    ## Namespace in which pipeline promotion job need to run
+    # TODO: Implementation pending; currently default namespace is hardcoded
+    executionNamespace: default
+    ## Spinnaker kubernetes account to use for job execution
+    # TODO: Implementation pending; currently default namespace is hardcoded
+    executionAccountName: default
 
 ####################################################
 ## LDAP configuration

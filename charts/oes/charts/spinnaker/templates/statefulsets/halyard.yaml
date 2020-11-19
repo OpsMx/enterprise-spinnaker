@@ -161,6 +161,8 @@ spec:
       - name: halyard-overrideurl
         configMap:
           name: {{ template "spinnaker.fullname" . }}-halyard-overrideurl
+      {{- end }}
+      {{- if .Values.enableMTLS }}
       - name: sslcerts
         secret:
           secretName: mtlscerts-pkcs12
@@ -242,8 +244,8 @@ spec:
       imagePullSecrets:
         {{- range .Values.halyard.image.pullSecrets }}
         - name: {{ . }}
-        {{- end}}
-      {{- end}}
+        {{- end }}
+      {{- end }}
       containers:
       - name: halyard
         image: {{ .Values.halyard.image.repository }}:{{ .Values.halyard.image.tag }}
@@ -286,7 +288,7 @@ spec:
           subPath: cacerts
           name: cacerts
         {{- end }}
-        {{- if .Values.gitopsHalyardInit.enabled }}
+        {{- if .Values.enableMTLS }}
         - mountPath: /home/spinnaker/.hal/default/tls.crt
           subPath: tls.crt
           name: sslcerts
