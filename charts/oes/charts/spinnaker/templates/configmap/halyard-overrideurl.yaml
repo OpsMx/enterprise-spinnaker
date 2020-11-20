@@ -223,6 +223,7 @@ data:
           ## Run hal config edit command to override deck url
           $HAL_COMMAND config security ui edit --no-validate --override-base-url http://$ENDPOINT_IP:$PORT
         fi
+        ;;
       spin-gate-ingress)
         ## Configured ingress host url as override url
           echo "Substituting gate url"
