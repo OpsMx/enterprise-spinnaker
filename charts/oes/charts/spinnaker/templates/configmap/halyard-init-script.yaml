@@ -6,7 +6,7 @@ metadata:
 {{ include "spinnaker.standard-labels" . | indent 4 }}
 data:
   init.sh: |
-    {{- if not .Values.gitopsHalyardInit.enabled }}
+    {{- if not .Values.gitopsHalyard.enabled }}
     #!/bin/bash
 
     # Override Halyard daemon's listen address

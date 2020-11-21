@@ -49,7 +49,7 @@ Render profiles for each service by merging predefined defaults with values pass
 
 data:
 {{ $profiles | toYaml | indent 2 }}
-{{- if .Values.pipelinePromotion.enabled }}
+{{- if .Values.gitopsHalyard.pipelinePromotion.enabled }}
   # Custom stage for pipeline promotion;
   # same configuration can be put in a repo for gitops style
   orca-local.yml: |-
@@ -61,7 +61,7 @@ data:
             credentials: default
             description: Update git with pipelines in Spinnaker
             account: default
-            application: pipelinepromotion
+            application: gitopsHalyard.pipelinePromotion
             type: pipelineSyncToGit
             waitForCompletion: true
             parameters:
@@ -178,7 +178,7 @@ data:
             credentials: default
             description: Sync Spinnaker pipelines from git
             account: default
-            application: pipelinepromotion
+            application: gitopsHalyard.pipelinePromotion
             type: pipelineSyncToSpinnaker
             waitForCompletion: true
             parameters:

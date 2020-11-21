@@ -2,7 +2,7 @@ apiVersion: v1
 data:
   call_overrides.sh: |
     echo $SPINNAKER_NAMESPACE
-    {{- if .Values.enableMTLS }}
+    {{- if .Values.gitopsHalyard.mTLS }}
     sh /tmp/autoconfig/config_overrideurl.sh spin-deck-ingress
     sh /tmp/autoconfig/config_overrideurl.sh spin-gate-ingress
     {{- else }}
@@ -19,7 +19,7 @@ data:
     fi
 
     COMPONENT=$1
-    EXTERNAL_IP_CHECK_DELAY={{ .Values.gitopsHalyardInit.spinnakerLBCheckDelay }}
+    EXTERNAL_IP_CHECK_DELAY={{ .Values.gitopsHalyard.spinnakerLBCheckDelay }}
 
     check_for_loadBalancer()
     {

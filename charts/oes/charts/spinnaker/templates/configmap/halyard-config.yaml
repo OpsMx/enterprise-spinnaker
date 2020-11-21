@@ -13,7 +13,7 @@ data:
     export HAL_COMMAND="hal --daemon-endpoint $DAEMON_ENDPOINT"
     until $HAL_COMMAND --ready; do sleep 10 ; done
 
-    {{- if not .Values.gitopsHalyardInit.enabled }}
+    {{- if not .Values.gitopsHalyard.enabled }}
 
     bash -xe /opt/halyard/scripts/config.sh
 
@@ -26,7 +26,7 @@ data:
     bash -xe /opt/halyard/additionalScripts/{{ $index }}
     {{- end }} # Range
     {{- end }} # if-additionalScipts
-    {{- else if .Values.enableMTLS }}
+    {{- else if .Values.gitopsHalyard.mTLS }}
     # Create secrets and certs necessary for mTLS
     cd /tmp/
     kubectl get secret mtlscerts-pkcs12 -o jsonpath='{.data.ca\.crt}'| base64 -d > ca.crt
@@ -148,11 +148,15 @@ data:
     {{- end }}
     $HAL_COMMAND config deploy edit --account-name {{ .Values.kubeConfig.deploymentContext }} --type distributed \
                            --location {{ .Release.Namespace }}
+    {{- if .Values.enableHA }}
+    $HAL_COMMAND config deploy ha clouddriver enable
+    $HAL_COMMAND config deploy ha echo enable
+    {{- end }}
     # Enable Authentication by default
     $HAL_COMMAND config security authn ldap edit --user-dn-pattern="cn={0}" --url=ldap://{{ .Release.Name }}-openldap:389/dc=example,dc=org
     $HAL_COMMAND config security authn ldap enable
     # Use Deck to route to Gate
-    {{- if not .Values.enableMTLS }}
+    {{- if not .Values.gitopsHalyard.mTLS }}
     # Fetch Deck, Gate Load Balancer IPs and override base url
     bash -x /opt/halyard/additionalScripts/config_overrideurl.sh override-gate-url
     bash -x /opt/halyard/additionalScripts/config_overrideurl.sh override-deck-url

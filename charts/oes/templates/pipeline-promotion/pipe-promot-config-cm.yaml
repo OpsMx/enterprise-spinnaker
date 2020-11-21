@@ -1,4 +1,4 @@
-{{- if .Values.spinnaker.pipelinePromotion.enabled }}
+{{- if .Values.spinnaker.gitopsHalyard.pipelinePromotion.enabled }}
 apiVersion: v1
 data:
   git_friendly_username: <git_friendly_username>
@@ -14,5 +14,5 @@ data:
 kind: ConfigMap
 metadata:
   name: pipe-promot-config
-  namespace: {{ .Values.spinnaker.pipelinePromotion.executionNamespace }}
+  namespace: {{ .Values.spinnaker.gitopsHalyard.pipelinePromotion.executionNamespace }}
 {{- end }}

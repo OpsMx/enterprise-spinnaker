@@ -168,10 +168,10 @@ Parameter | Description | Default
 `ldap.GroupIdentity` | User group identity | `memberOf`
 `ldap.userIdentity` | User identity | `cn`
 `ldap.userPrepend` | User Prepend | `cn=USERNAME`
-`spinnaker.gitopsHalyardInit.enabled` | Enable gitops style halyard & account config | `false`
-`spinnaker.gitopsHalyardInit.repo-type` | Repo type; git, s3, vault | `git`
-`spinnaker.gitopsHalyardInit.secretName` | Secret in which git credentials shall be specified, sample secret found under templates/secrets/ | `opsmx-gitops-auth`
-`spinnaker.gitopsHalyardInit.spinnakerLBCheckDelay` | Timeout while fetching LB IPs of spin-deck and spin-gate to configure in hal config in seconds | `180`
+`spinnaker.gitopsHalyard.enabled` | Enable gitops style halyard & account config | `false`
+`spinnaker.gitopsHalyard.repo-type` | Repo type; git, s3, vault | `git`
+`spinnaker.gitopsHalyard.secretName` | Secret in which git credentials shall be specified, sample secret found under templates/secrets/ | `opsmx-gitops-auth`
+`spinnaker.gitopsHalyard.spinnakerLBCheckDelay` | Timeout while fetching LB IPs of spin-deck and spin-gate to configure in hal config in seconds | `180`
 
 > **Tip**: Refer to values.yaml for detailed comments
 
