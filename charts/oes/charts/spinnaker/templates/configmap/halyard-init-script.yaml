@@ -45,7 +45,7 @@ data:
     {{ tpl .Values.halyard.additionalInitScript $ | indent 4 }}
     {{- end }}
     {{- else }}
-    #!/bin/bash
+    #!/bin/bash -x
     git clone $GIT_CLONE_PARAM /tmp/spinnaker/.hal
     GIT_USER=`echo $GIT_USER | sed 's/ *$//g'`
     GIT_TOKEN=`echo $GIT_TOKEN | sed 's/ *$//g'`
@@ -56,7 +56,7 @@ data:
     sed -i  s/RELEASE_NAME/{{ .Release.Name }}/g /tmp/spinnaker/.hal/config
     sed -i  s/GIT_USER/${GIT_USER}/g /tmp/spinnaker/.hal/default/profiles/spinnakerconfig.yml
     sed -i  s/GIT_TOKEN/${GIT_TOKEN}/g /tmp/spinnaker/.hal/default/profiles/spinnakerconfig.yml
-    sed -i  s/DYNAMIC_ACCOUNTS_REPO/${DYNAMIC_ACCOUNTS_REPO}g /tmp/spinnaker/.hal/default/profiles/spinnakerconfig.yml
+    sed -i  s,DYNAMIC_ACCOUNTS_REPO,${DYNAMIC_ACCOUNTS_REPO},g /tmp/spinnaker/.hal/default/profiles/spinnakerconfig.yml
     sed -i  s/RELEASE_NAME/{{ .Release.Name }}/g /tmp/spinnaker/.hal/default/service-settings/redis.yml
     sed -i  s/RELEASE_NAME/{{ .Release.Name }}/g /tmp/spinnaker/.hal/default/profiles/fiat-local.yml
     printf 'server.address: 0.0.0.0\n' > /tmp/config/halyard-local.yml
