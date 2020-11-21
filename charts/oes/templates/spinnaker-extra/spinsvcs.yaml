@@ -43,7 +43,7 @@ spec:
     cluster: spin-gate
 {{- end }}
 ---
-{{- if (.Values.spinnaker.gatex509.enabled) }}
+{{- if (.Values.spinnaker.gitopsHalyard.gatex509.enabled) }}
 apiVersion: v1
 kind: Service
 metadata:
