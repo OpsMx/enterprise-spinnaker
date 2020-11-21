@@ -172,7 +172,7 @@ spinnaker:
   # Change this if youd like to expose Spinnaker outside the cluster
   ingress:
     enabled: false
-    host: spindeck.engineering.opsmx.net  # Also, used by OES to create ingress by default
+    # host: spinnaker.example.org
     # annotations:
       # ingress.kubernetes.io/ssl-redirect: 'true'
       # kubernetes.io/ingress.class: nginx
@@ -184,7 +184,7 @@ spinnaker:
 
   ingressGate:
     enabled: false
-    host: spingate.engineering.opsmx.net  # Also, used by OES to create ingress by default
+    # host: gate.spinnaker.example.org
     # annotations:
       # ingress.kubernetes.io/ssl-redirect: 'true'
       # kubernetes.io/ingress.class: nginx
@@ -292,21 +292,23 @@ spinnaker:
   ## Centralized Monitoring enable for Prometheus
   enableCentralMonitoring: false
 
-  ## x509 authentication for Spinnaker Gate
-  gatex509:
-    enabled: false
-    host: spingate-x509.engineering.opsmx.net
-
   # Initialize gitOps style Halyard
   gitopsHalyard:
     enabled: false
-    mTLS: false   # Enable mTLS for Spinnaker Services and SSL for Deck and Gate
+    mTLS:
+      enabled: false   # Enable mTLS for Spinnaker Services and SSL for Deck and Gate
+      deckIngressHost: spindeck.engineering.opsmx.net  # Used by OES to create ingress for deck
+      gateIngressHost: spingate.engineering.opsmx.net  # Used by OES to create ingress for gate
     repo-type: git # git, S3, vault, only git support at this point
     secretName: opsmx-gitops-auth
     # Max time(in secs) that an init container of halyard should wait
     # to fetch External Load Balancer IP of spin-deck and spin-gate
     spinnakerLBCheckDelay: 180
     # Promote applications and pipelines from one environment to another environment
+      ## x509 authentication for Spinnaker Gate
+    gatex509:
+      enabled: false
+      host: spingate-x509.engineering.opsmx.net
     pipelinePromotion:
       enabled: false
       ## Namespace in which pipeline promotion job need to run
