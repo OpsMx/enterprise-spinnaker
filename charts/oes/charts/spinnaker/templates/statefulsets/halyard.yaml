@@ -5,7 +5,7 @@ metadata:
   labels:
 {{ include "spinnaker.standard-labels" . | indent 4 }}
   annotations:
-    "helm.sh/hook": "post-delete"
+    "helm.sh/hook": pre-install,post-delete
 spec:
   serviceName: {{ template "spinnaker.fullname" . }}-halyard
   replicas: 1
