@@ -26,7 +26,7 @@ spec:
   - spin-deck.{{ .Release.Namespace }}.svc
   - "*.{{ .Release.Namespace }}.svc"
   - localhost
-{{- if .Values.spinnaker.gatex509.enabled }}
-  - {{ .Values.spinnaker.gatex509.host }}
+{{- if .Values.spinnaker.gitopsHalyard.gatex509.enabled }}
+  - {{ .Values.spinnaker.gitopsHalyard.gatex509.host }}
 {{- end }}
 {{- end }}
