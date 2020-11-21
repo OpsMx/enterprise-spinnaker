@@ -26,7 +26,7 @@ data:
     bash -xe /opt/halyard/additionalScripts/{{ $index }}
     {{- end }} # Range
     {{- end }} # if-additionalScipts
-    {{- else if .Values.gitopsHalyard.mTLS }}
+    {{- else if .Values.gitopsHalyard.mTLS.enabled }}
     # Create secrets and certs necessary for mTLS
     cd /tmp/
     kubectl get secret mtlscerts-pkcs12 -o jsonpath='{.data.ca\.crt}'| base64 -d > ca.crt
@@ -160,7 +160,7 @@ data:
     $HAL_COMMAND config security authn ldap edit --user-dn-pattern="cn={0}" --url=ldap://{{ .Release.Name }}-openldap:389/dc=example,dc=org
     $HAL_COMMAND config security authn ldap enable
     # Use Deck to route to Gate
-    {{- if not .Values.gitopsHalyard.mTLS }}
+    {{- if not .Values.gitopsHalyard.mTLS.enabled }}
     # Fetch Deck, Gate Load Balancer IPs and override base url
     bash -x /opt/halyard/additionalScripts/config_overrideurl.sh override-gate-url
     bash -x /opt/halyard/additionalScripts/config_overrideurl.sh override-deck-url

@@ -1,5 +1,5 @@
 {{- if (.Values.installSpinnaker) }}
-{{- if .Values.spinnaker.gitopsHalyard.mTLS }}
+{{- if .Values.spinnaker.gitopsHalyard.mTLS.enabled }}
 apiVersion: extensions/v1beta1
 kind: Ingress
 metadata:
@@ -15,7 +15,7 @@ metadata:
   name: spinnaker-deck-ingress
 spec:
   rules:
-  - host: {{ .Values.spinnaker.gitopsHalyard.mTLS.deckIngressHost }}
+  - host: {{ .Values.spinnaker.gitopsHalyard.mTLS.enabled.deckIngressHost }}
     http:
       paths:
       - backend:
@@ -24,7 +24,7 @@ spec:
         path: /
   tls:
   - hosts:
-    - {{ .Values.spinnaker.gitopsHalyard.mTLS.deckIngressHost }}
+    - {{ .Values.spinnaker.gitopsHalyard.mTLS.enabled.deckIngressHost }}
     secretName: ui-{{ .Release.Name }}-tls
 ---
 apiVersion: extensions/v1beta1
@@ -42,7 +42,7 @@ metadata:
   name: spinnaker-gate-ingress
 spec:
   rules:
-  - host: {{ .Values.spinnaker.gitopsHalyard.mTLS.gateIngressHost }}
+  - host: {{ .Values.spinnaker.gitopsHalyard.mTLS.enabled.gateIngressHost }}
     http:
       paths:
       - backend:
@@ -59,7 +59,7 @@ spec:
         path: /auth/*
   tls:
   - hosts:
-    - {{ .Values.spinnaker.gitopsHalyard.mTLS.gateIngressHost }}
+    - {{ .Values.spinnaker.gitopsHalyard.mTLS.enabled.gateIngressHost }}
     secretName: api-{{ .Release.Name }}-tls
 ---
 {{- else if (.Values.spinnaker.createIngress) }}

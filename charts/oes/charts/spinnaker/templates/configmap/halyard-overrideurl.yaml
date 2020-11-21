@@ -2,7 +2,7 @@ apiVersion: v1
 data:
   call_overrides.sh: |
     echo $SPINNAKER_NAMESPACE
-    {{- if .Values.gitopsHalyard.mTLS }}
+    {{- if .Values.gitopsHalyard.mTLS.enabled }}
     sh /tmp/autoconfig/config_overrideurl.sh spin-deck-ingress
     sh /tmp/autoconfig/config_overrideurl.sh spin-gate-ingress
     {{- else }}

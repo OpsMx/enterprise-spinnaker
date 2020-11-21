@@ -164,7 +164,7 @@ spec:
         configMap:
           name: {{ template "spinnaker.fullname" . }}-halyard-overrideurl
       {{- end }}
-      {{- if .Values.gitopsHalyard.mTLS }}
+      {{- if .Values.gitopsHalyard.mTLS.enabled }}
       - name: sslcerts
         secret:
           secretName: mtlscerts-pkcs12
@@ -296,7 +296,7 @@ spec:
           subPath: cacerts
           name: cacerts
         {{- end }}
-        {{- if .Values.gitopsHalyard.mTLS }}
+        {{- if .Values.gitopsHalyard.mTLS.enabled }}
         - mountPath: /home/spinnaker/.hal/default/tls.crt
           subPath: tls.crt
           name: sslcerts

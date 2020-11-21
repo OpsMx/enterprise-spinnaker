@@ -1,5 +1,5 @@
 {{- if (.Values.installSpinnaker) }}
-{{- if not (.Values.spinnaker.gitopsHalyard.mTLS) }}
+{{- if not (.Values.spinnaker.gitopsHalyard.mTLS.enabled) }}
 apiVersion: v1
 kind: Service
 metadata:
