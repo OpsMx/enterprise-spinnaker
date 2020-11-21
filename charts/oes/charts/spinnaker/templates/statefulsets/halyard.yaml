@@ -249,6 +249,12 @@ spec:
       containers:
       - name: halyard
         image: {{ .Values.halyard.image.repository }}:{{ .Values.halyard.image.tag }}
+        {{- if .Values.gitopsHalyard.enabled }}
+        lifecycle:
+          postStart:
+            exec:
+              command: ["/bin/sh", "-c", "until hal --ready; do sleep 10 ;done;hal deploy apply"]
+        {{- end }}
         ports:
         - containerPort: 8064
           name: daemon

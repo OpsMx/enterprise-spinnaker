@@ -30,7 +30,6 @@ data:
     # Create secrets and certs necessary for mTLS
     cd /tmp/
     kubectl get secret mtlscerts-pkcs12 -o jsonpath='{.data.ca\.crt}'| base64 -d > ca.crt
-    #keytool -delete -alias ca -keystore cacerts -storepass changeit -noprompt
     keytool -importcert -keystore  cacerts -alias ca -file ca.crt -storepass changeit -noprompt
     kubectl create secret generic cacerts --from-file cacerts
     cd -
@@ -41,7 +40,12 @@ data:
     $HAL_COMMAND config metric-stores prometheus enable
     {{- end }}
 
+    # This is performed by post-start script in halyard pod
+    # in case gitopsHalyard is enabled
+    {{- if not .Values.gitopsHalyard.enabled }}
     $HAL_COMMAND deploy apply
+    {{- end }}
+
     {{- if .Values.halyard.additionalInstallParameters }} \
       {{- .Values.halyard.additionalInstallParameters | join " \\\n" | nindent 6 }}
     {{- end }}
