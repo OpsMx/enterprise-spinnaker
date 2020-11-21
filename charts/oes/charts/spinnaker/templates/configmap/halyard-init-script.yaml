@@ -50,7 +50,9 @@ data:
     GIT_USER=`echo $GIT_USER | sed 's/ *$//g'`
     GIT_TOKEN=`echo $GIT_TOKEN | sed 's/ *$//g'`
     sed -i  s/SPINNAKER_NAMESPACE/${SPINNAKER_NAMESPACE}/ /tmp/spinnaker/.hal/config
+    {{- if .Values.gitopsHalyard.mTLS.enabled }}
     sed -i  s/SPINNAKER_NAMESPACE/${SPINNAKER_NAMESPACE}/g /tmp/spinnaker/.hal/default/service-settings/*
+    {{- end }}
     sed -i  s/RELEASE_NAME/{{ .Release.Name }}/g /tmp/spinnaker/.hal/config
     sed -i  s/GIT_USER/${GIT_USER}/g /tmp/spinnaker/.hal/default/profiles/spinnakerconfig.yml
     sed -i  s/GIT_TOKEN/${GIT_TOKEN}/g /tmp/spinnaker/.hal/default/profiles/spinnakerconfig.yml
