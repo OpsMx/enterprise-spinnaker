@@ -782,7 +782,7 @@ spinnaker:
       ## x509 authentication for Spinnaker Gate
     gatex509:
       enabled: false
-      host: spingate-x509.engineering.opsmx.net
+      host: spingate-x509.domain.com
     pipelinePromotion:
       enabled: false
       ## Namespace in which pipeline promotion job need to run
