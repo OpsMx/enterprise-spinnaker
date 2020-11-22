@@ -258,6 +258,10 @@ data:
       fi
     }
 
+
+
+
+
     # upload function does copy spinnaker application and pipeline from github to s3
     upload_spin() {
 
@@ -460,7 +464,24 @@ data:
         #Replace .parameterConfig
         cat "$json" | jq  '.parameterConfig=$uc' --argfile uc temp/"updated-config-$json" > temp/"$json"
 
-        cp temp/"$json" "$json"
+        ########################################################################
+        #Extract 1st trigger
+        cat  temp/"$json"| jq '.triggers[0]' > temp/tmp-trig.json
+
+        #Update first trigger
+        cat temp/tmp-trig.json | jq 'if $pp.triggerValues != null then . * $pp.triggerValues else . end'  --argfile pp $confDir/"$json"  > temp/updated-tmp-trig.json
+
+        #Update pipeline-json with updated trigger
+        if [[ `cat temp/updated-tmp-trig.json | wc -c` -gt 5 ]]
+        then
+          cat temp/"$json" | jq '.triggers[0]=$pp' --argfile pp temp/updated-tmp-trig.json > temp/final-replaced.json
+          cp temp/final-replaced.json "$json"
+        else
+          cp  temp/"$json" "$json"
+        fi
+
+        ########################################################################
+
     }
 
     #Create default parameterconfig-files
@@ -471,8 +492,18 @@ data:
         for json in *.json ; do
           [[ -f "$json" ]] || continue
           echo "	processing $json"
-          cat "$json" | jq '.parameterConfig | reduce .[] as $p  ({};.Parameters += {($p.name): $p.default})'  >  $targetDir/"$json" 2>/dev/null
+          cat "$json" | jq '.parameterConfig | reduce .[] as $p  ({};.Parameters += {($p.name): $p.default})'  >  $targetDir/tmp-param.json 2>/dev/null
+          cat "$json" | jq '.triggers[0] '  >  $targetDir/tmp-trig.json 2>/dev/null
+
+          if [[ `cat $targetDir/tmp-trig.json | wc -c` -gt 5 ]]
+          then
+            cat $targetDir/tmp-param.json | jq '.triggerValues=$pp' --argfile pp $targetDir/tmp-trig.json > $targetDir/"$json" 2>/dev/null
+          else
+            cp  $targetDir/tmp-param.json $targetDir/"$json"
+          fi
         done
+        rm -f $targetDir/tmp-param.json
+        rm -f $targetDir/tmp-trig.json
         #Remove all files with zero size
         echo "Removing files that do not have any parameters defined"
         find $targetDir -type f -size -4c -delete # No parameterConfig in the file
