@@ -15,8 +15,8 @@ imagePullSecret: opsmxdev-secret
 ##
 imageCredentials:
   registry: https://index.docker.io/v1/
-  username: username  # Docker hub username
-  password: password # Docker hub password
+  username: dockerID  # Docker hub username
+  password: dockerPassword # Docker hub password
   email: info@opsmx.com   # email corresponding to docker hub ID
 
 rbac:
@@ -171,8 +171,8 @@ gate:
     ## under Redis Configuration section
     ##
 
-    ## Regex of OES-UI URL to prevent cross origin attacks
-    oesUIcors: ^https?://(?:localhost|OES_UI_LOADBALANCER_IP|opsmx.com|192.168.3.69)(?::[1-9]\d*)?/?
+    ## Regex of OES-UI URL to allow cross origin requests
+    oesUIcors: ^https?://(?:localhost|OES_UI_LOADBALANCER_IP|opsmx.com)(?::[1-9]\d*)?/?
 
     ## Set it to true to disable LDAP authentication and enable file based authentication
     ## Reach out over support@opsmx.com for pre-configured user credentials
