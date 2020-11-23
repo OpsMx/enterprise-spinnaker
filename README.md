@@ -82,11 +82,11 @@ Parameter | Description | Default
 `imageCredentials.password` | Password of docker account | `dockerPassword`
 `imageCredentials.email` | Email associated with docker account | `info@opsmx.com`
 `rbac.create` | Enable or disable rbac | `true`
-`installSpinnaker` | If true, install Spinnaker along with OES Extensions | `false`
+`installSpinnaker` | If true, install Spinnaker along with OES Extensions | `true`
 `installationMode` | The installation mode. Available installation modes are **OES-AP** (both OES 3.0 and Autopilot), **OES** (Only OES 3.0), **AP** (Only Autopilot) and **None**(Skip OES installation) | `OES-AP`
 `createIngress` | If true, exposes Spinnaker deck & gate services over Ingress | `false`
 `k8sServiceType` | Service Type of oes-ui, oes-gate, spin-deck-ui, spin-gate | `LoadBalancer`
-`installRedis` | If false, OES will uninstall its own Redis for caching | `true`
+`installRedis` | If false, OES will uninstall its own Redis for caching | `false`
 `redis.image.registry` | Registry to be used for docker images when installRedis is set to true | `docker.io`
 `redis.image.repository` | Repository to be used for docker images when installRedis is set to true | `redis`
 `redis.image.tag` | Tag to be used for docker images when installRedis is set to true | `true`
@@ -151,7 +151,7 @@ Parameter | Description | Default
 `ui.config.setApplicationRefreshInterval` | Interval at which UI refreshes application dashboard | `16000`
 `autoConfiguration.enabled` | Option enables OES to be configured automatically. Load Balancer IPs will be automatically replaced in the configuration files of oes-gate, oes-ui & sapor. Set it to false if OES is being installed on restricted environment. | `true`
 `autoConfiguration.initContainer.image` | Image to be used by Init container for auto configuration | `opsmx11/oes-init:v3`
-`autoConfiguration.initContainer.externalIpCheckDelay` | Expected delay in assigning load balancer IPs to oes-ui & oes-gate in secs | `120`
+`autoConfiguration.initContainer.externalIpCheckDelay` | Expected delay in assigning load balancer IPs to oes-ui & oes-gate in secs | `180`
 `opa.enabled` | Enable OPA with OES | `true`
 `opa.image.repository` | OPA image repository | `openpolicyagent/opa`
 `opa.image.tag` | Tag to pull OPA image | `latest`
