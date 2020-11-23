@@ -1,0 +1,61 @@
+{{- if or (eq .Values.installationMode "OES-AP") (eq .Values.installationMode "AP") (eq .Values.installationMode "OES") -}}
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: oes
+    component: visibility
+{{ include "oes.standard-labels" . | indent 4 }}
+  name: oes-visibility
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: oes
+      component: visibility
+  strategy: {}
+  template:
+    metadata:
+      annotations:
+        configmap/checksum: {{ (.Files.Glob "config/oes-visibility/visibility-local.yml").AsConfig | sha256sum }}
+      labels:
+        app: oes
+        component: visibility
+{{ include "oes.standard-labels" . | indent 8 }}
+    spec:
+      containers:
+      - image: {{ template "visibility.image" . }}
+        name: oes-visibility
+        ports:
+        - containerPort: 8096
+          protocol: TCP
+        env:
+        volumeMounts:
+        - mountPath: /opsmx/conf/visibility-local.yml
+          name: visibility-config
+          subPath: visibility-local.yml
+        resources:
+          requests:
+            memory: "500Mi"
+            cpu: "500m"
+          limits:
+            memory: "1000Mi"
+            cpu: "1500m"
+        readinessProbe:
+          tcpSocket:
+            port: 8096
+          initialDelaySeconds: 10
+          periodSeconds: 5
+        livenessProbe:
+          httpGet:
+            path: /mgmt/health
+            port: 8096
+          initialDelaySeconds: 30
+          periodSeconds: 60
+      imagePullSecrets:
+      - name: {{ .Values.imagePullSecret}}
+      volumes:
+      - name: visibility-config
+        configMap:
+          name: oes-visibility-config
+{{- end -}}

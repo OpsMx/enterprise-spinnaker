@@ -1,0 +1,20 @@
+{{- if or (eq .Values.installationMode "OES-AP") (eq .Values.installationMode "AP") (eq .Values.installationMode "OES") -}}
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    app: oes
+    component: visibility 
+{{ include "oes.standard-labels" . | indent 4 }}
+  name: oes-visibility
+spec:
+  type: ClusterIP
+  ports:
+  - name: visibility 
+    protocol: TCP
+    port: 8096
+    targetPort: 8096
+  selector:
+    app: oes
+    component: visibility
+{{- end -}}

@@ -1,0 +1,46 @@
+# DB configuration
+spring:
+  datasource:
+    url={{ .Values.db.url }}/visibilitydb
+    username={{ .Values.db.username }}
+    password={{ .Values.db.password }}
+
+visiblity:
+   connectors:
+      configured: JIRA,GIT,AUTOPILOT,SONARQUBE,JENKINS
+      properties:
+        jira:
+          - username
+          - apitoken
+          - url
+        git:
+          - username
+          - apitoken
+          - url
+        autopilot:
+          - username
+        sonarqube:
+          - hosturl
+        jenkins:
+          - username
+          - password
+          - url
+
+jira:
+  api:
+    url: /rest/api/2/search
+git:
+  api:
+    url: /repos/{username}/{repo}/commits/{commitId}
+
+jenkins:
+  api:
+    url: /jenkins/job/{jobname}/{buildId}/api/json
+
+logging:
+  level:
+    io:
+      swagger:
+        models:
+          parameters:
+            AbstractSerializableParameter: ERROR

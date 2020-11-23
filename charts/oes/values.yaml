@@ -28,7 +28,7 @@ createIngress: false
 
 ## Option to skip installation of OpsMx Spinnaker
 ## Setting this to true, will ensure custom ubi8 images of Spinnaker
-installSpinnaker: true
+installSpinnaker: false
 
 ## Installation mode
 ## Available installation modes OES-AP, OES, AP, None
@@ -46,7 +46,7 @@ k8sServiceType: LoadBalancer
 ## If Spinnaker is being installed, redis installed by spinnaker chart can
 ## be re-used
 ##
-installRedis: false
+installRedis: true
 
 ###############################################################################
 ## Details of redis-master image for OES
@@ -82,7 +82,7 @@ db:
   image:
     registry: opsmxdev
     repository: ubi8-autopilot-db
-    tag: v1.5
+    tag: v1.5-visibility-test
     pullPolicy: IfNotPresent
 
   ## Strategy to rollout statefulset pods
@@ -106,9 +106,9 @@ autopilot:
   ## Image specific details
   ##
   image:
-    registry: opsmxdev
-    repository: ubi8-oes-autopilot
-    tag: v3.1-202010191958
+    registry: opsmx11
+    repository: oes-autopilot
+    tag: v3.3-RC2-202011230653
     pullPolicy: IfNotPresent
 
   config:
@@ -137,9 +137,9 @@ dashboard:
   ## Image specific details
   ##
   image:
-    registry: opsmxdev
-    repository: ubi8-oes-dashboard
-    tag: v3.1-202010192021
+    registry: opsmx11
+    repository: oes-dashboard
+    tag: master-202011210741
     pullPolicy: IfNotPresent
 
   config:
@@ -156,9 +156,9 @@ gate:
   ## Image specific details
   ##
   image:
-    registry: opsmxdev
-    repository: ubi8-oes-gate
-    tag: v3.1-202010191958
+    registry: opsmx11
+    repository: oes-gate
+    tag: v0.202011202046
     pullPolicy: IfNotPresent
 
   config:
@@ -187,9 +187,9 @@ platform:
   ## Image specific details
   ##
   image:
-    registry: opsmxdev
-    repository: ubi8-oes-platform
-    tag: v3.1-202010191959
+    registry: opsmx11
+    repository: oes-platform
+    tag: platform-ldap-202011201326
     pullPolicy: IfNotPresent
 
   config:
@@ -234,9 +234,9 @@ sapor:
   ## Image specific details
   ##
   image:
-    registry: opsmxdev
-    repository: ubi8-oes-sapor
-    tag: v3.1-202010191959
+    registry: opsmx11
+    repository: oes-sapor
+    tag: v0.202011201011
     pullPolicy: IfNotPresent
 
   config:
@@ -292,9 +292,9 @@ ui:
   ## Image specific details
   ##
   image:
-    registry: opsmxdev
-    repository: ubi8-oes-ui
-    tag: v3.1-202010191957
+    registry: opsmx11
+    repository: oes-ui
+    tag: v0.202011231450
     pullPolicy: IfNotPresent
 
   config:
@@ -304,6 +304,26 @@ ui:
 
     ## Interval at which UI refreshes application dashboard
     setApplicationRefreshInterval: 16000
+
+###################################################################################
+##
+#
+## Values of OES Visibility
+##
+visibility:
+  ## Image specific details
+  ##
+  image:
+    registry: opsmx11
+    repository: oes-visibility
+    tag: master-202011230332
+    pullPolicy: IfNotPresent
+
+  config:
+    ## Installation mode
+    ## OES supports three modes of installation,
+    ## Uses the mode configured above, under Installation mode
+    ##
 
 ###############################################################################
 ## This option enables OES to be configured automatically
