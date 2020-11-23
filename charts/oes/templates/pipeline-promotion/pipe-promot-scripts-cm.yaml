@@ -1,0 +1,535 @@
+{{- if .Values.spinnaker.gitopsHalyard.pipelinePromotion.enabled }}
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: pipe-promot-scripts
+  namespace: {{ .Values.spinnaker.gitopsHalyard.pipelinePromotion.executionNamespace }}
+data:
+  deployer.sh: |
+    #!/bin/bash
+
+    gpg_dir=${HOME}/gpg
+    error=0
+    api="https://api.github.com"
+    merge_sleep=10
+    git_delete_branch_after_pr=true
+    # yaml_operation="destructive" # destroy, empty
+    ignore_errors=${ignore_spin_errors:-false}
+
+    set_debug() {
+      local debug=$1
+      if [[ $debug == "true" ]]; then
+        set -x
+      fi
+    }
+
+    unset_debug() {
+      local debug=$1
+      if [[ $debug == "true" ]]; then
+        set +x
+      fi
+    }
+
+    setup_secret() {
+      local region=$1
+      local secret=$2
+      local target_dir=$3
+      local target_file=$4
+      # local sshdir=${HOME}/.ssh
+
+      mkdir -p $target_dir
+      unset_debug $debug
+      sec=$(aws secretsmanager get-secret-value \
+        --region $region \
+        --secret-id $secret \
+        --version-stage AWSCURRENT | \
+          jq -r '.SecretString | fromjson | .[]')
+      echo $sec | openssl base64 -d -A -out $target_dir/$target_file
+      set_debug $debug
+      chmod 400 $target_dir/$target_file
+      # ssh -Tv git@github.com
+    }
+
+    # Setup gpg for git signing
+    setup_gpg_for_git() {
+      echo "Setting up GPG for commit signing."
+      setup_secret $region $git_aws_secret_gpg_pub $gpg_dir pub.gpg
+      setup_secret $region $git_aws_secret_gpg_priv $gpg_dir priv.gpg
+      setup_secret $region $git_aws_secret_gpg_pass $gpg_dir phrase
+      mkdir -m 0700 -p $HOME/.gnupg
+      echo "pinentry-mode loopback" > $HOME/.gnupg/gpg.conf
+      echo "passphrase-file $gpg_dir/phrase" >> $HOME/.gnupg/gpg.conf
+      gpg --import $gpg_dir/priv.gpg; rm $gpg_dir/priv.gpg
+      gpg --import $gpg_dir/pub.gpg; rm $gpg_dir/pub.gpg
+      key=$(gpg --list-key | grep "^  " | awk '{ print $1 }' | tail -1)
+      git config --global user.signingkey $key
+      git config --global commit.gpgsign true
+      # git config --global push.gpgsign true
+    }
+
+    # setup git for committing
+    setup_git() {
+      echo "Setting up the Git "
+      local name=$1
+      local email=$2
+      git config --global user.email "$email"
+      git config --global user.name "$name"
+    }
+
+    git_clone_ssh() {
+      local dir=$1
+      local repo=$2
+      local project=$3
+
+      mkdir -p $dir
+      cd $dir/../
+      git clone git@github.com:$repo/$project.git
+      cd -
+    }
+
+    git_clone_ssh_change() {
+      local dir=$1
+      local repo=$2
+      local project=$3
+
+      mkdir -p $dir
+      cd $dir
+      git clone git@github.com:$repo/$project.git
+      cd -
+    }
+
+    git_clone_http() {
+      local dir=$1
+      local repo=$2
+      local project=$3
+
+      mkdir -p $dir
+      cd $dir
+      rm -rf $3
+      unset_debug $debug
+      echo "git from github.com $repo/$project over https"
+      git clone https://$git_secret_token:x-oauth-basic@github.com/$repo/$project
+      set_debug $debug
+      #cd -
+    }
+
+    git_checkout() {
+      local dir=$1
+      local git_checkout=$2
+
+      cd $dir
+      if [ "$git_checkout" != "" ]; then
+        git checkout $git_checkout
+      else
+        git branch -v
+      fi
+      cd -
+    }
+
+    gen_branch_name() {
+      branch=$(cat /usr/share/dict/esperanto | grep '^[a-z]\+$' | shuf -n 1)
+      # branch=$(shuf -n1 /usr/share/dict/esperanto)
+      echo $branch
+    }
+
+    git_branch() {
+      local branch=$1
+      git branch $branch
+      git checkout $branch
+    }
+
+    git_add_file() {
+      local file=$1
+      git add $file
+    }
+
+    git_add_all() {
+      git add .
+    }
+
+    git_delete_file() {
+      local file=$1
+      git rm $file
+    }
+
+    git_commit() {
+      local branch=$1
+      local file=$2
+      shift; shift;
+      local msg=$@
+
+      opts=""
+      if [ "$git_commit_sign" == "true" ]; then
+        opts="-s"
+      fi
+      git commit $opts $file -m "$msg"
+      git push --set-upstream origin $branch
+      if [ "$?" != "0" ];then
+        echo "[ERROR]: Failed to push $branch upstream."
+        exit 1
+      fi
+    }
+
+    git_commit_all() {
+      local branch=$1
+      local msg="checking application and pipeline raw data"
+
+      opts=""
+      if [ "$git_commit_sign" == "true" ]; then
+        opts="-s"
+      fi
+      #git commit $opts -a -m $msg
+      git commit -m "$msg"
+      git push --set-upstream origin $branch
+      if [ "$?" != "0" ];then
+        echo "[ERROR]: Failed to push $branch upstream."
+        exit 1
+      fi
+    }
+
+    # Here we use HUB...
+    git_pr_merge() {
+      local repo=$1
+      local project=$2
+      local branch=$3
+      local main=${4:-master}
+      local label=${5:-spinnaker}
+      local msg=${6:-"Auto PR for $repo/$project $branch to $main"}
+
+      pr=$(hub pull-request \
+        -b $repo:$main \
+        -h $repo:$branch \
+        -l spinnaker-pr \
+        -m "$msg" | tail -1)
+      if [ "$?" != "0" -o "$pr" == "" ]; then
+          echo "PR Failed for $repo/$project $branch to $main"
+          exit 1
+      fi
+      # github only
+      prn=$(echo ${pr##*/})
+      if [ "$prn" == "" ]; then
+          echo "Unable to figure out Pull Request Number"
+          exit 2
+      fi
+      unset_debug $debug
+      review_url="$api/repos/$repo/$project/pulls/$prn/reviews"
+      res=$(curl \
+          -XPOST \
+          -H "Authorization: token $GITHUB_PR_TOKEN" \
+          -d '{
+               "body": "Spinnaker says LGTM",
+               "event": "APPROVE"
+           }' \
+           $review_url)
+      if [ "$?" != "0" ]; then
+        echo "Review of $prn failed for $repo/$project $branch"
+        exit 3
+      fi
+      sleep $merge_sleep
+      merge_url="$api/repos/$repo/$project/pulls/$prn/merge"
+      res=$(curl \
+          -XPUT \
+          -H "Authorization: token $GITHUB_PR_TOKEN" \
+          $merge_url)
+      if [ "$?" != "0" ]; then
+          echo "Merge failed for $prn on $repo/$project $branch to $main"
+          exit 4
+      fi
+      if [ "$git_delete_branch_after_pr" == "true" ]; then
+        db="$api/repos/$repo/$project/git/refs/heads/$branch"
+        curl \
+            -XDELETE \
+            -H "Authorization: token $GITHUB_PR_TOKEN" \
+            $db
+        if [ "$?" != "0" ]; then
+           echo "Delete failed for $repo/$project $branch to $main"
+           exit 5
+        fi
+      fi
+      set_debug $debug
+    }
+
+    mkdir_from_file() {
+      local file=$1
+
+      local dir=${file%/*}
+      if [ ! -d "$dir" ]; then
+        mkdir -p $dir
+      fi
+    }
+
+
+
+
+
+    # upload function does copy spinnaker application and pipeline from github to s3
+    upload_spin() {
+
+      echo "In upload function which copies spinnaker application and pipeline from spinnaker to github"
+
+      local user_root_folder=$HOME
+
+      if [ "$git_secret_sshkey" != "" ]; then
+        git_clone_ssh_change $user_root_folder $git_repo $git_project
+      elif [ "$git_secret_token" != "" ]; then
+        git_clone_http $user_root_folder $git_repo $git_project
+      else
+        echo "git cloning requires either a git_aws_secret_key to be set or git_aws_secret_token"
+       exit 5
+      fi
+
+      projectdir=$HOME/$git_project
+      cd $projectdir
+
+      spinnaker_app=$spinnaker_applications
+      IFS=',' read -r -a spinnaker_app_array <<< "$spinnaker_app"
+
+      spinnaker_pipe=$spinnaker_pipelines
+      #IFS=',' read -r -a spinnaker_pipe_array <<< "k8s-deploy"
+      IFS=',' read -r -a spinnaker_pipe_array <<< "$spinnaker_pipe"
+
+      for (( m=0; m<${#spinnaker_app_array[@]}; m++ )); do
+         sourceApp=${spinnaker_app_array[$m]}
+         echo -e "Processing application $sourceApp\n"
+         mkdir -p $sourceApp ; cd $sourceApp              # Get into the correct directory
+         spin pipeline list --application $sourceApp  > tmp.json
+         if [ "$?" != "0" ]; then
+             echo "ERROR: spin pipeline list --application $sourceApp"
+             return 1
+         fi
+         cat tmp.json | jq '.[] | (.name)' | sed 's/\"//g' > pipelines_in_application.list
+         rm tmp.json
+
+         spin application get $sourceApp  > $sourceApp.json
+         if [ "$?" != "0" ]; then
+             echo "ERROR: spin application get $sourceApp"
+             return 1
+         fi
+
+         if [[ ${#spinnaker_pipe_array[@]} > 0 ]]; then
+             for (( p=0; p<${#spinnaker_pipe_array[@]}; p++ )); do
+                pipeLine=${spinnaker_pipe_array[$p]}
+                echo -e "    Processing pipeline $pipeLine\n"
+                # Check if pipeline exists
+                existingPipe=`grep \^${pipeLine}\$ pipelines_in_application.list`
+                if [[ "$existingPipe" == "${pipeLine}" ]]; then
+                   spin pipeline get --application $sourceApp  --name "$pipeLine" > "$pipeLine.json"
+                   if [ "$?" != "0" ]; then
+                       echo "ERROR: spin spin pipeline get --application $sourceApp  --name \"$pipeLine\""
+                       return 1
+                   fi
+                else
+                   echo "WARNING: pipeline=${pipeLine} not found in application=$sourceApp ... skipping"
+                fi
+             done
+         else # No pipelines defined, get all the pipelines
+             while read -r line; do
+                echo -e "    Processing pipeline $line\n"
+                spin pipeline get --application $sourceApp --name "$line" > "$line.json"
+                if [ "$?" != "0" ]; then
+                    echo "ERROR: spin spin pipeline get --application $sourceApp  --name $line"
+                    return 1
+                fi
+             done < pipelines_in_application.list
+         fi
+         if [[ "$pipelinecreateconf" == "true" ]]; then
+            create_default_params
+         fi
+         cd ..
+      done
+
+      #We are done, get update git
+      git_add_all
+      git_commit_all
+      return 0
+    }
+
+    download_spin() {
+      echo "In Download function that updates the spinnaker instance with the contents in git"
+      local user_root_folder=$HOME
+
+
+      if [ "$git_secret_sshkey" != "" ]; then
+        git_clone_ssh_change $user_root_folder $git_repo $git_project
+      elif [ "$git_secret_token" != "" ]; then
+        git_clone_http $user_root_folder $git_repo $git_project
+      else
+        echo "git cloning requires either a git_secret_sshkey to be set or git_secret_token"
+       exit 5
+      fi
+
+      projectdir=$HOME/$git_project
+      cd $projectdir
+
+      spinnaker_app=$spinnaker_applications
+      IFS=',' read -r -a spinnaker_app_array <<< "$spinnaker_app"
+
+      spinnaker_pipe=$spinnaker_pipelines
+      #IFS=',' read -r -a spinnaker_pipe_array <<< "k8s-deploy"
+      IFS=',' read -r -a spinnaker_pipe_array <<< "$spinnaker_pipe"
+
+
+      for (( m=0; m<${#spinnaker_app_array[@]}; m++ )); do
+         sourceApp=${spinnaker_app_array[$m]}
+         echo -e "Processing application $sourceApp\n"
+         cd $sourceApp              # Get into the correct directory
+         if [ "$?" != "0" ]; then
+             echo "ERROR: Unable to change to application directory: $sourceApp"
+             return 1
+         fi
+
+         #Create the application by default, we can have flag to for this later
+         spin application save -f $sourceApp.json
+         retVal=$?
+         if [[ "$retVal" != "0" && "$ignore_errors" == "false" ]]; then
+             echo "ERROR: spin application save $sourceApp"
+             return 1
+         elif [[ "$retVal" != "0" && "$ignore_errors" == "true" ]]; then
+             echo "ERROR: spin application save $sourceApp, continuing"
+             cd ..
+             continue
+         fi
+         sleep 30 # Give a few seconds after application creation
+
+         if [[ ${#spinnaker_pipe_array[@]} > 0 ]]; then
+             for (( p=0; p<${#spinnaker_pipe_array[@]}; p++ )); do
+                pipeLine=${spinnaker_pipe_array[$p]}
+                echo -e "    Processing pipeline $pipeLine\n"
+                # Check if pipeline file  exists
+                if [ -f "$pipeLine.json" ]; then
+                    #Update parameterConfig
+                    if [[ "$pipelineconfig" == "true" ]]; then
+                        mkdir -p temp
+                        update_params "$pipeLine.json"
+                        rm -rf temp
+                    fi
+                   spin pipeline save --file "$pipeLine.json"
+                   retVal=$?
+                   if [[ "$retVal" != "0" && "$ignore_errors" == "false" ]]; then
+                       echo "ERROR: spin pipeline save --file $pipeLine.json"
+                       return 1
+                   elif [[ "$retVal" != "0" && "$ignore_errors" == "true" ]]; then
+                       echo "ERROR: spin pipeline save --file $pipeLine.json, continuing"
+                       continue
+                   fi
+                else
+                   echo "WARNING: pipeline=${pipeLine} not found in application=$sourceApp ... skipping"
+                fi
+             done
+         else # No pipelines defined, get all the pipelines
+             while read -r line; do
+                [[ -f "$line.json" ]] || continue
+                pipeLine=$line
+                echo -e "    Processing pipeline $pipeLine\n"
+
+                #Update parameterConfig
+                if [[ "$pipelineconfig" == "true" ]]; then
+                    mkdir -p temp
+                    update_params "$pipeLine.json"
+                    #rm -rf temp
+                fi
+                spin pipeline save --file "$pipeLine.json"
+                retVal=$?
+                if [[ "$retVal" != "0" && "$ignore_errors" == "false"  ]]; then
+                    echo "ERROR: spin pipeline save --file $pipeLine.json"
+                    return 1
+                elif [[ "$retVal" != "0" && "$ignore_errors" == "true" ]]; then
+                    echo "ERROR: spin pipeline save --file $pipeLine.json, continuing"
+                    continue
+                fi
+                sleep 5 # Slow it down
+             done < pipelines_in_application.list
+         fi
+         cd ..
+      done
+
+    }
+
+    update_params() {
+        confDir=${pipelineconfigdir}
+        if [ ! -d "$confDir" ] ; then
+          echo "Directory specified for configuratio ($confDir) not found in application directory"
+          return
+        fi
+        json="$1"
+
+        echo "Processing pipeline ($json) and updating pipelines as per configuration in $confDir"
+
+        #Extract .parameterConfig
+        cat "$json" | jq '.parameterConfig' > temp/"config-$json"
+
+        #Replace parameters
+        cat temp/"config-$json" | jq -f /home/opsmx/scripts/replace-params.jq --argfile pp $confDir/"$json" > temp/"updated-config-$json"
+
+        #Replace .parameterConfig
+        cat "$json" | jq  '.parameterConfig=$uc' --argfile uc temp/"updated-config-$json" > temp/"$json"
+
+        ########################################################################
+        #Extract 1st trigger
+        cat  temp/"$json"| jq '.triggers[0]' > temp/tmp-trig.json
+
+        #Update first trigger
+        cat temp/tmp-trig.json | jq 'if $pp.triggerValues != null then . * $pp.triggerValues else . end'  --argfile pp $confDir/"$json"  > temp/updated-tmp-trig.json
+
+        #Update pipeline-json with updated trigger
+        if [[ `cat temp/updated-tmp-trig.json | wc -c` -gt 5 ]]
+        then
+          cat temp/"$json" | jq '.triggers[0]=$pp' --argfile pp temp/updated-tmp-trig.json > temp/final-replaced.json
+          cp temp/final-replaced.json "$json"
+        else
+          cp  temp/"$json" "$json"
+        fi
+
+        ########################################################################
+
+    }
+
+    #Create default parameterconfig-files
+    create_default_params() {
+        targetDir=${1:-default-config}
+        echo "Processing pipelines and creating output in $targetDir"
+        mkdir -p $targetDir
+        for json in *.json ; do
+          [[ -f "$json" ]] || continue
+          echo "	processing $json"
+          cat "$json" | jq '.parameterConfig | reduce .[] as $p  ({};.Parameters += {($p.name): $p.default})'  >  $targetDir/tmp-param.json 2>/dev/null
+          cat "$json" | jq '.triggers[0] '  >  $targetDir/tmp-trig.json 2>/dev/null
+
+          if [[ `cat $targetDir/tmp-trig.json | wc -c` -gt 5 ]]
+          then
+            cat $targetDir/tmp-param.json | jq '.triggerValues=$pp' --argfile pp $targetDir/tmp-trig.json > $targetDir/"$json" 2>/dev/null
+          else
+            cp  $targetDir/tmp-param.json $targetDir/"$json"
+          fi
+        done
+        rm -f $targetDir/tmp-param.json
+        rm -f $targetDir/tmp-trig.json
+        #Remove all files with zero size
+        echo "Removing files that do not have any parameters defined"
+        find $targetDir -type f -size -4c -delete # No parameterConfig in the file
+        #find $targetDir -type f -size -4c -print -delete # No parameterConfig in the file
+    }
+
+
+    setup_git $git_friendly_username $git_user_email
+    if [[ "$command" == "download" ]]; then
+      download_spin
+    elif [[ "$command" == "upload" ]]; then
+      upload_spin
+    else
+      echo "command is not set or is invalid ($command)"
+      exit 5
+    fi
+    exit $?
+  replace-params.jq: |
+    .[]                                       # Stream input json (orig-paramConfig)
+    | .default=                               # set value of "default" key to either the new one or the old one
+    ( . as $paramFull                         # save the current input object as paramFull , this is the entire parameterConfig block
+    | $pp.Parameters                          # strea new-configs
+    |  if has($paramFull.name) then           # If the new-configs has a key that is the value of the "name" key of the existing config
+          $pp.Parameters[$paramFull.name]      # return the new value
+       else
+          $paramFull.default                  # else simply return the current value
+       end
+    )
+{{- end }}

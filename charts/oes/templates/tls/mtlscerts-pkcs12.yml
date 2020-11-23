@@ -1,0 +1,46 @@
+{{- if and (.Values.spinnaker.gitopsHalyard.mTLS.enabled) (.Values.spinnaker.gitopsHalyard.enabled) }}
+apiVersion: cert-manager.io/v1
+kind: Certificate
+metadata:
+  name: mtlscerts-pkcs12
+spec:
+  secretName: mtlscerts-pkcs12
+  duration: 21600h # 90d
+  renewBefore: 3600h # 15d
+  commonName: {{ .Release.Namespace }}.svc
+  keystores:
+   pkcs12:
+     create: true
+     passwordSecretRef:
+       name: passphrasesecret
+       key: passphrase
+  dnsNames:
+  - spin-clouddriver-ro.{{ .Release.Namespace }}.svc
+  - spin-clouddriver-caching.{{ .Release.Namespace }}.svc
+  - spin-clouddriver-ro-deck.{{ .Release.Namespace }}.svc
+  - spin-clouddriver-rw.{{ .Release.Namespace }}.svc
+  - spin-echo-scheduler.{{ .Release.Namespace }}.svc
+  - spin-echo-worker.{{ .Release.Namespace }}.svc
+  - spin-front50.{{ .Release.Namespace }}.svc
+  - spin-gate.{{ .Release.Namespace }}.svc
+  - spin-igor.{{ .Release.Namespace }}.svc
+  - spin-orca.{{ .Release.Namespace }}.svc
+  - spin-rosco.{{ .Release.Namespace }}.svc
+  - spin-fiat.{{ .Release.Namespace }}.svc
+  - spin-deck.{{ .Release.Namespace }}.svc
+  - "*.{{ .Release.Namespace }}.svc"
+  - localhost
+{{- if .Values.spinnaker.gitopsHalyard.gatex509.enabled }}
+  - {{ .Values.spinnaker.gitopsHalyard.gatex509.host }}
+{{- end }}
+  usages:
+  - digital signature
+  - key encipherment
+  - server auth
+  - client auth
+  issuerRef:
+    name: caissuer
+    # We can reference ClusterIssuers by changing the kind here.
+    # The default value is Issuer (i.e. a locally namespaced Issuer)
+    kind: Issuer
+{{- end }}

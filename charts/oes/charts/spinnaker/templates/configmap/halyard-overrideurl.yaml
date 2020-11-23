@@ -2,8 +2,13 @@ apiVersion: v1
 data:
   call_overrides.sh: |
     echo $SPINNAKER_NAMESPACE
+    {{- if .Values.gitopsHalyard.mTLS.enabled }}
+    sh /tmp/autoconfig/config_overrideurl.sh spin-deck-ingress
+    sh /tmp/autoconfig/config_overrideurl.sh spin-gate-ingress
+    {{- else }}
     sh /tmp/autoconfig/config_overrideurl.sh spin-deck
     sh /tmp/autoconfig/config_overrideurl.sh spin-gate
+    {{- end }}
   config_overrideurl.sh: |
     #!/bin/bash -x
 
@@ -14,7 +19,7 @@ data:
     fi
 
     COMPONENT=$1
-    EXTERNAL_IP_CHECK_DELAY={{ .Values.gitopsHalyardInit.spinnakerLBCheckDelay }}
+    EXTERNAL_IP_CHECK_DELAY={{ .Values.gitopsHalyard.spinnakerLBCheckDelay }}
 
     check_for_loadBalancer()
     {
@@ -218,6 +223,17 @@ data:
           ## Run hal config edit command to override deck url
           $HAL_COMMAND config security ui edit --no-validate --override-base-url http://$ENDPOINT_IP:$PORT
         fi
+        ;;
+      spin-gate-ingress)
+        ## Configured ingress host url as override url
+          echo "Substituting gate url"
+          sed -i 's,OVERRIDE_API_URL,{{ tpl .Values.gitopsHalyard.mTLS.gateIngressHost . }},g' /tmp/spinnaker/.hal/config
+        ;;
+
+      spin-deck-ingress)
+        ## Configured ingress host url as override url
+          echo "Substituting deck url"
+          sed -i 's,OVERRIDE_DECK_URL,{{ tpl .Values.gitopsHalyard.mTLS.deckIngressHost . }},g' /tmp/spinnaker/.hal/config
         ;;
       *)
         echo  COMP=$COMPONENT

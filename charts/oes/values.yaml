@@ -15,12 +15,16 @@ imagePullSecret: opsmxdev-secret
 ##
 imageCredentials:
   registry: https://index.docker.io/v1/
-  username: username  # Docker hub username
-  password: password # Docker hub password
+  username: dockerID  # Docker hub username
+  password: dockerPassword # Docker hub password
   email: info@opsmx.com   # email corresponding to docker hub ID
 
 rbac:
   create: true
+
+## Set to true to expose spinnaker and deck services over ingress
+##
+createIngress: false
 
 ## Option to skip installation of OpsMx Spinnaker
 ## Setting this to true, will ensure custom ubi8 images of Spinnaker
@@ -30,10 +34,6 @@ installSpinnaker: true
 ## Available installation modes OES-AP, OES, AP, None
 ##
 installationMode: OES-AP
-
-## Set to true to expose spinnaker and deck services as LoadBalancers
-##
-createIngress: false
 
 ## OES UI & Gate service type
 ##
@@ -171,8 +171,8 @@ gate:
     ## under Redis Configuration section
     ##
 
-    ## Regex of OES-UI URL to prevent cross origin attacks
-    oesUIcors: ^https?://(?:localhost|OES_UI_LOADBALANCER_IP|opsmx.com|192.168.3.69)(?::[1-9]\d*)?/?
+    ## Regex of OES-UI URL to allow cross origin requests
+    oesUIcors: ^https?://(?:localhost|OES_UI_LOADBALANCER_IP|opsmx.com)(?::[1-9]\d*)?/?
 
     ## Set it to true to disable LDAP authentication and enable file based authentication
     ## Reach out over support@opsmx.com for pre-configured user credentials
@@ -759,13 +759,35 @@ spinnaker:
     # Specifies permissions to write for user/group
     runAsUser: 1000
     fsGroup: 1000
+
+  ## Option to enable HA in Spinnaker; Enabled by default
+  enableHA: true
+
   ## Centralized Monitoring enable for Prometheus
   enableCentralMonitoring: false
-  #Initialize gitOps style Halyard
-  gitopsHalyardInit:
+
+  # Initialize gitOps style Halyard
+  gitopsHalyard:
     enabled: false
+    mTLS:
+      enabled: false   # Enable mTLS for Spinnaker Services and SSL for Deck and Gate
+      deckIngressHost: spindeck.{{ .Release.Name }}.domain.com  # Used by OES to create ingress for deck
+      gateIngressHost: spingate.{{ .Release.Name }}.domain.com  # Used by OES to create ingress for gate
     repo-type: git # git, S3, vault, only git support at this point
     secretName: opsmx-gitops-auth
     # Max time(in secs) that an init container of halyard should wait
     # to fetch External Load Balancer IP of spin-deck and spin-gate
     spinnakerLBCheckDelay: 180
+    # Promote applications and pipelines from one environment to another environment
+      ## x509 authentication for Spinnaker Gate
+    gatex509:
+      enabled: false
+      host: spingate-x509.domain.com
+    pipelinePromotion:
+      enabled: false
+      ## Namespace in which pipeline promotion job need to run
+      # TODO: Implementation pending; currently default namespace is hardcoded
+      executionNamespace: default
+      ## Spinnaker kubernetes account to use for job execution
+      # TODO: Implementation pending; currently default namespace is hardcoded
+      executionAccountName: default

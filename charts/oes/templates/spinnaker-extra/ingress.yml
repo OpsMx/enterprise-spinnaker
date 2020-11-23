@@ -1,5 +1,68 @@
-{{- if .Values.installSpinnaker }}
-{{- if .Values.createIngress }}
+{{- if (.Values.installSpinnaker) }}
+{{- if .Values.spinnaker.gitopsHalyard.mTLS.enabled }}
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  annotations:
+    cert-manager.io/issuer: letsencrypt-prod
+    kubernetes.io/ingress.class: nginx
+    nginx.ingress.kubernetes.io/backend-protocol: HTTPS
+    nginx.ingress.kubernetes.io/proxy-ssl-secret: {{ .Release.Namespace }}/mtlscerts-pkcs12
+    nginx.ingress.kubernetes.io/proxy-ssl-server-name: spin-deck.{{ .Release.Namespace }}.svc
+    nginx.ingress.kubernetes.io/ssl-redirect: "true"
+    "helm.sh/hook": post-install
+    "helm.sh/hook-delete-policy": before-hook-creation
+  name: spinnaker-deck-ingress
+spec:
+  rules:
+  - host: {{ tpl .Values.spinnaker.gitopsHalyard.mTLS.deckIngressHost . }}
+    http:
+      paths:
+      - backend:
+          serviceName: spin-deck
+          servicePort: 9000
+        path: /
+  tls:
+  - hosts:
+    - {{ tpl .Values.spinnaker.gitopsHalyard.mTLS.deckIngressHost . }}
+    secretName: ui-{{ .Release.Name }}-tls
+---
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  annotations:
+    cert-manager.io/issuer: letsencrypt-prod
+    kubernetes.io/ingress.class: nginx
+    nginx.ingress.kubernetes.io/backend-protocol: HTTPS
+    nginx.ingress.kubernetes.io/proxy-ssl-secret: {{ .Release.Namespace }}/mtlscerts-pkcs12
+    nginx.ingress.kubernetes.io/proxy-ssl-server-name: spin-gate.{{ .Release.Namespace }}.svc
+    nginx.ingress.kubernetes.io/ssl-redirect: "true"
+    "helm.sh/hook": post-install
+    "helm.sh/hook-delete-policy": before-hook-creation
+  name: spinnaker-gate-ingress
+spec:
+  rules:
+  - host: {{ tpl .Values.spinnaker.gitopsHalyard.mTLS.gateIngressHost . }}
+    http:
+      paths:
+      - backend:
+          serviceName: spin-gate
+          servicePort: 8084
+        path: /
+      - backend:
+          serviceName: spin-gate
+          servicePort: 8084
+        path: /login
+      - backend:
+          serviceName: spin-gate
+          servicePort: 8084
+        path: /auth/*
+  tls:
+  - hosts:
+    - {{ tpl .Values.spinnaker.gitopsHalyard.mTLS.gateIngressHost . }}
+    secretName: api-{{ .Release.Name }}-tls
+---
+{{- else if (.Values.spinnaker.createIngress) }}
 apiVersion: extensions/v1beta1
 kind: Ingress
 metadata:

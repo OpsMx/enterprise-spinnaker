@@ -1,0 +1,9 @@
+{{- if and (.Values.spinnaker.gitopsHalyard.mTLS.enabled) (.Values.spinnaker.gitopsHalyard.enabled) }}
+apiVersion: cert-manager.io/v1
+kind: Issuer
+metadata:
+  name: caissuer
+spec:
+  ca:
+    secretName: cacert
+{{- end }}

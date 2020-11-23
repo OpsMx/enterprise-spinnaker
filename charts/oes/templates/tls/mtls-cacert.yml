@@ -1,0 +1,32 @@
+{{- if and (.Values.spinnaker.gitopsHalyard.mTLS.enabled) (.Values.spinnaker.gitopsHalyard.enabled) }}
+apiVersion: cert-manager.io/v1
+kind: Certificate
+metadata:
+ name: mtlsca
+spec:
+ secretName: cacert
+ isCA: true
+ issuerRef:
+   name: selfsigned-issuer
+   kind: Issuer
+ commonName: mtlsca
+ dnsNames:
+  - spin-clouddriver-ro.{{ .Release.Namespace }}.svc
+  - spin-clouddriver-caching.{{ .Release.Namespace }}.svc
+  - spin-clouddriver-ro-deck.{{ .Release.Namespace }}.svc
+  - spin-clouddriver-rw.{{ .Release.Namespace }}.svc
+  - spin-echo-scheduler.{{ .Release.Namespace }}.svc
+  - spin-echo-worker.{{ .Release.Namespace }}.svc
+  - spin-front50.{{ .Release.Namespace }}.svc
+  - spin-gate.{{ .Release.Namespace }}.svc
+  - spin-igor.{{ .Release.Namespace }}.svc
+  - spin-orca.{{ .Release.Namespace }}.svc
+  - spin-rosco.{{ .Release.Namespace }}.svc
+  - spin-fiat.{{ .Release.Namespace }}.svc
+  - spin-deck.{{ .Release.Namespace }}.svc
+  - "*.{{ .Release.Namespace }}.svc"
+  - localhost
+{{- if .Values.spinnaker.gitopsHalyard.gatex509.enabled }}
+  - {{ .Values.spinnaker.gitopsHalyard.gatex509.host }}
+{{- end }}
+{{- end }}

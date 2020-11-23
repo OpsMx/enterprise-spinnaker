@@ -1,0 +1,18 @@
+{{- if .Values.spinnaker.gitopsHalyard.pipelinePromotion.enabled }}
+apiVersion: v1
+data:
+  git_friendly_username: <git_friendly_username>
+  git_project: pipeline-promotion
+  git_refresh_enabled: "true"
+  git_repo: <git_repo>
+  git_user_email: <git_user_email>
+  ignore_spin_errors: "false"
+  debug: "false"
+  pipelineconfig: "true" # Enable pipeline configuration during promotion
+  pipelineconfigdir: "prod-config" # directory to look for under application when syncing to Spinnaker
+  pipelinecreateconf: "true" # Create default parameter-config files in "default-config", useful for 1st time param-creation
+kind: ConfigMap
+metadata:
+  name: pipe-promot-config
+  namespace: {{ .Values.spinnaker.gitopsHalyard.pipelinePromotion.executionNamespace }}
+{{- end }}

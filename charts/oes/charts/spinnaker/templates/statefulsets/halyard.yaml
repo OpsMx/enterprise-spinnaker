@@ -40,19 +40,19 @@ spec:
     {{- end }}
       initContainers:
       - name: "create-halyard-local"
-      {{- if .Values.gitopsHalyardInit.enabled }}
+      {{- if .Values.gitopsHalyard.enabled }}
         image: alpine/git:v2.26.2
       {{- else }}
         image: {{ .Values.halyard.image.repository }}:{{ .Values.halyard.image.tag }}
       {{- end }}
         command:
-        {{- if .Values.gitopsHalyardInit.enabled }}
+        {{- if .Values.gitopsHalyard.enabled }}
         - sh
         {{- else }}
         - bash
         {{- end }}
         - /tmp/initscript/init.sh
-        {{- if .Values.gitopsHalyardInit.enabled }}
+        {{- if .Values.gitopsHalyard.enabled }}
         env:
         - name: SPINNAKER_NAMESPACE
           valueFrom:
@@ -61,22 +61,22 @@ spec:
         - name: GIT_CLONE_PARAM
           valueFrom:
             secretKeyRef:
-              name: {{ .Values.gitopsHalyardInit.secretName }}
+              name: {{ .Values.gitopsHalyard.secretName }}
               key: gitcloneparam
         - name: GIT_USER
           valueFrom:
             secretKeyRef:
-              name: {{ .Values.gitopsHalyardInit.secretName }}
+              name: {{ .Values.gitopsHalyard.secretName }}
               key: gituser
         - name: GIT_TOKEN
           valueFrom:
             secretKeyRef:
-              name: {{ .Values.gitopsHalyardInit.secretName }}
+              name: {{ .Values.gitopsHalyard.secretName }}
               key: gittoken
         - name: DYNAMIC_ACCOUNTS_REPO
           valueFrom:
             secretKeyRef:
-              name: {{ .Values.gitopsHalyardInit.secretName }}
+              name: {{ .Values.gitopsHalyard.secretName }}
               key: dynamicaccountsgituri
         {{- end }}
         volumeMounts:
@@ -107,7 +107,7 @@ spec:
         env:
 {{ toYaml .Values.halyard.env | indent 8 }}
         {{- end }}
-      {{- if .Values.gitopsHalyardInit.enabled }}
+      {{- if .Values.gitopsHalyard.enabled }}
       - name: "halyard-overrideurl"
         command:
         - sh
@@ -153,16 +153,20 @@ spec:
         {{- end }}
       {{- end }}
       volumes:
-      {{- if or .Values.gitopsHalyardInit.enabled (not .Values.halyard.persistence.enabled) }}
+      {{- if or .Values.gitopsHalyard.enabled (not .Values.halyard.persistence.enabled) }}
       - name: halyard-home
         emptyDir: {}
       {{- end }}
-      {{- if .Values.gitopsHalyardInit.enabled }}
+      {{- if .Values.gitopsHalyard.enabled }}
       - name: halyard-overrideurl
         configMap:
           name: {{ template "spinnaker.fullname" . }}-halyard-overrideurl
       {{- end }}
-
+      {{- if .Values.gitopsHalyard.mTLS.enabled }}
+      - name: sslcerts
+        secret:
+          secretName: mtlscerts-pkcs12
+      {{- end }}
       {{- if and .Values.kubeConfig.enabled .Values.kubeConfig.secretName }}
       - name: kube-config
         secret:
@@ -240,11 +244,17 @@ spec:
       imagePullSecrets:
         {{- range .Values.halyard.image.pullSecrets }}
         - name: {{ . }}
-        {{- end}}
-      {{- end}}
+        {{- end }}
+      {{- end }}
       containers:
       - name: halyard
         image: {{ .Values.halyard.image.repository }}:{{ .Values.halyard.image.tag }}
+        {{- if .Values.gitopsHalyard.enabled }}
+        lifecycle:
+          postStart:
+            exec:
+              command: ["/bin/sh", "-c", "until hal --ready; do sleep 10 ;done;hal deploy apply"]
+        {{- end }}
         ports:
         - containerPort: 8064
           name: daemon
@@ -284,11 +294,19 @@ spec:
           subPath: cacerts
           name: cacerts
         {{- end }}
+        {{- if .Values.gitopsHalyard.mTLS.enabled }}
+        - mountPath: /home/spinnaker/.hal/default/tls.crt
+          subPath: tls.crt
+          name: sslcerts
+        - mountPath: /home/spinnaker/.hal/default/tls.key
+          subPath: tls.key
+          name: sslcerts
+        {{- end }}
         {{- if .Values.halyard.env }}
         env:
 {{ toYaml .Values.halyard.env | indent 8 }}
         {{- end }}
-{{- if and (not .Values.gitopsHalyardInit.enabled) .Values.halyard.persistence.enabled }}
+{{- if and (not .Values.gitopsHalyard.enabled) .Values.halyard.persistence.enabled }}
   volumeClaimTemplates:
   - metadata:
       name: halyard-home
