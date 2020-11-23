@@ -1,4 +1,3 @@
-# DB configuration
 spring:
   datasource:
     url={{ .Values.db.url }}/visibilitydb
