@@ -453,13 +453,12 @@ ldap:
   url: ldap://{{ .Release.Name }}-openldap:389
   userDnPattern: cn={0}
   basedn: dc=example,dc=org # Value of ldap.base.dn
-  adminDn: cn=admin,dc=example,dc=org
-  adminPassword: opsmxadmin123
-  userDisplayName: displayName
-  pattern: (&(cn=USERNAME))
-  userGroupIdentity: memberOf
-  userIdentity: cn
-  userPrepend: cn=USERNAME
+  managerDn: cn=admin,dc=example,dc=org
+  managerPassword: opsmxadmin123
+  groupSearchBase: ou=groups,dc=example,dc=org
+  groupSearchFilter: member={0}
+  groupRoleAttributes: cn
+  userDnPattern: cn={0},dc=example,dc=org
 
 #####################################################
 # Centralized Logging Configuration

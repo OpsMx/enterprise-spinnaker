@@ -1,7 +1,7 @@
 {{- if or (eq .Values.installationMode "OES-AP") (eq .Values.installationMode "AP") (eq .Values.installationMode "OES") -}}
 apiVersion: v1
 data:
-  application.yml: |
+  dashboard-local.yml: |
     {{- tpl (.Files.Get "config/oes-dashboard/dashboard-local.yml") . | nindent 4 }}
 kind: ConfigMap
 metadata:

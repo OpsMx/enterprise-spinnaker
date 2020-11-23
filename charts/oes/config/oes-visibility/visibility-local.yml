@@ -24,7 +24,6 @@ visiblity:
           - username
           - password
           - url
-
 jira:
   api:
     url: /rest/api/2/search
