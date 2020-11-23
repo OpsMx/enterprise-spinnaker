@@ -17,7 +17,7 @@ cors:
   allowed-origins-pattern: {{ .Values.gate.config.oesUIcors }}
 ldap:
   enabled: {{ .Values.ldap.enabled }}
-  url: {{ tpl .Values.ldap.url . }}/{{ .Values.ldap.basedn }}
+  url: {{ tpl .Values.ldap.url . }}
   userDnPattern: {{ .Values.ldap.userDnPattern }}
 file:
   enabled: {{ .Values.gate.config.fileBasedAuthentication.enabled }}

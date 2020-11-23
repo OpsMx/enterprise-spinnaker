@@ -451,8 +451,6 @@ openldap:
 ldap:
   enabled: true
   url: ldap://{{ .Release.Name }}-openldap:389
-  userDnPattern: cn={0}
-  basedn: dc=example,dc=org # Value of ldap.base.dn
   managerDn: cn=admin,dc=example,dc=org
   managerPassword: opsmxadmin123
   groupSearchBase: ou=groups,dc=example,dc=org
