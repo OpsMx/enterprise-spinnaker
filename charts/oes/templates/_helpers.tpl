@@ -74,6 +74,17 @@ Return the proper sapor-db image name
 {{- end -}}
 
 {{/*
+Return the proper visibility image name
+*/}}
+{{- define "visibility.image" -}}
+{{- $registryName := .Values.visibility.image.registry -}}
+{{- $repositoryName := .Values.visibility.image.repository -}}
+{{- $tag := .Values.visibility.image.tag | toString -}}
+{{- printf "%s/%s:%s" $registryName $repositoryName $tag -}}
+{{- end -}}
+
+
+{{/*
 Return the proper Autopilot image name
 */}}
 {{- define "autopilot.image" -}}

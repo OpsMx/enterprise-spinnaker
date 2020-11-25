@@ -82,7 +82,7 @@ db:
   image:
     registry: opsmxdev
     repository: ubi8-autopilot-db
-    tag: v1.5
+    tag: v1.6
     pullPolicy: IfNotPresent
 
   ## Strategy to rollout statefulset pods
@@ -108,7 +108,7 @@ autopilot:
   image:
     registry: opsmxdev
     repository: ubi8-oes-autopilot
-    tag: v3.1-202010191958
+    tag: v3.3-202011251913
     pullPolicy: IfNotPresent
 
   config:
@@ -139,7 +139,7 @@ dashboard:
   image:
     registry: opsmxdev
     repository: ubi8-oes-dashboard
-    tag: v3.1-202010192021
+    tag: v3.3-202011251913
     pullPolicy: IfNotPresent
 
   config:
@@ -158,7 +158,7 @@ gate:
   image:
     registry: opsmxdev
     repository: ubi8-oes-gate
-    tag: v3.1-202010191958
+    tag: v3.3-202011251914
     pullPolicy: IfNotPresent
 
   config:
@@ -189,7 +189,7 @@ platform:
   image:
     registry: opsmxdev
     repository: ubi8-oes-platform
-    tag: v3.1-202010191959
+    tag: v3.3-202011251915
     pullPolicy: IfNotPresent
 
   config:
@@ -221,10 +221,9 @@ platform:
     ## List of features to be supported by OES
     ##
     supportedFeatures:
-      - deployment-verification
-      - services
-      - releases
-      - policies
+      - deployment_verification
+      - sapor
+      - visibility
 
 ###############################################################################
 ##
@@ -236,7 +235,7 @@ sapor:
   image:
     registry: opsmxdev
     repository: ubi8-oes-sapor
-    tag: v3.1-202010191959
+    tag: v3.3-202011251915
     pullPolicy: IfNotPresent
 
   config:
@@ -292,9 +291,9 @@ ui:
   ## Image specific details
   ##
   image:
-    registry: opsmxdev
-    repository: ubi8-oes-ui
-    tag: v3.1-202010191957
+    registry: opsmx11
+    repository: oes-ui
+    tag: v0.202011231450
     pullPolicy: IfNotPresent
 
   config:
@@ -304,6 +303,31 @@ ui:
 
     ## Interval at which UI refreshes application dashboard
     setApplicationRefreshInterval: 16000
+
+###################################################################################
+##
+#
+## Values of OES Visibility
+##
+visibility:
+  ## Image specific details
+  ##
+  image:
+    registry: opsmxdev
+    repository: ubi8-oes-visibility
+    tag: v3.3-202011251916
+    pullPolicy: IfNotPresent
+
+  config:
+    ## DB configuration; change it any other external DB is to be used
+    ## Refer it above, under DB configuration section
+    ##
+
+    ## Autopilot integration options
+    configuredConnectors: JIRA,GIT,AUTOPILOT,SONARQUBE,JENKINS
+
+    ## Logger level
+    logLevel: ERROR
 
 ###############################################################################
 ## This option enables OES to be configured automatically
@@ -431,15 +455,12 @@ openldap:
 ldap:
   enabled: true
   url: ldap://{{ .Release.Name }}-openldap:389
-  userDnPattern: cn={0}
-  basedn: dc=example,dc=org # Value of ldap.base.dn
-  adminDn: cn=admin,dc=example,dc=org
-  adminPassword: opsmxadmin123
-  userDisplayName: displayName
-  pattern: (&(cn=USERNAME))
-  userGroupIdentity: memberOf
-  userIdentity: cn
-  userPrepend: cn=USERNAME
+  managerDn: cn=admin,dc=example,dc=org
+  managerPassword: opsmxadmin123
+  groupSearchBase: ou=groups,dc=example,dc=org
+  groupSearchFilter: member={0}
+  groupRoleAttributes: cn
+  userDnPattern: cn={0},dc=example,dc=org
 
 #####################################################
 # Centralized Logging Configuration

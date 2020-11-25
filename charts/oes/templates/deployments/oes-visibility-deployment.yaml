@@ -4,36 +4,40 @@ kind: Deployment
 metadata:
   labels:
     app: oes
-    component: dashboard
+    component: visibility
 {{ include "oes.standard-labels" . | indent 4 }}
-  name: oes-dashboard
+  name: oes-visibility
 spec:
   replicas: 1
   selector:
     matchLabels:
       app: oes
-      component: dashboard
+      component: visibility
   strategy: {}
   template:
     metadata:
       annotations:
-        configmap/checksum: {{ (.Files.Glob "config/oes-dashboard/dashboard-local.yml").AsConfig | sha256sum }}
+        configmap/checksum: {{ (.Files.Glob "config/oes-visibility/visibility-local.yml").AsConfig | sha256sum }}
       labels:
         app: oes
-        component: dashboard
+        component: visibility
 {{ include "oes.standard-labels" . | indent 8 }}
     spec:
+      initContainers:
+      - name: db-check
+        image: busybox:1.28
+        command: ['sh', '-c', "sleep 60;until nslookup oes-db.$(cat /var/run/secrets/kubernetes.io/serviceaccount/namespace).svc.cluster.local; do echo waiting for oes-db to be up and running; sleep 2; done"]
       containers:
-      - image: {{ template "dashboard.image" . }}
-        name: oes-dashboard
+      - image: {{ template "visibility.image" . }}
+        name: oes-visibility
         ports:
-        - containerPort: 8094
+        - containerPort: 8096
           protocol: TCP
         env:
         volumeMounts:
-        - mountPath: /opsmx/conf/dashboard-local.yml
-          name: dashboard-config
-          subPath: dashboard-local.yml
+        - mountPath: /opsmx/conf/visibility-local.yml
+          name: visibility-config
+          subPath: visibility-local.yml
         resources:
           requests:
             memory: "500Mi"
@@ -43,19 +47,19 @@ spec:
             cpu: "1500m"
         readinessProbe:
           tcpSocket:
-            port: 8094
+            port: 8096
           initialDelaySeconds: 10
           periodSeconds: 5
         livenessProbe:
           httpGet:
             path: /mgmt/health
-            port: 8094
+            port: 8096
           initialDelaySeconds: 30
           periodSeconds: 60
       imagePullSecrets:
       - name: {{ .Values.imagePullSecret}}
       volumes:
-      - name: dashboard-config
+      - name: visibility-config
         configMap:
-          name: oes-dashboard-config
+          name: oes-visibility-config
 {{- end -}}

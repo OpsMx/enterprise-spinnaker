@@ -11,14 +11,13 @@ userGroup:
 user:
   source: {{ .Values.platform.config.userSource }}
 ldap:
-  adminDn: {{ .Values.ldap.adminDn }}
-  adminPassword: {{ .Values.ldap.adminPassword }}
-  baseDn: {{ .Values.ldap.basedn }}
   url: {{ tpl .Values.ldap.url . }}
-  userDisplayName: {{ .Values.ldap.userDisplayName }}
-  userFilterPattern: {{ .Values.ldap.pattern }}
-  userGroupIdentity: {{ .Values.ldap.userGroupIdentity }}
-  userIdentity: {{ .Values.ldap.userIdentity }}
-  userPrepend: {{ .Values.ldap.userPrepend }}
+  managerDn: {{ .Values.ldap.managerDn }}
+  managerPassword: {{ .Values.ldap.managerPassword }}
+  groupSearchBase: {{ .Values.ldap.groupSearchBase }}
+  groupSearchFilter: {{ .Values.ldap.groupSearchFilter }}
+  groupRoleAttributes: {{ .Values.ldap.groupRoleAttributes }}
+  userDnPattern: {{ .Values.ldap.userDnPattern }}
+
 redis:
   connection: {{ tpl .Values.redis.url . }}

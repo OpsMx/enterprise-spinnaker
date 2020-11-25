@@ -1,0 +1,17 @@
+spring:
+  datasource:
+    url={{ .Values.db.url }}/visibilitydb
+    username={{ .Values.db.username }}
+    password={{ .Values.db.password }}
+
+visiblity:
+   connectors:
+      configured: {{ .Values.visibility.config.configuredConnectors }}
+
+logging:
+  level:
+    io:
+      swagger:
+        models:
+          parameters:
+            AbstractSerializableParameter: {{ .Values.visibility.config.logLevel }}
