@@ -291,9 +291,9 @@ ui:
   ## Image specific details
   ##
   image:
-    registry: opsmx11
-    repository: oes-ui
-    tag: v0.202011231450
+    registry: opsmxdev
+    repository: ubi8-oes-ui
+    tag: v3.3-202011251916
     pullPolicy: IfNotPresent
 
   config:
