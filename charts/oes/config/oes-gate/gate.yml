@@ -12,6 +12,9 @@ services:
   dashboard:
     baseUrl: http://oes-dashboard:8094
     enabled: true
+  visibility:
+    baseUrl: http://oes-visibility:8096
+    enabled: true
   user: {}
 cors:
   allowed-origins-pattern: {{ .Values.gate.config.oesUIcors }}

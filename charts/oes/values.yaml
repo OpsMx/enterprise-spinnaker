@@ -28,7 +28,7 @@ createIngress: false
 
 ## Option to skip installation of OpsMx Spinnaker
 ## Setting this to true, will ensure custom ubi8 images of Spinnaker
-installSpinnaker: false
+installSpinnaker: true
 
 ## Installation mode
 ## Available installation modes OES-AP, OES, AP, None
@@ -46,7 +46,7 @@ k8sServiceType: LoadBalancer
 ## If Spinnaker is being installed, redis installed by spinnaker chart can
 ## be re-used
 ##
-installRedis: true
+installRedis: false
 
 ###############################################################################
 ## Details of redis-master image for OES
@@ -82,7 +82,7 @@ db:
   image:
     registry: opsmxdev
     repository: ubi8-autopilot-db
-    tag: v1.5-visibility-test
+    tag: v1.6
     pullPolicy: IfNotPresent
 
   ## Strategy to rollout statefulset pods
@@ -106,9 +106,9 @@ autopilot:
   ## Image specific details
   ##
   image:
-    registry: opsmx11
-    repository: oes-autopilot
-    tag: v3.3-RC2-202011230653
+    registry: opsmxdev
+    repository: ubi8-oes-autopilot
+    tag: v3.3-202011251913
     pullPolicy: IfNotPresent
 
   config:
@@ -137,9 +137,9 @@ dashboard:
   ## Image specific details
   ##
   image:
-    registry: opsmx11
-    repository: oes-dashboard
-    tag: master-202011210741
+    registry: opsmxdev
+    repository: ubi8-oes-dashboard
+    tag: v3.3-202011251913
     pullPolicy: IfNotPresent
 
   config:
@@ -156,9 +156,9 @@ gate:
   ## Image specific details
   ##
   image:
-    registry: opsmx11
-    repository: oes-gate
-    tag: v0.202011202046
+    registry: opsmxdev
+    repository: ubi8-oes-gate
+    tag: v3.3-202011251914
     pullPolicy: IfNotPresent
 
   config:
@@ -187,9 +187,9 @@ platform:
   ## Image specific details
   ##
   image:
-    registry: opsmx11
-    repository: oes-platform
-    tag: platform-ldap-202011201326
+    registry: opsmxdev
+    repository: ubi8-oes-platform
+    tag: v3.3-202011251915
     pullPolicy: IfNotPresent
 
   config:
@@ -221,10 +221,9 @@ platform:
     ## List of features to be supported by OES
     ##
     supportedFeatures:
-      - deployment-verification
-      - services
-      - releases
-      - policies
+      - deployment_verification
+      - sapor
+      - visibility
 
 ###############################################################################
 ##
@@ -234,9 +233,9 @@ sapor:
   ## Image specific details
   ##
   image:
-    registry: opsmx11
-    repository: oes-sapor
-    tag: v0.202011201011
+    registry: opsmxdev
+    repository: ubi8-oes-sapor
+    tag: v3.3-202011251915
     pullPolicy: IfNotPresent
 
   config:
@@ -314,16 +313,21 @@ visibility:
   ## Image specific details
   ##
   image:
-    registry: opsmx11
-    repository: oes-visibility
-    tag: master-202011230332
+    registry: opsmxdev
+    repository: ubi8-oes-visibility
+    tag: v3.3-202011251916
     pullPolicy: IfNotPresent
 
   config:
-    ## Installation mode
-    ## OES supports three modes of installation,
-    ## Uses the mode configured above, under Installation mode
+    ## DB configuration; change it any other external DB is to be used
+    ## Refer it above, under DB configuration section
     ##
+
+    ## Autopilot integration options
+    configuredConnectors: JIRA,GIT,AUTOPILOT,SONARQUBE,JENKINS
+
+    ## Logger level
+    logLevel: ERROR
 
 ###############################################################################
 ## This option enables OES to be configured automatically

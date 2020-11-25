@@ -6,34 +6,7 @@ spring:
 
 visiblity:
    connectors:
-      configured: JIRA,GIT,AUTOPILOT,SONARQUBE,JENKINS
-      properties:
-        jira:
-          - username
-          - apitoken
-          - url
-        git:
-          - username
-          - apitoken
-          - url
-        autopilot:
-          - username
-        sonarqube:
-          - hosturl
-        jenkins:
-          - username
-          - password
-          - url
-jira:
-  api:
-    url: /rest/api/2/search
-git:
-  api:
-    url: /repos/{username}/{repo}/commits/{commitId}
-
-jenkins:
-  api:
-    url: /jenkins/job/{jobname}/{buildId}/api/json
+      configured: {{ .Values.visibility.config.configuredConnectors }}
 
 logging:
   level:
@@ -41,4 +14,4 @@ logging:
       swagger:
         models:
           parameters:
-            AbstractSerializableParameter: ERROR
+            AbstractSerializableParameter: {{ .Values.visibility.config.logLevel }}
