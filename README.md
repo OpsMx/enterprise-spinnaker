@@ -86,7 +86,7 @@ Parameter | Description | Default
 `installationMode` | The installation mode. Available installation modes are **OES-AP** (both OES 3.0 and Autopilot), **OES** (Only OES 3.0), **AP** (Only Autopilot) and **None**(Skip OES installation) | `OES-AP`
 `createIngress` | If true, exposes Spinnaker deck & gate services over Ingress | `false`
 `k8sServiceType` | Service Type of oes-ui, oes-gate, spin-deck-ui, spin-gate | `LoadBalancer`
-`installRedis` | If false, OES will install its own Redis for caching | `false`
+`installRedis` | If true, OES will install its own Redis for caching.This option is mutually exclusive with installSpinnaker | `false`
 `redis.image.registry` | Registry to be used for docker images when installRedis is set to true | `docker.io`
 `redis.image.repository` | Repository to be used for docker images when installRedis is set to true | `redis`
 `redis.image.tag` | Tag to be used for docker images when installRedis is set to true | `true`
