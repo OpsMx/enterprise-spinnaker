@@ -64,7 +64,7 @@ spec:
       - configMap:
           name: oes-sapor-config
         name: sapor-config-volume
-      {{- if .Values.sapor.config.caCerts.override -}}
+      {{- if .Values.sapor.config.caCerts.override }}
       - name: certs-volume
         configMap:
           name: sapor-certs
