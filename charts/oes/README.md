@@ -99,7 +99,7 @@ Parameter | Description | Default
 `db.storageMountSize` | Storage to be allocated to OpsMx DB | `8Gi`
 `autopilot.image.registry` | Registry to be used for Autopilot docker images | `opsmxdev`
 `autopilot.image.repository` | Repository to be used for Autopilot docker images | `ubi8-oes-autopilot`
-`autopilot.image.tag` | Tag to be used for Autopilot docker images | `v3.3-202011251913`
+`autopilot.image.tag` | Tag to be used for Autopilot docker images | `v3.3.1-202012071648`
 `autopilot.image.pullPolicy` | Image pull policy for Autopilot image | `IfNotPresent`
 `autopilot.config.buildAnalysis.enabled` | Set it to false to disable build analysis | `false`
 `autopilot.config.ssl.enabled` | Set it to true to enable SSL | `false`
@@ -109,24 +109,24 @@ Parameter | Description | Default
 `autopilot.config.ssl.keyAlias` | SSL key alias | `tomcat`
 `dashboard.image.registry` | Registry to be used for dashboard images | `opsmxdev`
 `dashboard.image.repository` | Repository to be used for dashboard images | `ubi8-oes-dashboard`
-`dashboard.image.tag` | Tag to be used for dashboard images | `v3.3-202011251913`
+`dashboard.image.tag` | Tag to be used for dashboard images | `v3.3.1-202012071649`
 `dashboard.image.pullPolicy` | Image pull policy for dashboard image | `IfNotPresent`
 `gate.image.registry` | Registry to be used for OES Gate docker images | `opsmxdev`
 `gate.image.repository` | Repository to be used for OES Gate docker images | `ubi8-oes-gate`
-`gate.image.tag` | Tag to be used for OES Gate docker images | `v3.3-202011251914`
+`gate.image.tag` | Tag to be used for OES Gate docker images | `v3.3.1-202012071652`
 `gate.image.pullPolicy` | Image pull policy for OES Gate image | `IfNotPresent`
 `gate.config.oesUIcors` | Regex of OES-UI URL to prevent cross origin attacks | `^https?://(?:localhost|OES_UI_LOADBALANCER_IP|opsmx.com)(?::[1-9]\d*)?/?`
 `gate.config.fileBasedAuthentication` | Set it to true to disable LDAP authentication and enable file based authentication | `false`
 `platform.image.registry` | Registry to be used for platform docker images | `opsmxdev`
 `platform.image.repository` | Repository to be used for platform docker images | `ubi8-oes-platform`
-`platform.image.tag` | Tag to be used for platform docker images | `v3.3-202011251915`
+`platform.image.tag` | Tag to be used for platform docker images | `v3.3.1-202012071653`
 `platform.image.pullPolicy` | Image pull policy for OES platform | `IfNotPresent`
 `platform.config.adminGroups` | Admin groups available | `admin, Administrators`
 `platform.config.userSource` | Source of Users for authorization | `ldap`
 `platform.config.supportedFeatures` | List of featues to be supported by OES | `[deployment-verification, services, releases, policies]`
 `sapor.image.registry` | Registry to be used for OES SAPOR docker images | `opsmxdev`
 `sapor.image.repository` | Repository to be used for OES SAPOR docker images | `ubi8-oes-sapor`
-`sapor.image.tag` | Tag to be used for OES SAPOR docker images | `v3.3-202011251915`
+`sapor.image.tag` | Tag to be used for OES SAPOR docker images | `v3.3.1-202012071651`
 `sapor.image.pullPolicy` | Image pull policy for OES SAPOR image | `IfNotPresent`
 `sapor.config.spinnaker.authnEnabled` | Set it to true if authentication is enabled in Spinnaker | `false`
 `sapor.config.spinnaker.spinGateURL` | URL of Spinnaker Gate | `http://spin-gate.oes-spin:8084`
@@ -139,13 +139,13 @@ Parameter | Description | Default
 `sapor.config.caCerts.override` | If default java certs are to be overwritten, create custom config map 'oes-sapor-cacerts.yaml' under templates and set this option to true | `false`
 `ui.image.registry` | Registry to be used for OES UI docker images | `opsmxdev`
 `ui.image.repository` | Repository to be used for OES UI docker images | `ubi8-oes-ui`
-`ui.image.tag` | Tag to be used for OES UI docker images | `v3.3-202011251916`
+`ui.image.tag` | Tag to be used for OES UI docker images | `v3.3.1-202012071647`
 `ui.image.pullPolicy` | Image pull policy for OES UI image | `IfNotPresent`
 `ui.config.oesGateURL` | Endpoint of oes-gate to be used by oes-ui | `http://OES_GATE_IP:8084/`
 `ui.config.setApplicationRefreshInterval` | Interval at which UI refreshes application dashboard | `16000`
 `visiblity.image.registry` | Registry to be used for OES Visibility service docker images | `opsmxdev`
 `visiblity.image.repository` | Repository to be used for OES Visibility service docker images | `ubi8-oes-visibility`
-`visiblity.image.tag` | Tag to be used for OES Visibility service docker images | `v3.3-202011251916`
+`visiblity.image.tag` | Tag to be used for OES Visibility service docker images | `v3.3.1-202012071650`
 `visibility.config.configuredConnectors` | Integrations options | `JIRA,GIT,AUTOPILOT,SONARQUBE,JENKINS`
 `visibility.config.logLevel` | Default Log Level | `ERROR`
 `autoConfiguration.enabled` | Option enables OES to be configured automatically. Load Balancer IPs will be automatically replaced in the configuration files of oes-gate, oes-ui & sapor. Set it to false if OES is being installed on restricted environment. | `true`
