@@ -81,53 +81,21 @@ Parameter | Description | Default
 `createIngress` | If true, exposes Spinnaker deck & gate services over Ingress | `false`
 `k8sServiceType` | Service Type of oes-ui, oes-gate, spin-deck-ui, spin-gate | `LoadBalancer`
 `installRedis` | If true, OES will install its own Redis for caching. This option is mutually exclusive with installSpinnaker | `false`
-`redis.image.registry` | Registry to be used for docker images when installRedis is set to true | `docker.io`
-`redis.image.repository` | Repository to be used for docker images when installRedis is set to true | `redis`
-`redis.image.tag` | Tag to be used for docker images when installRedis is set to true | `true`
-`redis.image.pullPolicy` | Redis image pull policy | `IfNotPresent`
 `redis.url` | Set custom URL if installRedis is set to false | `redis://{{ .Release.Name }}-redis-master:6379`
 `db.enabled` | Set it to false if OpsMx DB is already installed on cluster or if any external database is to be used.| `true`
 `db.url` | URL of the external DB if not using OpsMx DB.| `jdbc:postgresql://oes-db:5432/opsmx`
-`db.username` | Username of the DB.| `postgres`
-`db.password` | Password of the DB.| `networks123`
-`db.image.registry` | Registry to be used for docker images.| `opsmxdev`
-`db.image.repository` | Repository to be used for docker images.| `ubi8-autopilot-db`
-`db.image.tag` | Tag to be used for docker images.| `v1.6`
-`db.image.pullPolicy` | DB image pull policy.| `IfNotPresent`
-`db.podManagementPolicy` | Rollout strategy for DB(statefulset) pods  | `OrderedReady`
-`db.securityContext.fsGroup` | FSGroup that owns the DB pod's volumes | `1000`
 `db.storageMountSize` | Storage to be allocated to OpsMx DB | `8Gi`
-`autopilot.image.registry` | Registry to be used for Autopilot docker images | `opsmxdev`
-`autopilot.image.repository` | Repository to be used for Autopilot docker images | `ubi8-oes-autopilot`
-`autopilot.image.tag` | Tag to be used for Autopilot docker images | `v3.3-202011251913`
-`autopilot.image.pullPolicy` | Image pull policy for Autopilot image | `IfNotPresent`
 `autopilot.config.buildAnalysis.enabled` | Set it to false to disable build analysis | `false`
 `autopilot.config.ssl.enabled` | Set it to true to enable SSL | `false`
 `autopilot.config.ssl.keystore` | SSL keystore value | `keystore.p12`
 `autopilot.config.ssl.keyStorePassword` | SSL keystore password | `dummypwd`
 `autopilot.config.ssl.keyStoreType` | SSL keystore type | `PKCS12`
 `autopilot.config.ssl.keyAlias` | SSL key alias | `tomcat`
-`dashboard.image.registry` | Registry to be used for dashboard images | `opsmxdev`
-`dashboard.image.repository` | Repository to be used for dashboard images | `ubi8-oes-dashboard`
-`dashboard.image.tag` | Tag to be used for dashboard images | `v3.3-202011251913`
-`dashboard.image.pullPolicy` | Image pull policy for dashboard image | `IfNotPresent`
-`gate.image.registry` | Registry to be used for OES Gate docker images | `opsmxdev`
-`gate.image.repository` | Repository to be used for OES Gate docker images | `ubi8-oes-gate`
-`gate.image.tag` | Tag to be used for OES Gate docker images | `v3.3-202011251914`
-`gate.image.pullPolicy` | Image pull policy for OES Gate image | `IfNotPresent`
 `gate.config.oesUIcors` | Regex of OES-UI URL to prevent cross origin attacks | `^https?://(?:localhost|OES_UI_LOADBALANCER_IP|opsmx.com)(?::[1-9]\d*)?/?`
 `gate.config.fileBasedAuthentication` | Set it to true to disable LDAP authentication and enable file based authentication | `false`
-`platform.image.registry` | Registry to be used for platform docker images | `opsmxdev`
-`platform.image.repository` | Repository to be used for platform docker images | `ubi8-oes-platform`
-`platform.image.tag` | Tag to be used for platform docker images | `v3.3-202011251915`
-`platform.image.pullPolicy` | Image pull policy for OES platform | `IfNotPresent`
 `platform.config.adminGroups` | Admin groups available | `admin, Administrators`
 `platform.config.userSource` | Source of Users for authorization | `ldap`
 `platform.config.supportedFeatures` | List of featues to be supported by OES | `[deployment-verification, services, releases, policies]`
-`sapor.image.registry` | Registry to be used for OES SAPOR docker images | `opsmxdev`
-`sapor.image.repository` | Repository to be used for OES SAPOR docker images | `ubi8-oes-sapor`
-`sapor.image.tag` | Tag to be used for OES SAPOR docker images | `v3.3-202011251915`
-`sapor.image.pullPolicy` | Image pull policy for OES SAPOR image | `IfNotPresent`
 `sapor.config.spinnaker.authnEnabled` | Set it to true if authentication is enabled in Spinnaker | `false`
 `sapor.config.spinnaker.spinGateURL` | URL of Spinnaker Gate | `http://spin-gate.oes-spin:8084`
 `sapor.config.spinnaker.spinExternalGateURL` | Set the external IP address of spin-gate, this is used to redirect to the spinnaker pipelines from OES-UI | `http://spin-gate.oes-spin:8084`
@@ -137,42 +105,17 @@ Parameter | Description | Default
 `sapor.config.spinnaker.spinAdminUsername` | Spinnaker admin username | `admin`
 `sapor.config.spinnaker.spinAdminPassword` | Spinnaker admin password | `admin`
 `sapor.config.caCerts.override` | If default java certs are to be overwritten, create custom config map 'oes-sapor-cacerts.yaml' under templates and set this option to true | `false`
-`ui.image.registry` | Registry to be used for OES UI docker images | `opsmxdev`
-`ui.image.repository` | Repository to be used for OES UI docker images | `ubi8-oes-ui`
-`ui.image.tag` | Tag to be used for OES UI docker images | `v3.3-202011251916`
-`ui.image.pullPolicy` | Image pull policy for OES UI image | `IfNotPresent`
 `ui.config.oesGateURL` | Endpoint of oes-gate to be used by oes-ui | `http://OES_GATE_IP:8084/`
 `ui.config.setApplicationRefreshInterval` | Interval at which UI refreshes application dashboard | `16000`
-`visiblity.image.registry` | Registry to be used for OES Visibility service docker images | `opsmxdev`
-`visiblity.image.repository` | Repository to be used for OES Visibility service docker images | `ubi8-oes-visibility`
-`visiblity.image.tag` | Tag to be used for OES Visibility service docker images | `v3.3-202011251916`
 `visibility.config.configuredConnectors` | Integrations options | `JIRA,GIT,AUTOPILOT,SONARQUBE,JENKINS`
 `visibility.config.logLevel` | Default Log Level | `ERROR`
 `autoConfiguration.enabled` | Option enables OES to be configured automatically. Load Balancer IPs will be automatically replaced in the configuration files of oes-gate, oes-ui & sapor. Set it to false if OES is being installed on restricted environment. | `true`
-`autoConfiguration.initContainer.image` | Image to be used by Init container for auto configuration | `opsmx11/oes-init:v3`
 `autoConfiguration.initContainer.externalIpCheckDelay` | Expected delay in assigning load balancer IPs to oes-ui & oes-gate in secs | `180`
 `opa.enabled` | Enable OPA with OES | `true`
-`opa.image.repository` | OPA image repository | `openpolicyagent/opa`
-`opa.image.tag` | Tag to pull OPA image | `latest`
-`opa.image.pullPolicy` | Image pull policy | `IfNotPresent`
 `installOpenLdap` | If true, installs Open LDAP server | `false`
 `openldap.adminPassword` | Password to be set for admin user of LDAP | `opsmxadmin123`
-`openldap.configPassword` | Password to be set for config user of LDAP | `opsmxconfig123`
-`openldap.omitClusterIP` | Set to true to omit ClusterIP for openldap service | `true`
-`openldap.persistence.enabled` | Enable persistent storage for open LDAP | `true`
-`openldap.env.LDAP_REMOVE_CONFIG_AFTER_SETUP` | Option to remove configuration of LDAP after setup | `false`
-`openldap.customLdifFiles` | Custom LDIF file for user and group creation of LDAP | ``
 `ldap.enabled` | Set it to true if LDAP is to be enabled for OES | `true`
 `ldap.url` | URL of LDAP server | `ldap://{{ .Release.Name }}-openldap:389`
-`ldap.userDnPattern` | DN Pattern for Open LDAP | `cn={0}`
-`ldap.basedn` | Base DN value | `dc=example,dc=org`
-`ldap.adminDn` | Admin DN value | `cn=admin,dc=example,dc=org`
-`ldap.adminPassword` | Admin password | `opsmxadmin123`
-`ldap.userDisplayName` | Display name of the user | `displayName`
-`ldap.pattern` | Base DN filter pattern | `(&(cn=USERNAME))`
-`ldap.GroupIdentity` | User group identity | `memberOf`
-`ldap.userIdentity` | User identity | `cn`
-`ldap.userPrepend` | User Prepend | `cn=USERNAME`
 `spinnaker.enableHA` | Enable HA for orca & echo | `true`
 `spinnaker.enableCentralMonitoring` | Enable monitoring for Spinnaker | `false`
 `spinnaker.gitopsHalyard.enabled` | Enable gitops style halyard & account config | `false`
