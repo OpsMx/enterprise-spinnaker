@@ -302,7 +302,7 @@ ui:
     oesGateURL: http://OES_GATE_IP:8084/
 
     ## Interval at which UI refreshes application dashboard
-    setApplicationRefreshInterval: 16000
+    setApplicationRefreshInterval: 300000
 
 ###################################################################################
 ##
