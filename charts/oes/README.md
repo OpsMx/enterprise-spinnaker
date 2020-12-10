@@ -36,6 +36,13 @@ Install OpsMx Enterprise for Spinnaker
 
 - Your Kubernetes cluster shall support persistent volumes and loadbalancer service type.
 
+- To enable mutual TLS for Spinnaker Services and SSL features provided by Spinnaker Life Cycle Management (LCM), it is required to install nginx ingress from kubernetes community and cert-manager before installing OES. Please refer the table below for options to be enabled for LCM
+  Instructions to install nginx ingress
+  https://kubernetes.github.io/ingress-nginx/deploy/
+
+  Instructions to install cert-manager
+  https://cert-manager.io/docs/installation/kubernetes/
+
 - Helm v3 expects the namespace to be present before helm install command is run. If it does not exists,
 
   ```console
@@ -100,7 +107,7 @@ Parameter | Description | Default
 `sapor.config.spinnaker.spinGateURL` | URL of Spinnaker Gate | `http://spin-gate.oes-spin:8084`
 `sapor.config.spinnaker.spinExternalGateURL` | Set the external IP address of spin-gate, this is used to redirect to the spinnaker pipelines from OES-UI | `http://spin-gate.oes-spin:8084`
 `sapor.config.spinnaker.spinuser` | Spinnaker username | `admin`
-`sapor.config.spinnaker.spinpasswd` | Spinnaker username | `opsmx@123`
+`sapor.config.spinnaker.spinpasswd` | Spinnaker password | `opsmx@123`
 `sapor.config.spinnaker.spinAdminLoginEnabled` | Enable to override spinnaker user credentials as an admin user | `false`
 `sapor.config.spinnaker.spinAdminUsername` | Spinnaker admin username | `admin`
 `sapor.config.spinnaker.spinAdminPassword` | Spinnaker admin password | `admin`
