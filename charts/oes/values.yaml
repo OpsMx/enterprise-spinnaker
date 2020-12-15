@@ -108,7 +108,7 @@ autopilot:
   image:
     registry: opsmxdev
     repository: ubi8-oes-autopilot
-    tag: v3.3.1-202012071648
+    tag: v3.3.2-202012141845
     pullPolicy: IfNotPresent
 
   config:
@@ -139,7 +139,7 @@ dashboard:
   image:
     registry: opsmxdev
     repository: ubi8-oes-dashboard
-    tag: v3.3.1-202012071649
+    tag: v3.3.2-202012141845
     pullPolicy: IfNotPresent
 
   config:
@@ -158,7 +158,7 @@ gate:
   image:
     registry: opsmxdev
     repository: ubi8-oes-gate
-    tag: v3.3.1-202012071652
+    tag: v3.3.2-202012141845
     pullPolicy: IfNotPresent
 
   config:
@@ -189,7 +189,7 @@ platform:
   image:
     registry: opsmxdev
     repository: ubi8-oes-platform
-    tag: v3.3.1-202012071653
+    tag: v3.3.2-202012141845
     pullPolicy: IfNotPresent
 
   config:
@@ -235,7 +235,7 @@ sapor:
   image:
     registry: opsmxdev
     repository: ubi8-oes-sapor
-    tag: v3.3.1-202012071651
+    tag: v3.3.2-202012141846
     pullPolicy: IfNotPresent
 
   config:
@@ -293,7 +293,7 @@ ui:
   image:
     registry: opsmxdev
     repository: ubi8-oes-ui
-    tag: v3.3.1-202012071647
+    tag: v3.3.2-202012141841
     pullPolicy: IfNotPresent
 
   config:
@@ -315,7 +315,7 @@ visibility:
   image:
     registry: opsmxdev
     repository: ubi8-oes-visibility
-    tag: v3.3.1-202012071650
+    tag: v3.3.2-202012141846
     pullPolicy: IfNotPresent
 
   config:
