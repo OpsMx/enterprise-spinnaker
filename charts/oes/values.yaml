@@ -108,7 +108,7 @@ autopilot:
   image:
     registry: opsmxdev
     repository: ubi8-oes-autopilot
-    tag: v3.3.2-202012141845
+    tag: v3.3.3-202012161333
     pullPolicy: IfNotPresent
 
   config:
@@ -293,7 +293,7 @@ ui:
   image:
     registry: opsmxdev
     repository: ubi8-oes-ui
-    tag: v3.3.2-202012141841
+    tag: v3.3.3-202012161332
     pullPolicy: IfNotPresent
 
   config:
