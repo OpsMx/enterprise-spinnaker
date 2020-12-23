@@ -243,6 +243,9 @@ sapor:
     ## Refer the RBAC create option at the top
     ##
 
+    datasources:
+      platform: false
+    
     spinnaker:
       ## Spinnaker configuration
       ## Necessary details needed by Sapor to
