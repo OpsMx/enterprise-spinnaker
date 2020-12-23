@@ -17,3 +17,5 @@ spring:
     url: {{ .Values.db.url }}/oesdb
     username: {{ .Values.db.username }}
     password: {{ .Values.db.password }}
+datasources:
+  platform: {{ .Values.sapor.config.datasources.platform }}
