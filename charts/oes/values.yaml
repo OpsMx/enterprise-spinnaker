@@ -245,7 +245,7 @@ sapor:
 
     datasources:
       platform: false
-    
+
     spinnaker:
       ## Spinnaker configuration
       ## Necessary details needed by Sapor to
@@ -280,6 +280,22 @@ sapor:
       spinAdminLoginEnabled: false
       spinAdminUsername: admin
       spinAdminPassword: admin
+
+      ## LDAP
+      ldap:
+        ldapEnabled: true
+        ldapUsername: admin
+        ldapPassword: opsmx@123
+        ldapAdminLoginEnabled: false
+        ldapAdminUsername:
+        ldapAdminPassword:
+
+      ## X509
+      x509:
+        enabled: false
+        client:
+          file: /opt/opsmx/client.p12
+          password: changeit
 
     ## Set the below field to true if default java cacert is to be overriden
     ##
