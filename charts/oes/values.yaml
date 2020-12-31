@@ -278,8 +278,8 @@ sapor:
       ## as an admin user
       ##
       spinAdminLoginEnabled: false
-      spinAdminUsername: admin
-      spinAdminPassword: admin
+      ##spinAdminUsername: admin
+      ##spinAdminPassword: admin
 
       ## LDAP
       ldap:
@@ -287,8 +287,8 @@ sapor:
         ldapUsername: admin
         ldapPassword: opsmx@123
         ldapAdminLoginEnabled: false
-        ldapAdminUsername:
-        ldapAdminPassword:
+        ldapAdminUsername: admin
+        ldapAdminPassword: admin
 
       ## X509
       x509:

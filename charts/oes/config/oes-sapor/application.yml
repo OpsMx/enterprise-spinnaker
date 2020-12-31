@@ -10,8 +10,8 @@ spinnaker:
     username: {{ .Values.sapor.config.spinnaker.ldap.ldapUsername }}
     password: {{ .Values.sapor.config.spinnaker.ldap.ldapPassword }}
     adminLoginEnabled: {{ .Values.sapor.config.spinnaker.ldap.ldapAdminLoginEnabled }}
-    adminUsername:
-    adminPassword:
+    adminUsername: {{ .Values.sapor.config.spinnaker.ldap.ldapAdminUsername }}
+    adminPassword: {{ .Values.sapor.config.spinnaker.ldap.ldapAdminPassword }}
   x509:
     enabled: {{ .Values.sapor.config.spinnaker.x509.enabled }}
     client:
