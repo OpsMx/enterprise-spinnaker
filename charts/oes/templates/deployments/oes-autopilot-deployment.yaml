@@ -28,6 +28,10 @@ spec:
             name: oes-autopilot-config
       imagePullSecrets:
         - name: {{ .Values.imagePullSecret}}
+      initContainers:
+      - name: db-check
+        image: postgres:9.6.5
+        command: ['/bin/bash', '-c', "sleep 30;echo Waiting for oes-db to be up and running; pg_isready -h oes-db -p 5432 && echo PostgreSQL DB is ready to receive connections"]
       containers:
         - image: {{ template "autopilot.image" . }}
           imagePullPolicy: {{ .Values.autopilot.image.pullPolicy }}
