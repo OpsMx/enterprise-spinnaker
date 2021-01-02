@@ -42,11 +42,11 @@ spec:
         {{- end }}
         resources:
           requests:
-            memory: "100Mi"
-            cpu: "500m"
+            memory: "{{ .Values.sapor.requests.memory }}"
+            cpu: "{{ .Values.sapor.requests.cpu }}"
           limits:
-            memory: "2000Mi"
-            cpu: "1500m"
+            memory: "{{ .Values.sapor.limits.memory }}"
+            cpu: "{{ .Values.sapor.limits.cpu }}"
         readinessProbe:
           tcpSocket:
             port: 8085

@@ -47,11 +47,11 @@ spec:
           protocol: TCP
         resources:
           requests:
-            memory: "500Mi"
-            cpu: "500m"
+            memory: "{{ .Values.gate.requests.memory }}"
+            cpu: "{{ .Values.gate.requests.cpu }}"
           limits:
-            memory: "1500Mi"
-            cpu: "1500m"
+            memory: "{{ .Values.gate.limits.memory }}"
+            cpu: "{{ .Values.gate.limits.cpu }}"
         volumeMounts:
         - name: gate-volume
           mountPath: /opt/spinnaker/config

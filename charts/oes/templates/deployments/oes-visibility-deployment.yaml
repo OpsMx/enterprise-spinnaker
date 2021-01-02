@@ -40,11 +40,11 @@ spec:
           subPath: visibility-local.yml
         resources:
           requests:
-            memory: "500Mi"
-            cpu: "500m"
+            memory: "{{ .Values.visibility.requests.memory }}"
+            cpu: "{{ .Values.visibility.requests.cpu }}"
           limits:
-            memory: "1000Mi"
-            cpu: "1500m"
+            memory: "{{ .Values.visibility.limits.memory }}"
+            cpu: "{{ .Values.visibility.limits.cpu }}"
         readinessProbe:
           tcpSocket:
             port: 8096
