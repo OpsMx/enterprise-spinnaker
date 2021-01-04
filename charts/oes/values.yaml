@@ -11,12 +11,12 @@
 ##
 imagePullSecret: opsmxdev-secret
 
-## Docker registry credentials to create imagePullSecret
+## Quay container image registry credentials to create imagePullSecret
 ##
 imageCredentials:
   registry: https://quay.io/
-  username: dockerID  # Docker hub username
-  password: dockerPassword # Docker hub password
+  username: quayID  # Quay username
+  password: quayPassword # Quay password
   email: info@opsmx.com   # email corresponding to docker hub ID
 
 rbac:
