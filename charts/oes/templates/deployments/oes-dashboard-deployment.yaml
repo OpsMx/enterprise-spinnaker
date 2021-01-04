@@ -36,11 +36,11 @@ spec:
           subPath: dashboard-local.yml
         resources:
           requests:
-            memory: "{{ .Values.dashboard.requests.memory }}"
-            cpu: "{{ .Values.dashboard.requests.cpu }}"
+            memory: "{{ .Values.dashboard.resources.requests.memory }}"
+            cpu: "{{ .Values.dashboard.resources.requests.cpu }}"
           limits:
-            memory: "{{ .Values.dashboard.limits.memory }}"
-            cpu: "{{ .Values.dashboard.limits.memory }}"
+            memory: "{{ .Values.dashboard.resources.limits.memory }}"
+            cpu: "{{ .Values.dashboard.resources.limits.memory }}"
         readinessProbe:
           tcpSocket:
             port: 8094

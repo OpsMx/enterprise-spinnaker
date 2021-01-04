@@ -37,11 +37,11 @@ spec:
         env:
         resources:
           requests:
-            memory: "{{ .Values.platform.requests.memory }}"
-            cpu: "{{ .Values.platform.requests.cpu }}"
+            memory: "{{ .Values.platform.resources.requests.memory }}"
+            cpu: "{{ .Values.platform.resources.requests.cpu }}"
           limits:
-            memory: "{{ .Values.platform.limits.cpu }}"
-            cpu: "{{ .Values.platform.limits.cpu }}"
+            memory: "{{ .Values.platform.resources.limits.cpu }}"
+            cpu: "{{ .Values.platform.resources.limits.cpu }}"
         readinessProbe:
           tcpSocket:
             port: 8095

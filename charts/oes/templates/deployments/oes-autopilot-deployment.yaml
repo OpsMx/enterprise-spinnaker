@@ -34,11 +34,11 @@ spec:
           name: oes-autopilot
           resources:
             requests:
-              memory: "{{ .Values.autopilot.requests.memory }}"
-              cpu: "{{ .Values.autopilot.requests.cpu }}"
+              memory: "{{ .Values.autopilot.resources.requests.memory }}"
+              cpu: "{{ .Values.autopilot.resources.requests.cpu }}"
             limits:
-              memory: "{{ .Values.autopilot.limits.memory }}"
-              cpu: "{{ .Values.autopilot.limits.cpu }}"
+              memory: "{{ .Values.autopilot.resources.limits.memory }}"
+              cpu: "{{ .Values.autopilot.resources.limits.cpu }}"
           ports:
             - containerPort: 8090
               name: backend
