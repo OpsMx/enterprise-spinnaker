@@ -1,0 +1,14 @@
+{{- if or (eq .Values.installationMode "OES-AP") (eq .Values.installationMode "OES") -}}
+{{- if .Values.sapor.config.spinnaker.x509.enabled }}
+apiVersion: v1
+binaryData:
+  client.p12: |
+    {{- tpl (.Files.Get "config/oes-sapor/client.p12") . | nindent 4 }}
+kind: ConfigMap
+metadata:
+  name: oes-sapor-x509-config
+  labels:
+    app: oes
+    component: sapor
+{{ include "oes.standard-labels" . | indent 4 }}
+{{- end -}}
