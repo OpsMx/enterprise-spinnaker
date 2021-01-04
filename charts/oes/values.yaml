@@ -520,7 +520,7 @@ spinnaker:
   halyard:
     spinnakerVersion: 1.20.5
     image:
-      repository: docker.io/devopsmx/ubi8-oes-operator-halyard
+      repository: quay.io/opsmxpublic/ubi8-spin-halyard
       tag: 1.20.5
     # Set to false to disable persistence data volume for halyard
     persistence:
