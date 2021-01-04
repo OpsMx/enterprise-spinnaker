@@ -4,14 +4,19 @@ oes:
 spinnaker:
   authnEnabled: {{ .Values.sapor.config.spinnaker.authnEnabled }}
   baseurl: {{ .Values.sapor.config.spinnaker.spinGateURL }}
-  username: {{ .Values.sapor.config.spinnaker.spinuser }}
-  password: {{ .Values.sapor.config.spinnaker.spinpasswd }}
   externalBaseUrl: {{ .Values.sapor.config.spinnaker.spinExternalGateURL }}
-  adminLoginEnabled: {{ .Values.sapor.config.spinnaker.spinAdminLoginEnabled }}
-  {{- if .Values.sapor.config.spinnaker.spinAdminLoginEnabled }}
-  adminUsername: {{ .Values.sapor.config.spinnaker.spinAdminUsername }}
-  adminPassword: {{ .Values.sapor.config.spinnaker.spinAdminPassword }}
-  {{- end }}
+  ldap:
+    enabled: {{ .Values.sapor.config.spinnaker.ldap.ldapEnabled }}
+    username: {{ .Values.sapor.config.spinnaker.ldap.ldapUsername }}
+    password: {{ .Values.sapor.config.spinnaker.ldap.ldapPassword }}
+    adminLoginEnabled: {{ .Values.sapor.config.spinnaker.ldap.ldapAdminLoginEnabled }}
+    adminUsername: {{ .Values.sapor.config.spinnaker.ldap.ldapAdminUsername }}
+    adminPassword: {{ .Values.sapor.config.spinnaker.ldap.ldapAdminPassword }}
+  x509:
+    enabled: {{ .Values.sapor.config.spinnaker.x509.enabled }}
+    client:
+      file: {{ .Values.sapor.config.spinnaker.x509.client.file }}
+      password: {{ .Values.sapor.config.spinnaker.x509.client.password }}
 spring:
   datasource:
     url: {{ .Values.db.url }}/oesdb
