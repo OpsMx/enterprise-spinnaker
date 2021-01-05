@@ -3,7 +3,7 @@ entries:
   oes:
   - apiVersion: v1
     appVersion: 3.3.3
-    created: "2020-12-16T19:55:26.947246084+05:30"
+    created: "2021-01-05T10:42:32.248179815+05:30"
     dependencies:
     - condition: installOpenLdap
       name: openldap
@@ -56,7 +56,7 @@ entries:
     version: 3.3.3
   - apiVersion: v1
     appVersion: 3.3.2
-    created: "2020-12-16T19:55:26.920641986+05:30"
+    created: "2021-01-05T10:42:32.205241219+05:30"
     dependencies:
     - condition: installOpenLdap
       name: openldap
@@ -109,7 +109,7 @@ entries:
     version: 3.3.2
   - apiVersion: v1
     appVersion: 3.3.1
-    created: "2020-12-16T19:55:26.894845584+05:30"
+    created: "2021-01-05T10:42:32.160911709+05:30"
     dependencies:
     - condition: installOpenLdap
       name: openldap
@@ -162,7 +162,7 @@ entries:
     version: 3.3.1
   - apiVersion: v1
     appVersion: 3.3.0
-    created: "2020-12-16T19:55:26.868813683+05:30"
+    created: "2021-01-05T10:42:32.117041179+05:30"
     dependencies:
     - condition: installOpenLdap
       name: openldap
@@ -215,7 +215,7 @@ entries:
     version: 3.3.0
   - apiVersion: v1
     appVersion: 3.2.0
-    created: "2020-12-16T19:55:26.836715931+05:30"
+    created: "2021-01-05T10:42:32.075479386+05:30"
     dependencies:
     - condition: installOpenLdap
       name: openldap
@@ -268,7 +268,7 @@ entries:
     version: 3.2.3
   - apiVersion: v1
     appVersion: 3.2.0
-    created: "2020-12-16T19:55:26.810774223+05:30"
+    created: "2021-01-05T10:42:32.038218087+05:30"
     dependencies:
     - condition: installOpenLdap
       name: openldap
@@ -321,7 +321,7 @@ entries:
     version: 3.2.2
   - apiVersion: v1
     appVersion: 3.2.0
-    created: "2020-12-16T19:55:26.786470921+05:30"
+    created: "2021-01-05T10:42:32.000516094+05:30"
     dependencies:
     - condition: installOpenLdap
       name: openldap
@@ -374,7 +374,7 @@ entries:
     version: 3.2.1
   - apiVersion: v1
     appVersion: 3.2.0
-    created: "2020-12-16T19:55:26.761572507+05:30"
+    created: "2021-01-05T10:42:31.954581488+05:30"
     dependencies:
     - condition: installOpenLdap
       name: openldap
@@ -427,7 +427,7 @@ entries:
     version: 3.2.0
   - apiVersion: v1
     appVersion: 3.1.1
-    created: "2020-12-16T19:55:26.737020161+05:30"
+    created: "2021-01-05T10:42:31.916674556+05:30"
     dependencies:
     - condition: installOpenLdap
       name: openldap
@@ -480,7 +480,7 @@ entries:
     version: 3.1.1
   - apiVersion: v1
     appVersion: 3.1.0
-    created: "2020-12-16T19:55:26.711899458+05:30"
+    created: "2021-01-05T10:42:31.879090375+05:30"
     dependencies:
     - condition: installOpenLdap
       name: openldap
@@ -529,7 +529,7 @@ entries:
     version: 3.1.0
   - apiVersion: v1
     appVersion: 3.0.0
-    created: "2020-12-16T19:55:26.691280583+05:30"
+    created: "2021-01-05T10:42:31.849602412+05:30"
     dependencies:
     - condition: installOpenLdap
       name: openldap
@@ -574,7 +574,7 @@ entries:
     version: 3.0.0
   - apiVersion: v1
     appVersion: 1.0.0
-    created: "2020-12-16T19:55:26.67332046+05:30"
+    created: "2021-01-05T10:42:31.821190118+05:30"
     dependencies:
     - condition: installOpenLdap
       name: openldap
@@ -619,7 +619,7 @@ entries:
   opsmx-autopilot:
   - apiVersion: v1
     appVersion: 2.9.10
-    created: "2020-12-16T19:55:26.948144129+05:30"
+    created: "2021-01-05T10:42:32.249508707+05:30"
     description: Autopilot is a release verification platform
     digest: 73b05b378187d481ff6b7d09fb1a1d6fbab089cef600453b77a647e48a526fa6
     home: https://www.opsmx.com/
@@ -641,8 +641,8 @@ entries:
     version: 2.0.0
   spinnaker:
   - apiVersion: v1
-    appVersion: 1.16.2
-    created: "2020-12-16T19:55:26.95668837+05:30"
+    appVersion: 1.22.2
+    created: "2021-01-05T10:42:32.262615589+05:30"
     dependencies:
     - condition: redis.enabled
       name: redis
@@ -654,7 +654,7 @@ entries:
       version: 5.0.9
     description: Open source, multi-cloud continuous delivery platform for releasing
       software changes with high velocity and confidence.
-    digest: cfdf28c08e8261c5eddf8ae84f3e6ec7df178cd6d5ca4e832f9216a83f3f44b5
+    digest: 8005c6dfd3622d11293bd93d569a510cd621e8a0d9fc2714936a17bfde821f6f
     home: http://spinnaker.io/
     icon: https://pbs.twimg.com/profile_images/669205226994319362/O7OjwPrh_400x400.png
     maintainers:
@@ -673,4 +673,4 @@ entries:
     urls:
     - https://opsmx.github.io/enterprise-spinnaker/helm-repo/spinnaker-2.2.3.tgz
     version: 2.2.3
-generated: "2020-12-16T19:55:26.655655303+05:30"
+generated: "2021-01-05T10:42:31.790351799+05:30"
