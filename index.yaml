@@ -694,7 +694,7 @@ entries:
     version: 2.0.0
   spinnaker:
   - apiVersion: v1
-    appVersion: 1.16.2
+    appVersion: 1.22.2
     created: "2021-01-05T15:11:17.51495583+05:30"
     dependencies:
     - condition: redis.enabled
@@ -707,7 +707,7 @@ entries:
       version: 5.0.9
     description: Open source, multi-cloud continuous delivery platform for releasing
       software changes with high velocity and confidence.
-    digest: cfdf28c08e8261c5eddf8ae84f3e6ec7df178cd6d5ca4e832f9216a83f3f44b5
+    digest: 8005c6dfd3622d11293bd93d569a510cd621e8a0d9fc2714936a17bfde821f6f
     home: http://spinnaker.io/
     icon: https://pbs.twimg.com/profile_images/669205226994319362/O7OjwPrh_400x400.png
     maintainers:
