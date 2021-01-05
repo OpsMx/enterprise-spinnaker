@@ -36,12 +36,7 @@ spec:
           protocol: TCP
         env:
         resources:
-          requests:
-            memory: "{{ .Values.platform.resources.requests.memory }}"
-            cpu: "{{ .Values.platform.resources.requests.cpu }}"
-          limits:
-            memory: "{{ .Values.platform.resources.limits.cpu }}"
-            cpu: "{{ .Values.platform.resources.limits.cpu }}"
+{{ toYaml .Values.platform.resources | indent 12 }}
         readinessProbe:
           tcpSocket:
             port: 8095

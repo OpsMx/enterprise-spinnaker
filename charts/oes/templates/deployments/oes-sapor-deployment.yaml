@@ -41,12 +41,7 @@ spec:
           mountPath: /etc/pki/ca-trust/extracted/java
         {{- end }}
         resources:
-          requests:
-            memory: "{{ .Values.sapor.resources.requests.memory }}"
-            cpu: "{{ .Values.sapor.resources.requests.cpu }}"
-          limits:
-            memory: "{{ .Values.sapor.resources.limits.memory }}"
-            cpu: "{{ .Values.sapor.resources.limits.cpu }}"
+{{ toYaml .Values.sapor.resources | indent 12 }}
         readinessProbe:
           tcpSocket:
             port: 8085

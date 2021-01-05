@@ -39,12 +39,7 @@ spec:
           name: visibility-config
           subPath: visibility-local.yml
         resources:
-          requests:
-            memory: "{{ .Values.visibility.resources.requests.memory }}"
-            cpu: "{{ .Values.visibility.resources.requests.cpu }}"
-          limits:
-            memory: "{{ .Values.visibility.resources.limits.memory }}"
-            cpu: "{{ .Values.visibility.resources.limits.cpu }}"
+{{ toYaml .Values.visibility.resources | indent 12 }}
         readinessProbe:
           tcpSocket:
             port: 8096

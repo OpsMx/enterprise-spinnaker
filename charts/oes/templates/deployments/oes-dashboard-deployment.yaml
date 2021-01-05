@@ -35,12 +35,7 @@ spec:
           name: dashboard-config
           subPath: dashboard-local.yml
         resources:
-          requests:
-            memory: "{{ .Values.dashboard.resources.requests.memory }}"
-            cpu: "{{ .Values.dashboard.resources.requests.cpu }}"
-          limits:
-            memory: "{{ .Values.dashboard.resources.limits.memory }}"
-            cpu: "{{ .Values.dashboard.resources.limits.memory }}"
+{{ toYaml .Values.dashboard.resources | indent 12 }}
         readinessProbe:
           tcpSocket:
             port: 8094
