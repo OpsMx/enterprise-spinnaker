@@ -1,4 +1,4 @@
-apiVersion: v1
+apiVersion: v2
 name: oes
 version: 3.4.1
 appVersion: 3.4.0
