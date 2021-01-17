@@ -37,12 +37,7 @@ spec:
           imagePullPolicy: {{ .Values.autopilot.image.pullPolicy }}
           name: oes-autopilot
           resources:
-            requests:
-              memory: "2Gi"
-              cpu: "1"
-            limits:
-              memory: "8Gi"
-              cpu: "2"
+{{ toYaml .Values.autopilot.resources | indent 12 }}
           ports:
             - containerPort: 8090
               name: backend

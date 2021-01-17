@@ -111,6 +111,15 @@ autopilot:
     tag: v3.4.0
     pullPolicy: IfNotPresent
 
+  resources:
+    requests:
+      memory: 2Gi
+      cpu: 1
+    limits:
+      memory: 8Gi
+      cpu: 2
+
+
   config:
     ## Build Analysis
     ##
@@ -142,6 +151,14 @@ dashboard:
     tag: v3.4.0
     pullPolicy: IfNotPresent
 
+  resources:
+    requests:
+      memory: 500Mi
+      cpu: 500m
+    limits:
+      memory: 1000Mi
+      cpu: 1500m
+
   config:
     ## Installation mode
     ## OES supports three modes of installation,
@@ -160,6 +177,14 @@ gate:
     repository: ubi8-oes-gate
     tag: v3.4.0
     pullPolicy: IfNotPresent
+
+  resources:
+    requests:
+      memory: 500Mi
+      cpu: 500m
+    limits:
+      memory: 1500Mi
+      cpu: 1500m
 
   config:
     ## LDAP Configuration
@@ -192,6 +217,14 @@ platform:
     tag: v3.4.0
     pullPolicy: IfNotPresent
 
+  resources:
+    requests:
+      memory: 500Mi
+      cpu: 500m
+    limits:
+      memory: 1500Mi
+      cpu: 1500m
+    
   config:
     ## DB configuration; change it any other external DB is to be used
     ## Refer it above, under DB configuration section
@@ -237,6 +270,14 @@ sapor:
     repository: ubi8-oes-sapor
     tag: v3.4.0
     pullPolicy: IfNotPresent
+
+  resources:
+    requests:
+      memory: 100Mi
+      cpu: 500m
+    limits:
+      memory: 2000Mi
+      cpu: 1500m
 
   config:
     ## RBAC Configuration
@@ -336,6 +377,14 @@ visibility:
     repository: ubi8-oes-visibility
     tag: v3.4.0
     pullPolicy: IfNotPresent
+
+  resources:
+    requests:
+      memory: 500Mi
+      cpu: 500m
+    limits:
+      memory: 1000Mi
+      cpu: 1500m
 
   config:
     ## DB configuration; change it any other external DB is to be used

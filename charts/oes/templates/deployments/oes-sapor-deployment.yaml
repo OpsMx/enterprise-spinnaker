@@ -46,12 +46,7 @@ spec:
           subPath: client.p12
         {{- end }}
         resources:
-          requests:
-            memory: "100Mi"
-            cpu: "500m"
-          limits:
-            memory: "2000Mi"
-            cpu: "1500m"
+{{ toYaml .Values.sapor.resources | indent 12 }}
         readinessProbe:
           tcpSocket:
             port: 8085
