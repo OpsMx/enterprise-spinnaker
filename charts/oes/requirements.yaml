@@ -3,7 +3,7 @@ dependencies:
     version: 1.2.3
     condition: installOpenLdap
   - name: spinnaker
-    version: 2.2.1
+    version: 2.2.3
     condition: installSpinnaker
   - name: redis
     version: 10.5.3
