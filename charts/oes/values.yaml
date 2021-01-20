@@ -650,7 +650,7 @@ spinnaker:
       fiat.yml:
         artifactId: quay.io/opsmxpublic/ubi8-spin-fiat:1.11.0
       front50.yml:
-        artifactId: docker.io/opsmxdev/ubi8-oes-front50:0.25.1-opa
+        artifactId: quay.io/opsmxpublic/ubi8-oes-front50:0.25.1-opa
       igor.yml:
         artifactId: quay.io/opsmxpublic/ubi8-spin-igor:1.10.0
       kayenta.yml:
