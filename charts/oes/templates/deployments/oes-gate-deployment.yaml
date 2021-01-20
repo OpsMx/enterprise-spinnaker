@@ -46,12 +46,7 @@ spec:
         - containerPort: 8084
           protocol: TCP
         resources:
-          requests:
-            memory: "500Mi"
-            cpu: "500m"
-          limits:
-            memory: "1500Mi"
-            cpu: "1500m"
+{{ toYaml .Values.gate.resources | indent 12 }}
         volumeMounts:
         - name: gate-volume
           mountPath: /opt/spinnaker/config

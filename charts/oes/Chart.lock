@@ -1,0 +1,24 @@
+dependencies:
+- name: openldap
+  repository: ""
+  version: 1.2.3
+- name: spinnaker
+  repository: ""
+  version: 2.2.3
+- name: redis
+  repository: ""
+  version: 10.5.3
+- name: elasticsearch
+  repository: ""
+  version: 7.5.0
+- name: kibana
+  repository: ""
+  version: 7.5.0
+- name: fluent-bit
+  repository: ""
+  version: 2.8.2
+- name: prometheus
+  repository: ""
+  version: 11.16.2
+digest: sha256:735ad1d8d9ec251e3dd815d946de6af2e835470fb67bd90d76369142ef850e33
+generated: "2021-01-17T15:33:01.825032546+05:30"
