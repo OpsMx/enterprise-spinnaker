@@ -41,7 +41,7 @@ spec:
       initContainers:
       - name: "create-halyard-local"
       {{- if .Values.gitopsHalyard.enabled }}
-        image: alpine/git:v2.26.2
+        image: amazon/aws-cli
       {{- else }}
         image: {{ .Values.halyard.image.repository }}:{{ .Values.halyard.image.tag }}
       {{- end }}
@@ -58,26 +58,16 @@ spec:
           valueFrom:
             fieldRef:
               fieldPath: metadata.namespace
-        - name: GIT_CLONE_PARAM
+        - name: S3_KEY
           valueFrom:
             secretKeyRef:
               name: {{ .Values.gitopsHalyard.secretName }}
-              key: gitcloneparam
-        - name: GIT_USER
+              key: s3accesskey
+        - name: S3_SECRET
           valueFrom:
             secretKeyRef:
               name: {{ .Values.gitopsHalyard.secretName }}
-              key: gituser
-        - name: GIT_TOKEN
-          valueFrom:
-            secretKeyRef:
-              name: {{ .Values.gitopsHalyard.secretName }}
-              key: gittoken
-        - name: DYNAMIC_ACCOUNTS_REPO
-          valueFrom:
-            secretKeyRef:
-              name: {{ .Values.gitopsHalyard.secretName }}
-              key: dynamicaccountsgituri
+              key: s3secretkey
         {{- end }}
         volumeMounts:
         - name: halyard-config
