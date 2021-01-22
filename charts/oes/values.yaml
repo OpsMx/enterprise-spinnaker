@@ -609,6 +609,16 @@ spinnaker:
               internalProxies: .*
               httpsServerPort: X-Forwarded-Port
 
+        ##If opa is installed and enabled  and spinnaker is installed,
+        ##Then you can enable policy in spinnaker through front50-local yaml.
+        ##If you don't want to configure make it as false or
+        ## If you have your different opa server you can mention that url here
+        front50-local.yml:
+          policy:
+            opa:
+              enabled: true
+              url: http://oes-sapor.{{ .Release.Namespace }}:8085
+
     ## Define custom settings for Spinnaker services. Read more for details:
     ## https://www.spinnaker.io/reference/halyard/custom/#custom-service-settings
     ## You can use it to add annotations for pods, override the image, etc.
@@ -640,7 +650,7 @@ spinnaker:
       fiat.yml:
         artifactId: quay.io/opsmxpublic/ubi8-spin-fiat:1.11.0
       front50.yml:
-        artifactId: quay.io/opsmxpublic/ubi8-spin-front50:0.24.0
+        artifactId: quay.io/opsmxpublic/ubi8-oes-front50:0.25.1-opa
       igor.yml:
         artifactId: quay.io/opsmxpublic/ubi8-spin-igor:1.10.0
       kayenta.yml:
