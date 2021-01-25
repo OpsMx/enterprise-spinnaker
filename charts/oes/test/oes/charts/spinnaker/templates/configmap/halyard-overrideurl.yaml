@@ -1,14 +1,9 @@
+---
+# Source: oes/charts/spinnaker/templates/configmap/halyard-overrideurl.yaml
 apiVersion: v1
 data:
   call_overrides.sh: |
     echo $SPINNAKER_NAMESPACE
-    {{- if .Values.gitopsHalyard.mTLS.enabled }}
-    sh /tmp/autoconfig/config_overrideurl.sh spin-deck-ingress
-    sh /tmp/autoconfig/config_overrideurl.sh spin-gate-ingress
-    {{- else if eq .Values.security.enabled false }}
-    sh /tmp/autoconfig/config_overrideurl.sh spin-deck
-    sh /tmp/autoconfig/config_overrideurl.sh spin-gate
-    {{- end }}
   config_overrideurl.sh: |
     #!/bin/bash -x
 
@@ -19,7 +14,7 @@ data:
     fi
 
     COMPONENT=$1
-    EXTERNAL_IP_CHECK_DELAY={{ .Values.gitopsHalyard.spinnakerLBCheckDelay }}
+    EXTERNAL_IP_CHECK_DELAY=180
 
     check_for_loadBalancer()
     {
@@ -185,7 +180,7 @@ data:
         ENDPOINT_IP=""
         PORT=8084
 
-        export DAEMON_ENDPOINT=http://{{ template "spinnaker.fullname" . }}-halyard:8064
+        export DAEMON_ENDPOINT=http://RELEASE-NAME-spinnaker-halyard:8064
         export HAL_COMMAND="hal --daemon-endpoint $DAEMON_ENDPOINT"
 
         ## Wait for $EXTERNAL_IP_CHECK_DELAY till K8s assins a load Balancer IP to oes-gate
@@ -207,7 +202,7 @@ data:
         ENDPOINT_IP=""
         PORT=9000
 
-        export DAEMON_ENDPOINT=http://{{ template "spinnaker.fullname" . }}-halyard:8064
+        export DAEMON_ENDPOINT=http://RELEASE-NAME-spinnaker-halyard:8064
         export HAL_COMMAND="hal --daemon-endpoint $DAEMON_ENDPOINT"
 
         ## Wait for $EXTERNAL_IP_CHECK_DELAY till K8s assins a load Balancer IP to oes-gate
@@ -227,30 +222,30 @@ data:
       spin-gate-ingress)
         ## Configured ingress host url as override url
           echo "Substituting gate url"
-          sed -i 's,OVERRIDE_API_URL,{{ tpl .Values.gitopsHalyard.mTLS.gateIngressHost . }},g' /tmp/spinnaker/.hal/config
+          sed -i 's,OVERRIDE_API_URL,spingate.RELEASE-NAME.domain.com,g' /tmp/spinnaker/.hal/config
         ;;
 
       spin-deck-ingress)
         ## Configured ingress host url as override url
           echo "Substituting deck url"
-          sed -i 's,OVERRIDE_DECK_URL,{{ tpl .Values.gitopsHalyard.mTLS.deckIngressHost . }},g' /tmp/spinnaker/.hal/config
+          sed -i 's,OVERRIDE_DECK_URL,spindeck.RELEASE-NAME.domain.com,g' /tmp/spinnaker/.hal/config
         ;;
 
       spin-gate-populated)
         ## Configuring externally populated spin deck url as override url
           echo "Substituting gate url"
-          export DAEMON_ENDPOINT=http://{{ template "spinnaker.fullname" . }}-halyard:8064
+          export DAEMON_ENDPOINT=http://RELEASE-NAME-spinnaker-halyard:8064
           export HAL_COMMAND="hal --daemon-endpoint $DAEMON_ENDPOINT"
-          ENDPOINT={{ .Values.security.saas.apioverrideBaseUrl }}
+          ENDPOINT=/ofc
           $HAL_COMMAND config security api edit --no-validate --override-base-url $ENDPOINT
         ;;
 
       spin-deck-populated)
         ## Configuring externally populated spin gate url as override url
           echo "Substituting deck url"
-          export DAEMON_ENDPOINT=http://{{ template "spinnaker.fullname" . }}-halyard:8064
+          export DAEMON_ENDPOINT=http://RELEASE-NAME-spinnaker-halyard:8064
           export HAL_COMMAND="hal --daemon-endpoint $DAEMON_ENDPOINT"
-          ENDPOINT={{ .Values.security.saas.deckoverrideBaseUrl }}
+          ENDPOINT=https://susmita
           $HAL_COMMAND config security ui edit --no-validate --override-base-url $ENDPOINT
         ;;
 
@@ -262,4 +257,4 @@ data:
 
 kind: ConfigMap
 metadata:
-  name: {{ template "spinnaker.fullname" . }}-halyard-overrideurl
+  name: RELEASE-NAME-spinnaker-halyard-overrideurl

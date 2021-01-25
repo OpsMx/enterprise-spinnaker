@@ -1,0 +1,19 @@
+---
+# Source: oes/templates/configmaps/oes-dashboard-configmap.yaml
+apiVersion: v1
+data:
+  dashboard-local.yml: |
+    opsmx:
+      dashboard:
+        installation:
+          mode: OES
+    
+kind: ConfigMap
+metadata:
+  name: oes-dashboard-config
+  labels:
+    app: oes
+    component: dashboard
+    heritage: "Helm"
+    release: "RELEASE-NAME"
+    chart: "oes-3.4.1"

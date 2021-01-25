@@ -15,8 +15,8 @@ imagePullSecret: opsmxdev-secret
 ##
 imageCredentials:
   registry: https://quay.io/
-  username: quayID  # Quay username
-  password: quayPassword # Quay password
+  username: quay-username # Quay username
+  password: quay-Password # Quay password
   email: info@opsmx.com   # email corresponding to docker hub ID
 
 rbac:
@@ -33,7 +33,7 @@ installSpinnaker: true
 ## Installation mode
 ## Available installation modes OES-AP, OES, AP, None
 ##
-installationMode: OES-AP
+installationMode: OES
 
 ## OES UI & Gate service type
 ##
@@ -864,6 +864,13 @@ spinnaker:
 
   ## Centralized Monitoring enable for Prometheus
   enableCentralMonitoring: false
+ 
+  ## Populate your Spinnaker Deck and Gate URL's in case if you are using SaaS 
+  security:
+    enabled: false
+    saas:
+      apioverrideBaseUrl: /ofc
+      deckoverrideBaseUrl: https://susmita
 
   # Initialize gitOps style Halyard
   gitopsHalyard:

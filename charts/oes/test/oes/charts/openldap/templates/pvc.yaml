@@ -1,0 +1,17 @@
+---
+# Source: oes/charts/openldap/templates/pvc.yaml
+kind: PersistentVolumeClaim
+apiVersion: v1
+metadata:
+  name: RELEASE-NAME-openldap
+  labels:
+    app: openldap
+    chart: openldap-1.2.3
+    release: RELEASE-NAME
+    heritage: Helm
+spec:
+  accessModes:
+    - "ReadWriteOnce"
+  resources:
+    requests:
+      storage: "8Gi"

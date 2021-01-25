@@ -1,0 +1,12 @@
+---
+# Source: oes/charts/spinnaker/templates/rbac/halyard-sa.yaml
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: RELEASE-NAME-spinnaker-halyard
+  namespace: default
+  labels:
+    app: "RELEASE-NAME-spinnaker"
+    heritage: "Helm"
+    release: "RELEASE-NAME"
+    chart: "spinnaker-2.2.3"

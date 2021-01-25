@@ -1,0 +1,41 @@
+---
+# Source: oes/templates/configmaps/oes-sapor-configmap.yaml
+apiVersion: v1
+data:
+  application.yml: |
+    oes:
+      rbac:
+        enabled: true
+    spinnaker:
+      authnEnabled: true
+      baseurl: http://spin-gate:8084
+      externalBaseUrl: http://spin-gate:8084
+      ldap:
+        enabled: true
+        username: admin
+        password: opsmx@123
+        adminLoginEnabled: false
+        adminUsername: admin
+        adminPassword: admin
+      x509:
+        enabled: false
+        client:
+          file: /opt/opsmx/client.p12
+          password: changeit
+    spring:
+      datasource:
+        url: jdbc:postgresql://oes-db:5432/oesdb
+        username: postgres
+        password: networks123
+    datasources:
+      platform: false
+    
+kind: ConfigMap
+metadata:
+  name: oes-sapor-config
+  labels:
+    app: oes
+    component: sapor
+    heritage: "Helm"
+    release: "RELEASE-NAME"
+    chart: "oes-3.4.1"

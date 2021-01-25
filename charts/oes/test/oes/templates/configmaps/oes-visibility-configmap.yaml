@@ -1,0 +1,32 @@
+---
+# Source: oes/templates/configmaps/oes-visibility-configmap.yaml
+apiVersion: v1
+data:
+  visibility-local.yml: |
+    spring:
+      datasource:
+        url=jdbc:postgresql://oes-db:5432/visibilitydb
+        username=postgres
+        password=networks123
+    
+    visiblity:
+       connectors:
+          configured: JIRA,GIT,AUTOPILOT,SONARQUBE,JENKINS
+    
+    logging:
+      level:
+        io:
+          swagger:
+            models:
+              parameters:
+                AbstractSerializableParameter: ERROR
+    
+kind: ConfigMap
+metadata:
+  name: oes-visibility-config
+  labels:
+    app: oes
+    component: visibility
+    heritage: "Helm"
+    release: "RELEASE-NAME"
+    chart: "oes-3.4.1"
