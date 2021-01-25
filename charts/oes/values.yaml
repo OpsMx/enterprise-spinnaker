@@ -15,8 +15,8 @@ imagePullSecret: opsmxdev-secret
 ##
 imageCredentials:
   registry: https://quay.io/
-  username: quay-username # Quay username
-  password: quay-Password # Quay password
+  username: QuayID # Quay username
+  password: QuayPassword # Quay password
   email: info@opsmx.com   # email corresponding to docker hub ID
 
 rbac:
@@ -33,7 +33,7 @@ installSpinnaker: true
 ## Installation mode
 ## Available installation modes OES-AP, OES, AP, None
 ##
-installationMode: OES
+installationMode: OES-AP
 
 ## OES UI & Gate service type
 ##
