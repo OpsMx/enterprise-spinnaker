@@ -41,7 +41,7 @@ spec:
       initContainers:
       - name: "create-halyard-local"
       {{- if .Values.gitopsHalyard.enabled }}
-        image: alpine/git:v2.26.2
+        image: quay.io/opsmxpublic/awsgit
       {{- else }}
         image: {{ .Values.halyard.image.repository }}:{{ .Values.halyard.image.tag }}
       {{- end }}
@@ -78,6 +78,20 @@ spec:
             secretKeyRef:
               name: {{ .Values.gitopsHalyard.secretName }}
               key: dynamicaccountsgituri
+        - name: SPINNAKER_NAMESPACE
+          valueFrom:
+            fieldRef:
+              fieldPath: metadata.namespace
+        - name: S3_ACCESSKEY
+          valueFrom:
+            secretKeyRef:
+              name: {{ .Values.gitopsHalyard.secretName }}
+              key: s3accesskey
+        - name: S3_SECRETKEY
+          valueFrom:
+            secretKeyRef:
+              name: {{ .Values.gitopsHalyard.secretName }}
+              key: s3secretkey 
         {{- end }}
         volumeMounts:
         - name: halyard-config
