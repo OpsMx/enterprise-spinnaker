@@ -92,6 +92,11 @@ spec:
             secretKeyRef:
               name: {{ .Values.gitopsHalyard.secretName }}
               key: s3secretkey 
+        - name: S3_BUCKET
+          valueFrom:
+            secretKeyRef:
+              name: {{ .Values.gitopsHalyard.secretName }}
+              key: s3bucket
         {{- end }}
         volumeMounts:
         - name: halyard-config
