@@ -748,6 +748,39 @@ entries:
   spinnaker:
   - apiVersion: v1
     appVersion: 1.22.2
+    created: "2021-01-28T17:22:16.879162+05:30"
+    dependencies:
+    - condition: redis.enabled
+      name: redis
+      repository: https://charts.bitnami.com/bitnami
+      version: 10.5.3
+    - condition: minio.enabled
+      name: minio
+      repository: https://helm.min.io/
+      version: 8.0.9
+    description: Open source, multi-cloud continuous delivery platform for releasing
+      software changes with high velocity and confidence.
+    digest: 95627c1d2cccb2085bea07a0cb935b14c016ac55c7edab0ae7f2470126f92a63
+    home: http://spinnaker.io/
+    icon: https://pbs.twimg.com/profile_images/669205226994319362/O7OjwPrh_400x400.png
+    maintainers:
+    - email: viglesias@google.com
+      name: viglesiasce
+    - email: ezimanyi@google.com
+      name: ezimanyi
+    - email: hello@dwardu.com
+      name: dwardu89
+    - email: username.taken@gmail.com
+      name: paulczar
+    name: spinnaker
+    sources:
+    - https://github.com/spinnaker
+    - https://github.com/viglesiasce/images
+    urls:
+    - https://opsmx.github.io/enterprise-spinnaker/spinnaker-2.2.4.tgz
+    version: 2.2.4
+  - apiVersion: v1
+    appVersion: 1.22.2
     created: "2021-01-17T13:45:12.93611473+05:30"
     dependencies:
     - condition: redis.enabled
@@ -758,7 +791,8 @@ entries:
       name: minio
       repository: https://kubernetes-charts.storage.googleapis.com/
       version: 5.0.9
-    description: Open source, multi-cloud continuous delivery platform for releasing software changes with high velocity and confidence.
+    description: Open source, multi-cloud continuous delivery platform for releasing
+      software changes with high velocity and confidence.
     digest: 3d75da6c05659cf784807ebd3c604b714adfbc4f5cab34307e24e2dab5ea9f00
     home: http://spinnaker.io/
     icon: https://pbs.twimg.com/profile_images/669205226994319362/O7OjwPrh_400x400.png
@@ -778,4 +812,4 @@ entries:
     urls:
     - https://opsmx.github.io/enterprise-spinnaker/spinnaker-2.2.3.tgz
     version: 2.2.3
-generated: "2021-01-17T13:45:11.958707878+05:30"
+generated: "2021-01-28T17:22:16.867889+05:30"
