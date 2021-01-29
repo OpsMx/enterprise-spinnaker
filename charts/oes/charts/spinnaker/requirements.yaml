@@ -1,9 +1,9 @@
 dependencies:
 - name: redis
   version: 10.5.3
-  repository: https://kubernetes-charts.storage.googleapis.com/
+  repository: https://charts.bitnami.com/bitnami
   condition: redis.enabled
 - name: minio
-  version: 5.0.33
-  repository: https://kubernetes-charts.storage.googleapis.com/
+  version: 8.0.9
+  repository: https://helm.min.io/
   condition: minio.enabled

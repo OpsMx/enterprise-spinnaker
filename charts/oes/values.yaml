@@ -762,7 +762,6 @@ spinnaker:
   #   - artifacts
   #   - pipeline-templates
   spinnakerFeatureFlags:
-    - artifacts
     - pipeline-templates
     - managed-pipeline-templates-v2-ui
 
