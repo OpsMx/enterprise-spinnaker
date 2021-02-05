@@ -2,3 +2,8 @@ opsmx:
   dashboard:
     installation:
       mode: {{ .Values.installationMode }}
+
+app:
+  sync:
+    enabled: {{ .Values.dashboard.config.app.sync.enabled }}
+spinnakerLink: {{ .Values.dashboard.config.spinnakerLink }}
