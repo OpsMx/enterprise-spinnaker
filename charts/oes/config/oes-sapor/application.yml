@@ -24,3 +24,18 @@ spring:
     password: {{ .Values.db.password }}
 datasources:
   platform: {{ .Values.sapor.config.datasources.platform }}
+  
+## Set the below field to true if agent for kubernetes
+kubernetes:
+  agent:
+    enabled: true
+    serverHostName: opsmx-controller-controller1
+    serverPort: 9001
+    caCertfile: /opt/opsmx/controller/ca.crt
+    certFile: /opt/opsmx/controller/cert/tls.crt
+    keyFile: /opt/opsmx/controller/cert/tls.key
+    image: quay.io/opsmxpublic/forwarder-agent:v20210118T161303
+  template:
+    path: /opt/opsmx/controller
+    kubectlTemplateFileName: kubeconfig.template
+    manifestTemplateFileName: deploy-agent.template   
