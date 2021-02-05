@@ -27,7 +27,7 @@ k8sServiceType: LoadBalancer
 #####################################################
 spinnaker:
   halyard:
-    spinnakerVersion: 1.22.0
+    spinnakerVersion: 1.22.2
     image:
       repository: quay.io/opsmxpublic/ubi8-spin-halyard
       tag: opsmx-1.40.0
