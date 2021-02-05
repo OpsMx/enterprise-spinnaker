@@ -27,10 +27,10 @@ k8sServiceType: LoadBalancer
 #####################################################
 spinnaker:
   halyard:
-    spinnakerVersion: 1.19.4
+    spinnakerVersion: 1.22.0
     image:
-      repository: gcr.io/spinnaker-marketplace/halyard
-      tag: 1.32.0
+      repository: quay.io/opsmxpublic/ubi8-spin-halyard
+      tag: opsmx-1.40.0
     # Set to false to disable persistence data volume for halyard
     persistence:
       enabled: true
@@ -78,25 +78,25 @@ spinnaker:
         healthEndpoint: /health
         kubernetes:
           useExecHealthCheck: false
-        artifactId: null
+        artifactId: quay.io/opsmxpublic/ubi8-spin-gate:1.18.1
       deck.yml:
-        artifactId: null
+        artifactId: quay.io/opsmxpublic/ubi8-spin-deck:3.3.0
       clouddriver.yml:
-        artifactId: null
+        artifactId: quay.io/opsmxpublic/ubi8-spin-clouddriver:6.11.1
       echo.yml:
-        artifactId: null
+        artifactId: quay.io/opsmxpublic/ubi8-spin-echo:2.14.0
       fiat.yml:
-        artifactId: null
+        artifactId: quay.io/opsmxpublic/ubi8-spin-fiat:1.13.0
       front50.yml:
-        artifactId: null
+        artifactId: quay.io/opsmxpublic/ubi8-spin-front50:0.25.1
       igor.yml:
-        artifactId: null
+        artifactId: quay.io/opsmxpublic/ubi8-spin-igor:1.12.0
       kayenta.yml:
-        artifactId: null
+        artifactId: quay.io/opsmxpublic/ubi8-spin-kayenta:0.17.0
       orca.yml:
-        artifactId: null
+        artifactId: quay.io/opsmxpublic/ubi8-spin-orca:2.16.0
       rosco.yml:
-        artifactId: null
+        artifactId: quay.io/opsmxpublic/ubi8-spin-rosco:0.21.1
     ## Uncomment if you want to add extra commands to the init script
     ## run by the init container before halyard is started.
     ## The content will be passed through `tpl`, so value interpolation is supported.
