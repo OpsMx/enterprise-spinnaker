@@ -21,3 +21,8 @@ ldap:
 
 redis:
   connection: {{ tpl .Values.redis.url . }}
+oes:
+  approvalGate:
+    apiUrl: {{ .Values.platform.config.oes.approvalGate.apiUrl }}
+  verificationGate:
+    apiUrl: {{ .Values.platform.config.oes.verificationGate.apiUrl }}
