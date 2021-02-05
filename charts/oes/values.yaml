@@ -283,10 +283,8 @@ sapor:
     ## RBAC Configuration
     ## Refer the RBAC create option at the top
     ##
-    oes:
-      rbac:
-        enabled: true
-
+    
+    ## Spinnaker Configuration
     spinnaker:
       ## Spinnaker configuration
       ## Necessary details needed by Sapor to
@@ -337,12 +335,7 @@ sapor:
         client:
           file: /opt/opsmx/client.p12
           password: changeit
-    spring:
-      datasource:
-        url: jdbc:postgresql://oes-db:5432/oesdb
-        username: postgres
-        password: networks123
-
+    
     ## Set the below field to true if datasource configurations from platform
     datasources:
       platform: true    
