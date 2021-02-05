@@ -138,6 +138,12 @@ autopilot:
       keyStorePassword: dummypwd # Provide keystore password
       keyStoreType: PKCS12
       keyAlias: tomcat
+    server:
+      host:
+        dns:
+          name: ^https?://(?:localhost|OES_UI_LOADBALANCER_IP|opsmx.com)(?::[1-9]\d*)?/? 
+    gate:
+      url: http://OES_GATE_IP:8084/  
 ###############################################################################
 ##
 ## Values of OES Dashboard
@@ -164,6 +170,10 @@ dashboard:
     ## OES supports three modes of installation,
     ## Uses the mode configured above, under Installation mode
     ##
+    app:
+    sync:
+      enabled: true
+    spinnakerLink: https://demo.opsmx.com
 
 ###############################################################################
 ##
@@ -203,6 +213,11 @@ gate:
     ## Reach out over support@opsmx.com for pre-configured user credentials
     fileBasedAuthentication:
       enabled: false
+    oesui:
+      externalUrl: ^https?://(?:localhost|OES_UI_LOADBALANCER_IP|opsmx.com)(?::[1-9]\d*)?/?
+    server:
+      session:
+        timeout-in-seconds: 7200
 
 ###############################################################################
 ##
@@ -257,6 +272,11 @@ platform:
       - deployment_verification
       - sapor
       - visibility
+    oes:
+      approvalGate:
+        apiUrl: https://OES_GATE_IP:8084/visibilityservice/v2/approvalGates/{id}/trigger
+      verificationGate:
+        apiUrl: https://OES_GATE_IP:8084/autopilot/api/v2/registerCanary
 
 ###############################################################################
 ##
@@ -413,6 +433,8 @@ visibility:
 
     ## Logger level
     logLevel: ERROR
+    gate:
+      url: http://OES_GATE_IP:8084
 
 ###############################################################################
 ## This option enables OES to be configured automatically
