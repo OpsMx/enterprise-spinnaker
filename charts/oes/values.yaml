@@ -141,9 +141,9 @@ autopilot:
     server:
       host:
         dns:
-          name: ^https?://(?:localhost|OES_UI_LOADBALANCER_IP|opsmx.com)(?::[1-9]\d*)?/? 
+          name: ^https?://(?:localhost|OES_UI_LOADBALANCER_IP|opsmx.com)(?::[1-9]\d*)?/?
     gate:
-      url: http://OES_GATE_IP:8084/  
+      url: http://OES_GATE_IP:8084/
 ###############################################################################
 ##
 ## Values of OES Dashboard
@@ -217,7 +217,7 @@ gate:
       externalUrl: ^https?://(?:localhost|OES_UI_LOADBALANCER_IP|opsmx.com)(?::[1-9]\d*)?/?
     server:
       session:
-        timeout-in-seconds: 7200
+        timeoutInSeconds: 7200
 
 ###############################################################################
 ##
@@ -239,7 +239,7 @@ platform:
     limits:
       memory: 1500Mi
       cpu: 1500m
-    
+
   config:
     ## DB configuration; change it any other external DB is to be used
     ## Refer it above, under DB configuration section
@@ -303,7 +303,7 @@ sapor:
     ## RBAC Configuration
     ## Refer the RBAC create option at the top
     ##
-    
+
     ## Spinnaker Configuration
     spinnaker:
       ## Spinnaker configuration
@@ -355,11 +355,11 @@ sapor:
         client:
           file: /opt/opsmx/client.p12
           password: changeit
-    
+
     ## Set the below field to true if datasource configurations from platform
     datasources:
-      platform: true    
-      
+      platform: true
+
     ## Set the below field to true if agent for kubernetes
     kubernetes:
       agent:
@@ -373,7 +373,7 @@ sapor:
       template:
         path: /opt/opsmx/controller
         kubectlTemplateFileName: kubeconfig.template
-        manifestTemplateFileName: deploy-agent.template   
+        manifestTemplateFileName: deploy-agent.template
 
     ## Set the below field to true if default java cacert is to be overriden
     ##
