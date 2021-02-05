@@ -45,7 +45,7 @@ data:
     {{ tpl .Values.halyard.additionalInitScript $ | indent 4 }}
     {{- end }}
     
-    {{- else if contains "git" .Values.gitopsHalyard.repotype }}
+    {{- else if eq .Values.gitopsHalyard.repoType "git" }}
     #!/bin/bash -x
     echo "+++++++++++running git commands+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++"
     git clone $GIT_CLONE_PARAM /tmp/spinnaker/.hal
@@ -66,6 +66,8 @@ data:
     {{- end }}
     
     {{- if .Values.gitopsHalyard.enabled }}
+    GIT_USER=`echo $GIT_USER | sed 's/ *$//g'`
+    GIT_TOKEN=`echo $GIT_TOKEN | sed 's/ *$//g'`
     DYNAMIC_ACCOUNTS_REPO=`echo $DYNAMIC_ACCOUNTS_REPO | sed 's/ *$//g'`
     sed -i  s/SPINNAKER_NAMESPACE/${SPINNAKER_NAMESPACE}/ /tmp/spinnaker/.hal/config
     sed -i  s/RELEASE_NAME/{{ .Release.Name }}/g /tmp/spinnaker/.hal/config
