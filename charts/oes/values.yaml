@@ -867,12 +867,12 @@ spinnaker:
 
   # Initialize gitOps style Halyard
   gitopsHalyard:
-    enabled: true
+    enabled: false
     mTLS:
       enabled: false   # Enable mTLS for Spinnaker Services and SSL for Deck and Gate
       deckIngressHost: spindeck.{{ .Release.Name }}.domain.com  # Used by OES to create ingress for deck
       gateIngressHost: spingate.{{ .Release.Name }}.domain.com  # Used by OES to create ingress for gate
-    repotype: git # git, S3, vault, only git support at this point
+    repoType: git # git, S3, vault, only git support at this point
     secretName: opsmx-gitops-auth
     # Max time(in secs) that an init container of halyard should wait
     # to fetch External Load Balancer IP of spin-deck and spin-gate
