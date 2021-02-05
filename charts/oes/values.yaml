@@ -108,7 +108,7 @@ autopilot:
   image:
     registry: quay.io/opsmxpublic
     repository: ubi8-oes-autopilot
-    tag: v3.4.0
+    tag: v3.5
     pullPolicy: IfNotPresent
 
   resources:
@@ -154,7 +154,7 @@ dashboard:
   image:
     registry: quay.io/opsmxpublic
     repository: ubi8-oes-dashboard
-    tag: v3.4.0
+    tag: v3.5
     pullPolicy: IfNotPresent
 
   resources:
@@ -185,7 +185,7 @@ gate:
   image:
     registry: quay.io/opsmxpublic
     repository: ubi8-oes-gate
-    tag: v3.4.0
+    tag: v3.5
     pullPolicy: IfNotPresent
 
   resources:
@@ -229,7 +229,7 @@ platform:
   image:
     registry: quay.io/opsmxpublic
     repository: ubi8-oes-platform
-    tag: v3.4.0
+    tag: v3.5
     pullPolicy: IfNotPresent
 
   resources:
@@ -288,7 +288,7 @@ sapor:
   image:
     registry: quay.io/opsmxpublic
     repository: ubi8-oes-sapor
-    tag: v3.4.0
+    tag: v3.5
     pullPolicy: IfNotPresent
 
   resources:
@@ -390,7 +390,7 @@ ui:
   image:
     registry: quay.io/opsmxpublic
     repository: ubi8-oes-ui
-    tag: v3.4.0
+    tag: v3.5
     pullPolicy: IfNotPresent
 
   config:
@@ -412,7 +412,7 @@ visibility:
   image:
     registry: quay.io/opsmxpublic
     repository: ubi8-oes-visibility
-    tag: v3.4.0
+    tag: v3.5
     pullPolicy: IfNotPresent
 
   resources:
