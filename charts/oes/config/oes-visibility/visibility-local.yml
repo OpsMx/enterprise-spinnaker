@@ -15,3 +15,6 @@ logging:
         models:
           parameters:
             AbstractSerializableParameter: {{ .Values.visibility.config.logLevel }}
+            
+gate:
+  url: {{ .Values.visibility.config.gate.url }}
