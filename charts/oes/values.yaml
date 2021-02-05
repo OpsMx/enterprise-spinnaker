@@ -171,8 +171,8 @@ dashboard:
     ## Uses the mode configured above, under Installation mode
     ##
     app:
-    sync:
-      enabled: true
+      sync:
+        enabled: true
     spinnakerLink: https://demo.opsmx.com
 
 ###############################################################################
