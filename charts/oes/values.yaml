@@ -427,6 +427,16 @@ opa:
     tag: latest
     pullPolicy: IfNotPresent
 
+#####################################################
+## Forwarder/Controller configuration
+#####################################################
+forwarder:
+  agentServiceType: LoadBalancer
+  externalName: grpc.controller.opsmx.com
+  image:
+    repository: quay.io/opsmxpublic/forwarder-controller
+    tag: v20210118T161248
+    pullPolicy: IfNotPresent
 ####################################################
 ## LDAP configuration
 ####################################################
