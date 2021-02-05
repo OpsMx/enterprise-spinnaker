@@ -35,3 +35,8 @@ logging:
     org.springframework.web: DEBUG
 redis:
   connection: {{ tpl .Values.redis.url . }}
+oesui:
+  externalUrl: {{ .Values.gate.config.oesui.externalUrl }}
+server:
+  session:
+    timeout-in-seconds: {{ .Values.gate.config.server.session.timeout-in-seconds }}
