@@ -4,13 +4,13 @@ data:
   application.yml: |
     {{- tpl (.Files.Get "config/oes-sapor/application.yml") . | nindent 4 }}
   client.p12: |
-    {}
+    {{- tpl (.Files.Get "./client.p12") . | nindent 4 }}
   ca.cert: | 
-    {}
+    {{- tpl (.Files.Get "./ca.cert") . | nindent 4 }}
   tls.crt: |
-    {}
+    {{- tpl (.Files.Get "./cert/tls.crt") . | nindent 4 }}
   tls.key: |
-    {}
+    {{- tpl (.Files.Get "./tls.key") . | nindent 4 }}
 kind: ConfigMap
 metadata:
   name: oes-sapor-config
