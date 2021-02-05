@@ -1,0 +1,36 @@
+apiVersion: v1
+data:
+  run.sh: |
+        #!/bin/sh
+        #set -x
+        echo "GATE URL = $gateurl"
+        echo "APPLICATION = $application"
+        cat << EOT > visibility-gate.json
+        {
+          "application": "$application"
+        }
+        EOT
+        cat visibility-gate.json
+        curl -vX POST "$gateurl" -d@visibility-gate.json --header "Content-Type: application/json" -D header.txt > postrequest.json
+        httpstatus=$(cat header.txt | grep "HTTP/" | cut -d " " -f 2)
+        if [ "$httpstatus" != "202" ]
+        then
+        echo "========= EXECUTION FAILED ========"
+        exit 1
+        fi
+        cat header.txt
+        cat postrequest.json
+        responseurlN=$(cat header.txt | grep location: | cut -d " " -f 2)
+        echo "Response URL: $responseurlN"
+        responseurl=$(echo $responseurlN | sed 's/.$//')
+        echo "$responseurl"
+        canaryid=$(cat postrequest.json | jq '.canaryId')
+        echo "Canary ID = $canaryid"
+        SPINNAKER_PROPERTY_CANARYID="$canaryid"
+        SPINNAKER_PROPERTY_RESPONSEURL="$responseurl"
+        echo "SPINNAKER_PROPERTY_CANARYID="$canaryid""
+        echo "SPINNAKER_PROPERTY_RESPONSEURL="$responseurl""
+kind: ConfigMap
+metadata:
+  name: visibilitygate-config
+  namespace: {{ .Release.Namespace }}

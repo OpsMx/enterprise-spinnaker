@@ -49,9 +49,11 @@ Render profiles for each service by merging predefined defaults with values pass
 
 data:
 {{ $profiles | toYaml | indent 2 }}
-{{- if .Values.gitopsHalyard.pipelinePromotion.enabled }}
   # Custom stage for pipeline promotion;
   # same configuration can be put in a repo for gitops style
   orca-local.yml: |-
-    {{- tpl (.Files.Get "config/orca-local.yml") . | nindent 4 }}
-{{- end }}
+    {{- if .Values.gitopsHalyard.pipelinePromotion.enabled }}
+    {{ .Files.Get "config/orca-local-pipeline-promotion.yml" | nindent 4 }}
+    {{- else }}
+    {{ .Files.Get "config/orca-local.yml" | nindent 4 }}
+    {{- end }}
