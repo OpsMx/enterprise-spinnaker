@@ -8,7 +8,7 @@
 ## Name of the secret for pulling image from docker registry.
 ## Change it only if you want to create a secret with
 ## different name.
-##
+## user opxm11 for internal use
 imagePullSecret: opsmxdev-secret
 
 ## Quay container image registry credentials to create imagePullSecret
