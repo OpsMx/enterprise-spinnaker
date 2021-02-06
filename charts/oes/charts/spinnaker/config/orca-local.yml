@@ -15,6 +15,7 @@ job:
             labels:
               spinnakerlabel: deljob
             name: opastage
+            namespace: default
           spec:
             backoffLimit: 0
             template:
@@ -93,7 +94,7 @@ job:
           kind: Job
           metadata:
             name: visibilitygate
-            namespace: {{ .Release.Namespace }}
+            namespace: default
           spec:
             backoffLimit: 0
             template:
@@ -188,7 +189,7 @@ job:
           kind: Job
           metadata:
             name: visibilityapprove
-            namespace: {{ .Release.Namespace }}
+            namespace: default 
           spec:
             backoffLimit: 0
             template:

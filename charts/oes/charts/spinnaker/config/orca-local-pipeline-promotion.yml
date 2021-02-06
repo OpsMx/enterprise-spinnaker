@@ -308,3 +308,161 @@ job:
                         value: "${execution.authentication.user}"
                     image: 'opsmxdev/apline-with-curl'
                     imagePullPolicy: Always
+      - label: VerificationGate
+        cloudProvider: kubernetes
+        application: spin
+        description: Stage for Visibility Gate
+        propertyFile: visibilitygate
+        account: default
+        type: Verification
+        waitForCompletion: true
+        parameters:
+          - defaultValue: ""
+            description: Please enter the Gate URL
+            label: Gate Url
+            mapping: 'manifest.spec.template.spec.containers[0].env[0].value'
+            name: gateurl
+        manifest:
+          apiVersion: batch/v1
+          kind: Job
+          metadata:
+            name: visibilitygate
+            namespace: default
+          spec:
+            backoffLimit: 0
+            template:
+              spec:
+                containers:
+                  - command:
+                      - sh
+                      - /tmp/initscript/run.sh
+                    env:
+                      - name: gateurl
+                        value:
+                      - name: application
+                        value: "${execution.application}"
+                    image: 'opsmxdev/apline-curl-jq:v1'
+                    imagePullPolicy: Always
+                    name: visibilitygate
+                    volumeMounts:
+                      - mountPath: /tmp/initscript/
+                        name: initscript
+                restartPolicy: Never
+                volumes:
+                  - configMap:
+                      default: 420
+                      name: visibilitygate-config
+                    name: initscript
+      - label: VisibilityApproval
+        cloudProvider: kubernetes
+        credentials: default
+        application: spin
+        description: Stage for Visibility Approval
+        account: default
+        type: Visibility Approval
+        waitForCompletion: true
+        parameters:
+          - defaultValue: ""
+            description: Please enter the Gate URL
+            label: Gate Url
+            mapping: 'manifest.spec.template.spec.containers[0].env[0].value'
+            name: gateurl
+          - defaultValue: ""
+            description: Please enter the JIRA ID1
+            label: Jira Id 1
+            mapping: 'manifest.spec.template.spec.containers[0].env[1].value'
+            name: jiraid1
+          - defaultValue: ""
+            description: Please enter the JIRA ID2
+            label: Jira Id 2
+            mapping: 'manifest.spec.template.spec.containers[0].env[2].value'
+            name: jiraid2
+          - defaultValue: ""
+            description: Please enter the Git Repo Name
+            label: Git Repo
+            mapping: 'manifest.spec.template.spec.containers[0].env[3].value'
+            name: gitrepo
+          - defaultValue: ""
+            description: Please enter the Git Commit Id 1
+            label: Git Commit Id 1
+            mapping: 'manifest.spec.template.spec.containers[0].env[4].value'
+            name: gitcommitid1
+          - defaultValue: ""
+            description: Please enter the Git Commit Id 2
+            label: Git Commit Id 2
+            mapping: 'manifest.spec.template.spec.containers[0].env[5].value'
+            name: gitcommitid2
+          - defaultValue: ""
+            description: Please enter the Jenins Job
+            label: Jenkins Job Name
+            mapping: 'manifest.spec.template.spec.containers[0].env[6].value'
+            name: jenkinsjob
+          - defaultValue: ""
+            description: Please enter the Jenkins Build No 1
+            label: Jenkins Build No 1
+            mapping: 'manifest.spec.template.spec.containers[0].env[7].value'
+            name: jenkinsbuild1
+          - defaultValue: ""
+            description: Please enter the Jenkins Build No 2
+            label: Jenkins Build No 2
+            mapping: 'manifest.spec.template.spec.containers[0].env[8].value'
+            name: jenkinsbuild2
+          - defaultValue: ""
+            description: Please enter the Autopilot Canary
+            label: Autopilot Canary Id
+            mapping: 'manifest.spec.template.spec.containers[0].env[9].value'
+            name: canaryid
+          - defaultValue: ""
+            description: Please enter the Sonarqube Prject Key
+            label: Sonarqube Project Key
+            mapping: 'manifest.spec.template.spec.containers[0].env[10].value'
+            name: projectkey
+        manifest:
+          apiVersion: batch/v1
+          kind: Job
+          metadata:
+            name: visibilityapprove
+            namespace: default 
+          spec:
+            backoffLimit: 0
+            template:
+              spec:
+                containers:
+                  - command:
+                      - sh
+                      - /tmp/initscript/run.sh
+                    env:
+                      - name: gateurl
+                        value:
+                      - name: jiraid1
+                        value:
+                      - name: jiraid2
+                        value:
+                      - name: gitrepo
+                        value:
+                      - name: gitcommitid1
+                        value:
+                      - name: gitcommitid2
+                        value:
+                      - name: jenkinsjob
+                        value:
+                      - name: jenkinsbuild1
+                        value:
+                      - name: jenkinsbuild2
+                        value:
+                      - name: canaryid
+                        value:
+                      - name: projectkey
+                        value:
+                    image: 'opsmxdev/apline-curl-jq:v1'
+                    imagePullPolicy: Always
+                    name: visibility-approve
+                    volumeMounts:
+                      - mountPath: /tmp/initscript/
+                        name: initscript
+                restartPolicy: Never
+                volumes:
+                  - configMap:
+                      default: 420
+                      name: visibility-config
+                    name: initscript

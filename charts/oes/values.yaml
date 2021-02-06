@@ -327,24 +327,16 @@ sapor:
       ##
       spinExternalGateURL: SPINNAKER_EXTERNAL_URL # THIS MUST BE CHANGED
 
-      ## Spinnaker user credentials
-      ##
-      spinuser: admin
-      spinpasswd: opsmxadmin123
-
       ## Spinnaker admin credentials
       ## When provided, will override above credentials and operate spinnaker
       ## as an admin user
       ##
-      spinAdminLoginEnabled: false
-      ##spinAdminUsername: admin
-      ##spinAdminPassword: admin
 
       ## LDAP
       ldap:
         ldapEnabled: true
         ldapUsername: admin
-        ldapPassword: opsmx@123
+        ldapPassword: opsmxadmin123
         ldapAdminLoginEnabled: false
         ldapAdminUsername: admin
         ldapAdminPassword: admin
@@ -444,7 +436,7 @@ autoConfiguration:
   # Set it to false if OES is being installed on restricted evnironment;
   # Autoconfiguration assumes Load Balancer is available for oes-gate, oes-ui
   # and spind-deck and configures accordingly
-  enabled: true
+  enabled: false
 
   initContainer:
     # Image for init container to automatically configure oes components
@@ -679,7 +671,7 @@ spinnaker:
           useExecHealthCheck: false
         artifactId: quay.io/opsmxpublic/ubi8-spin-gate:1.18.1
       deck.yml:
-        artifactId: quay.io/opsmxpublic/ubi8-spin-deck:1.22.2-mj
+        artifactId: quay.io/opsmxpublic/ubi8-spin-deck:3.3.0
       clouddriver.yml:
         artifactId: quay.io/opsmxpublic/ubi8-spin-clouddriver:6.11.1
       clouddriver-caching.yml:
@@ -705,7 +697,7 @@ spinnaker:
       kayenta.yml:
         artifactId: quay.io/opsmxpublic/ubi8-spin-kayenta:0.17.0
       orca.yml:
-        artifactId: quay.io/opsmxpublic/ubi8-spin-orca:2.14.2-mj2
+        artifactId: quay.io/opsmxpublic/ubi8-spin-orca:2.16.0
       rosco.yml:
         artifactId: quay.io/opsmxpublic/ubi8-spin-rosco:0.21.1
     ## Uncomment if you want to add extra commands to the init script
