@@ -78,8 +78,8 @@ job:
       - label: VerificationGate
         cloudProvider: kubernetes
         application: spin
-        description: Stage for Visibility Gate
-        propertyFile: visibilitygate
+        description: Stage for Verification Gate
+        propertyFile: verificationgate
         account: default
         type: Verification
         waitForCompletion: true
@@ -93,33 +93,24 @@ job:
           apiVersion: batch/v1
           kind: Job
           metadata:
-            name: visibilitygate
+            name: verificationgate
             namespace: default
           spec:
             backoffLimit: 0
             template:
               spec:
                 containers:
-                  - command:
-                      - sh
-                      - /tmp/initscript/run.sh
+                  - args:
+                      -
                     env:
                       - name: gateurl
                         value:
                       - name: application
                         value: "${execution.application}"
-                    image: 'opsmxdev/apline-curl-jq:v1'
+                    image: 'opsmxdev/verificationgate-stage:v1'
                     imagePullPolicy: Always
-                    name: visibilitygate
-                    volumeMounts:
-                      - mountPath: /tmp/initscript/
-                        name: initscript
+                    name: verificationgate
                 restartPolicy: Never
-                volumes:
-                  - configMap:
-                      default: 420
-                      name: visibilitygate-config
-                    name: initscript
       - label: VisibilityApproval
         cloudProvider: kubernetes
         credentials: default
@@ -195,9 +186,8 @@ job:
             template:
               spec:
                 containers:
-                  - command:
-                      - sh
-                      - /tmp/initscript/run.sh
+                  - args:
+                      -
                     env:
                       - name: gateurl
                         value:
@@ -221,15 +211,7 @@ job:
                         value:
                       - name: projectkey
                         value:
-                    image: 'opsmxdev/apline-curl-jq:v1'
+                    image: 'opsmxdev/visibility-stage:v1'
                     imagePullPolicy: Always
                     name: visibility-approve
-                    volumeMounts:
-                      - mountPath: /tmp/initscript/
-                        name: initscript
                 restartPolicy: Never
-                volumes:
-                  - configMap:
-                      default: 420
-                      name: visibility-config
-                    name: initscript

@@ -357,7 +357,7 @@ sapor:
       agent:
         enabled: true
         serverHostName: CONTROLLER_EXTERNAL_DNS  # THIS MUST BE CHANGED TO YOUR EXTERNAL CONTROLLER DNS ADDRESS e.g controller.opsmx.com
-        serverPort: 9001
+        serverPort: 9003
         caCertfile: /opt/opsmx/controller/ca.crt
         certFile: /opt/opsmx/controller/cert/tls.crt
         keyFile: /opt/opsmx/controller/cert/tls.key
