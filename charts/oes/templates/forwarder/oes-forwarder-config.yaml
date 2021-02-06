@@ -1,0 +1,18 @@
+{{- if or (eq .Values.installationMode "OES-AP") (eq .Values.installationMode "OES") -}}
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: opsmx-controller-controller1
+  labels:
+    agent.opsmx.com/name: controller1
+    agent.opsmx.com/role: controller
+{{ include "oes.standard-labels" . | indent 4 }}
+data:
+  configFile: |
+    serverNames:
+      - opsmx-controller-controller1
+      - {{ .Values.forwarder.externalName }}
+    kubernetesAPIHostname: opsmx-controller-controller1
+    commandHostname: opsmx-controller-controller1
+    agentHostname: {{ .Values.forwarder.externalName }}
+{{- end -}}

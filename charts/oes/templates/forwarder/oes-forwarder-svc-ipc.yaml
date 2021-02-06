@@ -1,0 +1,18 @@
+{{- if or (eq .Values.installationMode "OES-AP") (eq .Values.installationMode "OES") -}}
+apiVersion: v1
+kind: Service
+metadata:
+  name: opsmx-controller-controller1-interproc
+  labels:
+    agent.opsmx.com/name: controller1
+    agent.opsmx.com/role: controller
+{{ include "oes.standard-labels" . | indent 4 }}
+spec:
+  selector:
+    app: opsmx-controller-controller1
+  type: ClusterIP
+  ports:
+  - name: agent-grpc
+    port: 9001
+    targetPort: agent-grpc
+{{- end -}}
