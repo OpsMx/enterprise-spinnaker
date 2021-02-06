@@ -17,7 +17,7 @@ services:
     enabled: true
   user: {}
 cors:
-  allowed-origins-pattern: {{ .Values.gate.config.oesUIcors }}
+  allowed-origins-pattern: ^https?://(?:localhost|{{ .Values.oesUI.hostname }}|opsmx.com)(?::[1-9]\d*)?/?
 ldap:
   enabled: {{ .Values.ldap.enabled }}
   url: {{ tpl .Values.ldap.url . }}
@@ -36,7 +36,11 @@ logging:
 redis:
   connection: {{ tpl .Values.redis.url . }}
 oesui:
-  externalUrl: {{ .Values.gate.config.oesui.externalUrl }}
+{{- if .Values.oesUI.port }}
+  externalUrl: {{ .Values.oesUI.protocol }}://{{ .Values.oesUI.hostname }}:{{ .Values.oesUI.port }}
+{{- else }}
+  externalUrl: {{ .Values.oesUI.protocol }}://{{ .Values.oesUI.hostname }}
+{{- end }}
 server:
   session:
     timeoutInSeconds: {{ .Values.gate.config.server.session.timeoutInSeconds }}

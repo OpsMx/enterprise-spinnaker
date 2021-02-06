@@ -22,9 +22,9 @@ imageCredentials:
 rbac:
   create: true
 
-## Set to true to expose spinnaker and deck services over ingress
+## Set to true to expose oes-ui, oes-gate services over ingress
 ##
-createIngress: false
+createIngress: true
 
 ## Option to skip installation of OpsMx Spinnaker
 ## Setting this to true, will ensure custom ubi8 images of Spinnaker
@@ -38,6 +38,20 @@ installationMode: OES-AP
 ## OES UI & Gate service type
 ##
 k8sServiceType: LoadBalancer
+
+## OES-UI url
+oesUI:
+  protocol: http
+  hostname: oes.domain.com
+  # Use below port when hostname above is an external IP instead of a hostname
+  #port: 80
+
+## OES-Gate url
+oesGate:
+  protocol: http
+  hostname: oes-api.domain.com
+  # Use below port when hostname above is an external IP instead of a hostname
+  #port: 8084
 
 ####################################################
 ## Redis configuration
@@ -138,12 +152,13 @@ autopilot:
       keyStorePassword: dummypwd # Provide keystore password
       keyStoreType: PKCS12
       keyAlias: tomcat
-    server:
-      host:
-        dns:
-          name: OES_UI_EXTERNAL_URL   # THIS MUST BE UPDATED TO EXTERNAL URL OF OES-UI
-    gate:
-      url: http://oes-gate:8084/
+    
+    ## server.host.dns.name is fetched from oesUI.hostname
+    ##
+
+    ## gate.url is fetched from oesGate.hostname
+    ##
+
 ###############################################################################
 ##
 ## Values of OES Dashboard
@@ -173,7 +188,7 @@ dashboard:
     app:
       sync:
         enabled: true
-    spinnakerLink: SPINNAKER_EXTERNAL_URL  # THIS MUST BE UPDATED
+    spinnakerLink: http://spinnaker.domain.com #TODO: Fix this to use value that's defined at a single place
 
 ###############################################################################
 ##
@@ -206,15 +221,12 @@ gate:
     ## under Redis Configuration section
     ##
 
-    ## Regex of OES-UI URL to allow cross origin requests
-    oesUIcors: ^https?://(?:localhost|OES_UI_LOADBALANCER_IP|opsmx.com)(?::[1-9]\d*)?/?
+    ## Regex of OES-UI URL to allow cross origin requests; this is framed using oesUI.hostname
 
     ## Set it to true to disable LDAP authentication and enable file based authentication
     ## Reach out over support@opsmx.com for pre-configured user credentials
     fileBasedAuthentication:
       enabled: false
-    oesui:
-      externalUrl: OES_UI_EXTERNAL_URL # THIS MUST BE UPDATED
     server:
       session:
         timeoutInSeconds: 7200
@@ -272,11 +284,6 @@ platform:
       - deployment_verification
       - sapor
       - visibility
-    oes:
-      approvalGate:
-        apiUrl: https://oes-gate:8084/visibilityservice/v2/approvalGates/{id}/trigger
-      verificationGate:
-        apiUrl: https://oes-gate:8084/autopilot/api/v2/registerCanary
 
 ###############################################################################
 ##
@@ -325,7 +332,7 @@ sapor:
       ## the spinnaker pipelines from OES-UI.
       ## Note: Trailing / is not required
       ##
-      spinExternalGateURL: SPINNAKER_EXTERNAL_URL # THIS MUST BE CHANGED
+      spinExternalGateURL: http://spinnaker-api.domain.com #TODO: Fix this to use value that's defined at a single place
 
       ## Spinnaker admin credentials
       ## When provided, will override above credentials and operate spinnaker
@@ -356,11 +363,6 @@ sapor:
     kubernetes:
       agent:
         enabled: true
-        serverHostName: CONTROLLER_EXTERNAL_DNS  # THIS MUST BE CHANGED TO YOUR EXTERNAL CONTROLLER DNS ADDRESS e.g controller.opsmx.com
-        serverPort: 9003
-        caCertfile: /opt/opsmx/controller/ca.crt
-        certFile: /opt/opsmx/controller/cert/tls.crt
-        keyFile: /opt/opsmx/controller/cert/tls.key
         image: quay.io/opsmxpublic/forwarder-agent:v20210118T161303
       template:
         path: /opt/opsmx/controller
@@ -386,9 +388,6 @@ ui:
     pullPolicy: IfNotPresent
 
   config:
-    ## Endpoint of oes-gate to be used by oes-ui
-    ##
-    oesGateURL: http://OES_GATE_IP:8084/   # THIS MUST BE UPDATED IF AUTOCONFIG IS NOT BEING USED
 
     ## Interval at which UI refreshes application dashboard
     setApplicationRefreshInterval: 300000
@@ -425,8 +424,6 @@ visibility:
 
     ## Logger level
     logLevel: ERROR
-    gate:
-      url: http://oes-gate:8084
 
 ###############################################################################
 ## This option enables OES to be configured automatically
@@ -455,7 +452,7 @@ opa:
   enabled: true
   image:
     repository: openpolicyagent/opa
-    tag: edge-rootless # latest
+    tag: edge-rootless
     pullPolicy: IfNotPresent
 
 #####################################################
@@ -463,10 +460,11 @@ opa:
 #####################################################
 forwarder:
   agentServiceType: LoadBalancer
-  externalName: controller-agent.testing.opsmx.com # THIS MUST BE SAME AS sapor.kubernetes.agent.serverHostName
+  # Value is also used in sapor configuration for kubernetes.agent.serverHostName
+  externalName: controller-agent.testing.opsmx.com
   image:
     repository: quay.io/opsmxpublic/forwarder-controller
-    tag: v20210118T161248
+    tag: v1.0.0
     pullPolicy: IfNotPresent
 ####################################################
 ## LDAP configuration
@@ -691,7 +689,7 @@ spinnaker:
       fiat.yml:
         artifactId: quay.io/opsmxpublic/ubi8-spin-fiat:1.13.0
       front50.yml:
-        artifactId: quay.io/opsmxpublic/ubi8-spin-front50:0.25.1-opa
+        artifactId: quay.io/opsmxpublic/ubi8-oes-front50:0.25.1-opa
       igor.yml:
         artifactId: quay.io/opsmxpublic/ubi8-spin-igor:1.12.0
       kayenta.yml:
@@ -774,24 +772,25 @@ spinnaker:
 
   # Change this if youd like to expose Spinnaker outside the cluster
   ingress:
-    enabled: false
-    # host: spinnaker.example.org
-    # annotations:
+    enabled: true
+    host: spinnaker.example.org
+    annotations:
       # ingress.kubernetes.io/ssl-redirect: 'true'
-      # kubernetes.io/ingress.class: nginx
       # kubernetes.io/tls-acme: "true"
+      kubernetes.io/ingress.class: nginx
     # tls:
     #  - secretName: -tls
     #    hosts:
     #      - domain.com
 
   ingressGate:
-    enabled: false
-    # host: gate.spinnaker.example.org
-    # annotations:
+    enabled: true
+    host: gate.spinnaker.example.org
+    annotations:
       # ingress.kubernetes.io/ssl-redirect: 'true'
-      # kubernetes.io/ingress.class: nginx
       # kubernetes.io/tls-acme: "true"
+      kubernetes.io/ingress.class: nginx
+
     # tls:
     #  - secretName: -tls
     #    hosts:
@@ -802,10 +801,7 @@ spinnaker:
   # spinnakerFeatureFlags:
   #   - artifacts
   #   - pipeline-templates
-  spinnakerFeatureFlags:
-    - artifacts
-    - pipeline-templates
-    - managed-pipeline-templates-v2-ui
+  spinnakerFeatureFlags: []
 
   # Node labels for pod assignment
   # Ref: https://kubernetes.io/docs/user-guide/node-selection/
@@ -911,8 +907,6 @@ spinnaker:
     enabled: false
     mTLS:
       enabled: false   # Enable mTLS for Spinnaker Services and SSL for Deck and Gate
-      deckIngressHost: spindeck.{{ .Release.Name }}.domain.com  # Used by OES to create ingress for deck
-      gateIngressHost: spingate.{{ .Release.Name }}.domain.com  # Used by OES to create ingress for gate
     repo-type: git # git, S3, vault, only git support at this point
     secretName: opsmx-gitops-auth
     # Max time(in secs) that an init container of halyard should wait

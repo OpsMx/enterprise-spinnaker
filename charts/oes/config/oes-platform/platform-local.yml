@@ -23,6 +23,15 @@ redis:
   connection: {{ tpl .Values.redis.url . }}
 oes:
   approvalGate:
-    apiUrl: {{ .Values.platform.config.oes.approvalGate.apiUrl }}
+{{- if .Values.oesGate.port }}
+    apiUrl: {{ .Values.oesGate.protocol }}://{{ .Values.oesGate.hostname }}:{{ .Values.oesGate.port }}/visibilityservice/v2/approvalGates/{id}/trigger
+{{- else }}
+    apiUrl: {{ .Values.oesGate.protocol }}://{{ .Values.oesGate.hostname }}/visibilityservice/v2/approvalGates/{id}/trigger
+{{- end }}
+
   verificationGate:
-    apiUrl: {{ .Values.platform.config.oes.verificationGate.apiUrl }}
+{{- if .Values.oesGate.port }}
+    apiUrl: {{ .Values.oesGate.protocol }}://{{ .Values.oesGate.hostname }}:{{ .Values.oesGate.port }}/autopilot/api/v2/registerCanary
+{{- else }}
+    apiUrl: {{ .Values.oesGate.protocol }}://{{ .Values.oesGate.hostname }}/autopilot/api/v2/registerCanary
+{{- end }}

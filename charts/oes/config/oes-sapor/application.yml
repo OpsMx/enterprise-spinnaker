@@ -29,13 +29,13 @@ datasources:
 kubernetes:
   agent:
     enabled: {{ .Values.sapor.config.kubernetes.agent.enabled }} 
-    serverHostName: {{ .Values.sapor.config.kubernetes.agent.serverHostName }}
-    serverPort: {{ .Values.sapor.config.kubernetes.agent.serverPort }}
-    caCertfile: {{ .Values.sapor.config.kubernetes.agent.caCertfile }}
-    certFile: {{ .Values.sapor.config.kubernetes.agent.certFile }}
-    keyFile: {{ .Values.sapor.config.kubernetes.agent.keyFile }}
+    serverHostName: {{ .Values.forwarder.externalName }}
+    serverPort: 9003
+    caCertfile: /opt/opsmx/controller/ca.crt
+    certFile: /opt/opsmx/controller/cert/tls.crt
+    keyFile: /opt/opsmx/controller/cert/tls.key
     image: {{ .Values.sapor.config.kubernetes.agent.image }}
   template:
-    path: {{ .Values.sapor.config.kubernetes.template.path }}
-    kubectlTemplateFileName: {{ .Values.sapor.config.kubernetes.template.kubectlTemplateFileName }}
-    manifestTemplateFileName: {{ .Values.sapor.config.kubernetes.template.manifestTemplateFileName }}
+    path: /opt/opsmx/controller
+    kubectlTemplateFileName: kubeconfig.template
+    manifestTemplateFileName: deploy-agent.template

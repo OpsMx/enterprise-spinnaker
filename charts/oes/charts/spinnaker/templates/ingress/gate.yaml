@@ -1,4 +1,4 @@
-{{- if .Values.ingressGate.enabled }}
+{{- if and (.Values.ingress.enabled) (not .Values.gitopsHalyard.mTLS.enabled) }}
 apiVersion: extensions/v1beta1
 kind: Ingress
 metadata:

@@ -17,4 +17,8 @@ logging:
             AbstractSerializableParameter: {{ .Values.visibility.config.logLevel }}
             
 gate:
-  url: {{ .Values.visibility.config.gate.url }}
+{{- if .Values.oesGate.port }}
+  url: {{ .Values.oesGate.protocol }}://{{ .Values.oesGate.hostname }}:{{ .Values.oesGate.port }}
+{{- else }}
+  url: {{ .Values.oesGate.protocol }}://{{ .Values.oesGate.hostname }}
+{{- end }}

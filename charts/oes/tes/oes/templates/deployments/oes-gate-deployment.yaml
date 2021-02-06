@@ -1,0 +1,62 @@
+---
+# Source: oes/templates/deployments/oes-gate-deployment.yaml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: oes
+    component: gate
+    heritage: "Helm"
+    release: "RELEASE-NAME"
+    chart: "oes-3.5.0"
+  name: oes-gate
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: oes
+      component: gate
+  template:
+    metadata:
+      annotations:
+        configmap/checksum: dc5ece3ac6a2cbe1bd85c1eb51664d3c3d3061c7c039486f1d273792aa6abd7a
+      labels:
+        app: oes
+        component: gate
+        heritage: "Helm"
+        release: "RELEASE-NAME"
+        chart: "oes-3.5.0"
+    spec:
+      containers:
+      - image: quay.io/opsmxpublic/ubi8-oes-gate:v3.5.0
+        name: oes-gate
+        ports:
+        - containerPort: 8084
+          protocol: TCP
+        resources:
+            limits:
+              cpu: 1500m
+              memory: 1500Mi
+            requests:
+              cpu: 500m
+              memory: 500Mi
+        volumeMounts:
+        - name: gate-volume
+          mountPath: /opt/spinnaker/config
+        readinessProbe:
+          tcpSocket:
+            port: 8084
+          initialDelaySeconds: 120
+          periodSeconds: 30
+        livenessProbe:
+          httpGet:
+            path: /health
+            port: 8084
+          initialDelaySeconds: 120
+          periodSeconds: 60
+      imagePullSecrets:
+      - name: opsmxdev-secret
+      volumes:
+      - name: gate-volume
+        configMap:
+          name: oes-gate-config

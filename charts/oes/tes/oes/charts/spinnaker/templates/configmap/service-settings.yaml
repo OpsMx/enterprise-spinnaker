@@ -1,0 +1,43 @@
+---
+# Source: oes/charts/spinnaker/templates/configmap/service-settings.yaml
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: RELEASE-NAME-spinnaker-service-settings
+  labels:
+    app: "RELEASE-NAME-spinnaker"
+    heritage: "Helm"
+    release: "RELEASE-NAME"
+    chart: "spinnaker-2.2.3"
+
+data:
+  clouddriver-caching.yml: 'artifactId: quay.io/opsmxpublic/ubi8-spin-clouddriver:6.11.1'
+  clouddriver-ro-deck.yml: 'artifactId: quay.io/opsmxpublic/ubi8-spin-clouddriver:6.11.1'
+  clouddriver-ro.yml: 'artifactId: quay.io/opsmxpublic/ubi8-spin-clouddriver:6.11.1'
+  clouddriver-rw.yml: 'artifactId: quay.io/opsmxpublic/ubi8-spin-clouddriver:6.11.1'
+  clouddriver.yml: 'artifactId: quay.io/opsmxpublic/ubi8-spin-clouddriver:6.11.1'
+  deck.yml: |-
+    artifactId: quay.io/opsmxpublic/ubi8-spin-deck:3.3.0
+    env:
+      API_HOST: http://spin-gate:8084
+    kubernetes:
+      serviceType: NodePort
+      useExecHealthCheck: false
+  echo-scheduler.yml: 'artifactId: quay.io/opsmxpublic/ubi8-spin-echo:2.14.0'
+  echo-worker.yml: 'artifactId: quay.io/opsmxpublic/ubi8-spin-echo:2.14.0'
+  echo.yml: 'artifactId: quay.io/opsmxpublic/ubi8-spin-echo:2.14.0'
+  fiat.yml: 'artifactId: quay.io/opsmxpublic/ubi8-spin-fiat:1.13.0'
+  front50.yml: 'artifactId: quay.io/opsmxpublic/ubi8-oes-front50:0.25.1-opa'
+  gate.yml: |-
+    artifactId: quay.io/opsmxpublic/ubi8-spin-gate:1.18.1
+    healthEndpoint: /health
+    kubernetes:
+      serviceType: NodePort
+      useExecHealthCheck: false
+  igor.yml: 'artifactId: quay.io/opsmxpublic/ubi8-spin-igor:1.12.0'
+  kayenta.yml: 'artifactId: quay.io/opsmxpublic/ubi8-spin-kayenta:0.17.0'
+  orca.yml: 'artifactId: quay.io/opsmxpublic/ubi8-spin-orca:2.16.0'
+  redis.yml: |-
+    overrideBaseUrl: redis://:password@RELEASE-NAME-redis-master:6379
+    skipLifeCycleManagement: true
+  rosco.yml: 'artifactId: quay.io/opsmxpublic/ubi8-spin-rosco:0.21.1'
