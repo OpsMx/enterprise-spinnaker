@@ -1,0 +1,20 @@
+---
+# Source: oes/charts/spinnaker/templates/services/halyard.yaml
+apiVersion: v1
+kind: Service
+metadata:
+  name: oes-spinnaker-halyard
+  labels:
+    app: "oes-spinnaker"
+    heritage: "Helm"
+    release: "oes"
+    chart: "spinnaker-2.2.3"
+    component: halyard
+spec:
+  ports:
+  - port: 8064
+    name: daemon
+  clusterIP: None
+  selector:
+    app: oes-spinnaker
+    component: halyard

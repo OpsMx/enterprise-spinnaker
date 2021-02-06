@@ -141,9 +141,9 @@ autopilot:
     server:
       host:
         dns:
-          name: ^https?://(?:localhost|OES_UI_LOADBALANCER_IP|opsmx.com)(?::[1-9]\d*)?/?
+          name: OES_UI_EXTERNAL_URL   # THIS MUST BE UPDATED TO EXTERNAL URL OF OES-UI
     gate:
-      url: http://OES_GATE_IP:8084/
+      url: http://oes-gate:8084/
 ###############################################################################
 ##
 ## Values of OES Dashboard
@@ -173,7 +173,7 @@ dashboard:
     app:
       sync:
         enabled: true
-    spinnakerLink: https://demo.opsmx.com
+    spinnakerLink: SPINNAKER_EXTERNAL_URL  # THIS MUST BE UPDATED
 
 ###############################################################################
 ##
@@ -214,7 +214,7 @@ gate:
     fileBasedAuthentication:
       enabled: false
     oesui:
-      externalUrl: ^https?://(?:localhost|OES_UI_LOADBALANCER_IP|opsmx.com)(?::[1-9]\d*)?/?
+      externalUrl: OES_UI_EXTERNAL_URL # THIS MUST BE UPDATED
     server:
       session:
         timeoutInSeconds: 7200
@@ -274,9 +274,9 @@ platform:
       - visibility
     oes:
       approvalGate:
-        apiUrl: https://OES_GATE_IP:8084/visibilityservice/v2/approvalGates/{id}/trigger
+        apiUrl: https://oes-gate:8084/visibilityservice/v2/approvalGates/{id}/trigger
       verificationGate:
-        apiUrl: https://OES_GATE_IP:8084/autopilot/api/v2/registerCanary
+        apiUrl: https://oes-gate:8084/autopilot/api/v2/registerCanary
 
 ###############################################################################
 ##
@@ -325,7 +325,7 @@ sapor:
       ## the spinnaker pipelines from OES-UI.
       ## Note: Trailing / is not required
       ##
-      spinExternalGateURL: http://spin-gate:8084
+      spinExternalGateURL: SPINNAKER_EXTERNAL_URL # THIS MUST BE CHANGED
 
       ## Spinnaker user credentials
       ##
@@ -364,7 +364,7 @@ sapor:
     kubernetes:
       agent:
         enabled: true
-        serverHostName: opsmx-controller-controller1
+        serverHostName: CONTROLLER_EXTERNAL_DNS  # THIS MUST BE CHANGED TO YOUR EXTERNAL CONTROLLER DNS ADDRESS e.g controller.opsmx.com
         serverPort: 9001
         caCertfile: /opt/opsmx/controller/ca.crt
         certFile: /opt/opsmx/controller/cert/tls.crt
@@ -396,7 +396,7 @@ ui:
   config:
     ## Endpoint of oes-gate to be used by oes-ui
     ##
-    oesGateURL: http://OES_GATE_IP:8084/
+    oesGateURL: http://OES_GATE_IP:8084/   # THIS MUST BE UPDATED IF AUTOCONFIG IS NOT BEING USED
 
     ## Interval at which UI refreshes application dashboard
     setApplicationRefreshInterval: 300000
@@ -434,7 +434,7 @@ visibility:
     ## Logger level
     logLevel: ERROR
     gate:
-      url: http://OES_GATE_IP:8084
+      url: http://oes-gate:8084
 
 ###############################################################################
 ## This option enables OES to be configured automatically
@@ -463,7 +463,7 @@ opa:
   enabled: true
   image:
     repository: openpolicyagent/opa
-    tag: latest
+    tag: edge-rootless # latest
     pullPolicy: IfNotPresent
 
 #####################################################
@@ -471,7 +471,7 @@ opa:
 #####################################################
 forwarder:
   agentServiceType: LoadBalancer
-  externalName: grpc.controller.opsmx.com
+  externalName: controller-agent.testing.opsmx.com # THIS MUST BE SAME AS sapor.kubernetes.agent.serverHostName
   image:
     repository: quay.io/opsmxpublic/forwarder-controller
     tag: v20210118T161248

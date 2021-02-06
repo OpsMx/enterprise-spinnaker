@@ -1,0 +1,70 @@
+---
+# Source: oes/templates/deployments/oes-platform-deployment.yaml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  creationTimestamp: null
+  labels:
+    app: oes
+    component: platform
+    heritage: "Helm"
+    release: "oes"
+    chart: "oes-3.4.2"
+  name: oes-platform
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: oes
+      component: platform
+  strategy: {}
+  template:
+    metadata:
+      annotations:
+        configmap/checksum: 857437200c466caa7a0b5842e42aa2dd370fd5cf7b3f43a903dd7417eafa6a13
+      labels:
+        app: oes
+        component: platform
+        heritage: "Helm"
+        release: "oes"
+        chart: "oes-3.4.2"
+    spec:
+      initContainers:
+      - name: db-check
+        image: postgres:9.6.5
+        command: ['/bin/bash', '-c', "sleep 30;echo Waiting for oes-db to be up and running; pg_isready -h oes-db -p 5432 && echo PostgreSQL DB is ready to receive connections"]
+      containers:
+      - image: quay.io/opsmxpublic/ubi8-oes-platform:v3.5.0
+        name: oes-platform
+        ports:
+        - containerPort: 8095
+          protocol: TCP
+        env:
+        resources:
+            limits:
+              cpu: 1500m
+              memory: 1500Mi
+            requests:
+              cpu: 500m
+              memory: 500Mi
+        readinessProbe:
+          tcpSocket:
+            port: 8095
+          initialDelaySeconds: 10
+          periodSeconds: 5
+        livenessProbe:
+          httpGet:
+            path: /mgmt/health
+            port: 8095
+          initialDelaySeconds: 60
+          periodSeconds: 60
+        volumeMounts:
+        - mountPath: /opsmx/conf/platform-local.yml
+          name: platform-config-volume
+          subPath: platform-local.yml
+      imagePullSecrets:
+      - name: opsmxdev-secret
+      volumes:
+      - name: platform-config-volume
+        configMap:
+          name: oes-platform-config

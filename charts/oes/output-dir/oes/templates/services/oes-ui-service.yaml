@@ -1,0 +1,21 @@
+---
+# Source: oes/templates/services/oes-ui-service.yaml
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    app: oes
+    component: ui
+    heritage: "Helm"
+    release: "oes"
+    chart: "oes-3.4.2"
+  name: oes-ui
+spec:
+  type: LoadBalancer
+  ports:
+  - name: "oes-ui-service"
+    port: 80
+    targetPort: 80
+  selector:
+    app: oes
+    component: ui

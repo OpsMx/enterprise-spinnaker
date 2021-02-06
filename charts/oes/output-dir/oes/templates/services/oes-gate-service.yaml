@@ -1,0 +1,22 @@
+---
+# Source: oes/templates/services/oes-gate-service.yaml
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    app: oes
+    component: gate
+    heritage: "Helm"
+    release: "oes"
+    chart: "oes-3.4.2"
+  name: oes-gate
+spec:
+  type: LoadBalancer
+  ports:
+  - name: "oes-gate-service"
+    port: 8084
+    protocol: TCP
+    targetPort: 8084
+  selector:
+    app: oes
+    component: gate

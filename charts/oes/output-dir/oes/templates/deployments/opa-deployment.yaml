@@ -1,0 +1,31 @@
+---
+# Source: oes/templates/deployments/opa-deployment.yaml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: opa
+    heritage: "Helm"
+    release: "oes"
+    chart: "oes-3.4.2"
+  name: opa
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: opa
+  template:
+    metadata:
+      labels:
+        app: opa
+        heritage: "Helm"
+        release: "oes"
+        chart: "oes-3.4.2"
+      name: opa
+    spec:
+      containers:
+        - name: opa
+          image: openpolicyagent/opa:edge-rootless
+          args:
+            - "run"
+            - "--server"

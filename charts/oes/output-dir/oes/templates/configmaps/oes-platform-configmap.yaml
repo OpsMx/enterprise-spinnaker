@@ -1,0 +1,45 @@
+---
+# Source: oes/templates/configmaps/oes-platform-configmap.yaml
+apiVersion: v1
+data:
+  platform-local.yml: |
+    spring:
+      datasource:
+        url: jdbc:postgresql://oes-db:5432/platformdb
+        username: postgres
+        password: networks123
+    rbacEnabled: true
+    supportedFeatures:
+      - deployment_verification
+      - sapor
+      - visibility
+    userGroup:
+      adminGroups: admin, Administrators
+    user:
+      source: ldap
+    ldap:
+      url: ldap://oes-openldap:389
+      managerDn: cn=admin,dc=example,dc=org
+      managerPassword: opsmxadmin123
+      groupSearchBase: ou=groups,dc=example,dc=org
+      groupSearchFilter: member={0}
+      groupRoleAttributes: cn
+      userDnPattern: cn={0},dc=example,dc=org
+    
+    redis:
+      connection: redis://:password@oes-redis-master:6379
+    oes:
+      approvalGate:
+        apiUrl: https://oes-gate:8084/visibilityservice/v2/approvalGates/{id}/trigger
+      verificationGate:
+        apiUrl: https://oes-gate:8084/autopilot/api/v2/registerCanary
+    
+kind: ConfigMap
+metadata:
+  name: oes-platform-config
+  labels:
+    app: oes
+    component: platform
+    heritage: "Helm"
+    release: "oes"
+    chart: "oes-3.4.2"

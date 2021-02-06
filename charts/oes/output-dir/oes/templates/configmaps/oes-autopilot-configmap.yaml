@@ -1,0 +1,25 @@
+---
+# Source: oes/templates/configmaps/oes-autopilot-configmap.yaml
+apiVersion: v1
+data:
+  autopilot.properties: |
+    # Enable Build Analysis
+    build.analysis=false
+    
+    # DB configuration
+    opsmx.postgresql.username=postgres
+    opsmx.postgresql.password=networks123
+    opsmx.postgresql.url=jdbc:postgresql://oes-db:5432/opsmx
+    
+    server.host.dns.name=https://oes-test-gate.testing.opsmx.com
+    gate.url=http://oes-gate:8084/
+    
+kind: ConfigMap
+metadata:
+  name: oes-autopilot-config
+  labels:
+    app: oes
+    component: autopilot
+    heritage: "Helm"
+    release: "oes"
+    chart: "oes-3.4.2"

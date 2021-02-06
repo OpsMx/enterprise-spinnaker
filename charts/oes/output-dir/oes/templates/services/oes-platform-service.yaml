@@ -1,0 +1,22 @@
+---
+# Source: oes/templates/services/oes-platform-service.yaml
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    app: oes
+    component: platform
+    heritage: "Helm"
+    release: "oes"
+    chart: "oes-3.4.2"
+  name: oes-platform
+spec:
+  type: ClusterIP
+  ports:
+  - name: oes-platform
+    protocol: TCP
+    port: 8095
+    targetPort: 8095
+  selector:
+    app: oes
+    component: platform
