@@ -161,9 +161,9 @@ data:
     $HAL_COMMAND config security authn ldap enable
     # Use Deck to route to Gate
     {{- if not .Values.gitopsHalyard.enabled }}
-    # Fetch Deck, Gate Load Balancer IPs and override base url
-    bash -x /opt/halyard/additionalScripts/config_overrideurl.sh override-gate-url
-    bash -x /opt/halyard/additionalScripts/config_overrideurl.sh override-deck-url
+    # Configure override urls in halyard config
+    $HAL_COMMAND config security ui edit --no-validate --override-base-url {{ .Values.ingress.protocol }}://{{ .Values.ingress.host }}
+    $HAL_COMMAND config security api edit --no-validate --override-base-url {{ .Values.ingressGate.protocol }}://{{ .Values.ingressGate.host }}
     {{- end }}
     {{- range $index, $feature := .Values.spinnakerFeatureFlags }}
     $HAL_COMMAND config features edit --{{ $feature }} true

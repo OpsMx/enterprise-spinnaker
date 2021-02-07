@@ -4,7 +4,11 @@ oes:
 spinnaker:
   authnEnabled: {{ .Values.sapor.config.spinnaker.authnEnabled }}
   baseurl: {{ .Values.sapor.config.spinnaker.spinGateURL }}
+{{- if .Values.sapor.config.spinnaker.spinExternalGateURL }}
   externalBaseUrl: {{ .Values.sapor.config.spinnaker.spinExternalGateURL }}
+{{- else }}
+  externalBaseUrl: {{ .Values.spinnaker.ingressGate.protocol }}://{{ .Values.spinnaker.ingressGate.host }}
+{{- end }}
   ldap:
     enabled: {{ .Values.sapor.config.spinnaker.ldap.ldapEnabled }}
     username: {{ .Values.sapor.config.spinnaker.ldap.ldapUsername }}

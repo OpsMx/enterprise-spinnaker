@@ -188,7 +188,9 @@ dashboard:
     app:
       sync:
         enabled: true
-    spinnakerLink: http://spinnaker.domain.com #TODO: Fix this to use value that's defined at a single place
+    ## By default spinnakerLink is {{ .Values.spinnaker.ingress.protocol }}://{{ .Values.spinnaker.ingress.host }}
+    ## If spinnaker is exposed on Load balancer instead of ingress, set this value to external IP of spinnaker UI
+    #spinnakerLink: http://spinnaker.domain.com
 
 ###############################################################################
 ##
@@ -328,11 +330,12 @@ sapor:
       ##
       spinGateURL: http://spin-gate:8084
 
-      ## Set the external IP address of spin-gate, this is used to redirect to
+      ## By default spinExternalGateURL is {{ .Values.spinnaker.ingressGate.protocol }}://{{ .Values.spinnaker.ingressGate.host}}
+      ## If spinExternalGateURL is an external IP address instead of ingress, Set the external IP address of spin-gate, this is used to redirect to
       ## the spinnaker pipelines from OES-UI.
       ## Note: Trailing / is not required
       ##
-      spinExternalGateURL: http://spinnaker-api.domain.com #TODO: Fix this to use value that's defined at a single place
+      #spinExternalGateURL: http://spinnaker-api.domain.com
 
       ## Spinnaker admin credentials
       ## When provided, will override above credentials and operate spinnaker
@@ -773,6 +776,7 @@ spinnaker:
   # Change this if youd like to expose Spinnaker outside the cluster
   ingress:
     enabled: true
+    protocol: http
     host: spinnaker.example.org
     annotations:
       # ingress.kubernetes.io/ssl-redirect: 'true'
@@ -785,6 +789,7 @@ spinnaker:
 
   ingressGate:
     enabled: true
+    protocol: http
     host: gate.spinnaker.example.org
     annotations:
       # ingress.kubernetes.io/ssl-redirect: 'true'
