@@ -16,7 +16,6 @@ spec:
           serviceName: oes-ui
           servicePort: 80
         path: /
-        pathType: ImplementationSpecific
   tls:
   - hosts:
     - {{ .Values.oesUI.host }}
