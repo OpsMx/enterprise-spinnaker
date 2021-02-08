@@ -795,7 +795,7 @@ spinnaker:
     protocol: http
     host: spinnaker.example.org
     annotations:
-      cert-manager.io/issuer: letsencrypt-{{ .Release.Namespace }}-test-spin
+      cert-manager.io/issuer: letsencrypt-{{ .Release.Namespace }}-spin
       acme.cert-manager.io/http01-edit-in-place: "true"
       cert-manager.io/issue-temporary-certificate: "true"
       ingress.kubernetes.io/ssl-redirect: "true"
@@ -810,7 +810,7 @@ spinnaker:
     protocol: http
     host: gate.spinnaker.example.org
     annotations:
-      cert-manager.io/issuer: letsencrypt-{{ .Release.Namespace }}-test-spin
+      cert-manager.io/issuer: letsencrypt-{{ .Release.Namespace }}-spin
       acme.cert-manager.io/http01-edit-in-place: "true"
       cert-manager.io/issue-temporary-certificate: "true"
       ingress.kubernetes.io/ssl-redirect: "true"
