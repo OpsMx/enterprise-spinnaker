@@ -120,60 +120,45 @@ job:
         type: Visibility Approval
         waitForCompletion: true
         parameters:
-          - defaultValue: ""
+          - defaultValue: "" 
             description: Please enter the Gate URL
             label: Gate Url
             mapping: 'manifest.spec.template.spec.containers[0].env[0].value'
             name: gateurl
           - defaultValue: ""
-            description: Please enter the JIRA ID1
-            label: Jira Id 1
+            description: Please enter the JIRA ID
+            label: Jira Id 
             mapping: 'manifest.spec.template.spec.containers[0].env[1].value'
-            name: jiraid1
-          - defaultValue: ""
-            description: Please enter the JIRA ID2
-            label: Jira Id 2
-            mapping: 'manifest.spec.template.spec.containers[0].env[2].value'
-            name: jiraid2
+            name: jiraid
           - defaultValue: ""
             description: Please enter the Git Repo Name
             label: Git Repo
-            mapping: 'manifest.spec.template.spec.containers[0].env[3].value'
+            mapping: 'manifest.spec.template.spec.containers[0].env[2].value'
             name: gitrepo
           - defaultValue: ""
-            description: Please enter the Git Commit Id 1
-            label: Git Commit Id 1
-            mapping: 'manifest.spec.template.spec.containers[0].env[4].value'
+            description: Please enter the Git Commit Id 
+            label: Git Commit Id 
+            mapping: 'manifest.spec.template.spec.containers[0].env[3].value'
             name: gitcommitid1
-          - defaultValue: ""
-            description: Please enter the Git Commit Id 2
-            label: Git Commit Id 2
-            mapping: 'manifest.spec.template.spec.containers[0].env[5].value'
-            name: gitcommitid2
           - defaultValue: ""
             description: Please enter the Jenins Job
             label: Jenkins Job Name
-            mapping: 'manifest.spec.template.spec.containers[0].env[6].value'
+            mapping: 'manifest.spec.template.spec.containers[0].env[4].value'
             name: jenkinsjob
           - defaultValue: ""
-            description: Please enter the Jenkins Build No 1
-            label: Jenkins Build No 1
-            mapping: 'manifest.spec.template.spec.containers[0].env[7].value'
+            description: Please enter the Jenkins Build No 
+            label: Jenkins Build No 
+            mapping: 'manifest.spec.template.spec.containers[0].env[5].value'
             name: jenkinsbuild1
-          - defaultValue: ""
-            description: Please enter the Jenkins Build No 2
-            label: Jenkins Build No 2
-            mapping: 'manifest.spec.template.spec.containers[0].env[8].value'
-            name: jenkinsbuild2
           - defaultValue: ""
             description: Please enter the Autopilot Canary
             label: Autopilot Canary Id
-            mapping: 'manifest.spec.template.spec.containers[0].env[9].value'
+            mapping: 'manifest.spec.template.spec.containers[0].env[6].value'
             name: canaryid
           - defaultValue: ""
             description: Please enter the Sonarqube Prject Key
             label: Sonarqube Project Key
-            mapping: 'manifest.spec.template.spec.containers[0].env[10].value'
+            mapping: 'manifest.spec.template.spec.containers[0].env[7].value'
             name: projectkey
         manifest:
           apiVersion: batch/v1
@@ -191,26 +176,20 @@ job:
                     env:
                       - name: gateurl
                         value:
-                      - name: jiraid1
-                        value:
-                      - name: jiraid2
+                      - name: jiraid
                         value:
                       - name: gitrepo
                         value:
-                      - name: gitcommitid1
-                        value:
-                      - name: gitcommitid2
+                      - name: gitcommitid
                         value:
                       - name: jenkinsjob
                         value:
-                      - name: jenkinsbuild1
-                        value:
-                      - name: jenkinsbuild2
+                      - name: jenkinsbuild
                         value:
                       - name: canaryid
                         value:
                       - name: projectkey
-                        value:
+                        value: 
                     image: 'opsmxdev/visibility-stage:v1'
                     imagePullPolicy: Always
                     name: visibility-approve
