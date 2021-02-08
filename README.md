@@ -85,7 +85,11 @@ Parameter | Description | Default
 `rbac.create` | Enable or disable rbac | `true`
 `installSpinnaker` | If true, install Spinnaker along with OES Extensions | `true`
 `installationMode` | The installation mode. Available installation modes are **OES-AP** (both OES 3.0 and Autopilot), **OES** (Only OES 3.0), **AP** (Only Autopilot) and **None**(Skip OES installation) | `OES-AP`
-`createIngress` | If true, exposes Spinnaker deck & gate services over Ingress | `false`
+`createIngress` | If true, exposes OES ui & gate services over Ingress | `false`
+`oesUI.protocol` | Change this to https if TLS is enabled for ingress endpoint | `http`
+`oesUI.host` | Host using which UI needs to be accessed | `oes.domain.com`
+`oesUI.protocol` | Change this to https if TLS is enabled for ingress endpoint | `http`
+`oesUI.host` | Host using which UI needs to be accessed | `oes.domain.com`
 `k8sServiceType` | Service Type of oes-ui, oes-gate, spin-deck-ui, spin-gate | `LoadBalancer`
 `installRedis` | If true, OES will install its own Redis for caching. This option is mutually exclusive with installSpinnaker | `false`
 `redis.url` | Set custom URL if installRedis is set to false | `redis://{{ .Release.Name }}-redis-master:6379`
@@ -98,23 +102,24 @@ Parameter | Description | Default
 `autopilot.config.ssl.keyStorePassword` | SSL keystore password | `dummypwd`
 `autopilot.config.ssl.keyStoreType` | SSL keystore type | `PKCS12`
 `autopilot.config.ssl.keyAlias` | SSL key alias | `tomcat`
+`dashboard.spinnakerLink` | Specify if dashboard needs to be configured with a different spinnaker | `{{ .Values.spinnaker.ingress.protocol }}://{{ .Values.spinnaker.ingress.host }}`
 `gate.config.oesUIcors` | Regex of OES-UI URL to prevent cross origin attacks | `^https?://(?:localhost|OES_UI_LOADBALANCER_IP|opsmx.com)(?::[1-9]\d*)?/?`
 `gate.config.fileBasedAuthentication` | Set it to true to disable LDAP authentication and enable file based authentication | `false`
 `platform.config.adminGroups` | Admin groups available | `admin, Administrators`
 `platform.config.userSource` | Source of Users for authorization | `ldap`
-`platform.config.supportedFeatures` | List of featues to be supported by OES | `[deployment-verification, services, releases, policies]`
+`platform.config.supportedFeatures` | List of featues to be supported by OES | `[deployment_verification, sapor, visibility]`
 `sapor.config.spinnaker.authnEnabled` | Set it to true if authentication is enabled in Spinnaker | `false`
 `sapor.config.spinnaker.spinGateURL` | URL of Spinnaker Gate | `http://spin-gate.oes-spin:8084`
-`sapor.config.spinnaker.spinExternalGateURL` | Set the external IP address of spin-gate, this is used to redirect to the spinnaker pipelines from OES-UI | `http://spin-gate.oes-spin:8084`
-`sapor.config.spinnaker.spinuser` | Spinnaker username | `admin`
-`sapor.config.spinnaker.spinpasswd` | Spinnaker username | `opsmx@123`
-`sapor.config.spinnaker.spinAdminLoginEnabled` | Enable to override spinnaker user credentials as an admin user | `false`
-`sapor.config.spinnaker.spinAdminUsername` | Spinnaker admin username | `admin`
-`sapor.config.spinnaker.spinAdminPassword` | Spinnaker admin password | `admin`
+`sapor.config.spinnaker.spinExternalGateURL` | By default this is set to spinnaker installed in the same namespace; change this when different spinnaker needs to be configured with sapor | `{{ .Values.spinnaker.ingress.protocol }}://{{ .Values.spinnaker.ingress.host }}`
+`sapor.config.spinnaker.ldap.ldapEnabled` | Is LDAP authn enabled for spinnaker | `true`
+`sapor.config.spinnaker.ldap.ldapUsername` | Spinnaker username | `admin`
+`sapor.config.spinnaker.ldap.ldapPassword` | Spinnaker password | `opsmxadmin123`
+`sapor.config.spinnaker.x509.enabled` |  Is x509 cert authn enabled for spinnaker | `false`
+`sapor.config.spinnaker.x509.client.password` |  Password of x509 client certificate | `changeit`
+`sapor.config.kubernetes.agent.enabled` | Option to enable oes kubernetes agent | `true`
 `sapor.config.caCerts.override` | If default java certs are to be overwritten, create custom config map 'oes-sapor-cacerts.yaml' under templates and set this option to true | `false`
-`ui.config.oesGateURL` | Endpoint of oes-gate to be used by oes-ui | `http://OES_GATE_IP:8084/`
 `ui.config.setApplicationRefreshInterval` | Interval at which UI refreshes application dashboard | `16000`
-`visibility.config.configuredConnectors` | Integrations options | `JIRA,GIT,AUTOPILOT,SONARQUBE,JENKINS`
+`visibility.config.configuredConnectors` | Integrations options | `JIRA,GIT,AUTOPILOT,SONARQUBE,JENKINS,AQUAWAVE`
 `visibility.config.logLevel` | Default Log Level | `ERROR`
 `autoConfiguration.enabled` | Option enables OES to be configured automatically. Load Balancer IPs will be automatically replaced in the configuration files of oes-gate, oes-ui & sapor. Set it to false if OES is being installed on restricted environment. | `true`
 `autoConfiguration.initContainer.externalIpCheckDelay` | Expected delay in assigning load balancer IPs to oes-ui & oes-gate in secs | `180`

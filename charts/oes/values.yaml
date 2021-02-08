@@ -375,7 +375,6 @@ sapor:
       x509:
         enabled: false
         client:
-          file: /opt/opsmx/client.p12
           password: changeit
 
     ## Set the below field to true if datasource configurations from platform

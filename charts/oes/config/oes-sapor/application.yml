@@ -19,7 +19,7 @@ spinnaker:
   x509:
     enabled: {{ .Values.sapor.config.spinnaker.x509.enabled }}
     client:
-      file: {{ .Values.sapor.config.spinnaker.x509.client.file }}
+      file: /opt/opsmx/client.p12
       password: {{ .Values.sapor.config.spinnaker.x509.client.password }}
 spring:
   datasource:
