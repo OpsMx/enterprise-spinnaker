@@ -16,7 +16,6 @@ spec:
           serviceName: oes-gate
           servicePort: 8084
         path: /
-        pathType: ImplementationSpecific
   tls:
   - hosts:
     - {{ .Values.oesGate.host }}
