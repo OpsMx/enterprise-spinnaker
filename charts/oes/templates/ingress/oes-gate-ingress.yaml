@@ -5,7 +5,9 @@ metadata:
   annotations:
     acme.cert-manager.io/http01-edit-in-place: "true"
     cert-manager.io/issue-temporary-certificate: "true"
-    cert-manager.io/issuer: letsencrypt-spin
+    cert-manager.io/issuer: letsencrypt-{{ .Release.Namespace }}-spin
+    kubernetes.io/ingress.class: nginx
+    kubernetes.io/tls-acme: "true"
   name: oes-gate-ingress
 spec:
   rules:
