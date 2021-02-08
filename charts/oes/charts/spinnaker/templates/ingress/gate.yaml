@@ -4,7 +4,7 @@ kind: Ingress
 metadata:
 {{- if .Values.ingressGate.annotations }}
   annotations:
-{{ toYaml .Values.ingressGate.annotations | indent 4 }}
+{{ tpl (toYaml .Values.ingressGate.annotations) . | indent 4 }}
 {{- end }}
   name: {{ template "spinnaker.fullname" . }}-gate
   labels:
