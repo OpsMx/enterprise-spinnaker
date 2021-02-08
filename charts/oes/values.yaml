@@ -935,7 +935,7 @@ spinnaker:
     secretName: opsmx-gitops-auth
     # Max time(in secs) that an init container of halyard should wait
     # to fetch External Load Balancer IP of spin-deck and spin-gate
-    spinnakerLBCheckDelay: 180
+    spinnakerLBCheckDelay: 10
     # Promote applications and pipelines from one environment to another environment
       ## x509 authentication for Spinnaker Gate
     gatex509:
