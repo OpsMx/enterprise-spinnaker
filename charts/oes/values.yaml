@@ -37,7 +37,7 @@ installationMode: OES-AP
 
 ## OES UI & Gate service type
 ##
-k8sServiceType: LoadBalancer
+k8sServiceType: ClusterIP
 
 ## OES-UI url
 oesUI:
