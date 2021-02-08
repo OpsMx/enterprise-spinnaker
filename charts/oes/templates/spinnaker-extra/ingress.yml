@@ -68,7 +68,7 @@ spec:
     - {{ .Values.spinnaker.ingressGate.host }}
     secretName: api-{{ .Release.Name }}-tls
 ---
-{{- else if (.Values.createIngress) }}
+{{- else if and (.Values.createIngress) (not .Values.spinnaker.ingress.enabled)}}
 apiVersion: extensions/v1beta1
 kind: Ingress
 metadata:
