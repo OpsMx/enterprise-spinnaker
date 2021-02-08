@@ -28,6 +28,8 @@ spec:
           servicePort: 8084
 {{- if .Values.ingressGate.tls }}
   tls:
+  - hosts:
+    - {{ .Values.ingressGate.host }}
 {{ toYaml .Values.ingressGate.tls | indent 4 }}
 {{- end }}
 {{- end }}

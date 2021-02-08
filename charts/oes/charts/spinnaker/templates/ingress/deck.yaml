@@ -28,6 +28,8 @@ spec:
           servicePort: 9000
 {{- if .Values.ingress.tls }}
   tls:
+  - hosts:
+    - {{ .Values.ingress.host }}
 {{ toYaml .Values.ingress.tls | indent 4 }}
-{{- end -}}
+{{- end }}
 {{- end }}
