@@ -3,6 +3,59 @@ entries:
   oes:
   - apiVersion: v2
     appVersion: 3.5.0
+    created: "2021-02-08T16:13:44.861985908Z"
+    dependencies:
+    - condition: installOpenLdap
+      name: openldap
+      repository: ""
+      version: 1.2.3
+    - condition: installSpinnaker
+      name: spinnaker
+      repository: ""
+      version: 2.2.3
+    - condition: installRedis
+      name: redis
+      repository: ""
+      version: 10.5.3
+    - condition: enableCentralLogging
+      name: elasticsearch
+      repository: ""
+      version: 7.5.0
+    - condition: enableCentralLogging
+      name: kibana
+      repository: ""
+      version: 7.5.0
+    - condition: enableCentralLogging
+      name: fluent-bit
+      repository: ""
+      version: 2.8.2
+    - condition: spinnaker.enableCentralMonitoring
+      name: prometheus
+      repository: ""
+      version: 11.16.2
+    description: OES is a non-forked version of OSS spinnaker
+    digest: d7872e74a8c92a58311b384c7e4604f8e5eb824151a24c9a6b08ba4b7aaeb8c9
+    home: https://www.opsmx.com/
+    icon: https://www.opsmx.com/images/logo.png
+    keywords:
+    - OpsMx
+    - OES
+    - Autopilot
+    maintainers:
+    - email: abhinay.byrisetty@opsmx.io
+      name: abhinaybyrisetty
+    - email: vamsi.krishna@opsmx.io
+      name: vkvamsi
+    - email: nirmalya@opsmx.io
+      name: nirmalyasen
+    - email: srinivas@opsmx.io
+      name: ksrinimba
+    name: oes
+    urls:
+    - https://github.com/OpsMx/enterprise-spinnaker/releases/download/oes-3.5.1/oes-3.5.1.tgz
+    version: 3.5.1
+  - apiVersion: v2
+    appVersion: 3.5.0
     created: "2021-02-08T13:30:03.033540415Z"
     dependencies:
     - condition: installOpenLdap
