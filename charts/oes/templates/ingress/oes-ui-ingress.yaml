@@ -1,0 +1,24 @@
+{{- if .Values.createIngress }}
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  annotations:
+    acme.cert-manager.io/http01-edit-in-place: "true"
+    cert-manager.io/issue-temporary-certificate: "true"
+    cert-manager.io/issuer: letsencrypt-spin
+  name: oes-ui-ingress
+spec:
+  rules:
+  - host: {{ .Values.oesUI.protocol }}://{{ .Values.oesUI.hostname }}
+    http:
+      paths:
+      - backend:
+          serviceName: oes-ui
+          servicePort: 80
+        path: /
+        pathType: ImplementationSpecific
+  tls:
+  - hosts:
+    - {{ .Values.oesUI.protocol }}://{{ .Values.oesUI.hostname }}
+    secretName: oes-ui-authtls
+{{- end }}
