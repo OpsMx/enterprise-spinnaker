@@ -18,7 +18,7 @@ logging:
             
 gate:
 {{- if .Values.oesGate.port }}
-  url: {{ .Values.oesGate.protocol }}://{{ .Values.oesGate.hostname }}:{{ .Values.oesGate.port }}
+  url: {{ .Values.oesGate.protocol }}://{{ .Values.oesGate.host }}:{{ .Values.oesGate.port }}
 {{- else }}
-  url: {{ .Values.oesGate.protocol }}://{{ .Values.oesGate.hostname }}
+  url: {{ .Values.oesGate.protocol }}://{{ .Values.oesGate.host }}
 {{- end }}

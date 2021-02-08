@@ -2,16 +2,14 @@
 apiVersion: extensions/v1beta1
 kind: Ingress
 metadata:
+{{- if .Values.oesGate.annotations }}
   annotations:
-    acme.cert-manager.io/http01-edit-in-place: "true"
-    cert-manager.io/issue-temporary-certificate: "true"
-    cert-manager.io/issuer: letsencrypt-{{ .Release.Namespace }}-spin
-    kubernetes.io/ingress.class: nginx
-    kubernetes.io/tls-acme: "true"
+{{ tpl (toYaml .Values.oesGate.annotations) . | indent 4 }}
+{{- end }}
   name: oes-gate-ingress
 spec:
   rules:
-  - host: {{ .Values.oesGate.hostname }}
+  - host: {{ .Values.oesGate.host }}
     http:
       paths:
       - backend:
@@ -21,6 +19,6 @@ spec:
         pathType: ImplementationSpecific
   tls:
   - hosts:
-    - {{ .Values.oesGate.hostname }}
-    secretName: oes-gate-authtls
+    - {{ .Values.oesGate.host }}
+    secretName: {{ .Values.oesGate.tls.secretName }}
 {{- end }}

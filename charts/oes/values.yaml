@@ -22,10 +22,6 @@ imageCredentials:
 rbac:
   create: true
 
-## Set to true to expose oes-ui, oes-gate services over ingress
-##
-createIngress: true
-
 ## Option to skip installation of OpsMx Spinnaker
 ## Setting this to true, will ensure custom ubi8 images of Spinnaker
 installSpinnaker: true
@@ -39,19 +35,43 @@ installationMode: OES-AP
 ##
 k8sServiceType: ClusterIP
 
-## OES-UI url
+## Set to true to expose oes-ui, oes-gate services over ingress
+##
+createIngress: true
+
+## OES-UI ingress configuration
 oesUI:
   protocol: http
-  hostname: oes.domain.com
+  host: oes.domain.com
   # Use below port when hostname above is an external IP instead of a hostname
   #port: 80
 
-## OES-Gate url
+  annotations:
+    acme.cert-manager.io/http01-edit-in-place: "true"
+    cert-manager.io/issue-temporary-certificate: "true"
+    cert-manager.io/issuer: letsencrypt-{{ .Release.Namespace }}-spin
+    kubernetes.io/ingress.class: nginx
+    kubernetes.io/tls-acme: "true"
+  tls:
+    secretName: oes-ui-authtls
+
+
+## OES-Gate ingress configuration
 oesGate:
   protocol: http
-  hostname: oes-api.domain.com
+  host: oes-api.domain.com
   # Use below port when hostname above is an external IP instead of a hostname
   #port: 8084
+
+  annotations:
+    acme.cert-manager.io/http01-edit-in-place: "true"
+    cert-manager.io/issue-temporary-certificate: "true"
+    cert-manager.io/issuer: letsencrypt-{{ .Release.Namespace }}-spin
+    kubernetes.io/ingress.class: nginx
+    kubernetes.io/tls-acme: "true"
+
+  tls:
+    secretName: oes-gate-authtls
 
 ####################################################
 ## Redis configuration
@@ -153,10 +173,10 @@ autopilot:
       keyStoreType: PKCS12
       keyAlias: tomcat
     
-    ## server.host.dns.name is fetched from oesUI.hostname
+    ## server.host.dns.name is fetched from oesUI.host
     ##
 
-    ## gate.url is fetched from oesGate.hostname
+    ## gate.url is fetched from oesGate.host
     ##
 
 ###############################################################################
@@ -223,7 +243,7 @@ gate:
     ## under Redis Configuration section
     ##
 
-    ## Regex of OES-UI URL to allow cross origin requests; this is framed using oesUI.hostname
+    ## Regex of OES-UI URL to allow cross origin requests; this is framed using oesUI.host
 
     ## Set it to true to disable LDAP authentication and enable file based authentication
     ## Reach out over support@opsmx.com for pre-configured user credentials

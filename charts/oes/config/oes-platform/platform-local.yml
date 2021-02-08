@@ -24,14 +24,14 @@ redis:
 oes:
   approvalGate:
 {{- if .Values.oesGate.port }}
-    apiUrl: {{ .Values.oesGate.protocol }}://{{ .Values.oesGate.hostname }}:{{ .Values.oesGate.port }}/visibilityservice/v2/approvalGates/{id}/trigger
+    apiUrl: {{ .Values.oesGate.protocol }}://{{ .Values.oesGate.host }}:{{ .Values.oesGate.port }}/visibilityservice/v2/approvalGates/{id}/trigger
 {{- else }}
-    apiUrl: {{ .Values.oesGate.protocol }}://{{ .Values.oesGate.hostname }}/visibilityservice/v2/approvalGates/{id}/trigger
+    apiUrl: {{ .Values.oesGate.protocol }}://{{ .Values.oesGate.host }}/visibilityservice/v2/approvalGates/{id}/trigger
 {{- end }}
 
   verificationGate:
 {{- if .Values.oesGate.port }}
-    apiUrl: {{ .Values.oesGate.protocol }}://{{ .Values.oesGate.hostname }}:{{ .Values.oesGate.port }}/autopilot/api/v2/registerCanary
+    apiUrl: {{ .Values.oesGate.protocol }}://{{ .Values.oesGate.host }}:{{ .Values.oesGate.port }}/autopilot/api/v2/registerCanary
 {{- else }}
-    apiUrl: {{ .Values.oesGate.protocol }}://{{ .Values.oesGate.hostname }}/autopilot/api/v2/registerCanary
+    apiUrl: {{ .Values.oesGate.protocol }}://{{ .Values.oesGate.host }}/autopilot/api/v2/registerCanary
 {{- end }}
