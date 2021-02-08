@@ -88,8 +88,8 @@ Parameter | Description | Default
 `createIngress` | If true, exposes OES ui & gate services over Ingress | `false`
 `oesUI.protocol` | Change this to https if TLS is enabled for ingress endpoint | `http`
 `oesUI.host` | Host using which UI needs to be accessed | `oes.domain.com`
-`oesUI.protocol` | Change this to https if TLS is enabled for ingress endpoint | `http`
-`oesUI.host` | Host using which UI needs to be accessed | `oes.domain.com`
+`oesGate.protocol` | Change this to https if TLS is enabled for ingress endpoint | `http`
+`oesGate.host` | Host using which Gate needs to be accessed | `oes-api.domain.com`
 `k8sServiceType` | Service Type of oes-ui, oes-gate, spin-deck-ui, spin-gate | `LoadBalancer`
 `installRedis` | If true, OES will install its own Redis for caching. This option is mutually exclusive with installSpinnaker | `false`
 `redis.url` | Set custom URL if installRedis is set to false | `redis://{{ .Release.Name }}-redis-master:6379`
