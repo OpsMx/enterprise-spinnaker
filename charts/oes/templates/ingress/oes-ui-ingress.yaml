@@ -9,7 +9,7 @@ metadata:
   name: oes-ui-ingress
 spec:
   rules:
-  - host: {{ .Values.oesUI.protocol }}://{{ .Values.oesUI.hostname }}
+  - host: {{ .Values.oesUI.hostname }}
     http:
       paths:
       - backend:
@@ -19,6 +19,6 @@ spec:
         pathType: ImplementationSpecific
   tls:
   - hosts:
-    - {{ .Values.oesUI.protocol }}://{{ .Values.oesUI.hostname }}
+    - {{ .Values.oesUI.hostname }}
     secretName: oes-ui-authtls
 {{- end }}

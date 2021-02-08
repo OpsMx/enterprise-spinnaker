@@ -9,7 +9,7 @@ metadata:
   name: oes-gate-ingress
 spec:
   rules:
-  - host: {{ .Values.oesGate.protocol }}://{{ .Values.oesGate.hostname }}
+  - host: {{ .Values.oesGate.hostname }}
     http:
       paths:
       - backend:
@@ -19,6 +19,6 @@ spec:
         pathType: ImplementationSpecific
   tls:
   - hosts:
-    - {{ .Values.oesGate.protocol }}://{{ .Values.oesGate.hostname }}
+    - {{ .Values.oesGate.hostname }}
     secretName: oes-gate-authtls
 {{- end }}
