@@ -367,10 +367,6 @@ sapor:
       agent:
         enabled: true
         image: quay.io/opsmxpublic/forwarder-agent:v20210118T161303
-      template:
-        path: /opt/opsmx/controller
-        kubectlTemplateFileName: kubeconfig.template
-        manifestTemplateFileName: deploy-agent.template
 
     ## Set the below field to true if default java cacert is to be overriden
     ##
