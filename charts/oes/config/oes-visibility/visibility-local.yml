@@ -15,3 +15,10 @@ logging:
         models:
           parameters:
             AbstractSerializableParameter: {{ .Values.visibility.config.logLevel }}
+            
+gate:
+{{- if .Values.oesGate.port }}
+  url: {{ .Values.oesGate.protocol }}://{{ .Values.oesGate.host }}:{{ .Values.oesGate.port }}
+{{- else }}
+  url: {{ .Values.oesGate.protocol }}://{{ .Values.oesGate.host }}
+{{- end }}

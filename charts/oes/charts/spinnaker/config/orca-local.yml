@@ -1,237 +1,196 @@
 job:
   preconfigured:
     kubernetes:
-      - label: pipelineSyncToGit
+      - label: Custom Policy Stage
+        type: custom Policy Stage
+        description: Stage to do opa policy
         cloudProvider: kubernetes
-        credentials: default
-        description: Update git with pipelines in Spinnaker
         account: default
-        application: gitopsHalyard.pipelinePromotion
-        type: pipelineSyncToGit
+        waitForCompletion: true
+        application: spin
+        manifest:
+          apiVersion: batch/v1
+          kind: Job
+          metadata:
+            labels:
+              spinnakerlabel: deljob
+            name: opastage
+            namespace: default
+          spec:
+            backoffLimit: 0
+            template:
+              spec:
+                restartPolicy: Never
+                containers:
+                  - name: custom-opa-stage
+                    args:
+                      - |-
+                        param=$(echo $time | sed 's/[][]//g') > /dev/null 2>&1
+                        apk add jq > /dev/null 2>&1
+                        cat >> opa.json <<EOL
+                        {
+                         "startTime": $param,
+                         "application": "$application",
+                         "name": "$name",
+                         "trigger": {
+                           "user": "$user"
+                         }
+                        }
+                        EOL
+                        cat opa.json
+                        cat >> run.sh <<EOL
+                        #/bin/sh
+                        curl -sovX POST http://oes-sapor.oes:8085/v1/data/opa/pipelines/datetimeslot -d @opa.json --header "Content-Type: application/json" --insecure > out.txt
+                        if [ $? -ne 0 ]
+                        then
+                        echo "========= EXECUTION FAILED ========"
+                        else
+                        cat out.txt | jq '.deny'
+                        if [ $? -ne 0 ]
+                        then
+                        echo "=========== POLICY SUCCEDED! ============="
+                        cat out.txt | jq '.'
+                        exit 0
+                        else
+                        echo "==========  POLICY FAILED ========"
+                        cat out.txt | jq '.'
+                        exit 1
+                        fi
+                        fi
+                        EOL
+                        chmod +x run.sh > /dev/null 2>&1
+                        sh run.sh
+                    command:
+                      - /bin/sh
+                      - '-x'
+                      - '-c'
+                    env:
+                      - name: application
+                        value: "${execution.application}"
+                      - name: name
+                        value: "${execution.name}"
+                      - name: time
+                        value: "${{execution.startTime} .toString()}"
+                      - name: user
+                        value: "${execution.authentication.user}"
+                    image: 'opsmxdev/apline-with-curl'
+                    imagePullPolicy: Always
+      - label: VerificationGate
+        cloudProvider: kubernetes
+        application: spin
+        description: Stage for Verification Gate
+        propertyFile: verificationgate
+        account: default
+        type: Verification
         waitForCompletion: true
         parameters:
-          - defaultValue: "app1,app2,..."
-            description: "Please enter spinnaker applications separated by comma"
-            label: spinnaker applications
+          - defaultValue: ""
+            description: Please enter the Gate URL
+            label: Gate Url
             mapping: 'manifest.spec.template.spec.containers[0].env[0].value'
-            name: spinnaker_applications
-          - defaultValue: "pipeline1,pipeline2..."
-            description: "Please enter spinnaker pipelines separated by comma"
-            label: pipieline names
-            mapping: 'manifest.spec.template.spec.containers[0].env[1].value'
-            name: spinnaker_pipelines
+            name: gateurl
         manifest:
-            apiVersion: batch/v1
-            kind: Job
-            metadata:
-              generateName: pipepromot-
-              namespace: default
-            spec:
-              backoffLimit: 0
-              template:
-                spec:
-                  containers:
-                  - command: ["bash", "scripts/deployer.sh"]
-                    image: 'opsmxdev/pipepromot:1.0'
-                    imagePullPolicy: Always
-                    name: pipepromot
-                    volumeMounts:
-                    - mountPath: /home/opsmx/scripts
-                      name: pipe-promot-scripts
-                    - mountPath: /home/opsmx/.spin
-                      name: spin-cli-config
+          apiVersion: batch/v1
+          kind: Job
+          metadata:
+            name: verificationgate
+            namespace: default
+          spec:
+            backoffLimit: 0
+            template:
+              spec:
+                containers:
+                  - args:
+                      -
                     env:
-                      - name: spinnaker_applications
-                        value: 'will be replaced'
-                      - name: spinnaker_pipelines
-                        value: 'will be replaced'
-                      - name: command
-                        value: 'upload'
-                      - name: git_friendly_username
-                        valueFrom:
-                          configMapKeyRef:
-                            name: pipe-promot-config
-                            key: git_friendly_username
-                      - name: git_friendly_username
-                        valueFrom:
-                          configMapKeyRef:
-                            name: pipe-promot-config
-                            key: git_friendly_username
-                      - name: git_project
-                        valueFrom:
-                          configMapKeyRef:
-                            name: pipe-promot-config
-                            key: git_project
-                      - name: git_refresh_enabled
-                        valueFrom:
-                          configMapKeyRef:
-                            name: pipe-promot-config
-                            key: git_refresh_enabled
-                      - name: git_repo
-                        valueFrom:
-                          configMapKeyRef:
-                            name: pipe-promot-config
-                            key: git_repo
-                      - name: git_user_email
-                        valueFrom:
-                          configMapKeyRef:
-                            name: pipe-promot-config
-                            key: git_user_email
-                      - name: ignore_spin_errors
-                        valueFrom:
-                          configMapKeyRef:
-                            name: pipe-promot-config
-                            key: ignore_spin_errors
-                      - name: git_secret_token
-                        valueFrom:
-                          secretKeyRef:
-                            name: git-token
-                            key: git_secret_token
-                      - name: debug
-                        valueFrom:
-                          configMapKeyRef:
-                            name: pipe-promot-config
-                            key: debug
-                      - name: pipelineconfig
-                        valueFrom:
-                          configMapKeyRef:
-                            name: pipe-promot-config
-                            key: pipelineconfig
-                      - name: pipelineconfigdir
-                        valueFrom:
-                          configMapKeyRef:
-                            name: pipe-promot-config
-                            key: pipelineconfigdir
-                      - name: pipelinecreateconf
-                        valueFrom:
-                          configMapKeyRef:
-                            name: pipe-promot-config
-                            key: pipelinecreateconf
-                  volumes:
-                  - configMap:
-                      defaultMode: 420
-                      name: pipe-promot-scripts
-                    name: pipe-promot-scripts
-                  - name: spin-cli-config
-                    secret:
-                      defaultMode: 420
-                      secretName: spin-cli-config
-                  restartPolicy: Never
-                  serviceAccountName: default
-      - label: pipelineSyncToSpinnaker
+                      - name: gateurl
+                        value:
+                      - name: application
+                        value: "${execution.application}"
+                    image: 'opsmxdev/verificationgate-stage:v1'
+                    imagePullPolicy: Always
+                    name: verificationgate
+                restartPolicy: Never
+      - label: VisibilityApproval
         cloudProvider: kubernetes
         credentials: default
-        description: Sync Spinnaker pipelines from git
+        application: spin
+        description: Stage for Visibility Approval
         account: default
-        application: gitopsHalyard.pipelinePromotion
-        type: pipelineSyncToSpinnaker
+        type: Visibility Approval
         waitForCompletion: true
         parameters:
-          - defaultValue: "app1,app2,..."
-            description: "Please enter spinnaker applications separated by comma"
-            label: spinnaker applications
+          - defaultValue: "" 
+            description: Please enter the Gate URL
+            label: Gate Url
             mapping: 'manifest.spec.template.spec.containers[0].env[0].value'
-            name: spinnaker_applications
-          - defaultValue: "pipeline1,pipeline2..."
-            description: "Please enter spinnaker pipelines separated by comma"
-            label: pipieline names
+            name: gateurl
+          - defaultValue: ""
+            description: Please enter the JIRA ID
+            label: Jira Id 
             mapping: 'manifest.spec.template.spec.containers[0].env[1].value'
-            name: spinnaker_pipelines
+            name: jiraid
+          - defaultValue: ""
+            description: Please enter the Git Repo Name
+            label: Git Repo
+            mapping: 'manifest.spec.template.spec.containers[0].env[2].value'
+            name: gitrepo
+          - defaultValue: ""
+            description: Please enter the Git Commit Id 
+            label: Git Commit Id 
+            mapping: 'manifest.spec.template.spec.containers[0].env[3].value'
+            name: gitcommitid1
+          - defaultValue: ""
+            description: Please enter the Jenins Job
+            label: Jenkins Job Name
+            mapping: 'manifest.spec.template.spec.containers[0].env[4].value'
+            name: jenkinsjob
+          - defaultValue: ""
+            description: Please enter the Jenkins Build No 
+            label: Jenkins Build No 
+            mapping: 'manifest.spec.template.spec.containers[0].env[5].value'
+            name: jenkinsbuild1
+          - defaultValue: ""
+            description: Please enter the Autopilot Canary
+            label: Autopilot Canary Id
+            mapping: 'manifest.spec.template.spec.containers[0].env[6].value'
+            name: canaryid
+          - defaultValue: ""
+            description: Please enter the Sonarqube Prject Key
+            label: Sonarqube Project Key
+            mapping: 'manifest.spec.template.spec.containers[0].env[7].value'
+            name: projectkey
         manifest:
-            apiVersion: batch/v1
-            kind: Job
-            metadata:
-              generateName: pipepromot-
-              namespace: default
-            spec:
-              backoffLimit: 0
-              template:
-                spec:
-                  containers:
-                  - command: ["bash", "scripts/deployer.sh"]
-                    image: 'opsmxdev/pipepromot:1.0'
-                    imagePullPolicy: Always
-                    name: pipepromot
-                    volumeMounts:
-                    - mountPath: /home/opsmx/scripts
-                      name: pipe-promot-scripts
-                    - mountPath: /home/opsmx/.spin
-                      name: spin-cli-config
+          apiVersion: batch/v1
+          kind: Job
+          metadata:
+            name: visibilityapprove
+            namespace: default 
+          spec:
+            backoffLimit: 0
+            template:
+              spec:
+                containers:
+                  - args:
+                      -
                     env:
-                      - name: spinnaker_applications
-                        value: 'will be replaced'
-                      - name: spinnaker_pipelines
-                        value: 'will be replaced'
-                      - name: command
-                        value: 'download'
-                      - name: git_friendly_username
-                        valueFrom:
-                          configMapKeyRef:
-                            name: pipe-promot-config
-                            key: git_friendly_username
-                      - name: git_friendly_username
-                        valueFrom:
-                          configMapKeyRef:
-                            name: pipe-promot-config
-                            key: git_friendly_username
-                      - name: git_project
-                        valueFrom:
-                          configMapKeyRef:
-                            name: pipe-promot-config
-                            key: git_project
-                      - name: git_refresh_enabled
-                        valueFrom:
-                          configMapKeyRef:
-                            name: pipe-promot-config
-                            key: git_refresh_enabled
-                      - name: git_repo
-                        valueFrom:
-                          configMapKeyRef:
-                            name: pipe-promot-config
-                            key: git_repo
-                      - name: git_user_email
-                        valueFrom:
-                          configMapKeyRef:
-                            name: pipe-promot-config
-                            key: git_user_email
-                      - name: ignore_spin_errors
-                        valueFrom:
-                          configMapKeyRef:
-                            name: pipe-promot-config
-                            key: ignore_spin_errors
-                      - name: git_secret_token
-                        valueFrom:
-                          secretKeyRef:
-                            name: git-token
-                            key: git_secret_token
-                      - name: debug
-                        valueFrom:
-                          configMapKeyRef:
-                            name: pipe-promot-config
-                            key: debug
-                      - name: pipelineconfig
-                        valueFrom:
-                          configMapKeyRef:
-                            name: pipe-promot-config
-                            key: pipelineconfig
-                      - name: pipelineconfigdir
-                        valueFrom:
-                          configMapKeyRef:
-                            name: pipe-promot-config
-                            key: pipelineconfigdir
-                      - name: pipelinecreateconf
-                        valueFrom:
-                          configMapKeyRef:
-                            name: pipe-promot-config
-                            key: pipelinecreateconf
-                  volumes:
-                  - configMap:
-                      defaultMode: 420
-                      name: pipe-promot-scripts
-                    name: pipe-promot-scripts
-                  - name: spin-cli-config
-                    secret:
-                      defaultMode: 420
-                      secretName: local-spin-cli-config
-                  restartPolicy: Never
-                  serviceAccountName: default
+                      - name: gateurl
+                        value:
+                      - name: jiraid
+                        value:
+                      - name: gitrepo
+                        value:
+                      - name: gitcommitid
+                        value:
+                      - name: jenkinsjob
+                        value:
+                      - name: jenkinsbuild
+                        value:
+                      - name: canaryid
+                        value:
+                      - name: projectkey
+                        value: 
+                    image: 'opsmxdev/visibility-stage:v1'
+                    imagePullPolicy: Always
+                    name: visibility-approve
+                restartPolicy: Never

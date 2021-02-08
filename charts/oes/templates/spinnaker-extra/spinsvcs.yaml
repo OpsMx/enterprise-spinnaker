@@ -1,4 +1,4 @@
-{{- if (.Values.installSpinnaker) }}
+{{- if and (.Values.installSpinnaker) (not .Values.createIngress) }}
 {{- if not (.Values.spinnaker.gitopsHalyard.mTLS.enabled) }}
 apiVersion: v1
 kind: Service
@@ -7,13 +7,9 @@ metadata:
     app: spin
     stack: deck
 {{ include "oes.standard-labels" . | indent 4 }}
-  name: spin-deck-np
+  name: spin-deck-lb
 spec:
-  {{- if .Values.spinnaker.createIngress }}
-  type: NodePort
-  {{- else }}
   type: {{ .Values.k8sServiceType }}
-  {{- end }}
   ports:
   -  name: http
      port: 9000
@@ -28,13 +24,9 @@ metadata:
     app: spin
     stack: gate
 {{ include "oes.standard-labels" . | indent 4 }}
-  name: spin-gate-np
+  name: spin-gate-lb
 spec:
-  {{- if .Values.createIngress }}
-  type: NodePort
-  {{- else }}
   type: {{ .Values.k8sServiceType }}
-  {{- end }}
   ports:
   -  name: http
      port: 8084

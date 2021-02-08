@@ -1,0 +1,24 @@
+{{- if .Values.createIngress }}
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+{{- if .Values.oesGate.annotations }}
+  annotations:
+{{ tpl (toYaml .Values.oesGate.annotations) . | indent 4 }}
+{{- end }}
+  name: oes-gate-ingress
+spec:
+  rules:
+  - host: {{ .Values.oesGate.host }}
+    http:
+      paths:
+      - backend:
+          serviceName: oes-gate
+          servicePort: 8084
+        path: /
+        pathType: ImplementationSpecific
+  tls:
+  - hosts:
+    - {{ .Values.oesGate.host }}
+    secretName: {{ .Values.oesGate.tls.secretName }}
+{{- end }}

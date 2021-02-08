@@ -1,10 +1,10 @@
-{{- if .Values.ingress.enabled }}
+{{- if and (.Values.ingress.enabled) (not .Values.gitopsHalyard.mTLS.enabled) }}
 apiVersion: extensions/v1beta1
 kind: Ingress
 metadata:
 {{- if .Values.ingress.annotations }}
   annotations:
-{{ toYaml .Values.ingress.annotations | indent 4 }}
+{{ tpl (toYaml .Values.ingress.annotations) . | indent 4 }}
 {{- end }}
   name: {{ template "spinnaker.fullname" . }}-deck
   labels:
@@ -28,6 +28,8 @@ spec:
           servicePort: 9000
 {{- if .Values.ingress.tls }}
   tls:
+  - hosts:
+    - {{ .Values.ingress.host }}
 {{ toYaml .Values.ingress.tls | indent 4 }}
-{{- end -}}
+{{- end }}
 {{- end }}

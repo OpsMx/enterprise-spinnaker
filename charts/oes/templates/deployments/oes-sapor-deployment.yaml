@@ -33,6 +33,15 @@ spec:
         - containerPort: 8085
           protocol: TCP
         volumeMounts:
+        - mountPath: /opt/opsmx/controller/ca.crt	
+          name: ca-certs-volume	
+          subPath: tls.crt	
+        - mountPath: /opt/opsmx/controller/cert/tls.crt	
+          name: certs-volume	
+          subPath: tls.crt	
+        - mountPath: /opt/opsmx/controller/cert/tls.key	
+          name: certs-volume	
+          subPath: tls.key
         - name: sapor-config-volume
           mountPath: /opt/opsmx/application.yml
           subPath: application.yml
@@ -42,7 +51,7 @@ spec:
         {{- end }}
         {{- if .Values.sapor.config.spinnaker.x509.enabled }}
         - name: certs-x509-volume
-          mountPath: {{ .Values.sapor.config.spinnaker.x509.client.file }}
+          mountPath: /opt/opsmx/client.p12
           subPath: client.p12
         {{- end }}
         resources:
@@ -61,6 +70,12 @@ spec:
       imagePullSecrets:
       - name: {{ .Values.imagePullSecret }}
       volumes:
+      - secret:	
+          secretName: oes-command-secret
+        name: certs-volume
+      - secret:	
+          secretName: ca-secret
+        name: ca-certs-volume
       - configMap:
           name: oes-sapor-config
         name: sapor-config-volume

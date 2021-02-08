@@ -4,6 +4,9 @@ apiVersion: extensions/v1beta1
 kind: Ingress
 metadata:
   annotations:
+{{- if .Values.ingress.annotations }}
+{{ toYaml .Values.ingress.annotations | indent 4 }}
+{{- end }}
     cert-manager.io/issuer: letsencrypt-prod
     kubernetes.io/ingress.class: nginx
     nginx.ingress.kubernetes.io/backend-protocol: HTTPS
@@ -15,7 +18,7 @@ metadata:
   name: spinnaker-deck-ingress
 spec:
   rules:
-  - host: {{ tpl .Values.spinnaker.gitopsHalyard.mTLS.deckIngressHost . }}
+  - host: {{ .Values.spinnaker.ingress.host }}
     http:
       paths:
       - backend:
@@ -24,13 +27,16 @@ spec:
         path: /
   tls:
   - hosts:
-    - {{ tpl .Values.spinnaker.gitopsHalyard.mTLS.deckIngressHost . }}
+    - {{ .Values.spinnaker.ingress.host }}
     secretName: ui-{{ .Release.Name }}-tls
 ---
 apiVersion: extensions/v1beta1
 kind: Ingress
 metadata:
   annotations:
+{{- if .Values.ingressGate.annotations }}
+{{ toYaml .Values.ingressGate.annotations | indent 4 }}
+{{- end }}
     cert-manager.io/issuer: letsencrypt-prod
     kubernetes.io/ingress.class: nginx
     nginx.ingress.kubernetes.io/backend-protocol: HTTPS
@@ -42,7 +48,7 @@ metadata:
   name: spinnaker-gate-ingress
 spec:
   rules:
-  - host: {{ tpl .Values.spinnaker.gitopsHalyard.mTLS.gateIngressHost . }}
+  - host: {{ tpl .Values.spinnaker.ingressGate.host . }}
     http:
       paths:
       - backend:
@@ -59,33 +65,7 @@ spec:
         path: /auth/*
   tls:
   - hosts:
-    - {{ tpl .Values.spinnaker.gitopsHalyard.mTLS.gateIngressHost . }}
+    - {{ .Values.spinnaker.ingressGate.host }}
     secretName: api-{{ .Release.Name }}-tls
----
-{{- else if (.Values.spinnaker.createIngress) }}
-apiVersion: extensions/v1beta1
-kind: Ingress
-metadata:
-  labels:
-    app: spinnaker
-  name: spinnaker-ingress
-  annotations:
-    "helm.sh/hook": post-install
-    "helm.sh/hook-delete-policy": before-hook-creation
-spec:
-  backend:
-    serviceName: spin-deck-np
-    servicePort: 9000
-  rules:
-  - http:
-      paths:
-      - path: /login
-        backend:
-          serviceName: spin-gate-np
-          servicePort: 8084
-      - path: /auth/*
-        backend:
-          serviceName: spin-gate-np
-          servicePort: 8084
 {{- end }}
 {{- end }}

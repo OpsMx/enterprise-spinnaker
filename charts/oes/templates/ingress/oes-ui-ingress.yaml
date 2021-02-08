@@ -1,0 +1,24 @@
+{{- if .Values.createIngress }}
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+{{- if .Values.oesUI.annotations }}
+  annotations:
+{{ tpl (toYaml .Values.oesUI.annotations) . | indent 4 }}
+{{- end }}
+  name: oes-ui-ingress
+spec:
+  rules:
+  - host: {{ .Values.oesUI.host }}
+    http:
+      paths:
+      - backend:
+          serviceName: oes-ui
+          servicePort: 80
+        path: /
+        pathType: ImplementationSpecific
+  tls:
+  - hosts:
+    - {{ .Values.oesUI.host }}
+    secretName: {{ .Values.oesUI.tls.secretName }}
+{{- end }}

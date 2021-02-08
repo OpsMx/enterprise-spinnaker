@@ -17,7 +17,7 @@ services:
     enabled: true
   user: {}
 cors:
-  allowed-origins-pattern: {{ .Values.gate.config.oesUIcors }}
+  allowed-origins-pattern: ^https?://(?:localhost|{{ .Values.oesUI.host }}|opsmx.com)(?::[1-9]\d*)?/?
 ldap:
   enabled: {{ .Values.ldap.enabled }}
   url: {{ tpl .Values.ldap.url . }}
@@ -35,3 +35,12 @@ logging:
     org.springframework.web: DEBUG
 redis:
   connection: {{ tpl .Values.redis.url . }}
+oesui:
+{{- if .Values.oesUI.port }}
+  externalUrl: {{ .Values.oesUI.protocol }}://{{ .Values.oesUI.host }}:{{ .Values.oesUI.port }}
+{{- else }}
+  externalUrl: {{ .Values.oesUI.protocol }}://{{ .Values.oesUI.host }}
+{{- end }}
+server:
+  session:
+    timeoutInSeconds: {{ .Values.gate.config.server.session.timeoutInSeconds }}

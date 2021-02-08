@@ -4,7 +4,11 @@ oes:
 spinnaker:
   authnEnabled: {{ .Values.sapor.config.spinnaker.authnEnabled }}
   baseurl: {{ .Values.sapor.config.spinnaker.spinGateURL }}
+{{- if .Values.sapor.config.spinnaker.spinExternalGateURL }}
   externalBaseUrl: {{ .Values.sapor.config.spinnaker.spinExternalGateURL }}
+{{- else }}
+  externalBaseUrl: {{ .Values.spinnaker.ingressGate.protocol }}://{{ .Values.spinnaker.ingressGate.host }}
+{{- end }}
   ldap:
     enabled: {{ .Values.sapor.config.spinnaker.ldap.ldapEnabled }}
     username: {{ .Values.sapor.config.spinnaker.ldap.ldapUsername }}
@@ -15,7 +19,7 @@ spinnaker:
   x509:
     enabled: {{ .Values.sapor.config.spinnaker.x509.enabled }}
     client:
-      file: {{ .Values.sapor.config.spinnaker.x509.client.file }}
+      file: /opt/opsmx/client.p12
       password: {{ .Values.sapor.config.spinnaker.x509.client.password }}
 spring:
   datasource:
@@ -24,3 +28,18 @@ spring:
     password: {{ .Values.db.password }}
 datasources:
   platform: {{ .Values.sapor.config.datasources.platform }}
+  
+## Set the below field to true if agent for kubernetes
+kubernetes:
+  agent:
+    enabled: {{ .Values.sapor.config.kubernetes.agent.enabled }} 
+    serverHostName: {{ .Values.forwarder.externalName }}
+    serverPort: 9003
+    caCertfile: /opt/opsmx/controller/ca.crt
+    certFile: /opt/opsmx/controller/cert/tls.crt
+    keyFile: /opt/opsmx/controller/cert/tls.key
+    image: {{ .Values.sapor.config.kubernetes.agent.image }}
+  template:
+    path: /opt/opsmx/controller
+    kubectlTemplateFileName: kubeconfig.template
+    manifestTemplateFileName: deploy-agent.template

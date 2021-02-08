@@ -8,7 +8,7 @@
 ## Name of the secret for pulling image from docker registry.
 ## Change it only if you want to create a secret with
 ## different name.
-##
+## user opxm11 for internal use
 imagePullSecret: opsmxdev-secret
 
 ## Quay container image registry credentials to create imagePullSecret
@@ -22,10 +22,6 @@ imageCredentials:
 rbac:
   create: true
 
-## Set to true to expose spinnaker and deck services over ingress
-##
-createIngress: false
-
 ## Option to skip installation of OpsMx Spinnaker
 ## Setting this to true, will ensure custom ubi8 images of Spinnaker
 installSpinnaker: true
@@ -37,7 +33,45 @@ installationMode: OES-AP
 
 ## OES UI & Gate service type
 ##
-k8sServiceType: LoadBalancer
+k8sServiceType: ClusterIP
+
+## Set to true to expose oes-ui, oes-gate services over ingress
+##
+createIngress: true
+
+## OES-UI ingress configuration
+oesUI:
+  protocol: http
+  host: oes.domain.com
+  # Use below port when hostname above is an external IP instead of a hostname
+  #port: 80
+
+  annotations:
+    acme.cert-manager.io/http01-edit-in-place: "true"
+    cert-manager.io/issue-temporary-certificate: "true"
+    cert-manager.io/issuer: letsencrypt-{{ .Release.Namespace }}-spin
+    kubernetes.io/ingress.class: nginx
+    kubernetes.io/tls-acme: "true"
+  tls:
+    secretName: oes-ui-authtls
+
+
+## OES-Gate ingress configuration
+oesGate:
+  protocol: http
+  host: oes-api.domain.com
+  # Use below port when hostname above is an external IP instead of a hostname
+  #port: 8084
+
+  annotations:
+    acme.cert-manager.io/http01-edit-in-place: "true"
+    cert-manager.io/issue-temporary-certificate: "true"
+    cert-manager.io/issuer: letsencrypt-{{ .Release.Namespace }}-spin
+    kubernetes.io/ingress.class: nginx
+    kubernetes.io/tls-acme: "true"
+
+  tls:
+    secretName: oes-gate-authtls
 
 ####################################################
 ## Redis configuration
@@ -108,7 +142,7 @@ autopilot:
   image:
     registry: quay.io/opsmxpublic
     repository: ubi8-oes-autopilot
-    tag: v3.4.0
+    tag: v3.5.0
     pullPolicy: IfNotPresent
 
   resources:
@@ -138,6 +172,13 @@ autopilot:
       keyStorePassword: dummypwd # Provide keystore password
       keyStoreType: PKCS12
       keyAlias: tomcat
+    
+    ## server.host.dns.name is fetched from oesUI.host
+    ##
+
+    ## gate.url is fetched from oesGate.host
+    ##
+
 ###############################################################################
 ##
 ## Values of OES Dashboard
@@ -148,7 +189,7 @@ dashboard:
   image:
     registry: quay.io/opsmxpublic
     repository: ubi8-oes-dashboard
-    tag: v3.4.0
+    tag: v3.5.0
     pullPolicy: IfNotPresent
 
   resources:
@@ -164,6 +205,12 @@ dashboard:
     ## OES supports three modes of installation,
     ## Uses the mode configured above, under Installation mode
     ##
+    app:
+      sync:
+        enabled: true
+    ## By default spinnakerLink is {{ .Values.spinnaker.ingress.protocol }}://{{ .Values.spinnaker.ingress.host }}
+    ## If spinnaker is exposed on Load balancer instead of ingress, set this value to external IP of spinnaker UI
+    #spinnakerLink: http://spinnaker.domain.com
 
 ###############################################################################
 ##
@@ -175,7 +222,7 @@ gate:
   image:
     registry: quay.io/opsmxpublic
     repository: ubi8-oes-gate
-    tag: v3.4.0
+    tag: v3.5.0
     pullPolicy: IfNotPresent
 
   resources:
@@ -196,13 +243,15 @@ gate:
     ## under Redis Configuration section
     ##
 
-    ## Regex of OES-UI URL to allow cross origin requests
-    oesUIcors: ^https?://(?:localhost|OES_UI_LOADBALANCER_IP|opsmx.com)(?::[1-9]\d*)?/?
+    ## Regex of OES-UI URL to allow cross origin requests; this is framed using oesUI.host
 
     ## Set it to true to disable LDAP authentication and enable file based authentication
     ## Reach out over support@opsmx.com for pre-configured user credentials
     fileBasedAuthentication:
       enabled: false
+    server:
+      session:
+        timeoutInSeconds: 7200
 
 ###############################################################################
 ##
@@ -214,7 +263,7 @@ platform:
   image:
     registry: quay.io/opsmxpublic
     repository: ubi8-oes-platform
-    tag: v3.4.0
+    tag: v3.5.0
     pullPolicy: IfNotPresent
 
   resources:
@@ -224,7 +273,7 @@ platform:
     limits:
       memory: 1500Mi
       cpu: 1500m
-    
+
   config:
     ## DB configuration; change it any other external DB is to be used
     ## Refer it above, under DB configuration section
@@ -268,7 +317,7 @@ sapor:
   image:
     registry: quay.io/opsmxpublic
     repository: ubi8-oes-sapor
-    tag: v3.4.0
+    tag: v3.5.0
     pullPolicy: IfNotPresent
 
   resources:
@@ -284,9 +333,7 @@ sapor:
     ## Refer the RBAC create option at the top
     ##
 
-    datasources:
-      platform: false
-
+    ## Spinnaker Configuration
     spinnaker:
       ## Spinnaker configuration
       ## Necessary details needed by Sapor to
@@ -303,30 +350,23 @@ sapor:
       ##
       spinGateURL: http://spin-gate:8084
 
-      ## Set the external IP address of spin-gate, this is used to redirect to
+      ## By default spinExternalGateURL is {{ .Values.spinnaker.ingressGate.protocol }}://{{ .Values.spinnaker.ingressGate.host}}
+      ## If spinExternalGateURL is an external IP address instead of ingress, Set the external IP address of spin-gate, this is used to redirect to
       ## the spinnaker pipelines from OES-UI.
       ## Note: Trailing / is not required
       ##
-      spinExternalGateURL: http://spin-gate:8084
-
-      ## Spinnaker user credentials
-      ##
-      spinuser: admin
-      spinpasswd: opsmxadmin123
+      #spinExternalGateURL: http://spinnaker-api.domain.com
 
       ## Spinnaker admin credentials
       ## When provided, will override above credentials and operate spinnaker
       ## as an admin user
       ##
-      spinAdminLoginEnabled: false
-      ##spinAdminUsername: admin
-      ##spinAdminPassword: admin
 
       ## LDAP
       ldap:
         ldapEnabled: true
         ldapUsername: admin
-        ldapPassword: opsmx@123
+        ldapPassword: opsmxadmin123
         ldapAdminLoginEnabled: false
         ldapAdminUsername: admin
         ldapAdminPassword: admin
@@ -335,8 +375,17 @@ sapor:
       x509:
         enabled: false
         client:
-          file: /opt/opsmx/client.p12
           password: changeit
+
+    ## Set the below field to true if datasource configurations from platform
+    datasources:
+      platform: true
+
+    ## Set the below field to true if agent for kubernetes
+    kubernetes:
+      agent:
+        enabled: true
+        image: quay.io/opsmxpublic/forwarder-agent:v20210118T161303
 
     ## Set the below field to true if default java cacert is to be overriden
     ##
@@ -353,13 +402,10 @@ ui:
   image:
     registry: quay.io/opsmxpublic
     repository: ubi8-oes-ui
-    tag: v3.4.0
+    tag: v3.5.0
     pullPolicy: IfNotPresent
 
   config:
-    ## Endpoint of oes-gate to be used by oes-ui
-    ##
-    oesGateURL: http://OES_GATE_IP:8084/
 
     ## Interval at which UI refreshes application dashboard
     setApplicationRefreshInterval: 300000
@@ -375,7 +421,7 @@ visibility:
   image:
     registry: quay.io/opsmxpublic
     repository: ubi8-oes-visibility
-    tag: v3.4.0
+    tag: v3.5.0
     pullPolicy: IfNotPresent
 
   resources:
@@ -392,7 +438,7 @@ visibility:
     ##
 
     ## Autopilot integration options
-    configuredConnectors: JIRA,GIT,AUTOPILOT,SONARQUBE,JENKINS
+    configuredConnectors: JIRA,GIT,AUTOPILOT,SONARQUBE,JENKINS,AQUAWAVE
 
     ## Logger level
     logLevel: ERROR
@@ -405,7 +451,7 @@ autoConfiguration:
   # Set it to false if OES is being installed on restricted evnironment;
   # Autoconfiguration assumes Load Balancer is available for oes-gate, oes-ui
   # and spind-deck and configures accordingly
-  enabled: true
+  enabled: false
 
   initContainer:
     # Image for init container to automatically configure oes components
@@ -424,9 +470,20 @@ opa:
   enabled: true
   image:
     repository: openpolicyagent/opa
-    tag: latest
+    tag: edge-rootless
     pullPolicy: IfNotPresent
 
+#####################################################
+## Forwarder/Controller configuration
+#####################################################
+forwarder:
+  agentServiceType: LoadBalancer
+  # Value is also used in sapor configuration for kubernetes.agent.serverHostName
+  externalName: controller-agent.testing.opsmx.com
+  image:
+    repository: quay.io/opsmxpublic/forwarder-controller
+    tag: v1.0.0
+    pullPolicy: IfNotPresent
 ####################################################
 ## LDAP configuration
 ####################################################
@@ -567,10 +624,10 @@ kibana:
 #####################################################
 spinnaker:
   halyard:
-    spinnakerVersion: 1.20.5
+    spinnakerVersion: 1.22.2
     image:
       repository: quay.io/opsmxpublic/ubi8-spin-halyard
-      tag: 1.20.5
+      tag: opsmx-1.40.0
     # Set to false to disable persistence data volume for halyard
     persistence:
       enabled: true
@@ -628,37 +685,37 @@ spinnaker:
         healthEndpoint: /health
         kubernetes:
           useExecHealthCheck: false
-        artifactId: quay.io/opsmxpublic/ubi8-spin-gate:1.16.1
+        artifactId: quay.io/opsmxpublic/ubi8-spin-gate:1.18.1
       deck.yml:
         artifactId: quay.io/opsmxpublic/ubi8-spin-deck:3.3.0
       clouddriver.yml:
-        artifactId: quay.io/opsmxpublic/ubi8-spin-clouddriver:6.9.2
+        artifactId: quay.io/opsmxpublic/ubi8-spin-clouddriver:6.11.1
       clouddriver-caching.yml:
-        artifactId: quay.io/opsmxpublic/ubi8-spin-clouddriver:6.9.2
+        artifactId: quay.io/opsmxpublic/ubi8-spin-clouddriver:6.11.1
       clouddriver-rw.yml:
-        artifactId: quay.io/opsmxpublic/ubi8-spin-clouddriver:6.9.2
+        artifactId: quay.io/opsmxpublic/ubi8-spin-clouddriver:6.11.1
       clouddriver-ro.yml:
-        artifactId: quay.io/opsmxpublic/ubi8-spin-clouddriver:6.9.2
+        artifactId: quay.io/opsmxpublic/ubi8-spin-clouddriver:6.11.1
       clouddriver-ro-deck.yml:
-        artifactId: quay.io/opsmxpublic/ubi8-spin-clouddriver:6.9.2
+        artifactId: quay.io/opsmxpublic/ubi8-spin-clouddriver:6.11.1
       echo.yml:
-        artifactId: quay.io/opsmxpublic/ubi8-spin-echo:version-2.12.1
+        artifactId: quay.io/opsmxpublic/ubi8-spin-echo:2.14.0
       echo-scheduler.yml:
-        artifactId: quay.io/opsmxpublic/ubi8-spin-echo:version-2.12.1
+        artifactId: quay.io/opsmxpublic/ubi8-spin-echo:2.14.0
       echo-worker.yml:
-        artifactId: quay.io/opsmxpublic/ubi8-spin-echo:version-2.12.1
+        artifactId: quay.io/opsmxpublic/ubi8-spin-echo:2.14.0
       fiat.yml:
-        artifactId: quay.io/opsmxpublic/ubi8-spin-fiat:1.11.0
+        artifactId: quay.io/opsmxpublic/ubi8-spin-fiat:1.13.0
       front50.yml:
         artifactId: quay.io/opsmxpublic/ubi8-oes-front50:0.25.1-opa
       igor.yml:
-        artifactId: quay.io/opsmxpublic/ubi8-spin-igor:1.10.0
+        artifactId: quay.io/opsmxpublic/ubi8-spin-igor:1.12.0
       kayenta.yml:
-        artifactId: quay.io/opsmxpublic/ubi8-spin-kayenta:0.15.1
+        artifactId: quay.io/opsmxpublic/ubi8-spin-kayenta:0.17.0
       orca.yml:
-        artifactId: quay.io/opsmxpublic/ubi8-spin-orca:2.14.2-mj2
+        artifactId: quay.io/opsmxpublic/ubi8-spin-orca:2.16.0
       rosco.yml:
-        artifactId: quay.io/opsmxpublic/ubi8-spin-rosco:0.19.0
+        artifactId: quay.io/opsmxpublic/ubi8-spin-rosco:0.21.1
     ## Uncomment if you want to add extra commands to the init script
     ## run by the init container before halyard is started.
     ## The content will be passed through `tpl`, so value interpolation is supported.
@@ -733,37 +790,42 @@ spinnaker:
 
   # Change this if youd like to expose Spinnaker outside the cluster
   ingress:
-    enabled: false
-    # host: spinnaker.example.org
-    # annotations:
-      # ingress.kubernetes.io/ssl-redirect: 'true'
-      # kubernetes.io/ingress.class: nginx
-      # kubernetes.io/tls-acme: "true"
-    # tls:
-    #  - secretName: -tls
-    #    hosts:
-    #      - domain.com
+    enabled: true
+    protocol: http
+    host: spinnaker.example.org
+    annotations:
+      cert-manager.io/issuer: letsencrypt-{{ .Release.Namespace }}-spin
+      acme.cert-manager.io/http01-edit-in-place: "true"
+      cert-manager.io/issue-temporary-certificate: "true"
+      ingress.kubernetes.io/ssl-redirect: "true"
+      ingress.kubernetes.io/ssl-redirect: 'true'
+      kubernetes.io/tls-acme: "true"
+      kubernetes.io/ingress.class: nginx
+    tls:
+      secretName: deck-authtls
 
   ingressGate:
-    enabled: false
-    # host: gate.spinnaker.example.org
-    # annotations:
-      # ingress.kubernetes.io/ssl-redirect: 'true'
-      # kubernetes.io/ingress.class: nginx
-      # kubernetes.io/tls-acme: "true"
-    # tls:
-    #  - secretName: -tls
-    #    hosts:
-    #      - domain.com
+    enabled: true
+    protocol: http
+    host: gate.spinnaker.example.org
+    annotations:
+      cert-manager.io/issuer: letsencrypt-{{ .Release.Namespace }}-spin
+      acme.cert-manager.io/http01-edit-in-place: "true"
+      cert-manager.io/issue-temporary-certificate: "true"
+      ingress.kubernetes.io/ssl-redirect: "true"
+      ingress.kubernetes.io/ssl-redirect: 'true'
+      kubernetes.io/tls-acme: "true"
+      kubernetes.io/ingress.class: nginx
+
+    tls:
+      secretName: gate-authtls
 
   # spinnakerFeatureFlags is a list of Spinnaker feature flags to enable
   # Ref: https://www.spinnaker.io/reference/halyard/commands/#hal-config-features-edit
   # spinnakerFeatureFlags:
   #   - artifacts
   #   - pipeline-templates
-  spinnakerFeatureFlags:
-    - pipeline-templates
-    - managed-pipeline-templates-v2-ui
+  spinnakerFeatureFlags: []
 
   # Node labels for pod assignment
   # Ref: https://kubernetes.io/docs/user-guide/node-selection/
@@ -869,8 +931,6 @@ spinnaker:
     enabled: false
     mTLS:
       enabled: false   # Enable mTLS for Spinnaker Services and SSL for Deck and Gate
-      deckIngressHost: spindeck.{{ .Release.Name }}.domain.com  # Used by OES to create ingress for deck
-      gateIngressHost: spingate.{{ .Release.Name }}.domain.com  # Used by OES to create ingress for gate
     repo-type: git # git, S3, vault, only git support at this point
     secretName: opsmx-gitops-auth
     # Max time(in secs) that an init container of halyard should wait
