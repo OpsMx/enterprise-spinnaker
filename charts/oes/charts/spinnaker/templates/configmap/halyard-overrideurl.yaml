@@ -227,13 +227,13 @@ data:
       spin-gate-ingress)
         ## Configured ingress host url as override url
           echo "Substituting gate url"
-          sed -i 's,OVERRIDE_API_URL,{{ tpl .Values.ingressGate.host . }},g' /tmp/spinnaker/.hal/config
+          sed -i 's,OVERRIDE_API_URL,{{ tpl .Values.global.spinGate.host . }},g' /tmp/spinnaker/.hal/config
         ;;
 
       spin-deck-ingress)
         ## Configured ingress host url as override url
           echo "Substituting deck url"
-          sed -i 's,OVERRIDE_DECK_URL,{{ tpl .Values.ingress.host . }},g' /tmp/spinnaker/.hal/config
+          sed -i 's,OVERRIDE_DECK_URL,{{ tpl .Values.global.spinDeck.host . }},g' /tmp/spinnaker/.hal/config
         ;;
       *)
         echo  COMP=$COMPONENT

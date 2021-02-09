@@ -1,21 +1,27 @@
-{{- if and (.Values.ingress.enabled) (not .Values.gitopsHalyard.mTLS.enabled) }}
+{{- if and (.Values.global.createIngress) (not .Values.gitopsHalyard.mTLS.enabled) }}
 apiVersion: extensions/v1beta1
 kind: Ingress
 metadata:
-{{- if .Values.ingress.annotations }}
   annotations:
-{{ tpl (toYaml .Values.ingress.annotations) . | indent 4 }}
+{{- if .Values.global.certManager.installed }}
+    cert-manager.io/issuer: letsencrypt-{{ .Release.Namespace }}-spin
+    acme.cert-manager.io/http01-edit-in-place: "true"
+    cert-manager.io/issue-temporary-certificate: "true"
+    kubernetes.io/tls-acme: "true"
+{{- end }}
+{{- if .Values.global.spinDeck.ingress.annotations }}
+{{ tpl (toYaml .Values.global.spinDeck.ingress.annotations) . | indent 4 }}
 {{- end }}
   name: {{ template "spinnaker.fullname" . }}-deck
   labels:
 {{ include "spinnaker.standard-labels" . | indent 4 }}
 spec:
   rules:
-  - host: {{ .Values.ingress.host | quote }}
+  - host: {{ .Values.global.spinDeck.host | quote }}
     http:
       paths:
-      {{- if index $.Values.ingress "annotations" }}
-      {{- if eq (index $.Values.ingress.annotations "kubernetes.io/ingress.class" | default "") "gce" "alb" "nsx" }}
+      {{- if index $.Values.global.spinDeck.ingress "annotations" }}
+      {{- if eq (index $.Values.global.spinDeck.ingress.annotations "kubernetes.io/ingress.class" | default "") "gce" "alb" "nsx" }}
       - path: /*
       {{- else }}{{/* Has annotations but ingress class is not "gce" nor "alb" */}}
       - path: /
@@ -26,10 +32,10 @@ spec:
         backend:
           serviceName: spin-deck
           servicePort: 9000
-{{- if .Values.ingress.tls }}
+{{- if .Values.global.spinDeck.ingress.tls }}
   tls:
   - hosts:
-    - {{ .Values.ingress.host }}
-{{ toYaml .Values.ingress.tls | indent 4 }}
+    - {{ .Values.global.spinDeck.host }}
+{{ toYaml .Values.global.spinDeck.ingress.tls | indent 4 }}
 {{- end }}
 {{- end }}

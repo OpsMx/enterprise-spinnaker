@@ -1,10 +1,16 @@
-{{- if .Values.createIngress }}
+{{- if .Values.global.createIngress }}
 apiVersion: extensions/v1beta1
 kind: Ingress
 metadata:
-{{- if .Values.oesGate.annotations }}
   annotations:
-{{ tpl (toYaml .Values.oesGate.annotations) . | indent 4 }}
+{{- if .Values.global.certManager.installed }}
+    acme.cert-manager.io/http01-edit-in-place: "true"
+    cert-manager.io/issue-temporary-certificate: "true"
+    cert-manager.io/issuer: letsencrypt-{{ .Release.Namespace }}-spin
+    kubernetes.io/tls-acme: "true"
+{{- end }}
+{{- if .Values.oesGate.ingress.annotations }}
+{{ tpl (toYaml .Values.oesGate.ingress.annotations) . | indent 4 }}
 {{- end }}
   name: oes-gate-ingress
 spec:
@@ -19,5 +25,5 @@ spec:
   tls:
   - hosts:
     - {{ .Values.oesGate.host }}
-    secretName: {{ .Values.oesGate.tls.secretName }}
+    secretName: {{ .Values.oesGate.ingress.tls.secretName }}
 {{- end }}
