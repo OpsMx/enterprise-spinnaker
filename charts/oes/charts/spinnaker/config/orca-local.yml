@@ -139,7 +139,7 @@ job:
             description: Please enter the Git Commit Id 
             label: Git Commit Id 
             mapping: 'manifest.spec.template.spec.containers[0].env[3].value'
-            name: gitcommitid1
+            name: gitcommitid
           - defaultValue: ""
             description: Please enter the Jenins Job
             label: Jenkins Job Name
@@ -149,7 +149,7 @@ job:
             description: Please enter the Jenkins Build No 
             label: Jenkins Build No 
             mapping: 'manifest.spec.template.spec.containers[0].env[5].value'
-            name: jenkinsbuild1
+            name: jenkinsbuild
           - defaultValue: ""
             description: Please enter the Autopilot Canary
             label: Autopilot Canary Id
