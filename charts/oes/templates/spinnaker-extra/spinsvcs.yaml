@@ -1,4 +1,4 @@
-{{- if and (.Values.installSpinnaker) (not .Values.createIngress) }}
+{{- if and (.Values.installSpinnaker) (not .Values.global.createIngress) }}
 {{- if not (.Values.spinnaker.gitopsHalyard.mTLS.enabled) }}
 apiVersion: v1
 kind: Service

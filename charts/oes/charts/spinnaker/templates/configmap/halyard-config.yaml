@@ -162,8 +162,8 @@ data:
     # Use Deck to route to Gate
     {{- if not .Values.gitopsHalyard.enabled }}
     # Configure override urls in halyard config
-    $HAL_COMMAND config security ui edit --no-validate --override-base-url {{ .Values.ingress.protocol }}://{{ .Values.ingress.host }}
-    $HAL_COMMAND config security api edit --no-validate --override-base-url {{ .Values.ingressGate.protocol }}://{{ .Values.ingressGate.host }}
+    $HAL_COMMAND config security ui edit --no-validate --override-base-url {{ .Values.global.spinDeck.protocol }}://{{ .Values.global.spinDeck.host }}
+    $HAL_COMMAND config security api edit --no-validate --override-base-url {{ .Values.global.spinGate.protocol }}://{{ .Values.global.spinGate.host }}
     {{- end }}
     {{- range $index, $feature := .Values.spinnakerFeatureFlags }}
     $HAL_COMMAND config features edit --{{ $feature }} true

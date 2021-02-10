@@ -1,4 +1,4 @@
-{{- if .Values.createIngress }}
+{{- if .Values.global.certManager.installed }}
 apiVersion: cert-manager.io/v1
 kind: Issuer
 metadata:

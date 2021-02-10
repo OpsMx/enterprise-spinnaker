@@ -17,7 +17,7 @@ imageCredentials:
   registry: https://quay.io/
   username: quayID  # Quay username
   password: quayPassword # Quay password
-  email: info@opsmx.com   # email corresponding to docker hub ID
+  email: info@opsmx.com   # email corresponding to quay registry ID
 
 rbac:
   create: true
@@ -35,43 +35,77 @@ installationMode: OES-AP
 ##
 k8sServiceType: ClusterIP
 
-## Set to true to expose oes-ui, oes-gate services over ingress
-##
-createIngress: true
+## Declare all the global variables under this
+## Global variables can be accessed across all the charts including sub-charts
+global:
+  ## Set this to false if cert-manager is not installed
+  ## If cert-manager is installed, an issuer will be created
+  ## by OES helm chart which generates certs for tls automatically
+  ## If cert-manager is not installed, specify secrets with
+  ## certificates under oesUI.tls.secretName & oesGate.tls.secretName
 
-## OES-UI ingress configuration
+  certManager:
+    installed: true
+
+  ## Set to true to expose oes-ui, oes-gate services over ingress
+  ##
+  createIngress: true
+
+  # Spinnaker Deck URL configuration; url overwhich spinnaker deck will be accessed
+  spinDeck:
+    protocol: http
+    host: spinnaker.example.org
+    #port: 9000
+
+    ingress:
+      annotations:
+        ingress.kubernetes.io/ssl-redirect: "true"
+        kubernetes.io/ingress.class: nginx
+      tls:
+        secretName: deck-authtls
+
+  # Spinnaker Gate URL configuration; url overwhich spinnaker gate will be accessed
+  spinGate:
+    protocol: http
+    host: gate.spinnaker.example.org
+    #port: 8084
+
+    ingress:
+      annotations:
+        ingress.kubernetes.io/ssl-redirect: "true"
+        kubernetes.io/ingress.class: nginx
+
+      tls:
+        secretName: gate-authtls
+
+## OES-UI url configuration
 oesUI:
   protocol: http
   host: oes.domain.com
   # Use below port when hostname above is an external IP instead of a hostname
   #port: 80
 
-  annotations:
-    acme.cert-manager.io/http01-edit-in-place: "true"
-    cert-manager.io/issue-temporary-certificate: "true"
-    cert-manager.io/issuer: letsencrypt-{{ .Release.Namespace }}-spin
-    kubernetes.io/ingress.class: nginx
-    kubernetes.io/tls-acme: "true"
-  tls:
-    secretName: oes-ui-authtls
+  ingress:
+    annotations:
+      kubernetes.io/ingress.class: nginx
+
+    tls:
+      secretName: oes-ui-authtls
 
 
-## OES-Gate ingress configuration
+## OES-Gate url configuration
 oesGate:
   protocol: http
   host: oes-api.domain.com
   # Use below port when hostname above is an external IP instead of a hostname
   #port: 8084
 
-  annotations:
-    acme.cert-manager.io/http01-edit-in-place: "true"
-    cert-manager.io/issue-temporary-certificate: "true"
-    cert-manager.io/issuer: letsencrypt-{{ .Release.Namespace }}-spin
-    kubernetes.io/ingress.class: nginx
-    kubernetes.io/tls-acme: "true"
+  ingress:
+    annotations:
+      kubernetes.io/ingress.class: nginx
 
-  tls:
-    secretName: oes-gate-authtls
+    tls:
+      secretName: oes-gate-authtls
 
 ####################################################
 ## Redis configuration
@@ -787,38 +821,6 @@ spinnaker:
     - kube-public
     onlySpinnakerManaged:
       enabled: true
-
-  # Change this if youd like to expose Spinnaker outside the cluster
-  ingress:
-    enabled: true
-    protocol: http
-    host: spinnaker.example.org
-    annotations:
-      cert-manager.io/issuer: letsencrypt-{{ .Release.Namespace }}-spin
-      acme.cert-manager.io/http01-edit-in-place: "true"
-      cert-manager.io/issue-temporary-certificate: "true"
-      ingress.kubernetes.io/ssl-redirect: "true"
-      ingress.kubernetes.io/ssl-redirect: 'true'
-      kubernetes.io/tls-acme: "true"
-      kubernetes.io/ingress.class: nginx
-    tls:
-      secretName: deck-authtls
-
-  ingressGate:
-    enabled: true
-    protocol: http
-    host: gate.spinnaker.example.org
-    annotations:
-      cert-manager.io/issuer: letsencrypt-{{ .Release.Namespace }}-spin
-      acme.cert-manager.io/http01-edit-in-place: "true"
-      cert-manager.io/issue-temporary-certificate: "true"
-      ingress.kubernetes.io/ssl-redirect: "true"
-      ingress.kubernetes.io/ssl-redirect: 'true'
-      kubernetes.io/tls-acme: "true"
-      kubernetes.io/ingress.class: nginx
-
-    tls:
-      secretName: gate-authtls
 
   # spinnakerFeatureFlags is a list of Spinnaker feature flags to enable
   # Ref: https://www.spinnaker.io/reference/halyard/commands/#hal-config-features-edit
