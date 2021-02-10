@@ -1,5 +1,5 @@
 <p align="center">
-	<img src="img/opsmx.png" width="40%" align="center" alt="OpsMx">
+	<img src="img/opsmx.png" width="20%" align="center" alt="OpsMx">
 </p>
 
 # OpsMx Enterprise for Spinnaker
