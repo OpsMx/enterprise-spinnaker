@@ -17,7 +17,7 @@ imageCredentials:
   registry: https://quay.io/
   username: quayID  # Quay username
   password: quayPassword # Quay password
-  email: info@opsmx.com   # email corresponding to docker hub ID
+  email: info@opsmx.com   # email corresponding to quay registry ID
 
 rbac:
   create: true
