@@ -1,3 +1,7 @@
+<p align="center">
+	<img src="img/opsmx.png" width="40%" align="center" alt="OpsMx">
+</p>
+
 # OpsMx Enterprise for Spinnaker
 
 OpsMx Enterprise for Spinnaker is an installation bundle that includes the open source Spinnaker and OpsMx extensions on top of it.
