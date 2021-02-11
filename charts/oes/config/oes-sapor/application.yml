@@ -7,7 +7,7 @@ spinnaker:
 {{- if .Values.sapor.config.spinnaker.spinExternalGateURL }}
   externalBaseUrl: {{ .Values.sapor.config.spinnaker.spinExternalGateURL }}
 {{- else }}
-  externalBaseUrl: {{ .Values.spinnaker.ingressGate.protocol }}://{{ .Values.spinnaker.ingressGate.host }}
+  externalBaseUrl: {{ .Values.global.spinGate.protocol }}://{{ .Values.global.spinGate.host }}
 {{- end }}
   ldap:
     enabled: {{ .Values.sapor.config.spinnaker.ldap.ldapEnabled }}
