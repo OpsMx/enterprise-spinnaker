@@ -242,7 +242,7 @@ dashboard:
     app:
       sync:
         enabled: true
-    ## By default spinnakerLink is {{ .Values.spinnaker.ingress.protocol }}://{{ .Values.spinnaker.ingress.host }}
+    ## By default spinnakerLink is {{ .Values.global.spinDeck.protocol }}://{{ .Values.global.spinDeck.host }}
     ## If spinnaker is exposed on Load balancer instead of ingress, set this value to external IP of spinnaker UI
     #spinnakerLink: http://spinnaker.domain.com
 
@@ -384,7 +384,7 @@ sapor:
       ##
       spinGateURL: http://spin-gate:8084
 
-      ## By default spinExternalGateURL is {{ .Values.spinnaker.ingressGate.protocol }}://{{ .Values.spinnaker.ingressGate.host}}
+      ## By default spinExternalGateURL is {{ .Values.global.spinGate.protocol }}://{{ .Values.global.spinGate.host }}
       ## If spinExternalGateURL is an external IP address instead of ingress, Set the external IP address of spin-gate, this is used to redirect to
       ## the spinnaker pipelines from OES-UI.
       ## Note: Trailing / is not required

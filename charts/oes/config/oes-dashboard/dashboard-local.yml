@@ -9,5 +9,5 @@ app:
 {{- if .Values.dashboard.config.spinnakerLink }}
 spinnakerLink: {{ .Values.dashboard.config.spinnakerLink }}
 {{- else }}
-spinnakerLink: {{ .Values.spinnaker.ingress.protocol }}://{{ .Values.spinnaker.ingress.host }}
+spinnakerLink: {{ .Values.global.spinDeck.protocol }}://{{ .Values.global.spinDeck.host }}
 {{- end }}
