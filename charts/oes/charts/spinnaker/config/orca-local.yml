@@ -84,7 +84,7 @@ job:
         type: Verification
         waitForCompletion: true
         parameters:
-          - defaultValue: "" 
+          - defaultValue: ""
             description: Please enter the Gate URL
             label: Gate Url
             mapping: 'manifest.spec.template.spec.containers[0].env[0].value'
@@ -134,13 +134,14 @@ job:
           kind: Job
           metadata:
             name: verificationgate
+            namespace: default
           spec:
             backoffLimit: 0
             template:
               spec:
                 containers:
                   - args:
-                      - 
+                      -
                     env:
                       - name: gateurl
                         value:
