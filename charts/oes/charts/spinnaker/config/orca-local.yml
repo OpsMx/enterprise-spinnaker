@@ -84,29 +84,88 @@ job:
         type: Verification
         waitForCompletion: true
         parameters:
-          - defaultValue: ""
+          - defaultValue: "" 
             description: Please enter the Gate URL
             label: Gate Url
             mapping: 'manifest.spec.template.spec.containers[0].env[0].value'
             name: gateurl
+          - defaultValue: "0.1" 
+            description: Please enter the Life Time in Hours like 0.5
+            label: LifeTimeHours
+            mapping: 'manifest.spec.template.spec.containers[0].env[1].value'
+            name: lifetime
+          - defaultValue: "70" 
+            description: Please enter the Minimum Canary Result
+            label: Minimum CanaryResult
+            mapping: 'manifest.spec.template.spec.containers[0].env[2].value'
+            name: minicanaryresult
+          - defaultValue: "90" 
+            description: Please enter the Canry Result Score
+            label: CanaryResult Score
+            mapping: 'manifest.spec.template.spec.containers[0].env[3].value'
+            name: canaryresultscore
+          - defaultValue: "true" 
+            description: Please Enable Log with true / false
+            label: Log Analysis
+            mapping: 'manifest.spec.template.spec.containers[0].env[4].value'
+            name: log
+          - defaultValue: "true"
+            description: Please Enable Metric with true / false
+            label: Metric Analysis
+            mapping: 'manifest.spec.template.spec.containers[0].env[5].value'
+            name: metric
+          - defaultValue: ""
+            description: Please enter Baseline Start Time in Epoch format. If it is empty will take it as current time
+            label: Baseline StartTime 
+            mapping: 'manifest.spec.template.spec.containers[0].env[6].value'
+            name: baselinestarttime
+          - defaultValue: "" 
+            description: Please enter Canry Start Time  in Epoch format. If it is empty will take it as current time
+            label: Canary StartTime
+            mapping: 'manifest.spec.template.spec.containers[0].env[7].value'
+            name: canarystarttime
+          - defaultValue: "" 
+            description: Please enter Gate
+            label: Gate Name
+            mapping: 'manifest.spec.template.spec.containers[0].env[8].value'
+            name: gate
         manifest:
           apiVersion: batch/v1
           kind: Job
           metadata:
             name: verificationgate
-            namespace: default
           spec:
             backoffLimit: 0
             template:
               spec:
                 containers:
                   - args:
-                      -
+                      - 
                     env:
                       - name: gateurl
                         value:
+                      - name: lifetime
+                        value:
+                      - name: minicanaryresult
+                        value:
+                      - name: canaryresultscore
+                        value:
+                      - name: log
+                        value:
+                      - name: metric
+                        value:
+                      - name: baselinestarttime
+                        value:
+                      - name: canarystarttime
+                        value:
+                      - name: gate
+                        value:
                       - name: application
                         value: "${execution.application}"
+                      - name: service
+                        value: "${execution.name}"
+                      - name: time
+                        value: "${{execution.startTime} .toString()}"
                     image: 'opsmxdev/verificationgate-stage:v1'
                     imagePullPolicy: Always
                     name: verificationgate
