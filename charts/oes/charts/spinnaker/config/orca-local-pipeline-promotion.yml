@@ -323,6 +323,46 @@ job:
             label: Gate Url
             mapping: 'manifest.spec.template.spec.containers[0].env[0].value'
             name: gateurl
+          - defaultValue: "0.1" 
+            description: Please enter the Life Time in Hours like 0.5
+            label: LifeTimeHours
+            mapping: 'manifest.spec.template.spec.containers[0].env[1].value'
+            name: lifetime
+          - defaultValue: "70" 
+            description: Please enter the Minimum Canary Result
+            label: Minimum CanaryResult
+            mapping: 'manifest.spec.template.spec.containers[0].env[2].value'
+            name: minicanaryresult
+          - defaultValue: "90" 
+            description: Please enter the Canry Result Score
+            label: CanaryResult Score
+            mapping: 'manifest.spec.template.spec.containers[0].env[3].value'
+            name: canaryresultscore
+          - defaultValue: "true" 
+            description: Please Enable Log Analysis with true / false
+            label: Log Analysis
+            mapping: 'manifest.spec.template.spec.containers[0].env[4].value'
+            name: log
+          - defaultValue: "true"
+            description: Please Enable Metric Analysis with true / false
+            label: Metric Analysis
+            mapping: 'manifest.spec.template.spec.containers[0].env[5].value'
+            name: metric
+          - defaultValue: ""
+            description: Please enter Baseline Start Time in Epoch format. If it is empty will take it as current time
+            label: Baseline StartTime 
+            mapping: 'manifest.spec.template.spec.containers[0].env[6].value'
+            name: baselinestarttime
+          - defaultValue: "" 
+            description: Please enter Canry Start Time  in Epoch format. If it is empty will take it as current time
+            label: Canary StartTime
+            mapping: 'manifest.spec.template.spec.containers[0].env[7].value'
+            name: canarystarttime
+          - defaultValue: "" 
+            description: Please enter Gate Name that is created in OES
+            label: Gate Name
+            mapping: 'manifest.spec.template.spec.containers[0].env[8].value'
+            name: gate
         manifest:
           apiVersion: batch/v1
           kind: Job
@@ -339,8 +379,28 @@ job:
                     env:
                       - name: gateurl
                         value:
+                      - name: lifetime
+                        value:
+                      - name: minicanaryresult
+                        value:
+                      - name: canaryresultscore
+                        value:
+                      - name: log
+                        value:
+                      - name: metric
+                        value:
+                      - name: baselinestarttime
+                        value:
+                      - name: canarystarttime
+                        value:
+                      - name: gate
+                        value:
                       - name: application
                         value: "${execution.application}"
+                      - name: service
+                        value: "${execution.name}"
+                      - name: time
+                        value: "${{execution.startTime} .toString()}"
                     image: 'opsmxdev/verificationgate-stage:v1'
                     imagePullPolicy: Always
                     name: verificationgate
@@ -354,60 +414,45 @@ job:
         type: Visibility Approval
         waitForCompletion: true
         parameters:
-          - defaultValue: ""
+          - defaultValue: "" 
             description: Please enter the Gate URL
             label: Gate Url
             mapping: 'manifest.spec.template.spec.containers[0].env[0].value'
             name: gateurl
           - defaultValue: ""
-            description: Please enter the JIRA ID1
-            label: Jira Id 1
+            description: Please enter the JIRA ID
+            label: Jira Id 
             mapping: 'manifest.spec.template.spec.containers[0].env[1].value'
-            name: jiraid1
-          - defaultValue: ""
-            description: Please enter the JIRA ID2
-            label: Jira Id 2
-            mapping: 'manifest.spec.template.spec.containers[0].env[2].value'
-            name: jiraid2
+            name: jiraid
           - defaultValue: ""
             description: Please enter the Git Repo Name
             label: Git Repo
-            mapping: 'manifest.spec.template.spec.containers[0].env[3].value'
+            mapping: 'manifest.spec.template.spec.containers[0].env[2].value'
             name: gitrepo
           - defaultValue: ""
-            description: Please enter the Git Commit Id 1
-            label: Git Commit Id 1
-            mapping: 'manifest.spec.template.spec.containers[0].env[4].value'
-            name: gitcommitid1
-          - defaultValue: ""
-            description: Please enter the Git Commit Id 2
-            label: Git Commit Id 2
-            mapping: 'manifest.spec.template.spec.containers[0].env[5].value'
-            name: gitcommitid2
+            description: Please enter the Git Commit Id 
+            label: Git Commit Id 
+            mapping: 'manifest.spec.template.spec.containers[0].env[3].value'
+            name: gitcommitid
           - defaultValue: ""
             description: Please enter the Jenins Job
             label: Jenkins Job Name
-            mapping: 'manifest.spec.template.spec.containers[0].env[6].value'
+            mapping: 'manifest.spec.template.spec.containers[0].env[4].value'
             name: jenkinsjob
           - defaultValue: ""
-            description: Please enter the Jenkins Build No 1
-            label: Jenkins Build No 1
-            mapping: 'manifest.spec.template.spec.containers[0].env[7].value'
-            name: jenkinsbuild1
-          - defaultValue: ""
-            description: Please enter the Jenkins Build No 2
-            label: Jenkins Build No 2
-            mapping: 'manifest.spec.template.spec.containers[0].env[8].value'
-            name: jenkinsbuild2
+            description: Please enter the Jenkins Build No 
+            label: Jenkins Build No 
+            mapping: 'manifest.spec.template.spec.containers[0].env[5].value'
+            name: jenkinsbuild
           - defaultValue: ""
             description: Please enter the Autopilot Canary
             label: Autopilot Canary Id
-            mapping: 'manifest.spec.template.spec.containers[0].env[9].value'
+            mapping: 'manifest.spec.template.spec.containers[0].env[6].value'
             name: canaryid
           - defaultValue: ""
             description: Please enter the Sonarqube Prject Key
             label: Sonarqube Project Key
-            mapping: 'manifest.spec.template.spec.containers[0].env[10].value'
+            mapping: 'manifest.spec.template.spec.containers[0].env[7].value'
             name: projectkey
         manifest:
           apiVersion: batch/v1
@@ -425,26 +470,20 @@ job:
                     env:
                       - name: gateurl
                         value:
-                      - name: jiraid1
-                        value:
-                      - name: jiraid2
+                      - name: jiraid
                         value:
                       - name: gitrepo
                         value:
-                      - name: gitcommitid1
-                        value:
-                      - name: gitcommitid2
+                      - name: gitcommitid
                         value:
                       - name: jenkinsjob
                         value:
-                      - name: jenkinsbuild1
-                        value:
-                      - name: jenkinsbuild2
+                      - name: jenkinsbuild
                         value:
                       - name: canaryid
                         value:
                       - name: projectkey
-                        value:
+                        value: 
                     image: 'opsmxdev/visibility-stage:v1'
                     imagePullPolicy: Always
                     name: visibility-approve
