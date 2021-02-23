@@ -1,4 +1,5 @@
 {{- if or (eq .Values.installationMode "OES-AP") (eq .Values.installationMode "OES") -}}
+{{- if .Values.forwarder.enabled }}
 apiVersion: v1
 kind: Service
 metadata:
@@ -15,4 +16,5 @@ spec:
   - name: agent-grpc
     port: 9001
     targetPort: agent-grpc
+{{- end -}}
 {{- end -}}

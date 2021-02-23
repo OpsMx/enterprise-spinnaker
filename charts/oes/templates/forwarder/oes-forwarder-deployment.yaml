@@ -1,4 +1,5 @@
 {{- if or (eq .Values.installationMode "OES-AP") (eq .Values.installationMode "OES") -}}
+{{- if .Values.forwarder.enabled }}
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -67,5 +68,6 @@ spec:
           items:
           - key: "configFile"
             path: "config.yaml"
+{{- end -}}
 {{- end -}}
 

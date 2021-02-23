@@ -246,6 +246,22 @@ dashboard:
     ## If spinnaker is exposed on Load balancer instead of ingress, set this value to external IP of spinnaker UI
     #spinnakerLink: http://spinnaker.domain.com
 
+#####################################################
+##
+## Values of Forwarder/Controller
+##
+forwarder:
+  enabled: false
+  agent:
+    image: quay.io/opsmxpublic/forwarder-agent:v20210118T161303
+    serviceType: LoadBalancer
+  # Value is also used in sapor configuration for kubernetes.agent.serverHostName
+  externalName: controller-agent.testing.opsmx.com
+  image:
+    repository: quay.io/opsmxpublic/forwarder-controller
+    tag: v1.0.0
+    pullPolicy: IfNotPresent
+
 ###############################################################################
 ##
 ## Values of OES Gate
@@ -415,12 +431,6 @@ sapor:
     datasources:
       platform: true
 
-    ## Set the below field to true if agent for kubernetes
-    kubernetes:
-      agent:
-        enabled: true
-        image: quay.io/opsmxpublic/forwarder-agent:v20210118T161303
-
     ## Set the below field to true if default java cacert is to be overriden
     ##
     caCerts:
@@ -507,17 +517,6 @@ opa:
     tag: edge-rootless
     pullPolicy: IfNotPresent
 
-#####################################################
-## Forwarder/Controller configuration
-#####################################################
-forwarder:
-  agentServiceType: LoadBalancer
-  # Value is also used in sapor configuration for kubernetes.agent.serverHostName
-  externalName: controller-agent.testing.opsmx.com
-  image:
-    repository: quay.io/opsmxpublic/forwarder-controller
-    tag: v1.0.0
-    pullPolicy: IfNotPresent
 ####################################################
 ## LDAP configuration
 ####################################################
