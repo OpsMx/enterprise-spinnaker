@@ -150,7 +150,7 @@ db:
   image:
     registry: quay.io/opsmxpublic
     repository: ubi8-oes-autopilot-db
-    tag: v1.6
+    tag: v1.6.1
     pullPolicy: IfNotPresent
 
   ## Strategy to rollout statefulset pods
@@ -176,7 +176,7 @@ autopilot:
   image:
     registry: quay.io/opsmxpublic
     repository: ubi8-oes-autopilot
-    tag: v3.5.0
+    tag: v3.5.1
     pullPolicy: IfNotPresent
 
   resources:
@@ -223,7 +223,7 @@ dashboard:
   image:
     registry: quay.io/opsmxpublic
     repository: ubi8-oes-dashboard
-    tag: v3.5.0
+    tag: v3.5.1
     pullPolicy: IfNotPresent
 
   resources:
@@ -272,7 +272,7 @@ gate:
   image:
     registry: quay.io/opsmxpublic
     repository: ubi8-oes-gate
-    tag: v3.5.0
+    tag: v3.5.1
     pullPolicy: IfNotPresent
 
   resources:
@@ -313,7 +313,7 @@ platform:
   image:
     registry: quay.io/opsmxpublic
     repository: ubi8-oes-platform
-    tag: v3.5.0
+    tag: v3.5.1
     pullPolicy: IfNotPresent
 
   resources:
@@ -367,7 +367,7 @@ sapor:
   image:
     registry: quay.io/opsmxpublic
     repository: ubi8-oes-sapor
-    tag: v3.5.0
+    tag: v3.5.1
     pullPolicy: IfNotPresent
 
   resources:
@@ -446,7 +446,7 @@ ui:
   image:
     registry: quay.io/opsmxpublic
     repository: ubi8-oes-ui
-    tag: v3.5.0
+    tag: v3.5.1
     pullPolicy: IfNotPresent
 
   config:
@@ -465,7 +465,7 @@ visibility:
   image:
     registry: quay.io/opsmxpublic
     repository: ubi8-oes-visibility
-    tag: v3.5.0
+    tag: v3.5.1
     pullPolicy: IfNotPresent
 
   resources:
@@ -657,7 +657,7 @@ kibana:
 #####################################################
 spinnaker:
   halyard:
-    spinnakerVersion: 1.22.2
+    spinnakerVersion: 1.24.4
     image:
       repository: quay.io/opsmxpublic/ubi8-spin-halyard
       tag: opsmx-1.40.0
@@ -718,37 +718,37 @@ spinnaker:
         healthEndpoint: /health
         kubernetes:
           useExecHealthCheck: false
-        artifactId: quay.io/opsmxpublic/ubi8-spin-gate:1.18.1
+        artifactId: quay.io/opsmxpublic/ubi8-spin-gate:1.20.0
       deck.yml:
-        artifactId: quay.io/opsmxpublic/ubi8-spin-deck:3.3.0
+        artifactId: quay.io/opsmxpublic/ubi8-spin-deck:3.5.1
       clouddriver.yml:
-        artifactId: quay.io/opsmxpublic/ubi8-spin-clouddriver:6.11.1
+        artifactId: quay.io/opsmxpublic/ubi8-spin-clouddriver:7.2.2
       clouddriver-caching.yml:
-        artifactId: quay.io/opsmxpublic/ubi8-spin-clouddriver:6.11.1
+        artifactId: quay.io/opsmxpublic/ubi8-spin-clouddriver:7.2.2
       clouddriver-rw.yml:
-        artifactId: quay.io/opsmxpublic/ubi8-spin-clouddriver:6.11.1
+        artifactId: quay.io/opsmxpublic/ubi8-spin-clouddriver:7.2.2
       clouddriver-ro.yml:
-        artifactId: quay.io/opsmxpublic/ubi8-spin-clouddriver:6.11.1
+        artifactId: quay.io/opsmxpublic/ubi8-spin-clouddriver:7.2.2
       clouddriver-ro-deck.yml:
-        artifactId: quay.io/opsmxpublic/ubi8-spin-clouddriver:6.11.1
+        artifactId: quay.io/opsmxpublic/ubi8-spin-clouddriver:7.2.2
       echo.yml:
-        artifactId: quay.io/opsmxpublic/ubi8-spin-echo:2.14.0
+        artifactId: quay.io/opsmxpublic/ubi8-spin-echo:2.15.2
       echo-scheduler.yml:
-        artifactId: quay.io/opsmxpublic/ubi8-spin-echo:2.14.0
+        artifactId: quay.io/opsmxpublic/ubi8-spin-echo:2.15.2
       echo-worker.yml:
-        artifactId: quay.io/opsmxpublic/ubi8-spin-echo:2.14.0
+        artifactId: quay.io/opsmxpublic/ubi8-spin-echo:2.15.2
       fiat.yml:
-        artifactId: quay.io/opsmxpublic/ubi8-spin-fiat:1.13.0
+        artifactId: quay.io/opsmxpublic/ubi8-spin-fiat:1.14.1
       front50.yml:
-        artifactId: quay.io/opsmxpublic/ubi8-oes-front50:0.25.1-opa
+        artifactId: quay.io/opsmxpublic/ubi8-spin-front50:0.26.1-opa
       igor.yml:
-        artifactId: quay.io/opsmxpublic/ubi8-spin-igor:1.12.0
+        artifactId: quay.io/opsmxpublic/ubi8-spin-igor:1.14.0
       kayenta.yml:
-        artifactId: quay.io/opsmxpublic/ubi8-spin-kayenta:0.17.0
+        artifactId: quay.io/opsmxpublic/ubi8-spin-kayenta:0.19.0
       orca.yml:
-        artifactId: quay.io/opsmxpublic/ubi8-spin-orca:2.16.0
+        artifactId: quay.io/opsmxpublic/ubi8-spin-orca:2.18.1
       rosco.yml:
-        artifactId: quay.io/opsmxpublic/ubi8-spin-rosco:0.21.1
+        artifactId: quay.io/opsmxpublic/ubi8-spin-rosco:0.23.0
     ## Uncomment if you want to add extra commands to the init script
     ## run by the init container before halyard is started.
     ## The content will be passed through `tpl`, so value interpolation is supported.
