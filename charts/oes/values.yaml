@@ -15,8 +15,8 @@ imagePullSecret: opsmxdev-secret
 ##
 imageCredentials:
   registry: https://quay.io/
-  username: abhinaybyrisetty  # Quay username
-  password: Quayp@2021 # Quay password
+  username: quayID  # Quay username
+  password: quayPassword # Quay password
   email: info@opsmx.com   # email corresponding to quay registry ID
 
 rbac:
@@ -54,7 +54,7 @@ global:
   # Spinnaker Deck URL configuration; url overwhich spinnaker deck will be accessed
   spinDeck:
     protocol: http
-    host: spin.oes35.opsmx.com
+    host: spinnaker.example.org
     #port: 9000
 
     ingress:
@@ -67,7 +67,7 @@ global:
   # Spinnaker Gate URL configuration; url overwhich spinnaker gate will be accessed
   spinGate:
     protocol: http
-    host: spin-api.oes35.opsmx.com
+    host: gate.spinnaker.example.org
     #port: 8084
 
     ingress:
@@ -81,7 +81,7 @@ global:
 ## OES-UI url configuration
 oesUI:
   protocol: http
-  host: oes35.opsmx.com
+  host: oes.domain.com
   # Use below port when hostname above is an external IP instead of a hostname
   #port: 80
 
@@ -96,7 +96,7 @@ oesUI:
 ## OES-Gate url configuration
 oesGate:
   protocol: http
-  host: oes35-api.opsmx.com
+  host: oes-api.domain.com
   # Use below port when hostname above is an external IP instead of a hostname
   #port: 8084
 
