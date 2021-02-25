@@ -1,70 +1,49 @@
 job:
   preconfigured:
     kubernetes:
-      - label: Custom Policy Stage
-        type: custom Policy Stage
-        description: Stage to do opa policy
+      - label: Policy Stage
+        type: Policy Stage
+        description: Spinnaker Policy Evaluation and Decision Stage
         cloudProvider: kubernetes
         account: default
         waitForCompletion: true
         application: spin
+        parameters:
+          - defaultValue: "http://oes-sapor:8085"
+            description: Please enter the POLICY Proxy Hostname and Port
+            label: Policy Proxy
+            mapping: 'manifest.spec.template.spec.containers[0].env[0].value'
+            name: policyurl
+          - defaultValue: "/v1/data/opa/pipelines/datetimeslot"
+            description: Please enter Policy path that applies to this stage 
+            label: Policy Path
+            mapping: 'manifest.spec.template.spec.containers[0].env[1].value'
+            name: policypath
+          - defaultValue: ""
+            description: Please enter the Payload in single line 
+            label: Payload
+            mapping: 'manifest.spec.template.spec.containers[0].env[2].value'
+            name: payload
         manifest:
           apiVersion: batch/v1
           kind: Job
           metadata:
-            labels:
-              spinnakerlabel: deljob
-            name: opastage
+            name: policystage
             namespace: default
           spec:
             backoffLimit: 0
             template:
               spec:
-                restartPolicy: Never
                 containers:
-                  - name: custom-opa-stage
-                    args:
-                      - |-
-                        param=$(echo $time | sed 's/[][]//g') > /dev/null 2>&1
-                        apk add jq > /dev/null 2>&1
-                        cat >> opa.json <<EOL
-                        {
-                         "startTime": $param,
-                         "application": "$application",
-                         "name": "$name",
-                         "trigger": {
-                           "user": "$user"
-                         }
-                        }
-                        EOL
-                        cat opa.json
-                        cat >> run.sh <<EOL
-                        #/bin/sh
-                        curl -sovX POST http://oes-sapor.oes:8085/v1/data/opa/pipelines/datetimeslot -d @opa.json --header "Content-Type: application/json" --insecure > out.txt
-                        if [ $? -ne 0 ]
-                        then
-                        echo "========= EXECUTION FAILED ========"
-                        else
-                        cat out.txt | jq '.deny'
-                        if [ $? -ne 0 ]
-                        then
-                        echo "=========== POLICY SUCCEDED! ============="
-                        cat out.txt | jq '.'
-                        exit 0
-                        else
-                        echo "==========  POLICY FAILED ========"
-                        cat out.txt | jq '.'
-                        exit 1
-                        fi
-                        fi
-                        EOL
-                        chmod +x run.sh > /dev/null 2>&1
-                        sh run.sh
-                    command:
-                      - /bin/sh
-                      - '-x'
-                      - '-c'
+                  - args:
+                      -
                     env:
+                      - name: policyurl
+                        value:
+                      - name: policypath
+                        value:
+                      - name: payload
+                        value:
                       - name: application
                         value: "${execution.application}"
                       - name: name
@@ -73,8 +52,10 @@ job:
                         value: "${{execution.startTime} .toString()}"
                       - name: user
                         value: "${execution.authentication.user}"
-                    image: 'opsmxdev/apline-with-curl'
+                    image: 'opsmxdev/policy:v1'
                     imagePullPolicy: Always
+                    name: policystage
+                restartPolicy: Never
       - label: VerificationGate
         cloudProvider: kubernetes
         application: spin
