@@ -1,4 +1,5 @@
 {{- if or (eq .Values.installationMode "OES-AP") (eq .Values.installationMode "OES") -}}
+{{- if .Values.forwarder.enabled }}
 apiVersion: v1
 kind: ConfigMap
 metadata:
@@ -15,4 +16,5 @@ data:
     kubernetesAPIHostname: opsmx-controller-controller1
     commandHostname: opsmx-controller-controller1
     agentHostname: {{ .Values.forwarder.externalName }}
+{{- end -}}
 {{- end -}}

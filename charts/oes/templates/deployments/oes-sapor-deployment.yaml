@@ -33,6 +33,7 @@ spec:
         - containerPort: 8085
           protocol: TCP
         volumeMounts:
+        {{- if .Values.forwarder.enabled }}
         - mountPath: /opt/opsmx/controller/ca.crt	
           name: ca-certs-volume	
           subPath: tls.crt	
@@ -42,6 +43,7 @@ spec:
         - mountPath: /opt/opsmx/controller/cert/tls.key	
           name: certs-volume	
           subPath: tls.key
+        {{- end }}
         - name: sapor-config-volume
           mountPath: /opt/opsmx/application.yml
           subPath: application.yml
@@ -70,12 +72,14 @@ spec:
       imagePullSecrets:
       - name: {{ .Values.imagePullSecret }}
       volumes:
+      {{- if .Values.forwarder.enabled }}
       - secret:	
           secretName: oes-command-secret
         name: certs-volume
       - secret:	
           secretName: ca-secret
         name: ca-certs-volume
+      {{- end }}
       - configMap:
           name: oes-sapor-config
         name: sapor-config-volume

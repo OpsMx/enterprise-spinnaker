@@ -32,13 +32,13 @@ datasources:
 ## Set the below field to true if agent for kubernetes
 kubernetes:
   agent:
-    enabled: {{ .Values.sapor.config.kubernetes.agent.enabled }} 
+    enabled: {{ .Values.forwarder.enabled }}
     serverHostName: {{ .Values.forwarder.externalName }}
     serverPort: 9003
     caCertfile: /opt/opsmx/controller/ca.crt
     certFile: /opt/opsmx/controller/cert/tls.crt
     keyFile: /opt/opsmx/controller/cert/tls.key
-    image: {{ .Values.sapor.config.kubernetes.agent.image }}
+    image: {{ .Values.forwarder.agent.image }}
   template:
     path: /opt/opsmx/controller
     kubectlTemplateFileName: kubeconfig.template
