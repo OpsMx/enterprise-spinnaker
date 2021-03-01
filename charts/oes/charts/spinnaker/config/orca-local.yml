@@ -157,6 +157,7 @@ job:
         credentials: default
         application: spin
         description: Stage for Visibility Approval
+        propertyFile: visibilityapprove
         account: default
         type: Visibility Approval
         waitForCompletion: true
@@ -233,5 +234,5 @@ job:
                         value: 
                     image: 'opsmxdev/visibility-stage:v1'
                     imagePullPolicy: Always
-                    name: visibility-approve
+                    name: visibilityapprove
                 restartPolicy: Never
