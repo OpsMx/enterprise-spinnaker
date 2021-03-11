@@ -25,5 +25,5 @@ data:
     ];\nthen\n    echo \"Spinnaker is ready\"\n    mkdir -p /tmp/config/git/\n    git
     clone https://github.com/OpsMx/sample-pipelines.git /tmp/config/git/\n    cd /tmp/config/git\n
     \  cp -p /tmp/config/spin/config .\n sed 's/$/ --config config/' create-app.sh >create-app1.sh\n  bash -xe create-app1.sh\n
-    \ sleep 30d\n  break\n    \nelse\n    echo \"Waiting for Spinnaker to be ready\"\n    sleep
+    \  break\n    \nelse\n    echo \"Waiting for Spinnaker to be ready\"\n    sleep
     60\nfi\ndone\n\n"
