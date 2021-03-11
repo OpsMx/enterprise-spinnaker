@@ -1,0 +1,16 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ template "spinnaker.fullname" . }}-spin-config
+  labels:
+{{ include "spinnaker.standard-labels" . | indent 4 }}
+data:
+  config: |
+    gate:
+      endpoint: http://spin-gate:8084
+    auth:
+      enabled: true
+      basic:
+        username: admin
+        password: opsmxadmin123
+
