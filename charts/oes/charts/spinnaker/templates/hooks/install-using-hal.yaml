@@ -161,7 +161,7 @@ spec:
         - bash
         - /tmp/config/spin-pipeline-import.sh
         name: sample-pipeline-install
-        image: quay.io/opsmxpublic/akv2k8s-decoder:spingit-v4
+        image: quay.io/opsmxpublic/spin-sample-pipeline:spingit-v1
         volumeMounts:         
         - name: spin-pipeline-config
           mountPath: /tmp/config/git
