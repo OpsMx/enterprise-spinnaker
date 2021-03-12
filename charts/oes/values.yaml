@@ -15,7 +15,7 @@ imagePullSecret: opsmxdev-secret
 ##
 imageCredentials:
   registry: https://quay.io/
-  username: QuayID  # Quay username
+  username: quayID  # Quay username
   password: quayPassword # Quay password
   email: info@opsmx.com   # email corresponding to quay registry ID
 
