@@ -11,6 +11,6 @@ data:
     auth:
       enabled: true
       basic:
-        username: admin
-        password: opsmxadmin123
+        username: {{ .Values.global.openldap.username }}
+        password: {{ .Values.global.openldap.adminPassword }}
 

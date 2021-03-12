@@ -15,8 +15,8 @@ imagePullSecret: opsmxdev-secret
 ##
 imageCredentials:
   registry: https://quay.io/
-  username: quayID  # Quay username
-  password: quayPassword # Quay password
+  username: raghuramopsmx  # Quay username
+  password: Kubernetes@2019 # Quay password
   email: info@opsmx.com   # email corresponding to quay registry ID
 
 rbac:
@@ -29,7 +29,7 @@ installSpinnaker: true
 ## Installation mode
 ## Available installation modes OES-AP, OES, AP, None
 ##
-installationMode: OES-AP
+installationMode: None
 
 ## OES UI & Gate service type
 ##
@@ -45,11 +45,11 @@ global:
   ## certificates under oesUI.tls.secretName & oesGate.tls.secretName
 
   certManager:
-    installed: true
+    installed: false
 
   ## Set to true to expose oes-ui, oes-gate services over ingress
   ##
-  createIngress: true
+  createIngress: false
 
   # Spinnaker Deck URL configuration; url overwhich spinnaker deck will be accessed
   spinDeck:
@@ -77,6 +77,12 @@ global:
 
       tls:
         secretName: gate-authtls
+
+  ## Open Ldap password required for spin-cli for installing the sample pipelines
+  openldap:
+    username: admin
+    adminPassword: opsmxadmin123
+
 
 ## OES-UI url configuration
 oesUI:
