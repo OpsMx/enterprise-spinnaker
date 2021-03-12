@@ -166,6 +166,10 @@ db:
   ##
   storageMountSize: 8Gi
 
+  ## storageClass for DB persistent volume claim (PVC)
+  ##
+  #storageClassName: default
+
 ###############################################################################
 ##
 ## Values of OES Autopilot
@@ -179,13 +183,13 @@ autopilot:
     tag: v3.5.1
     pullPolicy: IfNotPresent
 
-  resources:
-    requests:
-      memory: 2Gi
-      cpu: 1
-    limits:
-      memory: 8Gi
-      cpu: 2
+  resources: {}
+  #  requests:
+  #    memory: 2Gi
+  #    cpu: 1
+  #  limits:
+  #    memory: 8Gi
+  #    cpu: 2
 
 
   config:
@@ -226,13 +230,13 @@ dashboard:
     tag: v3.5.1
     pullPolicy: IfNotPresent
 
-  resources:
-    requests:
-      memory: 500Mi
-      cpu: 500m
-    limits:
-      memory: 1000Mi
-      cpu: 1500m
+  resources: {}
+  #  requests:
+  #    memory: 500Mi
+  #    cpu: 500m
+  #  limits:
+  #    memory: 1000Mi
+  #    cpu: 1500m
 
   config:
     ## Installation mode
@@ -275,13 +279,13 @@ gate:
     tag: v3.5.1
     pullPolicy: IfNotPresent
 
-  resources:
-    requests:
-      memory: 500Mi
-      cpu: 500m
-    limits:
-      memory: 1500Mi
-      cpu: 1500m
+  resources: {}
+  #  requests:
+  #    memory: 500Mi
+  #    cpu: 500m
+  #  limits:
+  #    memory: 1500Mi
+  #    cpu: 1500m
 
   config:
     ## LDAP Configuration
@@ -316,13 +320,13 @@ platform:
     tag: v3.5.1
     pullPolicy: IfNotPresent
 
-  resources:
-    requests:
-      memory: 500Mi
-      cpu: 500m
-    limits:
-      memory: 1500Mi
-      cpu: 1500m
+  resources: {}
+  #  requests:
+  #    memory: 500Mi
+  #    cpu: 500m
+  #  limits:
+  #    memory: 1500Mi
+  #    cpu: 1500m
 
   config:
     ## DB configuration; change it any other external DB is to be used
@@ -370,13 +374,13 @@ sapor:
     tag: v3.5.1
     pullPolicy: IfNotPresent
 
-  resources:
-    requests:
-      memory: 100Mi
-      cpu: 500m
-    limits:
-      memory: 2000Mi
-      cpu: 1500m
+  resources: {}
+  #  requests:
+  #    memory: 100Mi
+  #    cpu: 500m
+  #  limits:
+  #    memory: 2000Mi
+  #    cpu: 1500m
 
   config:
     ## RBAC Configuration
@@ -468,13 +472,13 @@ visibility:
     tag: v3.5.1
     pullPolicy: IfNotPresent
 
-  resources:
-    requests:
-      memory: 500Mi
-      cpu: 500m
-    limits:
-      memory: 1000Mi
-      cpu: 1500m
+  resources: {}
+  #  requests:
+  #    memory: 500Mi
+  #    cpu: 500m
+  #  limits:
+  #    memory: 1000Mi
+  #    cpu: 1500m
 
   config:
     ## DB configuration; change it any other external DB is to be used
