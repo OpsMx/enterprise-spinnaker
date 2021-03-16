@@ -343,7 +343,7 @@ platform:
     adminGroups: admin, Administrators
 
     ## Source of Users for authorization
-    ## Supported sources:- ldap, file
+    ## Supported sources:- ldap, file, gate
     userSource: ldap
 
     ## LDAP Configuration will be used if above userSource is set to ldap
@@ -624,6 +624,38 @@ ldap:
   groupSearchFilter: member={0}
   groupRoleAttributes: cn
   userDnPattern: cn={0},dc=example,dc=org
+
+#####################################################
+# SAML AUthentication
+#####################################################
+# saml.jks and metadata.xml are to be mounted as secrets
+# with names oes-saml-jks and oes-saml-metadata resp.
+saml:
+  enabled: false
+  keyStorePassword: changeit
+  keyStoreAliasName: saml
+  issuerId: spind
+  userSource: gate
+
+#####################################################
+#OAUTH2 Authentication for GitHub
+#####################################################
+oauth2:
+  enabled: false
+  client:
+    clientId: #CLIENT_ID
+    clientSecret: #CLIENT_SECRET_ID
+    accessTokenUri: https://github.com/login/oauth/access_token
+    userAuthorizationUri: https://github.com/login/oauth/authorize
+    scope: user-email
+  resource:
+    userInfoUri: https://api.github.com/user
+  userInfoMapping:
+    email: email
+    firstName: firstname
+    lastName: name
+    username: login
+  provider: GITHUB
 
 #####################################################
 # Centralized Logging Configuration

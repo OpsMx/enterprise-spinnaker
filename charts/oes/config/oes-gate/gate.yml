@@ -15,13 +15,49 @@ services:
   visibility:
     baseUrl: http://oes-visibility:8096
     enabled: true
+  oesui:
+  {{- if .Values.oesUI.port }}
+    externalUrl: {{ .Values.oesUI.protocol }}://{{ .Values.oesUI.host }}:{{ .Values.oesUI.port }}
+  {{- else }}
+    externalUrl: {{ .Values.oesUI.protocol }}://{{ .Values.oesUI.host }}
+  {{- end }}
   user: {}
 cors:
   allowed-origins-pattern: ^https?://(?:localhost|{{ .Values.oesUI.host }}|opsmx.com)(?::[1-9]\d*)?/?
 ldap:
   enabled: {{ .Values.ldap.enabled }}
   url: {{ tpl .Values.ldap.url . }}
+  managerDn: {{ .Values.ldap.managerDn }}
+  managerPassword: {{ .Values.ldap.managerPassword }}
+  groupSearchBase: {{ .Values.ldap.groupSearchBase }}
+  groupSearchFilter: {{ .Values.ldap.groupSearchFilter }}
   userDnPattern: {{ .Values.ldap.userDnPattern }}
+saml:
+  enabled: {{ .Values.saml.enabled }}
+  keyStore: /opt/spinnaker/saml/saml.jks
+  keyStorePassword: {{ .Values.saml.keyStorePassword }}
+  keyStoreAliasName: {{ .Values.saml.keyStoreAliasName }}
+  metadataUrl: /opt/spinnaker/saml/metadata.xml
+  redirectProtocol: https
+  redirectHostname: {{ .Values.oesGate.host }} 
+  redirectBasePath: /
+  issuerId: {{ .Values.saml.issuerId }}
+oauth2:
+  enabled: {{ .Values.oauth2.enabled }}
+  client:
+    clientId: {{ .Values.oauth2.clientId }}
+    clientSecret: {{ .Values.oauth2.clientSecret }}
+    accessTokenUri: {{ .Values.oauth2.accessTokenUri }}
+    userAuthorizationUri: {{ .Values.oauth2.userAuthorizationUri }}
+    scope: {{ .Values.oauth2.scope }}
+  resource:
+    serInfoUri: https://api.github.com/user
+  userInfoMapping:
+    email: {{ .Values.oauth2.email }}
+    firstName: {{ .Values.oauth2.firstName }}
+    lastName:  {{ .Values.oauth2.lastName }}
+    username: {{ .Values.oauth2.username }}
+  provider: GITHUB
 file:
   enabled: {{ .Values.gate.config.fileBasedAuthentication.enabled }}
   url: /platformservice/v1/users/authenticate
@@ -30,9 +66,9 @@ authn:
 google: {}
 logging:
   level:
-    com.netflix.spinnaker.gate.security: DEBUG
-    org.springframework.security: DEBUG
-    org.springframework.web: DEBUG
+    com.netflix.spinnaker.gate.security: INFO
+    org.springframework.security: INFO
+    org.springframework.web: INFO
 redis:
   connection: {{ tpl .Values.redis.url . }}
 oesui:
@@ -44,3 +80,8 @@ oesui:
 server:
   session:
     timeoutInSeconds: {{ .Values.gate.config.server.session.timeoutInSeconds }}
+  tomcat:
+    protocolHeader: X-Forwarded-Proto
+    remoteIpHeader: X-Forwarded-For
+    internalProxies: .*
+
