@@ -78,10 +78,6 @@ global:
       tls:
         secretName: gate-authtls
 
-  ## Open Ldap password required for spin-cli for installing the sample pipelines
-  openldap:
-    username: admin
-    adminPassword: opsmxadmin123
 
 ## OES-UI url configuration
 oesUI:
@@ -642,6 +638,9 @@ saml:
   issuerId: spind
   userSource: gate
 
+  jksSecretName: oes-saml-jks
+  metadataSecretName: metadata-xml
+
 #####################################################
 #OAUTH2 Authentication for GitHub
 #####################################################
@@ -992,3 +991,11 @@ spinnaker:
       ## Spinnaker kubernetes account to use for job execution
       # TODO: Implementation pending; currently default namespace is hardcoded
       executionAccountName: default
+
+
+  ## Auth mechanism and credentials to be used by spin-cli for creating the sample pipelines
+  ## Here basic ldap auth is used by default
+  spinCli:
+    basic:
+      username: admin
+      password: opsmxadmin123

@@ -5,25 +5,38 @@ metadata:
   labels:
 {{ include "spinnaker.standard-labels" . | indent 4 }}
 data:
-  spin-pipeline-import.sh: "#!/bin/bash\necho \"Waiting for all Spinnaker Services to
-    come-up\"\n\nwhile true \ndo\nkubectl get po -n {{ .Release.Namespace }} -o jsonpath='{range
-    .items[*]}{..metadata.name}{\"\\t\"}{..containerStatuses..ready}{\"\\n\"}{end}'
-    > /tmp/inst.status\nCLOUDRO=$(grep spin-clouddriver-ro /tmp/inst.status |grep
-    -v deck | awk '{print $2}')\nCLOUDRODECK=$(grep spin-clouddriver-ro-deck /tmp/inst.status
-    | awk '{print $2}')\nCLOUDRW=$(grep spin-clouddriver-rw /tmp/inst.status | awk
-    '{print $2}')\nCLOUDCACHING=$(grep spin-clouddriver-caching /tmp/inst.status |
-    awk '{print $2}')\nDECK=$(grep spin-deck /tmp/inst.status | awk '{print $2}')\nECHOWORKER=$(grep
-    spin-echo-worker /tmp/inst.status | awk '{print $2}')\nECHOSCHEDULER=$(grep spin-echo-scheduler
-    /tmp/inst.status | awk '{print $2}')\nFRONT=$(grep spin-front /tmp/inst.status
-    | awk '{print $2}')\nGATE=$(grep spin-gate /tmp/inst.status | awk '{print $2}')\nIGOR=$(grep
-    spin-igor /tmp/inst.status | awk '{print $2}')\nORCA=$(grep spin-orca /tmp/inst.status
-    | awk '{print $2}')\nROSCO=$(grep spin-rosco /tmp/inst.status | awk '{print $2}')\n\nif
-    [ $DECK == \"true\" ] && [ $CLOUDCACHING == \"true\" ] && [ $CLOUDRO == \"true\"
-    ] && [ $CLOUDRW == \"true\" ] && [ $CLOUDRODECK == \"true\" ] && [ $FRONT == \"true\"
-    ] && [ $GATE == \"true\" ] && [ $IGOR == \"true\" ] && [ $ORCA == \"true\" ] &&
-    [ $ROSCO == \"true\" ] && [ $ECHOWORKER == \"true\" ] && [ $ECHOSCHEDULER == \"true\"
-    ];\nthen\n    echo \"Spinnaker is ready\"\n    mkdir -p /tmp/config/git/\n    git
-    clone https://github.com/OpsMx/sample-pipelines.git /tmp/config/git/\n    cd /tmp/config/git\n
-    \  cp -p /tmp/config/spin/config .\n sed 's/$/ --config config/' create-app.sh >create-app1.sh\n  bash -xe create-app1.sh\n
-    \  sleep 10\n break\nelse\n    echo \"Waiting for Spinnaker to be ready\"\n    sleep
-    60\nfi\ndone\n\n"
+  spin-pipeline-import.sh: |-
+    #!/bin/bash
+    echo \"Waiting for all Spinnaker Services to come-up\"
+
+    while true
+    do
+    kubectl get po -n {{ .Release.Namespace }} -o jsonpath='{range .items[*]}{..metadata.name}{\"\\t\"}{..containerStatuses..ready}{\"\\n\"}{end}' > /tmp/inst.status
+    CLOUDRO=$(grep spin-clouddriver-ro /tmp/inst.status |grep -v deck | awk '{print $2}')
+    CLOUDRODECK=$(grep spin-clouddriver-ro-deck /tmp/inst.status | awk '{print $2}')
+    CLOUDRW=$(grep spin-clouddriver-rw /tmp/inst.status | awk '{print $2}')
+    CLOUDCACHING=$(grep spin-clouddriver-caching /tmp/inst.status | awk '{print $2}')
+    DECK=$(grep spin-deck /tmp/inst.status | awk '{print $2}')
+    ECHOWORKER=$(grep spin-echo-worker /tmp/inst.status | awk '{print $2}')
+    ECHOSCHEDULER=$(grep spin-echo-scheduler  /tmp/inst.status | awk '{print $2}')
+    FRONT=$(grep spin-front /tmp/inst.status  | awk '{print $2}')
+    GATE=$(grep spin-gate /tmp/inst.status | awk '{print $2}')
+    IGOR=$(grep spin-igor /tmp/inst.status | awk '{print $2}')
+    ORCA=$(grep spin-orca /tmp/inst.status | awk '{print $2}')
+    ROSCO=$(grep spin-rosco /tmp/inst.status | awk '{print $2}')
+
+    if [ $DECK == \"true\" ] && [ $CLOUDCACHING == \"true\" ] && [ $CLOUDRO == \"true\" ] && [ $CLOUDRW == \"true\" ] && [ $CLOUDRODECK == \"true\" ] && [ $FRONT == \"true\" ] && [ $GATE == \"true\" ] && [ $IGOR == \"true\" ] && [ $ORCA == \"true\" ] && [ $ROSCO == \"true\" ] && [ $ECHOWORKER == \"true\" ] && [ $ECHOSCHEDULER == \"true\" ];
+    then
+        echo \"Spinnaker is ready\"
+        mkdir -p /tmp/config/git/
+        git clone https://github.com/OpsMx/sample-pipelines.git /tmp/config/git/
+        cd /tmp/config/git
+        cp -p /tmp/config/spin/config .
+        sed 's/$/ --config config/' create-app.sh >create-app1.sh
+        bash -xe create-app1.sh
+        sleep 10\n break
+    else
+        echo \"Waiting for Spinnaker to be ready\"
+        sleep 60
+    fi
+    done

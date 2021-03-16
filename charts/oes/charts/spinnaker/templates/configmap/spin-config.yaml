@@ -10,7 +10,4 @@ data:
       endpoint: http://spin-gate:8084
     auth:
       enabled: true
-      basic:
-        username: {{ .Values.global.openldap.username }}
-        password: {{ .Values.global.openldap.adminPassword }}
-
+{{ toYaml .Values.spinCli | indent 6 }}

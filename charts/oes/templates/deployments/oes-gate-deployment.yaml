@@ -74,10 +74,10 @@ spec:
       volumes:
       {{- if .Values.saml.enabled }}
       - secret:	
-          secretName: oes-saml-jks
+          secretName: {{ .Values.saml.jksSecretName }}
         name: saml-jks
       - secret:	
-          secretName: oes-saml-metadata
+          secretName: {{ .Values.saml.metadataSecretName }}
         name: metadata-xml
       {{- end }}
       {{- if .Values.autoConfiguration.enabled }}
