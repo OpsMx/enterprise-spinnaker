@@ -9,7 +9,11 @@ supportedFeatures:
 userGroup:
   adminGroups: {{ .Values.platform.config.adminGroups }}
 user:
+  {{- if .Values.saml.enabled }}
+  source: {{ .Values.saml.userSource }}
+  {{- else }}
   source: {{ .Values.platform.config.userSource }}
+  {{- end }}
 ldap:
   url: {{ tpl .Values.ldap.url . }}
   managerDn: {{ .Values.ldap.managerDn }}

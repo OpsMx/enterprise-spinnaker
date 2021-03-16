@@ -1,6 +1,8 @@
 oes:
   rbac:
     enabled: true
+  admin:
+    user: admin
 spinnaker:
   authnEnabled: {{ .Values.sapor.config.spinnaker.authnEnabled }}
   baseurl: {{ .Values.sapor.config.spinnaker.spinGateURL }}
