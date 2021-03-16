@@ -155,7 +155,7 @@ db:
   image:
     registry: quay.io/opsmxpublic
     repository: ubi8-oes-autopilot-db
-    tag: v1.6.1
+    tag: v2.0.0
     pullPolicy: IfNotPresent
 
   ## Strategy to rollout statefulset pods
@@ -181,11 +181,11 @@ autopilot:
   image:
     registry: quay.io/opsmxpublic
     repository: ubi8-oes-autopilot
-    tag: v3.5.1
+    tag: v3.6.0
     pullPolicy: IfNotPresent
 
   resources:
-    requests:
+   requests:
       memory: 2Gi
       cpu: 1
     limits:
@@ -228,7 +228,7 @@ dashboard:
   image:
     registry: quay.io/opsmxpublic
     repository: ubi8-oes-dashboard
-    tag: v3.5.1
+    tag: v3.6.0
     pullPolicy: IfNotPresent
 
   resources:
@@ -277,7 +277,7 @@ gate:
   image:
     registry: quay.io/opsmxpublic
     repository: ubi8-oes-gate
-    tag: v3.5.1
+    tag: v3.6.0
     pullPolicy: IfNotPresent
 
   resources:
@@ -318,7 +318,7 @@ platform:
   image:
     registry: quay.io/opsmxpublic
     repository: ubi8-oes-platform
-    tag: v3.5.1
+    tag: v3.6.0
     pullPolicy: IfNotPresent
 
   resources:
@@ -372,7 +372,7 @@ sapor:
   image:
     registry: quay.io/opsmxpublic
     repository: ubi8-oes-sapor
-    tag: v3.5.1
+    tag: v3.6.0
     pullPolicy: IfNotPresent
 
   resources:
@@ -451,7 +451,7 @@ ui:
   image:
     registry: quay.io/opsmxpublic
     repository: ubi8-oes-ui
-    tag: v3.5.1
+    tag: v3.6.0
     pullPolicy: IfNotPresent
 
   config:
@@ -470,7 +470,7 @@ visibility:
   image:
     registry: quay.io/opsmxpublic
     repository: ubi8-oes-visibility
-    tag: v3.5.1
+    tag: v3.6.0
     pullPolicy: IfNotPresent
 
   resources:
