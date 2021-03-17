@@ -34,7 +34,8 @@ data:
         cp -p /tmp/config/spin/config .
         sed 's/$/ --config config/' create-app.sh >create-app1.sh
         bash -xe create-app1.sh
-        sleep 10\n break
+        sleep 10
+        break
     else
         echo \"Waiting for Spinnaker to be ready\"
         sleep 60
