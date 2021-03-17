@@ -236,3 +236,120 @@ job:
                     imagePullPolicy: Always
                     name: visibilityapprove
                 restartPolicy: Never
+      - label: TestVerification
+        cloudProvider: kubernetes
+        application: spin
+        description: Stage for TestVerification
+        propertyFile: testverification
+        account: default
+        type: Test Verification
+        waitForCompletion: true
+        parameters:
+          - defaultValue: ""
+            description: Please enter the Gate URL
+            label: Gate Url
+            mapping: 'manifest.spec.template.spec.containers[0].env[0].value'
+            name: gateurl
+          - defaultValue: "0.1" 
+            description: Please enter the Life Time in Hours like 0.5
+            label: LifeTimeHours
+            mapping: 'manifest.spec.template.spec.containers[0].env[1].value'
+            name: lifetime
+          - defaultValue: "70" 
+            description: Please enter the Minimum Canary Result
+            label: Minimum CanaryResult
+            mapping: 'manifest.spec.template.spec.containers[0].env[2].value'
+            name: minicanaryresult
+          - defaultValue: "90" 
+            description: Please enter the Canry Result Score
+            label: CanaryResult Score
+            mapping: 'manifest.spec.template.spec.containers[0].env[3].value'
+            name: canaryresultscore
+          - defaultValue: "true" 
+            description: Please Enable Log Analysis with true / false
+            label: Log Analysis
+            mapping: 'manifest.spec.template.spec.containers[0].env[4].value'
+            name: log
+          - defaultValue: ""
+            description: Please enter Baseline Start Time in Epoch format. If it is empty will take it as current time
+            label: Baseline StartTime 
+            mapping: 'manifest.spec.template.spec.containers[0].env[5].value'
+            name: baselinestarttime
+          - defaultValue: "" 
+            description: Please enter New Start Time  in Epoch format. If it is empty will take it as current time
+            label: New StartTime
+            mapping: 'manifest.spec.template.spec.containers[0].env[6].value'
+            name: canarystarttime
+          - defaultValue: "" 
+            description: Please enter Gate Name that is created in OES
+            label: Gate Name
+            mapping: 'manifest.spec.template.spec.containers[0].env[7].value'
+            name: gate
+          - defaultValue: ""
+            description: Please enter the Field name which contains Test Run Id in the Index eg., TestRunId
+            label: Test Run Key
+            mapping: 'manifest.spec.template.spec.containers[0].env[8].value'
+            name: testrunkey
+          - defaultValue: ""
+            description: Please enter Baseline Test Run Id of the Test Run to be used as baseline eg., 100
+            label: Baseline Test Run Id
+            mapping: 'manifest.spec.template.spec.containers[0].env[9].value'
+            name: baselinetestrunid
+          - defaultValue: ""
+            description: Please enter New Test Run Id Id of the current Test Run eg., 227
+            label: New Test Run Id
+            mapping: 'manifest.spec.template.spec.containers[0].env[10].value'
+            name: newtestrunid
+          - defaultValue: ""
+            description: Please enter Metadata associated with the current Test Run eg., { "Build Info" "http://opsmx.jenkins.com/123", "Code Repository" "http://opsmx.github.com", "Version" "v1.09" }
+            label: Test Run Info
+            mapping: 'manifest.spec.template.spec.containers[0].env[11].value'
+            name: testruninfo
+        manifest:
+          apiVersion: batch/v1
+          kind: Job
+          metadata:
+            name: testverification
+            namespace: default
+          spec:
+            backoffLimit: 0
+            template:
+              spec:
+                containers:
+                  - args:
+                      -
+                    env:
+                      - name: gateurl
+                        value:
+                      - name: lifetime
+                        value:
+                      - name: minicanaryresult
+                        value:
+                      - name: canaryresultscore
+                        value:
+                      - name: log
+                        value:
+                      - name: baselinestarttime
+                        value:
+                      - name: canarystarttime
+                        value:
+                      - name: gate
+                        value:
+                      - name: testrunkey
+                        value:
+                      - name: baselinetestrunid
+                        value:
+                      - name: newtestrunid
+                        value:
+                      - name: testruninfo
+                        value:
+                      - name: application
+                        value: "${execution.application}"
+                      - name: service
+                        value: "${execution.name}"
+                      - name: time
+                        value: "${{execution.startTime} .toString()}"
+                    image: 'opsmxdev/testverification:v1'
+                    imagePullPolicy: Always
+                    name: testverification
+                restartPolicy: Never
