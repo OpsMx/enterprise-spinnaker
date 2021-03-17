@@ -28,6 +28,12 @@ spec:
       - image: {{ template "db.image" . }}
         imagePullPolicy: {{ .Values.db.image.pullPolicy }}
         name: oes-db
+        lifecycle:
+          preStop:
+            exec:
+              command:
+              - /bin/sh
+              - /opt/opsmx/bin/stop.sh
         ports:
         - containerPort: 5432
           protocol: TCP
