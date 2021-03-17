@@ -75,12 +75,6 @@ logging:
     org.springframework.web: INFO
 redis:
   connection: {{ tpl .Values.redis.url . }}
-oesui:
-{{- if .Values.oesUI.port }}
-  externalUrl: {{ .Values.oesUI.protocol }}://{{ .Values.oesUI.host }}:{{ .Values.oesUI.port }}
-{{- else }}
-  externalUrl: {{ .Values.oesUI.protocol }}://{{ .Values.oesUI.host }}
-{{- end }}
 server:
   session:
     timeoutInSeconds: {{ .Values.gate.config.server.session.timeoutInSeconds }}
