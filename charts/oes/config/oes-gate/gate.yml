@@ -32,6 +32,7 @@ ldap:
   groupSearchBase: {{ .Values.ldap.groupSearchBase }}
   groupSearchFilter: {{ .Values.ldap.groupSearchFilter }}
   userDnPattern: {{ .Values.ldap.userDnPattern }}
+{{- if .Values.saml.enabled }}
 saml:
   enabled: {{ .Values.saml.enabled }}
   keyStore: /opt/spinnaker/saml/saml.jks
@@ -42,6 +43,8 @@ saml:
   redirectHostname: {{ .Values.oesGate.host }} 
   redirectBasePath: /
   issuerId: {{ .Values.saml.issuerId }}
+{{- end }}
+{{- if .Values.oauth2.enabled }}
 oauth2:
   enabled: {{ .Values.oauth2.enabled }}
   client:
@@ -58,6 +61,7 @@ oauth2:
     lastName:  {{ .Values.oauth2.lastName }}
     username: {{ .Values.oauth2.username }}
   provider: GITHUB
+{{- end }}
 file:
   enabled: {{ .Values.gate.config.fileBasedAuthentication.enabled }}
   url: /platformservice/v1/users/authenticate
