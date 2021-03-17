@@ -9,8 +9,8 @@ supportedFeatures:
 userGroup:
   adminGroups: {{ .Values.platform.config.adminGroups }}
 user:
-  {{- if .Values.saml.enabled }}
-  source: {{ .Values.saml.userSource }}
+  {{- if .Values.gate.config.saml.enabled }}
+  source: {{ .Values.gate.config.saml.userSource }}
   {{- else }}
   source: {{ .Values.platform.config.userSource }}
   {{- end }}

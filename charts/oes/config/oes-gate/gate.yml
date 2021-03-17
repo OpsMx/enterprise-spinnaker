@@ -32,35 +32,13 @@ ldap:
   groupSearchBase: {{ .Values.ldap.groupSearchBase }}
   groupSearchFilter: {{ .Values.ldap.groupSearchFilter }}
   userDnPattern: {{ .Values.ldap.userDnPattern }}
-{{- if .Values.saml.enabled }}
+{{- if .Values.gate.config.saml.enabled }}
 saml:
-  enabled: {{ .Values.saml.enabled }}
-  keyStore: /opt/spinnaker/saml/saml.jks
-  keyStorePassword: {{ .Values.saml.keyStorePassword }}
-  keyStoreAliasName: {{ .Values.saml.keyStoreAliasName }}
-  metadataUrl: /opt/spinnaker/saml/metadata.xml
-  redirectProtocol: https
-  redirectHostname: {{ .Values.oesGate.host }} 
-  redirectBasePath: /
-  issuerId: {{ .Values.saml.issuerId }}
+{{ toYaml .Values.gate.config.saml | indent 2 }}
 {{- end }}
-{{- if .Values.oauth2.enabled }}
+{{- if .Values.gate.config.oauth2.enabled }}
 oauth2:
-  enabled: {{ .Values.oauth2.enabled }}
-  client:
-    clientId: {{ .Values.oauth2.clientId }}
-    clientSecret: {{ .Values.oauth2.clientSecret }}
-    accessTokenUri: {{ .Values.oauth2.accessTokenUri }}
-    userAuthorizationUri: {{ .Values.oauth2.userAuthorizationUri }}
-    scope: {{ .Values.oauth2.scope }}
-  resource:
-    serInfoUri: https://api.github.com/user
-  userInfoMapping:
-    email: {{ .Values.oauth2.email }}
-    firstName: {{ .Values.oauth2.firstName }}
-    lastName:  {{ .Values.oauth2.lastName }}
-    username: {{ .Values.oauth2.username }}
-  provider: GITHUB
+{{ toYaml .Values.gate.config.oauth2 | indent 2 }}
 {{- end }}
 file:
   enabled: {{ .Values.gate.config.fileBasedAuthentication.enabled }}

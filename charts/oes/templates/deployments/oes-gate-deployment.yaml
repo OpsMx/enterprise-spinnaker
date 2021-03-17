@@ -50,7 +50,7 @@ spec:
         volumeMounts:
         - name: gate-volume
           mountPath: /opt/spinnaker/config
-        {{- if .Values.saml.enabled }}
+        {{- if .Values.gate.config.saml.enabled }}
         - mountPath: /opt/spinnaker/saml/saml.jks	
           name: saml-jks	
           subPath: saml.jks	
@@ -72,12 +72,12 @@ spec:
       imagePullSecrets:
       - name: {{ .Values.imagePullSecret}}
       volumes:
-      {{- if .Values.saml.enabled }}
+      {{- if .Values.gate.config.saml.enabled }}
       - secret:	
-          secretName: {{ .Values.saml.jksSecretName }}
+          secretName: {{ .Values.gate.config.saml.jksSecretName }}
         name: saml-jks
       - secret:	
-          secretName: {{ .Values.saml.metadataSecretName }}
+          secretName: {{ .Values.gate.config.saml.metadataSecretName }}
         name: metadata-xml
       {{- end }}
       {{- if .Values.autoConfiguration.enabled }}
