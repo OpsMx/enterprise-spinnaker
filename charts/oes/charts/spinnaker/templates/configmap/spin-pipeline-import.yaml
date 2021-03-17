@@ -25,7 +25,7 @@ data:
     ORCA=$(grep spin-orca /tmp/inst.status | awk '{print $2}')
     ROSCO=$(grep spin-rosco /tmp/inst.status | awk '{print $2}')
 
-    if [ $DECK == \"true\" ] && [ $CLOUDCACHING == \"true\" ] && [ $CLOUDRO == \"true\" ] && [ $CLOUDRW == \"true\" ] && [ $CLOUDRODECK == \"true\" ] && [ $FRONT == \"true\" ] && [ $GATE == \"true\" ] && [ $IGOR == \"true\" ] && [ $ORCA == \"true\" ] && [ $ROSCO == \"true\" ] && [ $ECHOWORKER == \"true\" ] && [ $ECHOSCHEDULER == \"true\" ];
+    if [ $DECK == "true" ] && [ $CLOUDCACHING == "true" ] && [ $CLOUDRO == "true" ] && [ $CLOUDRW == "true" ] && [ $CLOUDRODECK == "true" ] && [ $FRONT == "true" ] && [ $GATE == "true" ] && [ $IGOR == "true" ] && [ $ORCA == "true" ] && [ $ROSCO == "true" ] && [ $ECHOWORKER == "true" ] && [ $ECHOSCHEDULER == "true" ];
     then
         echo \"Spinnaker is ready\"
         mkdir -p /tmp/config/git/
