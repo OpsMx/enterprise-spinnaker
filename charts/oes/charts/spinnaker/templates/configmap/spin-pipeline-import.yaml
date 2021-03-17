@@ -25,7 +25,7 @@ data:
     ORCA=$(grep spin-orca /tmp/inst.status | awk '{print $2}')
     ROSCO=$(grep spin-rosco /tmp/inst.status | awk '{print $2}')
 
-    if [ $DECK == \"true\" ] && [ $CLOUDCACHING == \"true\" ] && [ $CLOUDRO == \"true\" ] && [ $CLOUDRW == \"true\" ] && [ $CLOUDRODECK == \"true\" ] && [ $FRONT == \"true\" ] && [ $GATE == \"true\" ] && [ $IGOR == \"true\" ] && [ $ORCA == \"true\" ] && [ $ROSCO == \"true\" ] && [ $ECHOWORKER == \"true\" ] && [ $ECHOSCHEDULER == \"true\" ];
+    if [ $DECK == "true" ] && [ $CLOUDCACHING == "true" ] && [ $CLOUDRO == "true" ] && [ $CLOUDRW == "true" ] && [ $CLOUDRODECK == "true" ] && [ $FRONT == "true" ] && [ $GATE == "true" ] && [ $IGOR == "true" ] && [ $ORCA == "true" ] && [ $ROSCO == "true" ] && [ $ECHOWORKER == "true" ] && [ $ECHOSCHEDULER == "true" ];
     then
         echo \"Spinnaker is ready\"
         mkdir -p /tmp/config/git/
@@ -34,7 +34,8 @@ data:
         cp -p /tmp/config/spin/config .
         sed 's/$/ --config config/' create-app.sh >create-app1.sh
         bash -xe create-app1.sh
-        sleep 10\n break
+        sleep 10
+        break
     else
         echo \"Waiting for Spinnaker to be ready\"
         sleep 60
