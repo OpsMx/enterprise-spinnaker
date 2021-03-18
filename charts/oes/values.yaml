@@ -315,7 +315,7 @@ gate:
     # saml.jks and metadata.xml are to be mounted as secrets
     # with names oes-saml-jks and oes-saml-metadata resp.
     saml:
-      enabled: true
+      enabled: false
       keyStorePassword: changeit
       keyStoreAliasName: saml
       issuerId: spind
@@ -747,7 +747,7 @@ spinnaker:
         front50-local.yml:
           policy:
             opa:
-              enabled: false
+              enabled: true
               url: http://oes-sapor.{{ .Release.Namespace }}:8085
 
     ## Define custom settings for Spinnaker services. Read more for details:
