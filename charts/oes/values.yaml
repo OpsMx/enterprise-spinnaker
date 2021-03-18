@@ -53,7 +53,7 @@ global:
 
   # Spinnaker Deck URL configuration; url overwhich spinnaker deck will be accessed
   spinDeck:
-    protocol: http
+    protocol: https
     host: spinnaker.example.org
     #port: 9000
 
@@ -66,7 +66,7 @@ global:
 
   # Spinnaker Gate URL configuration; url overwhich spinnaker gate will be accessed
   spinGate:
-    protocol: http
+    protocol: https
     host: gate.spinnaker.example.org
     #port: 8084
 
@@ -81,7 +81,7 @@ global:
 
 ## OES-UI url configuration
 oesUI:
-  protocol: http
+  protocol: https
   host: oes.domain.com
   # Use below port when hostname above is an external IP instead of a hostname
   #port: 80
@@ -96,7 +96,7 @@ oesUI:
 
 ## OES-Gate url configuration
 oesGate:
-  protocol: http
+  protocol: https
   host: oes-api.domain.com
   # Use below port when hostname above is an external IP instead of a hostname
   #port: 8084
