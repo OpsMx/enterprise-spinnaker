@@ -35,7 +35,7 @@ oes:
 
   verificationGate:
 {{- if .Values.oesGate.port }}
-    apiUrl: {{ .Values.oesGate.protocol }}://{{ .Values.oesGate.host }}:{{ .Values.oesGate.port }}/autopilot/api/v2/registerCanary
+    apiUrl: {{ .Values.oesGate.protocol }}://{{ .Values.oesGate.host }}:{{ .Values.oesGate.port }}/autopilot/api/v3/registerCanary
 {{- else }}
-    apiUrl: {{ .Values.oesGate.protocol }}://{{ .Values.oesGate.host }}/autopilot/api/v2/registerCanary
+    apiUrl: {{ .Values.oesGate.protocol }}://{{ .Values.oesGate.host }}/autopilot/api/v3/registerCanary
 {{- end }}
