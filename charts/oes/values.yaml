@@ -150,7 +150,7 @@ db:
   ##
   image:
     registry: quay.io/opsmxpublic
-    repository: ubi8-oes-autopilot-db
+    repository: ubi8-oes-db
     tag: v2.0.0
     pullPolicy: IfNotPresent
 
