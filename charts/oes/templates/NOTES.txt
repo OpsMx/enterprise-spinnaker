@@ -8,22 +8,38 @@ To learn more about the release, try:
   $ helm status {{ .Release.Name }} [--namespace <namespace>]
   $ helm get all {{ .Release.Name }} [--namespace <namespace>]
 
-{{ if .Values.installSpinnaker }}
+{{ if and (.Values.installSpinnaker) (.Values.global.createIngress) }}
+#### Connecting to Spinnaker
+
+  Once the service is up and running, connect using below url
+
+
+  {{ .Values.global.spinDeck.protocol }}://{{ .Values.global.spinDeck.host }}
+
+{{- else }}
 #### Connecting to Spinnaker
 
   Once the service is up and running, find the service ip address
 
-      kubectl get svc spin-deck-np [--namespace mynamespace]
+      kubectl get svc spin-deck-lb [--namespace mynamespace]
 
   Example output would be:
 
       NAME           TYPE           CLUSTER-IP     EXTERNAL-IP   PORT(S)          AGE
-      spin-deck-np   LoadBalancer   10.0.139.222   40.78.4.201   9000:31030/TCP   8m9s
+      spin-deck-lb   LoadBalancer   10.0.139.222   40.78.4.201   9000:31030/TCP   8m9s
 
   Using the EXTERNAL-IP address, go to http://EXTERNAL-IP:9000/
 {{- end }}
 
-{{ if not (eq .Values.installationMode "None") }}
+{{ if and (not (eq .Values.installationMode "None")) ( .Values.global.createIngress ) }}
+#### Connecting to OpsMx Enterprise Spinnaker Extensions(OES)
+
+  Once the service is up and running, connect using below url
+
+  {{ .Values.oesUI.protocol }}://{{ .Values.oesUI.host }}
+
+
+{{- else }}
 #### Connecting to OpsMx Enterprise Spinnaker Extensions(OES)
 
   Once the service is up and running, find the service ip address
@@ -37,5 +53,6 @@ To learn more about the release, try:
 
   Using the EXTERNAL-IP address, go to http://EXTERNAL-IP:80/
 
+{{- end }}
+
     You can login with admin/opsmxadmin123
-{{- end -}}
