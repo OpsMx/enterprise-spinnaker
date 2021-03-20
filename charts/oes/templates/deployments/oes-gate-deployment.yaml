@@ -50,6 +50,14 @@ spec:
         volumeMounts:
         - name: gate-volume
           mountPath: /opt/spinnaker/config
+        {{- if .Values.gate.config.saml.enabled }}
+        - mountPath: /opt/spinnaker/saml/saml.jks	
+          name: saml-jks	
+          subPath: saml.jks	
+        - mountPath: /opt/spinnaker/saml/metadata.xml
+          name: metadata-xml	
+          subPath: metadata.xml
+        {{- end }} 
         readinessProbe:
           tcpSocket:
             port: 8084
@@ -64,6 +72,14 @@ spec:
       imagePullSecrets:
       - name: {{ .Values.imagePullSecret}}
       volumes:
+      {{- if .Values.gate.config.saml.enabled }}
+      - secret:	
+          secretName: {{ .Values.gate.config.saml.jksSecretName }}
+        name: saml-jks
+      - secret:	
+          secretName: {{ .Values.gate.config.saml.metadataSecretName }}
+        name: metadata-xml
+      {{- end }}
       {{- if .Values.autoConfiguration.enabled }}
       - configMap:
           name: oes-gate-config

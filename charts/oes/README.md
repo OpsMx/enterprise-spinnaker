@@ -129,6 +129,10 @@ Parameter | Description | Default
 `dashboard.spinnakerLink` | Specify if dashboard needs to be configured with a different spinnaker | `{{ .Values.spinnaker.ingress.protocol }}://{{ .Values.spinnaker.ingress.host }}`
 `gate.config.oesUIcors` | Regex of OES-UI URL to prevent cross origin attacks | `^https?://(?:localhost|OES_UI_LOADBALANCER_IP|opsmx.com)(?::[1-9]\d*)?/?`
 `gate.config.fileBasedAuthentication` | Set it to true to disable LDAP authentication and enable file based authentication | `false`
+`gate.config.saml` | SAML configuration for oes gate authn and authz | ``
+`gate.config.saml.jksSecretName` | Set this value to use an existing secret in which saml jks exists | `oes-saml-jks`
+`gate.config.saml.metadataSecretName` | Set this value to use an existing secret in which saml metadata exists | `metadata-xml`
+`gate.config.oauth2` | OAuth2 configuration for oes gate authn and authz | ``
 `platform.config.adminGroups` | Admin groups available | `admin, Administrators`
 `platform.config.userSource` | Source of Users for authorization | `ldap`
 `platform.config.supportedFeatures` | List of featues to be supported by OES | `[deployment_verification, sapor, visibility]`
@@ -164,6 +168,7 @@ Parameter | Description | Default
 `spinnaker.gitopsHalyard.gatex509.enabled` | Flag to enable x509 authentication for gate and use it for webhooks | `false`
 `spinnaker.gitopsHalyard.gatex509.host` | Separate host for using x509 authentication | `spingate-x509.domain.com`
 `spinnaker.gitopsHalyard.pipelinePromotion.enabled` | To Enable pipeline promotion from one env to another | `false`
+`spinnaker.spinCli` | Authn credentials to enable spin-cli container to automatically populate sample pipelines while spinnaker is starting up | ``
 
 > **Tip**: Refer to values.yaml for detailed comments
 

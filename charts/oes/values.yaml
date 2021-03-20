@@ -53,7 +53,7 @@ global:
 
   # Spinnaker Deck URL configuration; url overwhich spinnaker deck will be accessed
   spinDeck:
-    protocol: http
+    protocol: https
     host: spinnaker.example.org
     #port: 9000
 
@@ -66,7 +66,7 @@ global:
 
   # Spinnaker Gate URL configuration; url overwhich spinnaker gate will be accessed
   spinGate:
-    protocol: http
+    protocol: https
     host: gate.spinnaker.example.org
     #port: 8084
 
@@ -78,9 +78,10 @@ global:
       tls:
         secretName: gate-authtls
 
+
 ## OES-UI url configuration
 oesUI:
-  protocol: http
+  protocol: https
   host: oes.domain.com
   # Use below port when hostname above is an external IP instead of a hostname
   #port: 80
@@ -95,7 +96,7 @@ oesUI:
 
 ## OES-Gate url configuration
 oesGate:
-  protocol: http
+  protocol: https
   host: oes-api.domain.com
   # Use below port when hostname above is an external IP instead of a hostname
   #port: 8084
@@ -149,8 +150,8 @@ db:
   ##
   image:
     registry: quay.io/opsmxpublic
-    repository: ubi8-oes-autopilot-db
-    tag: v1.6.1
+    repository: ubi8-oes-db
+    tag: v2.0.0
     pullPolicy: IfNotPresent
 
   ## Strategy to rollout statefulset pods
@@ -180,8 +181,9 @@ autopilot:
   image:
     registry: quay.io/opsmxpublic
     repository: ubi8-oes-autopilot
-    tag: v3.5.1
+    tag: v3.6.0
     pullPolicy: IfNotPresent
+
 
   resources: {}
   #  requests:
@@ -227,7 +229,7 @@ dashboard:
   image:
     registry: quay.io/opsmxpublic
     repository: ubi8-oes-dashboard
-    tag: v3.5.1
+    tag: v3.6.0
     pullPolicy: IfNotPresent
 
   resources: {}
@@ -276,7 +278,7 @@ gate:
   image:
     registry: quay.io/opsmxpublic
     repository: ubi8-oes-gate
-    tag: v3.5.1
+    tag: v3.6.0
     pullPolicy: IfNotPresent
 
   resources: {}
@@ -307,6 +309,41 @@ gate:
       session:
         timeoutInSeconds: 7200
 
+    #####################################################
+    # SAML AUthentication
+    #####################################################
+    # saml.jks and metadata.xml are to be mounted as secrets
+    # with names oes-saml-jks and oes-saml-metadata resp.
+    saml:
+      enabled: false
+      keyStorePassword: changeit
+      keyStoreAliasName: saml
+      issuerId: spind
+      userSource: gate
+
+      jksSecretName: oes-saml-jks
+      metadataSecretName: metadata-xml
+
+    #####################################################
+    #OAUTH2 Authentication for GitHub
+    #####################################################
+    oauth2:
+      enabled: true
+      client:
+        clientId: #CLIENT_ID
+        clientSecret: #CLIENT_SECRET_ID
+        accessTokenUri: https://github.com/login/oauth/access_token
+        userAuthorizationUri: https://github.com/login/oauth/authorize
+        scope: user-email
+      resource:
+        userInfoUri: https://api.github.com/user
+      userInfoMapping:
+        email: email
+        firstName: firstname
+        lastName: name
+        username: login
+      provider: GITHUB
+
 ###############################################################################
 ##
 ## Values of OES Platform
@@ -317,7 +354,7 @@ platform:
   image:
     registry: quay.io/opsmxpublic
     repository: ubi8-oes-platform
-    tag: v3.5.1
+    tag: v3.6.0
     pullPolicy: IfNotPresent
 
   resources: {}
@@ -342,7 +379,7 @@ platform:
     adminGroups: admin, Administrators
 
     ## Source of Users for authorization
-    ## Supported sources:- ldap, file
+    ## Supported sources:- ldap, file, gate
     userSource: ldap
 
     ## LDAP Configuration will be used if above userSource is set to ldap
@@ -371,7 +408,7 @@ sapor:
   image:
     registry: quay.io/opsmxpublic
     repository: ubi8-oes-sapor
-    tag: v3.5.1
+    tag: v3.6.0
     pullPolicy: IfNotPresent
 
   resources: {}
@@ -450,7 +487,7 @@ ui:
   image:
     registry: quay.io/opsmxpublic
     repository: ubi8-oes-ui
-    tag: v3.5.1
+    tag: v3.6.0
     pullPolicy: IfNotPresent
 
   config:
@@ -469,7 +506,7 @@ visibility:
   image:
     registry: quay.io/opsmxpublic
     repository: ubi8-oes-visibility
-    tag: v3.5.1
+    tag: v3.6.0
     pullPolicy: IfNotPresent
 
   resources: {}
@@ -954,3 +991,11 @@ spinnaker:
       ## Spinnaker kubernetes account to use for job execution
       # TODO: Implementation pending; currently default namespace is hardcoded
       executionAccountName: default
+
+
+  ## Auth mechanism and credentials to be used by spin-cli for creating the sample pipelines
+  ## Here basic ldap auth is used by default
+  spinCli:
+    basic:
+      username: admin
+      password: opsmxadmin123

@@ -57,3 +57,11 @@ data:
     {{- else -}}
     {{ .Files.Get "config/orca-local.yml" | nindent 4 }}
     {{- end }}
+  echo-local.yml: |-
+    rest:
+      enabled: true
+      endpoints:
+       -
+        wrap: false
+        url: http://oes-sapor.{{ .Release.Namespace }}:8085/oes/echo
+  
