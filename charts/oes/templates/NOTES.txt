@@ -8,7 +8,7 @@ To learn more about the release, try:
   $ helm status {{ .Release.Name }} [--namespace <namespace>]
   $ helm get all {{ .Release.Name }} [--namespace <namespace>]
 
-{{ if and .Values.installSpinnaker .Values.createIngress }}
+{{ if .Values.installSpinnaker }}
 #### Connecting to Spinnaker
 
   Once the service is up and running, find the service ip address
