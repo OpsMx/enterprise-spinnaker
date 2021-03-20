@@ -1,6 +1,6 @@
 {{- if (.Values.installSpinnaker) }}
 {{- if .Values.spinnaker.gitopsHalyard.mTLS.enabled }}
-apiVersion: extensions/v1beta1
+apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
   annotations:
@@ -30,7 +30,7 @@ spec:
     - {{ .Values.spinnaker.ingress.host }}
     secretName: ui-{{ .Release.Name }}-tls
 ---
-apiVersion: extensions/v1beta1
+apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
   annotations:
