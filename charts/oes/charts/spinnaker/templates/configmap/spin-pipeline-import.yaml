@@ -28,6 +28,7 @@ data:
     PLATFORM=$(grep oes-platform /tmp/inst.status | awk '{print $2}')
     
     wait_period=$(($wait_period+10))
+    sleep 1m
 
     if [ $DECK == "true" ] && [ $CLOUDCACHING == "true" ] && [ $CLOUDRO == "true" ] && [ $CLOUDRW == "true" ] && [ $CLOUDRODECK == "true" ] && [ $FRONT == "true" ] && [ $GATE == "true" ] && [ $IGOR == "true" ] && [ $ORCA == "true" ] && [ $ROSCO == "true" ] && [ $ECHOWORKER == "true" ] && [ $ECHOSCHEDULER == "true" ];
     then
