@@ -62,6 +62,7 @@ data:
             break
         else
             echo \"Waiting for Spinnaker services to be ready\"
+            sleep 1m
         fi
     fi
     done
