@@ -13,7 +13,7 @@ metadata:
 {{- if .Values.oesUI.ingress.annotations }}
 {{ tpl (toYaml .Values.oesUI.ingress.annotations) . | indent 4 }}
 {{- end }}
-  name: oes-ui-ingress
+  name: {{ template "oes.fullname" . }}-ui
 spec:
   rules:
   - host: {{ .Values.oesUI.host }}
@@ -23,9 +23,11 @@ spec:
           serviceName: oes-ui
           servicePort: 80
         path: /
+{{- if .Values.oesUI.ingress.tls }}
   tls:
   - hosts:
     - {{ .Values.oesUI.host }}
-    secretName: {{ .Values.oesUI.ingress.tls.secretName }}
+{{ toYaml .Values.oesUI.ingress.tls | indent 4 }}
+{{- end }}
 {{- end }}
 {{- end }}
