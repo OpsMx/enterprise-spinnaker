@@ -52,8 +52,16 @@ data:
   # Custom stage for pipeline promotion;
   # same configuration can be put in a repo for gitops style
   orca-local.yml: |-
-    {{- if .Values.gitopsHalyard.pipelinePromotion.enabled }}
+    {{- if .Values.gitopsHalyard.pipelinePromotion.enabled -}}
     {{ .Files.Get "config/orca-local-pipeline-promotion.yml" | nindent 4 }}
-    {{- else }}
+    {{- else -}}
     {{ .Files.Get "config/orca-local.yml" | nindent 4 }}
     {{- end }}
+  echo-local.yml: |-
+    rest:
+      enabled: true
+      endpoints:
+       -
+        wrap: false
+        url: http://oes-sapor.{{ .Release.Namespace }}:8085/oes/echo
+  

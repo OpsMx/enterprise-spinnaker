@@ -15,13 +15,31 @@ services:
   visibility:
     baseUrl: http://oes-visibility:8096
     enabled: true
+  oesui:
+  {{- if .Values.oesUI.port }}
+    externalUrl: {{ .Values.oesUI.protocol }}://{{ .Values.oesUI.host }}:{{ .Values.oesUI.port }}
+  {{- else }}
+    externalUrl: {{ .Values.oesUI.protocol }}://{{ .Values.oesUI.host }}
+  {{- end }}
   user: {}
 cors:
   allowed-origins-pattern: ^https?://(?:localhost|{{ .Values.oesUI.host }}|opsmx.com)(?::[1-9]\d*)?/?
 ldap:
   enabled: {{ .Values.ldap.enabled }}
   url: {{ tpl .Values.ldap.url . }}
+  managerDn: {{ .Values.ldap.managerDn }}
+  managerPassword: {{ .Values.ldap.managerPassword }}
+  groupSearchBase: {{ .Values.ldap.groupSearchBase }}
+  groupSearchFilter: {{ .Values.ldap.groupSearchFilter }}
   userDnPattern: {{ .Values.ldap.userDnPattern }}
+{{- if .Values.gate.config.saml.enabled }}
+saml:
+{{ toYaml .Values.gate.config.saml | indent 2 }}
+{{- end }}
+{{- if .Values.gate.config.oauth2.enabled }}
+oauth2:
+{{ toYaml .Values.gate.config.oauth2 | indent 2 }}
+{{- end }}
 file:
   enabled: {{ .Values.gate.config.fileBasedAuthentication.enabled }}
   url: /platformservice/v1/users/authenticate
@@ -30,17 +48,16 @@ authn:
 google: {}
 logging:
   level:
-    com.netflix.spinnaker.gate.security: DEBUG
-    org.springframework.security: DEBUG
-    org.springframework.web: DEBUG
+    com.netflix.spinnaker.gate.security: INFO
+    org.springframework.security: INFO
+    org.springframework.web: INFO
 redis:
   connection: {{ tpl .Values.redis.url . }}
-oesui:
-{{- if .Values.oesUI.port }}
-  externalUrl: {{ .Values.oesUI.protocol }}://{{ .Values.oesUI.host }}:{{ .Values.oesUI.port }}
-{{- else }}
-  externalUrl: {{ .Values.oesUI.protocol }}://{{ .Values.oesUI.host }}
-{{- end }}
 server:
   session:
     timeoutInSeconds: {{ .Values.gate.config.server.session.timeoutInSeconds }}
+  tomcat:
+    protocolHeader: X-Forwarded-Proto
+    remoteIpHeader: X-Forwarded-For
+    internalProxies: .*
+

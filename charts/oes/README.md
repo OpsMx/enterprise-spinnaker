@@ -1,3 +1,7 @@
+<p align="center">
+	<img src="img/opsmx.png" width="20%" align="center" alt="OpsMx">
+</p>
+
 # OpsMx Enterprise for Spinnaker
 
 OpsMx Enterprise for Spinnaker is an installation bundle that includes the open source Spinnaker and OpsMx extensions on top of it.
@@ -30,11 +34,22 @@ Install OpsMx Enterprise for Spinnaker
    $ helm repo add opsmx https://helmcharts.opsmx.com/
    ```
 
-- Docker registry credentials is setup as a secret in Kubernetes. Before you install OES, please send an email to support@opsmx.com requesting access to the OES images with your Dockerhub id. You can proceed with installation once your Dockerhub id has been granted access.
+  Note: If opsmx helm repo is already added, do a repo update before installing the chart
 
-  To be able to fetch OES docker images, username and password shall be set in values.yaml or use --set imageCredentials.username=<username> --set imageCredentials.password=<password> while running helm install.
+   ```console
+   $ helm repo update
+   ```
 
-- Your Kubernetes cluster shall support persistent volumes and loadbalancer service type.
+- Quay container registry credentials is setup as a secret in Kubernetes. Before you install OES, please send an email to creds@opsmx.com requesting access to the OES images with your Quay ID. You can proceed with installation once your Quay ID has been granted access.
+
+  To be able to fetch OES container images, do anything of the below actions
+  1. username and password shall be set in values.yaml or 
+  2. use --set imageCredentials.username=<username> --set imageCredentials.password=<password> while running helm install or
+  3. Create an imagePullSecret with your quay credentials and specify the secret name using --set imagePullSecret=<secretName>
+
+- Your Kubernetes cluster shall support persistent volumes
+
+- It is assumed that an nginx ingress controller is installed on the cluster, by default ingress resources are created for oes-ui, oes-gate, spin-deck and spin-gate services. Customize the hosts for OES using the options in the values.yaml under oesUI, oesGate, spinDeck, spinGate. If any other ingress controller is installed, set createIngress flag to false and configure your ingress.
 
 - To enable mutual TLS for Spinnaker Services and SSL features provided by Spinnaker Life Cycle Management (LCM), it is required to install nginx ingress from kubernetes community and cert-manager before installing OES. Please refer the table below for options to be enabled for LCM
   Instructions to install nginx ingress
@@ -85,7 +100,16 @@ Parameter | Description | Default
 `rbac.create` | Enable or disable rbac | `true`
 `installSpinnaker` | If true, install Spinnaker along with OES Extensions | `true`
 `installationMode` | The installation mode. Available installation modes are **OES-AP** (both OES 3.0 and Autopilot), **OES** (Only OES 3.0), **AP** (Only Autopilot) and **None**(Skip OES installation) | `OES-AP`
-`createIngress` | If true, exposes OES ui & gate services over Ingress | `false`
+`global.certManager.installed` | Disable this flag if cert-manager is not installed, when set to true issuer and TLS certs for ingress are automatically created | `true`
+`global.createIngress` | If true, exposes OES ui & gate services over Ingress | `false`
+`global.spinDeck.protocol` | Change this to https if TLS is enabled for ingress endpoint | `http`
+`global.spinDeck.host` | Host using which spinnaker deck needs to be accessed | `spinnaker.example.org`
+`global.spinDeck.ingress.annotations` | Annotations for deck ingress resource | ``
+`global.spinDeck.ingress.tls.secretName` | Change this value if your own certificate is put into a specific secret | `deck-authtls` 
+`global.spinGate.protocol` | Change this to https if TLS is enabled for ingress endpoint | `http`
+`global.spinGate.host` | Host using which spinnaker gate needs to be accessed | `gate.spinnaker.example.org`
+`global.spinGate.ingress.annotations` | Annotations for spinnaker gate ingress resource | ``
+`global.spinGate.ingress.tls.secretName` | Change this value if your own certificate is put into a specific secret | `gate-authtls`
 `oesUI.protocol` | Change this to https if TLS is enabled for ingress endpoint | `http`
 `oesUI.host` | Host using which UI needs to be accessed | `oes.domain.com`
 `oesGate.protocol` | Change this to https if TLS is enabled for ingress endpoint | `http`
@@ -105,6 +129,10 @@ Parameter | Description | Default
 `dashboard.spinnakerLink` | Specify if dashboard needs to be configured with a different spinnaker | `{{ .Values.spinnaker.ingress.protocol }}://{{ .Values.spinnaker.ingress.host }}`
 `gate.config.oesUIcors` | Regex of OES-UI URL to prevent cross origin attacks | `^https?://(?:localhost|OES_UI_LOADBALANCER_IP|opsmx.com)(?::[1-9]\d*)?/?`
 `gate.config.fileBasedAuthentication` | Set it to true to disable LDAP authentication and enable file based authentication | `false`
+`gate.config.saml` | SAML configuration for oes gate authn and authz | ``
+`gate.config.saml.jksSecretName` | Set this value to use an existing secret in which saml jks exists | `oes-saml-jks`
+`gate.config.saml.metadataSecretName` | Set this value to use an existing secret in which saml metadata exists | `metadata-xml`
+`gate.config.oauth2` | OAuth2 configuration for oes gate authn and authz | ``
 `platform.config.adminGroups` | Admin groups available | `admin, Administrators`
 `platform.config.userSource` | Source of Users for authorization | `ldap`
 `platform.config.supportedFeatures` | List of featues to be supported by OES | `[deployment_verification, sapor, visibility]`
@@ -140,6 +168,7 @@ Parameter | Description | Default
 `spinnaker.gitopsHalyard.gatex509.enabled` | Flag to enable x509 authentication for gate and use it for webhooks | `false`
 `spinnaker.gitopsHalyard.gatex509.host` | Separate host for using x509 authentication | `spingate-x509.domain.com`
 `spinnaker.gitopsHalyard.pipelinePromotion.enabled` | To Enable pipeline promotion from one env to another | `false`
+`spinnaker.spinCli` | Authn credentials to enable spin-cli container to automatically populate sample pipelines while spinnaker is starting up | ``
 
 > **Tip**: Refer to values.yaml for detailed comments
 

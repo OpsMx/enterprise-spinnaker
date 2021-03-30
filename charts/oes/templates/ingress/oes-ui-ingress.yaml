@@ -1,12 +1,19 @@
-{{- if .Values.createIngress }}
+{{- if .Values.global.createIngress -}}
+{{- if or (eq .Values.installationMode "OES-AP") (eq .Values.installationMode "OES") -}}
 apiVersion: extensions/v1beta1
 kind: Ingress
 metadata:
-{{- if .Values.oesUI.annotations }}
   annotations:
-{{ tpl (toYaml .Values.oesUI.annotations) . | indent 4 }}
+{{- if .Values.global.certManager.installed }}
+    acme.cert-manager.io/http01-edit-in-place: "true"
+    cert-manager.io/issue-temporary-certificate: "true"
+    cert-manager.io/issuer: letsencrypt-{{ .Release.Namespace }}-spin
+    kubernetes.io/tls-acme: "true"
 {{- end }}
-  name: oes-ui-ingress
+{{- if .Values.oesUI.ingress.annotations }}
+{{ tpl (toYaml .Values.oesUI.ingress.annotations) . | indent 4 }}
+{{- end }}
+  name: {{ template "oes.fullname" . }}-ui
 spec:
   rules:
   - host: {{ .Values.oesUI.host }}
@@ -16,8 +23,11 @@ spec:
           serviceName: oes-ui
           servicePort: 80
         path: /
+{{- if .Values.oesUI.ingress.tls }}
   tls:
   - hosts:
     - {{ .Values.oesUI.host }}
-    secretName: {{ .Values.oesUI.tls.secretName }}
+{{ toYaml .Values.oesUI.ingress.tls | indent 4 }}
+{{- end }}
+{{- end }}
 {{- end }}

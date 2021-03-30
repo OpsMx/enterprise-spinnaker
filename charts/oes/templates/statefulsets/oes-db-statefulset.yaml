@@ -28,6 +28,12 @@ spec:
       - image: {{ template "db.image" . }}
         imagePullPolicy: {{ .Values.db.image.pullPolicy }}
         name: oes-db
+        lifecycle:
+          preStop:
+            exec:
+              command:
+              - /bin/sh
+              - /opt/opsmx/bin/stop.sh
         ports:
         - containerPort: 5432
           protocol: TCP
@@ -40,7 +46,7 @@ spec:
           initialDelaySeconds: 10
           periodSeconds: 5
       securityContext:
-        fsGroup: {{ .Values.db.securityContext.fsGroup }}
+{{ toYaml .Values.db.securityContext | indent 8 }}
   volumeClaimTemplates:
   - metadata:
       creationTimestamp: null
@@ -55,4 +61,7 @@ spec:
         requests:
           storage: {{ .Values.db.storageMountSize }}
       volumeMode: Filesystem
+      {{- if .Values.db.storageClassName }}
+      storageClassName: {{ .Values.db.storageClassName }}
+      {{- end -}}
 {{- end -}}

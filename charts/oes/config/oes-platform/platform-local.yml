@@ -9,7 +9,11 @@ supportedFeatures:
 userGroup:
   adminGroups: {{ .Values.platform.config.adminGroups }}
 user:
+  {{- if .Values.gate.config.saml.enabled }}
+  source: {{ .Values.gate.config.saml.userSource }}
+  {{- else }}
   source: {{ .Values.platform.config.userSource }}
+  {{- end }}
 ldap:
   url: {{ tpl .Values.ldap.url . }}
   managerDn: {{ .Values.ldap.managerDn }}
@@ -31,7 +35,7 @@ oes:
 
   verificationGate:
 {{- if .Values.oesGate.port }}
-    apiUrl: {{ .Values.oesGate.protocol }}://{{ .Values.oesGate.host }}:{{ .Values.oesGate.port }}/autopilot/api/v2/registerCanary
+    apiUrl: {{ .Values.oesGate.protocol }}://{{ .Values.oesGate.host }}:{{ .Values.oesGate.port }}/autopilot/api/v3/registerCanary
 {{- else }}
-    apiUrl: {{ .Values.oesGate.protocol }}://{{ .Values.oesGate.host }}/autopilot/api/v2/registerCanary
+    apiUrl: {{ .Values.oesGate.protocol }}://{{ .Values.oesGate.host }}/autopilot/api/v3/registerCanary
 {{- end }}

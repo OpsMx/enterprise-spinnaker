@@ -27,7 +27,7 @@ k8sServiceType: LoadBalancer
 #####################################################
 spinnaker:
   halyard:
-    spinnakerVersion: 1.22.2
+    spinnakerVersion: 1.24.4
     image:
       repository: quay.io/opsmxpublic/ubi8-spin-halyard
       tag: opsmx-1.40.0
@@ -78,25 +78,25 @@ spinnaker:
         healthEndpoint: /health
         kubernetes:
           useExecHealthCheck: false
-        artifactId: quay.io/opsmxpublic/ubi8-spin-gate:1.18.1
+        artifactId: quay.io/opsmxpublic/ubi8-spin-gate:1.20.0
       deck.yml:
-        artifactId: quay.io/opsmxpublic/ubi8-spin-deck:3.3.0
+        artifactId: quay.io/opsmxpublic/ubi8-spin-deck:3.5.1
       clouddriver.yml:
-        artifactId: quay.io/opsmxpublic/ubi8-spin-clouddriver:6.11.1
+        artifactId: quay.io/opsmxpublic/ubi8-spin-clouddriver:7.2.2
       echo.yml:
-        artifactId: quay.io/opsmxpublic/ubi8-spin-echo:2.14.0
+        artifactId: quay.io/opsmxpublic/ubi8-spin-echo:2.15.2
       fiat.yml:
-        artifactId: quay.io/opsmxpublic/ubi8-spin-fiat:1.13.0
+        artifactId: quay.io/opsmxpublic/ubi8-spin-fiat:1.14.1
       front50.yml:
-        artifactId: quay.io/opsmxpublic/ubi8-spin-front50:0.25.1
+        artifactId: quay.io/opsmxpublic/ubi8-spin-front50:0.26.1
       igor.yml:
-        artifactId: quay.io/opsmxpublic/ubi8-spin-igor:1.12.0
+        artifactId: quay.io/opsmxpublic/ubi8-spin-igor:1.14.0
       kayenta.yml:
-        artifactId: quay.io/opsmxpublic/ubi8-spin-kayenta:0.17.0
+        artifactId: quay.io/opsmxpublic/ubi8-spin-kayenta:0.19.0
       orca.yml:
-        artifactId: quay.io/opsmxpublic/ubi8-spin-orca:2.16.0
+        artifactId: quay.io/opsmxpublic/ubi8-spin-orca:2.18.1
       rosco.yml:
-        artifactId: quay.io/opsmxpublic/ubi8-spin-rosco:0.21.1
+        artifactId: quay.io/opsmxpublic/ubi8-spin-rosco:0.23.0
     ## Uncomment if you want to add extra commands to the init script
     ## run by the init container before halyard is started.
     ## The content will be passed through `tpl`, so value interpolation is supported.
