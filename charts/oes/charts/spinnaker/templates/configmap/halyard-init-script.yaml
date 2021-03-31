@@ -63,9 +63,7 @@ data:
     if [ -f /tmp/spinnaker/.hal/default/profiles/fiat-local.yml ]; then
     sed -i  s/RELEASE_NAME/{{ .Release.Name }}/g /tmp/spinnaker/.hal/default/profiles/fiat-local.yml
     fi
-    if [ -f /tmp/config/halyard-local.yml ]; then
     printf 'server.address: 0.0.0.0\n' > /tmp/config/halyard-local.yml
-    fi
     if [ -f /tmp/spinnaker/.hal/halyard.yaml ]; then
     cp /tmp/spinnaker/.hal/halyard.yaml /tmp/config
     fi
