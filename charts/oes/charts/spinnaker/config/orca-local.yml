@@ -587,3 +587,189 @@ job:
                     imagePullPolicy: Always
                     name: testverification
                 restartPolicy: Never
+
+      - label: "JIRA: Wait for state"
+        type: waitJiraState
+        enabled: true
+        description: Custom stage that waits for a specific state on a Jira Issue
+        method: GET
+        url: https://devopsmx.atlassian.net/rest/api/latest/issue/${parameterValues['issue']}
+        customHeaders:
+          Authorization: Basic eXVnYW5kaGFyQG9wc214LmlvOlNuNGFVeVh2Z3JCRzNER1lRUEtjQzlGNw==
+          Content-Type: application/json
+        failPipeline: true
+        progressJsonPath: "fields.status.name"
+        payload: ""
+        retryStatusCodes:
+          - 200
+        statusJsonPath: "fields.status.name"
+        statusUrlResolution: "getMethod"
+        successStatuses: ${parameterValues['success']}
+        retryStatuses: ${parameterValue['retry']}
+        terminalStatuses: ${parameterValues['terminate']}
+        canceledStatuses: ${parameterValues['cancel']}
+        waitBeforeMonitor: "1"
+        waitForCompletion: true
+        parameters:
+        - label: JIRA Issue ID
+          name: issue
+          description: "The JIRA issue, the default relies on JIRA issue ID extraction"
+          type: string
+          defaultValue: ${jira_issue}
+        - label: JIRA Retry States
+          name: retry
+          description: "JIRA issue states that Retry the stage e.g,: To Do, In Progress, etc."
+          type: string
+          defaultValue: To Do, In Progress
+        - label: JIRA Success States
+          name: success
+          description: "JIRA issue States that progress the pipeline, e.g,: In Verificaiton etc."
+          type: string
+          defaultValue: In Verification
+        - label: JIRA Temination States
+          name: terminate
+          description: "JIRA issue states that terminates the pipeline, e.g,: PR Raised etc."
+          type: string
+          defaultValue: PR Raised
+        - label: JIRA Canceled States
+          name: cancel
+          description: "JIRA issue states that cancel the pipeline e.g,: Done, etc."
+          type: string
+          defaultValue: Done
+      - label: "JIRA: Create Issue"
+        type: addJiraIss
+        enabled: true
+        description: Custom stage that add an Issue in Jira
+        method: POST
+        url: https://devopsmx.atlassian.net/rest/api/2/issue/
+        customHeaders:
+          Authorization: Basic eXVnYW5kaGFyQG9wc214LmlvOlNuNGFVeVh2Z3JCRzNER1lRUEtjQzlGNw==
+          Content-Type: application/json
+        payload: |-
+          {
+            "fields": {
+                "project":
+                {
+                  "key": "${parameterValues['projectid']}"
+                },
+                "summary": "${parameterValues['summary']}",
+                "description": "${parameterValues['description']}",
+                "issuetype": {
+                  "name": "${parameterValues['issuetype']}"
+                },
+                "components": [
+                    {
+                  "id": "${parameterValues['components']}"
+                }
+                ],
+                "priority": {
+                  "name": "${parameterValues['priority']}"
+                }
+            }
+          }
+        parameters:
+        - label: Project ID ("ENG" or "DOCS")
+          name: projectid
+          description: Which JIRA project do you want to create an item in?
+          type: string
+        - label: Issue Type ("Improvement", "Task", "New Feature", or "Bug")
+          name: issuetype
+          description: issuetype
+          type: string
+        - label: Priority ("Low", "Medium", or "High")
+          name: priority
+          description: priority
+          type: string
+        - label: Components ("10103")
+          name: components
+          description: component of the project
+        - label: Issue Summary
+          name: summary
+          description: summary
+          type: string
+        - label: Description
+          name: description
+          description: description
+          type: string
+      - label: "JIRA: Comment on Issue"
+        type: comJiraIss
+        enabled: true
+        description: Custom stage that posts a comment in a Jira Issue
+        method: POST
+        url: https://devopsmx.atlassian.net/rest/api/latest/issue/${parameterValues['issue']}/comment
+        customHeaders:
+          Authorization: Basic eXVnYW5kaGFyQG9wc214LmlvOlNuNGFVeVh2Z3JCRzNER1lRUEtjQzlGNw==
+          Content-Type: application/json
+        payload: |-
+          {
+            "body": "${parameterValues['message']}"
+          }
+        parameters:
+        - label: Issue ID
+          name: issue
+          description: Issue
+          type: string
+        - label: Message
+          name: message
+          description: message
+          type: string
+      - label: "JIRA: Update Issue"
+        type: updJiraIss
+        enabled: true
+        description: Custom stage that updates an Issue in Jira
+        method: PUT
+        url: https://devopsmx.atlassian.net/rest/api/latest/issue/${parameterValues['issue']}
+        customHeaders:
+          Authorization: Basic eXVnYW5kaGFyQG9wc214LmlvOlNuNGFVeVh2Z3JCRzNER1lRUEtjQzlGNw==
+          Content-Type: application/json
+        payload: |-
+          {
+            "update": {
+                "summary": [
+                    {
+                        "set": "${parameterValues['summary']}"
+                    }
+                ],
+                "description": [
+                    {
+                        "set": "${parameterValues['description']}"
+                    }
+                ]
+            }
+          }
+        parameters:
+        - label: Issue ID
+          name: issue
+          description: Issue
+          type: string
+        - label: Summary
+          name: summary
+          description: summary
+          type: string
+        - label: Description
+          name: description
+          description: description
+      - label: "JIRA: Transition Issue"
+        type: transJiraIss
+        enabled: true
+        description: Custom stage that transitions an Issue in Jira
+        method: POST
+        url: https://devopsmx.atlassian.net/rest/api/latest/issue/${parameterValues['issue']}/transitions
+        customHeaders:
+          Authorization: Basic eXVnYW5kaGFyQG9wc214LmlvOlNuNGFVeVh2Z3JCRzNER1lRUEtjQzlGNw==
+          Content-Type: application/json
+        payload: |-
+          {
+            "transition": {
+              "id": "${parameterValues['targetStageID']}"
+            }
+          }
+        parameters:
+        - label: Issue ID
+          name: issue
+          description: Issue
+          type: string
+        - label: Target Stage ID
+          name: targetStageID
+          description: Target Stage ID (11 is "To Do", 21 is "In Progress", 31 is "In Review", 41 is "Done")
+          type: string
