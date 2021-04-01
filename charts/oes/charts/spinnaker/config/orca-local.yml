@@ -1,6 +1,240 @@
 job:
   preconfigured:
     kubernetes:
+      - label: pipelineSyncToGit
+        cloudProvider: kubernetes
+        credentials: default
+        description: Update git with pipelines in Spinnaker
+        account: default
+        application: gitopsHalyard.pipelinePromotion
+        type: pipelineSyncToGit
+        waitForCompletion: true
+        parameters:
+          - defaultValue: "app1,app2,..."
+            description: "Please enter spinnaker applications separated by comma"
+            label: spinnaker applications
+            mapping: 'manifest.spec.template.spec.containers[0].env[0].value'
+            name: spinnaker_applications
+          - defaultValue: "pipeline1,pipeline2..."
+            description: "Please enter spinnaker pipelines separated by comma"
+            label: pipieline names
+            mapping: 'manifest.spec.template.spec.containers[0].env[1].value'
+            name: spinnaker_pipelines
+        manifest:
+            apiVersion: batch/v1
+            kind: Job
+            metadata:
+              generateName: pipepromot-
+              namespace: default
+            spec:
+              backoffLimit: 0
+              template:
+                spec:
+                  containers:
+                  - command: ["bash", "scripts/deployer.sh"]
+                    image: 'opsmxdev/pipepromot:1.0'
+                    imagePullPolicy: Always
+                    name: pipepromot
+                    volumeMounts:
+                    - mountPath: /home/opsmx/scripts
+                      name: pipe-promot-scripts
+                    - mountPath: /home/opsmx/.spin
+                      name: spin-cli-config
+                    env:
+                      - name: spinnaker_applications
+                        value: 'will be replaced'
+                      - name: spinnaker_pipelines
+                        value: 'will be replaced'
+                      - name: command
+                        value: 'upload'
+                      - name: git_friendly_username
+                        valueFrom:
+                          configMapKeyRef:
+                            name: pipe-promot-config
+                            key: git_friendly_username
+                      - name: git_friendly_username
+                        valueFrom:
+                          configMapKeyRef:
+                            name: pipe-promot-config
+                            key: git_friendly_username
+                      - name: git_project
+                        valueFrom:
+                          configMapKeyRef:
+                            name: pipe-promot-config
+                            key: git_project
+                      - name: git_refresh_enabled
+                        valueFrom:
+                          configMapKeyRef:
+                            name: pipe-promot-config
+                            key: git_refresh_enabled
+                      - name: git_repo
+                        valueFrom:
+                          configMapKeyRef:
+                            name: pipe-promot-config
+                            key: git_repo
+                      - name: git_user_email
+                        valueFrom:
+                          configMapKeyRef:
+                            name: pipe-promot-config
+                            key: git_user_email
+                      - name: ignore_spin_errors
+                        valueFrom:
+                          configMapKeyRef:
+                            name: pipe-promot-config
+                            key: ignore_spin_errors
+                      - name: git_secret_token
+                        valueFrom:
+                          secretKeyRef:
+                            name: git-token
+                            key: git_secret_token
+                      - name: debug
+                        valueFrom:
+                          configMapKeyRef:
+                            name: pipe-promot-config
+                            key: debug
+                      - name: pipelineconfig
+                        valueFrom:
+                          configMapKeyRef:
+                            name: pipe-promot-config
+                            key: pipelineconfig
+                      - name: pipelineconfigdir
+                        valueFrom:
+                          configMapKeyRef:
+                            name: pipe-promot-config
+                            key: pipelineconfigdir
+                      - name: pipelinecreateconf
+                        valueFrom:
+                          configMapKeyRef:
+                            name: pipe-promot-config
+                            key: pipelinecreateconf
+                  volumes:
+                  - configMap:
+                      defaultMode: 420
+                      name: pipe-promot-scripts
+                    name: pipe-promot-scripts
+                  - name: spin-cli-config
+                    secret:
+                      defaultMode: 420
+                      secretName: spin-cli-config
+                  restartPolicy: Never
+                  serviceAccountName: default
+      - label: pipelineSyncToSpinnaker
+        cloudProvider: kubernetes
+        credentials: default
+        description: Sync Spinnaker pipelines from git
+        account: default
+        application: gitopsHalyard.pipelinePromotion
+        type: pipelineSyncToSpinnaker
+        waitForCompletion: true
+        parameters:
+          - defaultValue: "app1,app2,..."
+            description: "Please enter spinnaker applications separated by comma"
+            label: spinnaker applications
+            mapping: 'manifest.spec.template.spec.containers[0].env[0].value'
+            name: spinnaker_applications
+          - defaultValue: "pipeline1,pipeline2..."
+            description: "Please enter spinnaker pipelines separated by comma"
+            label: pipieline names
+            mapping: 'manifest.spec.template.spec.containers[0].env[1].value'
+            name: spinnaker_pipelines
+        manifest:
+            apiVersion: batch/v1
+            kind: Job
+            metadata:
+              generateName: pipepromot-
+              namespace: default
+            spec:
+              backoffLimit: 0
+              template:
+                spec:
+                  containers:
+                  - command: ["bash", "scripts/deployer.sh"]
+                    image: 'opsmxdev/pipepromot:1.0'
+                    imagePullPolicy: Always
+                    name: pipepromot
+                    volumeMounts:
+                    - mountPath: /home/opsmx/scripts
+                      name: pipe-promot-scripts
+                    - mountPath: /home/opsmx/.spin
+                      name: spin-cli-config
+                    env:
+                      - name: spinnaker_applications
+                        value: 'will be replaced'
+                      - name: spinnaker_pipelines
+                        value: 'will be replaced'
+                      - name: command
+                        value: 'download'
+                      - name: git_friendly_username
+                        valueFrom:
+                          configMapKeyRef:
+                            name: pipe-promot-config
+                            key: git_friendly_username
+                      - name: git_friendly_username
+                        valueFrom:
+                          configMapKeyRef:
+                            name: pipe-promot-config
+                            key: git_friendly_username
+                      - name: git_project
+                        valueFrom:
+                          configMapKeyRef:
+                            name: pipe-promot-config
+                            key: git_project
+                      - name: git_refresh_enabled
+                        valueFrom:
+                          configMapKeyRef:
+                            name: pipe-promot-config
+                            key: git_refresh_enabled
+                      - name: git_repo
+                        valueFrom:
+                          configMapKeyRef:
+                            name: pipe-promot-config
+                            key: git_repo
+                      - name: git_user_email
+                        valueFrom:
+                          configMapKeyRef:
+                            name: pipe-promot-config
+                            key: git_user_email
+                      - name: ignore_spin_errors
+                        valueFrom:
+                          configMapKeyRef:
+                            name: pipe-promot-config
+                            key: ignore_spin_errors
+                      - name: git_secret_token
+                        valueFrom:
+                          secretKeyRef:
+                            name: git-token
+                            key: git_secret_token
+                      - name: debug
+                        valueFrom:
+                          configMapKeyRef:
+                            name: pipe-promot-config
+                            key: debug
+                      - name: pipelineconfig
+                        valueFrom:
+                          configMapKeyRef:
+                            name: pipe-promot-config
+                            key: pipelineconfig
+                      - name: pipelineconfigdir
+                        valueFrom:
+                          configMapKeyRef:
+                            name: pipe-promot-config
+                            key: pipelineconfigdir
+                      - name: pipelinecreateconf
+                        valueFrom:
+                          configMapKeyRef:
+                            name: pipe-promot-config
+                            key: pipelinecreateconf
+                  volumes:
+                  - configMap:
+                      defaultMode: 420
+                      name: pipe-promot-scripts
+                    name: pipe-promot-scripts
+                  - name: spin-cli-config
+                    secret:
+                      defaultMode: 420
+                      secretName: local-spin-cli-config
+                  restartPolicy: Never
+                  serviceAccountName: default
       - label: Policy Stage
         type: Policy Stage
         description: Spinnaker Policy Evaluation and Decision Stage
@@ -353,3 +587,189 @@ job:
                     imagePullPolicy: Always
                     name: testverification
                 restartPolicy: Never
+
+      - label: "JIRA: Wait for state"
+        type: waitJiraState
+        enabled: true
+        description: Custom stage that waits for a specific state on a Jira Issue
+        method: GET
+        url: https://devopsmx.atlassian.net/rest/api/latest/issue/${parameterValues['issue']}
+        customHeaders:
+          Authorization: Basic eXVnYW5kaGFyQG9wc214LmlvOlNuNGFVeVh2Z3JCRzNER1lRUEtjQzlGNw==
+          Content-Type: application/json
+        failPipeline: true
+        progressJsonPath: "fields.status.name"
+        payload: ""
+        retryStatusCodes:
+          - 200
+        statusJsonPath: "fields.status.name"
+        statusUrlResolution: "getMethod"
+        successStatuses: ${parameterValues['success']}
+        retryStatuses: ${parameterValue['retry']}
+        terminalStatuses: ${parameterValues['terminate']}
+        canceledStatuses: ${parameterValues['cancel']}
+        waitBeforeMonitor: "1"
+        waitForCompletion: true
+        parameters:
+        - label: JIRA Issue ID
+          name: issue
+          description: "The JIRA issue, the default relies on JIRA issue ID extraction"
+          type: string
+          defaultValue: ${jira_issue}
+        - label: JIRA Retry States
+          name: retry
+          description: "JIRA issue states that Retry the stage e.g,: To Do, In Progress, etc."
+          type: string
+          defaultValue: To Do, In Progress
+        - label: JIRA Success States
+          name: success
+          description: "JIRA issue States that progress the pipeline, e.g,: In Verificaiton etc."
+          type: string
+          defaultValue: In Verification
+        - label: JIRA Temination States
+          name: terminate
+          description: "JIRA issue states that terminates the pipeline, e.g,: PR Raised etc."
+          type: string
+          defaultValue: PR Raised
+        - label: JIRA Canceled States
+          name: cancel
+          description: "JIRA issue states that cancel the pipeline e.g,: Done, etc."
+          type: string
+          defaultValue: Done
+      - label: "JIRA: Create Issue"
+        type: addJiraIss
+        enabled: true
+        description: Custom stage that add an Issue in Jira
+        method: POST
+        url: https://devopsmx.atlassian.net/rest/api/2/issue/
+        customHeaders:
+          Authorization: Basic eXVnYW5kaGFyQG9wc214LmlvOlNuNGFVeVh2Z3JCRzNER1lRUEtjQzlGNw==
+          Content-Type: application/json
+        payload: |-
+          {
+            "fields": {
+                "project":
+                {
+                  "key": "${parameterValues['projectid']}"
+                },
+                "summary": "${parameterValues['summary']}",
+                "description": "${parameterValues['description']}",
+                "issuetype": {
+                  "name": "${parameterValues['issuetype']}"
+                },
+                "components": [
+                    {
+                  "id": "${parameterValues['components']}"
+                }
+                ],
+                "priority": {
+                  "name": "${parameterValues['priority']}"
+                }
+            }
+          }
+        parameters:
+        - label: Project ID ("ENG" or "DOCS")
+          name: projectid
+          description: Which JIRA project do you want to create an item in?
+          type: string
+        - label: Issue Type ("Improvement", "Task", "New Feature", or "Bug")
+          name: issuetype
+          description: issuetype
+          type: string
+        - label: Priority ("Low", "Medium", or "High")
+          name: priority
+          description: priority
+          type: string
+        - label: Components ("10103")
+          name: components
+          description: component of the project
+        - label: Issue Summary
+          name: summary
+          description: summary
+          type: string
+        - label: Description
+          name: description
+          description: description
+          type: string
+      - label: "JIRA: Comment on Issue"
+        type: comJiraIss
+        enabled: true
+        description: Custom stage that posts a comment in a Jira Issue
+        method: POST
+        url: https://devopsmx.atlassian.net/rest/api/latest/issue/${parameterValues['issue']}/comment
+        customHeaders:
+          Authorization: Basic eXVnYW5kaGFyQG9wc214LmlvOlNuNGFVeVh2Z3JCRzNER1lRUEtjQzlGNw==
+          Content-Type: application/json
+        payload: |-
+          {
+            "body": "${parameterValues['message']}"
+          }
+        parameters:
+        - label: Issue ID
+          name: issue
+          description: Issue
+          type: string
+        - label: Message
+          name: message
+          description: message
+          type: string
+      - label: "JIRA: Update Issue"
+        type: updJiraIss
+        enabled: true
+        description: Custom stage that updates an Issue in Jira
+        method: PUT
+        url: https://devopsmx.atlassian.net/rest/api/latest/issue/${parameterValues['issue']}
+        customHeaders:
+          Authorization: Basic eXVnYW5kaGFyQG9wc214LmlvOlNuNGFVeVh2Z3JCRzNER1lRUEtjQzlGNw==
+          Content-Type: application/json
+        payload: |-
+          {
+            "update": {
+                "summary": [
+                    {
+                        "set": "${parameterValues['summary']}"
+                    }
+                ],
+                "description": [
+                    {
+                        "set": "${parameterValues['description']}"
+                    }
+                ]
+            }
+          }
+        parameters:
+        - label: Issue ID
+          name: issue
+          description: Issue
+          type: string
+        - label: Summary
+          name: summary
+          description: summary
+          type: string
+        - label: Description
+          name: description
+          description: description
+      - label: "JIRA: Transition Issue"
+        type: transJiraIss
+        enabled: true
+        description: Custom stage that transitions an Issue in Jira
+        method: POST
+        url: https://devopsmx.atlassian.net/rest/api/latest/issue/${parameterValues['issue']}/transitions
+        customHeaders:
+          Authorization: Basic eXVnYW5kaGFyQG9wc214LmlvOlNuNGFVeVh2Z3JCRzNER1lRUEtjQzlGNw==
+          Content-Type: application/json
+        payload: |-
+          {
+            "transition": {
+              "id": "${parameterValues['targetStageID']}"
+            }
+          }
+        parameters:
+        - label: Issue ID
+          name: issue
+          description: Issue
+          type: string
+        - label: Target Stage ID
+          name: targetStageID
+          description: Target Stage ID (11 is "To Do", 21 is "In Progress", 31 is "In Review", 41 is "Done")
+          type: string
