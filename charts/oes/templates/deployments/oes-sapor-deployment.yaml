@@ -73,10 +73,10 @@ spec:
       - name: {{ .Values.imagePullSecret }}
       volumes:
       {{- if .Values.forwarder.enabled }}
-      - secret:	
+      - secret:
           secretName: oes-command-secret
         name: certs-volume
-      - secret:	
+      - secret:
           secretName: ca-secret
         name: ca-certs-volume
       {{- end }}

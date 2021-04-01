@@ -973,8 +973,15 @@ spinnaker:
     enabled: false
     mTLS:
       enabled: false   # Enable mTLS for Spinnaker Services and SSL for Deck and Gate
-    repo-type: git # git, S3, vault, only git support at this point
-    secretName: opsmx-gitops-auth
+    #repo-type: git # git, S3, vault, only git support at this point
+    repo:
+      type: git # git, S3, vault, only git support at this point
+      organization: OpsMx
+      halRepository: gitops-haldir # Please provide the repo URL of the GitOps Halyard Directory.
+      dynamicAccRepository: standard-dynamic-account # Please provide the repo URL of the GitOps Dynamic Accounts Directory.
+      username: <GitHub_UserName>
+      token: <GitHub_Token>
+    secretName: opsmx-gitops-auth 
     # Max time(in secs) that an init container of halyard should wait
     # to fetch External Load Balancer IP of spin-deck and spin-gate
     spinnakerLBCheckDelay: 10
