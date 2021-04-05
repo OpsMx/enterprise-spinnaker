@@ -107,6 +107,18 @@ spec:
 {{ toYaml .Values.halyard.env | indent 8 }}
         {{- end }}
       {{- if .Values.gitopsHalyard.enabled }}
+      - name: "halyardconfig-update"
+        command:
+        - sh
+        - /tmp/akv2k8s/run.sh
+        image: quay.io/opsmxpublic/k8s-decoder:hal
+        imagePullPolicy: IfNotPresent
+        resources: {}
+        volumeMounts:
+        - name: halyard-home
+          mountPath: /tmp/spinnaker
+        {{- end }}
+      {{- if .Values.gitopsHalyard.enabled }}
       - name: "halyard-overrideurl"
         command:
         - sh
