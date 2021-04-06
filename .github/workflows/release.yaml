@@ -6,6 +6,7 @@ on:
       - master
     paths:
       - 'charts/oes/Chart.yaml'
+      - 'charts/oes/Chart.lock'
 
 jobs:
   release:
