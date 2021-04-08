@@ -573,7 +573,7 @@ openldap:
   configPassword: opsmxconfig123
   omitClusterIP: true
   persistence:
-    enabled: true
+    enabled: false
   env:
     LDAP_REMOVE_CONFIG_AFTER_SETUP: "false"
 
