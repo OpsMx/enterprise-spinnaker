@@ -117,6 +117,8 @@ spec:
         volumeMounts:
         - name: halyard-home
           mountPath: /tmp/spinnaker
+        - name: secret-decoder
+          mountPath: /tmp/akv2k8s
         {{- end }}
       {{- if .Values.gitopsHalyard.enabled }}
       - name: "halyard-overrideurl"
@@ -172,6 +174,11 @@ spec:
       - name: halyard-overrideurl
         configMap:
           name: {{ template "spinnaker.fullname" . }}-halyard-overrideurl
+      {{- end }}
+      {{- if .Values.gitopsHalyard.enabled }}
+      - name: secret-decoder
+        configMap:
+          name: {{ template "spinnaker.fullname" . }}-spin-secret-decoder
       {{- end }}
       {{- if .Values.gitopsHalyard.mTLS.enabled }}
       - name: sslcerts
