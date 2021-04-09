@@ -4,6 +4,8 @@ oes:
   admin:
     user: admin
 spinnaker:
+  restart:
+    endPoint: /webhooks/webhook/restartSpinnaker
   authnEnabled: {{ .Values.sapor.config.spinnaker.authnEnabled }}
   baseurl: {{ .Values.sapor.config.spinnaker.spinGateURL }}
 {{- if .Values.sapor.config.spinnaker.spinExternalGateURL }}
