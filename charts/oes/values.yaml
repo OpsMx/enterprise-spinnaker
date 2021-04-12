@@ -977,8 +977,8 @@ spinnaker:
     repo:
       type: git # git, S3, vault, only git support at this point
       organization: OpsMx
-      repository: standard-gitops-repo # Please provide the repo name for GitOps Halyard Directory (Sample Reference: https://github.com/OpsMx/gitops-hal-sample.git).
-      dynamicAccRepository: standard-gitops-repo # Please provide the repo name of the GitOps Dynamic Accounts Directory.Can be same as Hal repo or can be different if needed. (Sample Reference: https://github.com/OpsMx/gitops-accounts-sample.git)
+      repository: gitops-hal-sample # Please provide the repo name for GitOps Halyard Directory (Sample Reference: https://github.com/OpsMx/gitops-hal-sample.git).
+      dynamicAccRepository: gitops-accounts-sample # Please provide the repo name of the GitOps Dynamic Accounts Directory.Can be same as Hal repo or can be different if needed. (Sample Reference: https://github.com/OpsMx/gitops-accounts-sample.git)
       halConfigPath: gitops-haldir/
       username: <GitHub_UserName>
       token: <GitHub_Token>
