@@ -595,10 +595,10 @@ webhook:
     description: Custom stage that waits for a specific state on a Jira Issue
     method: GET
     ## Provide JIRA DNS in th URL https://DOMAIN/rest/api/latest/issue/${parameterValues['issue']}
-    url: https://{{ .Values.customstages.jiraDNS }}/rest/api/latest/issue/${parameterValues['issue']}
+    url: https://{{ .Values.customstages.jira.jiraDNS }}/rest/api/latest/issue/${parameterValues['issue']}
     customHeaders:
       ## Provide the JIRA credentails that are in base64 encoded USER:PASSWORD/TOKEN
-      Authorization: {{ .Values.customstages.jiraDNS.Authorization }}
+      Authorization: Basic {{ .Values.customstages.jira.Authorization }}
       Content-Type: application/json
     failPipeline: true
     progressJsonPath: "fields.status.name"
@@ -645,10 +645,10 @@ webhook:
     description: Custom stage that add an Issue in Jira
     method: POST
     ## Provide JIRA DNS in th URL https://DOMAIN/rest/api/2/issue/
-    url: https://{{ .Values.customstages.jiraDNS }}/rest/api/2/issue/
+    url: https://{{ .Values.customstages.jira.jiraDNS }}/rest/api/2/issue/
     customHeaders:
      ## Provide the JIRA credentails that are in base64 encoded USER:PASSWORD/TOKEN
-     Authorization: {{ .Values.customstages.jiraDNS.Authorization }}
+     Authorization: Basic {{ .Values.customstages.jira.Authorization }}
      Content-Type: application/json
     payload: |-
       {
@@ -702,10 +702,10 @@ webhook:
     description: Custom stage that posts a comment in a Jira Issue
     method: POST
     ## Provide JIRA DNS in th URL https://DOMAIN/rest/api/latest/issue/${parameterValues['issue']}/comment
-    url: https://{{ .Values.customstages.jiraDNS }}/rest/api/latest/issue/${parameterValues['issue']}/comment
+    url: https://{{ .Values.customstages.jira.jiraDNS }}/rest/api/latest/issue/${parameterValues['issue']}/comment
     customHeaders:
       ## Provide the JIRA credentails that are in base64 encoded USER:PASSWORD/TOKEN
-      Authorization: {{ .Values.customstages.jiraDNS.Authorization }}
+      Authorization: Basic {{ .Values.customstages.jira.Authorization }}
       Content-Type: application/json
     payload: |-
       {
@@ -725,10 +725,10 @@ webhook:
     enabled: true
     description: Custom stage that updates an Issue in Jira
     method: PUT
-    url: https://{{ .Values.customstages.jiraDNS }}/rest/api/latest/issue/${parameterValues['issue']}
+    url: https://{{ .Values.customstages.jira.jiraDNS }}/rest/api/latest/issue/${parameterValues['issue']}
     customHeaders:
       ## Provide the JIRA credentails that are in base64 encoded USER:PASSWORD/TOKEN
-      Authorization: {{ .Values.customstages.jiraDNS.Authorization }}
+      Authorization: Basic {{ .Values.customstages.jira.Authorization }}
       Content-Type: application/json
     payload: |-
       {
@@ -763,10 +763,10 @@ webhook:
     description: Custom stage that transitions an Issue in Jira
     method: POST
     ## https://DOMAIN/rest/api/latest/issue/${parameterValues['issue']}/transitions
-    url: https://{{ .Values.customstages.jiraDNS }}/rest/api/latest/issue/${parameterValues['issue']}/transitions
+    url: https://{{ .Values.customstages.jira.jiraDNS }}/rest/api/latest/issue/${parameterValues['issue']}/transitions
     customHeaders:
       ## Provide the JIRA credentails that are in base64 encoded USER:PASSWORD/TOKEN
-      Authorization: {{ .Values.customstages.jiraDNS.Authorization }}
+      Authorization: Basic {{ .Values.customstages.jira.Authorization }}
       Content-Type: application/json
     payload: |-
       {
