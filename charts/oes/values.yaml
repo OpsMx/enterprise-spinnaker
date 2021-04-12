@@ -979,6 +979,7 @@ spinnaker:
       organization: OpsMx
       repository: standard-gitops-repo # Please provide the repo name for GitOps Halyard Directory (Sample Reference: https://github.com/OpsMx/gitops-hal-sample.git).
       dynamicAccRepository: standard-gitops-repo # Please provide the repo name of the GitOps Dynamic Accounts Directory.Can be same as Hal repo or can be different if needed. (Sample Reference: https://github.com/OpsMx/gitops-accounts-sample.git)
+      # Directory in gitops halyard repo under which halyard config exists; change this to / if config is directly available in root directory
       halConfigPath: gitops-haldir/
       username: <GitHub_UserName>
       token: <GitHub_Token>
