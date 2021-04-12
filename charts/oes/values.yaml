@@ -817,14 +817,6 @@ spinnaker:
       ## Enable to override the default cacerts with your own one
       enabled: false
       secretName: custom-cacerts
-      
-    ## DNS and Credentials for JIRA Customstage in spinnaker
-    # # DNS of the jira <DNS>
-    # # Crdentials should be base64 encoded in format of USER:PASSWORD or USER:TOKEN
-    customstages:
-      jira:
-        jiraDNS: <DNS OF JIRA>
-        Authorization: <BASE64 USER:PASSWORD>
 
   # Define which registries and repositories you want available in your
   # Spinnaker pipeline definitions
