@@ -87,9 +87,6 @@ spec:
         secret:
           secretName: {{ template "spinnaker.fullname" .}}-s3
       {{- end }}
-      - name: override-baseurl
-        configMap:
-          name: {{ template "spinnaker.fullname" . }}-halyard-overrideurl
       - configMap:
           defaultMode: 420
           name: {{ template "spinnaker.fullname" . }}-spin-config
@@ -144,8 +141,6 @@ spec:
         - name: kube-config
           mountPath: /opt/kube
         {{- end }}
-        - name: override-baseurl
-          mountPath: /opt/halyard/additionalScripts
         command:
         - bash
         - -xe
