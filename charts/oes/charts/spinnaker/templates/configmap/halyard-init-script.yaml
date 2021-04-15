@@ -47,7 +47,9 @@ data:
     {{- else }}
     #!/bin/bash -x
     rm -rf /tmp/spinnaker/.hal
-    git clone $GIT_CLONE_PARAM /tmp/spinnaker/.hal
+    git clone $GIT_CLONE_PARAM /tmp/spinnaker/test
+    cp -pr /tmp/spinnaker/test/{{ .Values.gitopsHalyard.repo.halConfigPath }} /tmp/spinnaker/.hal
+    rm -rf /tmp/spinnaker/test
     GIT_USER=`echo $GIT_USER | sed 's/ *$//g'`
     GIT_TOKEN=`echo $GIT_TOKEN | sed 's/ *$//g'`
     DYNAMIC_ACCOUNTS_REPO=`echo $DYNAMIC_ACCOUNTS_REPO | sed 's/ *$//g'`
