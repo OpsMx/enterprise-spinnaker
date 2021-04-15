@@ -11,7 +11,7 @@ metadata:
 spec:
   selector:
     app: opsmx-controller-controller1
-  type: ClusterIP
+  type: {{ .Values.forwarder.agent.serviceType }}
   ports:
   - name: agent-grpc
     port: 9001
