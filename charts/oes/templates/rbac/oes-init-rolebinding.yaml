@@ -1,5 +1,4 @@
-{{- if or (eq .Values.installationMode "AP") (eq .Values.installationMode "OES") -}}
-{{- if .Values.autoConfiguration.enabled -}}
+{{- if or (eq .Values.installationMode "OES-AP") (eq .Values.installationMode "AP") (eq .Values.installationMode "OES") -}}
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRoleBinding
 metadata:
@@ -12,5 +11,4 @@ subjects:
 - namespace: {{ .Release.Namespace }}
   kind: ServiceAccount
   name: default
-{{- end -}}
 {{- end -}}
