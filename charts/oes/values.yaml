@@ -27,9 +27,9 @@ rbac:
 installSpinnaker: true
 
 ## Installation mode
-## Available installation modes OES-AP, OES, AP, None
+## Available installation modes OES, AP, None
 ##
-installationMode: OES-AP
+installationMode: OES
 
 ## OES UI & Gate service type
 ##
