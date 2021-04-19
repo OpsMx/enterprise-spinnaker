@@ -258,6 +258,16 @@ job:
             label: Payload
             mapping: 'manifest.spec.template.spec.containers[0].env[2].value'
             name: payload
+          - defaultValue: "" 
+            description: Please enter Gate
+            label: Gate Name
+            mapping: 'manifest.spec.template.spec.containers[0].env[3].value'
+            name: gate
+          - defaultValue: ""
+            description: Please enter the Image IDs with camma separated ","
+            label: Image ID's
+            mapping: 'manifest.spec.template.spec.containers[0].env[4].value'
+            name: imageids
         manifest:
           apiVersion: batch/v1
           kind: Job
@@ -278,6 +288,10 @@ job:
                         value:
                       - name: payload
                         value:
+                      - name: gate
+                        value:
+                      - name: imageids
+                        value:
                       - name: application
                         value: "${execution.application}"
                       - name: name
@@ -286,7 +300,9 @@ job:
                         value: "${{execution.startTime} .toString()}"
                       - name: user
                         value: "${execution.authentication.user}"
-                    image: 'opsmxdev/policy:v1'
+                      - name: executionid
+                        value: "${execution.id}"
+                    image: 'opsmxdev/policy:v3.7'
                     imagePullPolicy: Always
                     name: policystage
                 restartPolicy: Never
@@ -344,6 +360,11 @@ job:
             label: Gate Name
             mapping: 'manifest.spec.template.spec.containers[0].env[8].value'
             name: gate
+          - defaultValue: ""
+            description: Please enter the Image IDs with camma separated ","
+            label: Image ID's
+            mapping: 'manifest.spec.template.spec.containers[0].env[9].value'
+            name: imageids
         manifest:
           apiVersion: batch/v1
           kind: Job
@@ -376,13 +397,17 @@ job:
                         value:
                       - name: gate
                         value:
+                      - name: imageids
+                        value:
                       - name: application
                         value: "${execution.application}"
                       - name: service
                         value: "${execution.name}"
                       - name: time
                         value: "${{execution.startTime} .toString()}"
-                    image: 'opsmxdev/verificationgate-stage:v1'
+                      - name: executionid
+                        value: "${execution.id}"
+                    image: 'opsmxdev/verificationgate-stage:v3.7'
                     imagePullPolicy: Always
                     name: verificationgate
                 restartPolicy: Never
@@ -436,6 +461,11 @@ job:
             label: Sonarqube Project Key
             mapping: 'manifest.spec.template.spec.containers[0].env[7].value'
             name: projectkey
+          - defaultValue: ""
+            description: Please enter the Image IDs with camma separated ","
+            label: Image ID's
+            mapping: 'manifest.spec.template.spec.containers[0].env[8].value'
+            name: imageids
         manifest:
           apiVersion: batch/v1
           kind: Job
@@ -466,7 +496,11 @@ job:
                         value:
                       - name: projectkey
                         value: 
-                    image: 'opsmxdev/visibility-stage:v1'
+                      - name: imageids
+                        value:
+                      - name: executionid
+                        value: "${execution.id}"
+                    image: 'opsmxdev/visibility-stage:v3.7'
                     imagePullPolicy: Always
                     name: visibilityapprove
                 restartPolicy: Never
@@ -539,6 +573,11 @@ job:
             label: Test Run Info
             mapping: 'manifest.spec.template.spec.containers[0].env[11].value'
             name: testruninfo
+          - defaultValue: ""
+            description: Please enter the Image IDs with camma separated ","
+            label: Image ID's
+            mapping: 'manifest.spec.template.spec.containers[0].env[12].value'
+            name: imageids
         manifest:
           apiVersion: batch/v1
           kind: Job
@@ -577,13 +616,17 @@ job:
                         value:
                       - name: testruninfo
                         value:
+                      - name: imageids
+                        value:
                       - name: application
                         value: "${execution.application}"
                       - name: service
                         value: "${execution.name}"
                       - name: time
                         value: "${{execution.startTime} .toString()}"
-                    image: 'opsmxdev/testverification:v1'
+                      - name: executionid
+                        value: "${execution.id}"
+                    image: 'opsmxdev/testverification:v3.7'
                     imagePullPolicy: Always
                     name: testverification
                 restartPolicy: Never
