@@ -2,12 +2,9 @@ apiVersion: v1
 data:
   call_overrides.sh: |
     echo $SPINNAKER_NAMESPACE
-    {{- if .Values.gitopsHalyard.mTLS.enabled }}
-    sh /tmp/autoconfig/config_overrideurl.sh spin-deck-ingress
-    sh /tmp/autoconfig/config_overrideurl.sh spin-gate-ingress
-    {{- else }}
-    sh /tmp/autoconfig/config_overrideurl.sh spin-deck
-    sh /tmp/autoconfig/config_overrideurl.sh spin-gate
+    {{- if .Values.gitopsHalyard.enabled }}
+    sh /tmp/autoconfig/config_overrideurl.sh spin-gate-overrideurl-gitops
+    sh /tmp/autoconfig/config_overrideurl.sh spin-deck-overrideurl-gitops
     {{- end }}
   config_overrideurl.sh: |
     #!/bin/bash -x
@@ -82,66 +79,6 @@ data:
     }
 
     case "$COMPONENT" in
-      oes-ui)
-        cp /config/* /var/www/html/assets/config/
-
-        ENDPOINT_IP=""
-
-        ## Wait for $EXTERNAL_IP_CHECK_DELAY till K8s assins a load Balancer IP to oes-gate
-        check_for_loadBalancer oes-gate
-
-        ## If external IP is not available
-        if [ -z "$ENDPOINT_IP" ]; then
-          ## Fetch the nodePort & nodeport and replace in app-config.js
-          ENDPOINT_IP=$(kubectl get ep kubernetes -n default  -o jsonpath="{.subsets[].addresses[].ip}")
-          PORT=$(kubectl get svc oes-gate -o jsonpath="{.spec.ports[].nodePort}")
-          sed -i "s/OES_GATE_IP/$ENDPOINT_IP/g" /var/www/html/assets/config/app-config.json
-          sed -i "s/8084/$PORT/g" /var/www/html/assets/config/app-config.json
-        else
-          ## Substitute oes-gate external IP in app-config.js
-          sed -i "s/OES_GATE_IP/$ENDPOINT_IP/g" /var/www/html/assets/config/app-config.json
-        fi
-        ;;
-      oes-gate)
-        cp /config/* /opt/spinnaker/config/
-
-        ENDPOINT_IP=""
-
-        ## Wait for $EXTERNAL_IP_CHECK_DELAY till K8s assins a load Balancer IP to oes-gate
-        check_for_loadBalancer oes-ui
-
-        ## If external IP is not available
-        if [ -z "$ENDPOINT_IP" ]; then
-          ## Fetch the nodePort IP and replace in gate.yml
-          ENDPOINT_IP=$(kubectl get ep kubernetes -n default -o jsonpath="{.subsets[].addresses[].ip}")
-          sed -i "s/OES_UI_LOADBALANCER_IP/$ENDPOINT_IP/g" /opt/spinnaker/config/gate.yml
-        else
-          ## Substitute oes-ui external IP in gate.yml
-          sed -i "s/OES_UI_LOADBALANCER_IP/$ENDPOINT_IP/g" /opt/spinnaker/config/gate.yml
-        fi
-        ;;
-      sapor)
-        ## Unused code block in oes-init:v3; sapor is not automatically configured!!!
-        cp /config/* /opt/opsmx/
-
-        ENDPOINT_IP=""
-
-        ## Wait for $EXTERNAL_IP_CHECK_DELAY till K8s assins a load Balancer IP to oes-gate
-        check_for_spinnakerGate_loadBalancer spin-deck $SPINNAKER_SETUP_DELAY
-        PORT=9000
-
-        ## If external IP is not available
-        if [ -z "$ENDPOINT_IP" ]; then
-          ## Fetch the nodePort IP and replace in spinnaker.yaml
-          ENDPOINT_IP=$(kubectl get ep kubernetes -n default -o jsonpath="{.subsets[].addresses[].ip}")
-          PORT=$(kubectl get svc spin-gate -o jsonpath="{.spec.ports[].nodePort}")
-          sed -i "s/SPIN_GATE_LOADBALANCER_IP_PORT/$ENDPOINT_IP:$PORT/g" /opt/opsmx/application.yml
-          #sed -i "s/spin-gate:8084/$ENDPOINT_IP:$PORT/g" /opt/opsmx/spinnaker.yaml
-        else
-          ## Substitute spin-deck external IP in spinnaker.yaml
-          sed -i "s/SPIN_GATE_LOADBALANCER_IP_PORT/$ENDPOINT_IP:$PORT/g" /opt/opsmx/application.yml
-        fi
-        ;;
       spin-gate)
         ENDPOINT_IP=""
         PORT=8084
@@ -224,13 +161,13 @@ data:
           $HAL_COMMAND config security ui edit --no-validate --override-base-url http://$ENDPOINT_IP:$PORT
         fi
         ;;
-      spin-gate-ingress)
+      spin-gate-overrideurl-gitops)
         ## Configured ingress host url as override url
           echo "Substituting gate url"
           sed -i 's,OVERRIDE_API_URL,{{ tpl .Values.global.spinGate.host . }},g' /tmp/spinnaker/.hal/config
         ;;
 
-      spin-deck-ingress)
+      spin-deck-overrideurl-gitops)
         ## Configured ingress host url as override url
           echo "Substituting deck url"
           sed -i 's,OVERRIDE_DECK_URL,{{ tpl .Values.global.spinDeck.host . }},g' /tmp/spinnaker/.hal/config
