@@ -970,9 +970,9 @@ spinnaker:
 
   # Initialize gitOps style Halyard
   gitopsHalyard:
-    enabled: true
+    enabled: false
     # Change this to environment which you want to choose when multiple deployment profiles are specified in halyard config repo; uncomment and change this
-    environment: default
+    #environment: default
     mTLS:
       enabled: false   # Enable mTLS for Spinnaker Services and SSL for Deck and Gate
     #repo-type: git # git, S3, vault, only git support at this point
