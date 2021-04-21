@@ -265,7 +265,7 @@ job:
             name: gate
           - defaultValue: ""
             description: Please enter the Image IDs with camma separated ","
-            label: Image ID's
+            label: Image IDs
             mapping: 'manifest.spec.template.spec.containers[0].env[4].value'
             name: imageids
         manifest:
@@ -362,7 +362,7 @@ job:
             name: gate
           - defaultValue: ""
             description: Please enter the Image IDs with camma separated ","
-            label: Image ID's
+            label: Image IDs
             mapping: 'manifest.spec.template.spec.containers[0].env[9].value'
             name: imageids
         manifest:
@@ -463,7 +463,7 @@ job:
             name: projectkey
           - defaultValue: ""
             description: Please enter the Image IDs with camma separated ","
-            label: Image ID's
+            label: Image IDs
             mapping: 'manifest.spec.template.spec.containers[0].env[8].value'
             name: imageids
         manifest:
@@ -575,7 +575,7 @@ job:
             name: testruninfo
           - defaultValue: ""
             description: Please enter the Image IDs with camma separated ","
-            label: Image ID's
+            label: Image IDs
             mapping: 'manifest.spec.template.spec.containers[0].env[12].value'
             name: imageids
         manifest:
