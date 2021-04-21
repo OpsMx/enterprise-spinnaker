@@ -272,7 +272,7 @@ job:
           apiVersion: batch/v1
           kind: Job
           metadata:
-            name: policystage
+            generateName: policystage-
             namespace: default
           spec:
             backoffLimit: 0
@@ -369,7 +369,7 @@ job:
           apiVersion: batch/v1
           kind: Job
           metadata:
-            name: verificationgate
+            generateName: verificationgate-
             namespace: default
           spec:
             backoffLimit: 0
@@ -470,7 +470,7 @@ job:
           apiVersion: batch/v1
           kind: Job
           metadata:
-            name: visibilityapprove
+            generateName: visibilityapprove-
             namespace: default 
           spec:
             backoffLimit: 0
@@ -582,7 +582,7 @@ job:
           apiVersion: batch/v1
           kind: Job
           metadata:
-            name: testverification
+            generateName: testverification-
             namespace: default
           spec:
             backoffLimit: 0
