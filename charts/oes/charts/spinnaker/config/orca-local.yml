@@ -428,7 +428,7 @@ job:
             name: gateurl
           - defaultValue: ""
             description: Please enter the JIRA ID
-            label: Jira Id 
+            label: Jira ID
             mapping: 'manifest.spec.template.spec.containers[0].env[1].value'
             name: jiraid
           - defaultValue: ""
@@ -438,7 +438,7 @@ job:
             name: gitrepo
           - defaultValue: ""
             description: Please enter the Git Commit Id 
-            label: Git Commit Id 
+            label: Git Commit ID
             mapping: 'manifest.spec.template.spec.containers[0].env[3].value'
             name: gitcommitid
           - defaultValue: ""
@@ -453,7 +453,7 @@ job:
             name: jenkinsbuild
           - defaultValue: ""
             description: Please enter the Autopilot Canary
-            label: Autopilot Canary Id
+            label: Autopilot Canary ID
             mapping: 'manifest.spec.template.spec.containers[0].env[6].value'
             name: canaryid
           - defaultValue: ""
@@ -466,6 +466,11 @@ job:
             label: Image IDs
             mapping: 'manifest.spec.template.spec.containers[0].env[8].value'
             name: imageids
+          - defaultValue: ""
+            description: Please enter the App Scan ID with camma separated ","
+            label: AppScan ProjectID
+            mapping: 'manifest.spec.template.spec.containers[0].env[9].value'
+            name: appscanid
         manifest:
           apiVersion: batch/v1
           kind: Job
@@ -497,6 +502,8 @@ job:
                       - name: projectkey
                         value: 
                       - name: imageids
+                        value:
+                      - name: appscanid
                         value:
                       - name: executionid
                         value: "${execution.id}"
@@ -640,7 +647,7 @@ webhook:
     url: https://<DOMAIN>/rest/api/latest/issue/${parameterValues['issue']}
     customHeaders:
       ## Provide the JIRA credentails that are in base64 encoded USER:PASSWORD/TOKEN
-      Authorization: Basic BASE64-USER:PASSWORD/TOKEN
+      Authorization: Basic base64{<<USER>>:<<Jira-token>>}
       Content-Type: application/json
     failPipeline: true
     progressJsonPath: "fields.status.name"
@@ -689,7 +696,7 @@ webhook:
     url: https://<DOMAIN>/rest/api/2/issue/
     customHeaders:
      ## Provide the JIRA credentails that are in base64 encoded USER:PASSWORD/TOKEN
-     Authorization: Basic BASE64-USER:PASSWORD/TOKEN
+     Authorization: Basic base64{<<USER>>:<<Jira-token>>}
      Content-Type: application/json
     payload: |-
       {
@@ -745,7 +752,7 @@ webhook:
     url: https://<DOMAIN>/rest/api/latest/issue/${parameterValues['issue']}/comment
     customHeaders:
       ## Provide the JIRA credentails that are in base64 encoded USER:PASSWORD/TOKEN
-      Authorization: Basic BASE64-USER:PASSWORD/TOKEN
+      Authorization: Basic base64{<<USER>>:<<Jira-token>>}
       Content-Type: application/json
     payload: |-
       {
@@ -768,7 +775,7 @@ webhook:
     url: https://<DOMAIN>/rest/api/latest/issue/${parameterValues['issue']}
     customHeaders:
       ## Provide the JIRA credentails that are in base64 encoded USER:PASSWORD/TOKEN
-      Authorization: Basic BASE64-USER:PASSWORD/TOKEN
+      Authorization: Basic base64{<<USER>>:<<Jira-token>>}
       Content-Type: application/json
     payload: |-
       {
@@ -805,7 +812,7 @@ webhook:
     url: https://<DOMAIN>/rest/api/latest/issue/${parameterValues['issue']}/transitions
     customHeaders:
       ## Provide the JIRA credentails that are in base64 encoded USER:PASSWORD/TOKEN
-      Authorization: Basic BASE64-USER:PASSWORD/TOKEN
+      Authorization: Basic base64{<<USER>>:<<Jira-token>>}
       Content-Type: application/json
     payload: |-
       {
