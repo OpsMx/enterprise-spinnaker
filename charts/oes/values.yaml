@@ -1005,8 +1005,12 @@ spinnaker:
 
 
   ## Auth mechanism and credentials to be used by spin-cli for creating the sample pipelines
-  ## Here basic ldap auth is used by default
+  ## Here basic ldap auth is used by default; everything under spinCli will be lifted and pasted in ~/.spin/config
   spinCli:
-    basic:
-      username: admin
-      password: opsmxadmin123
+    gate:
+      endpoint: http://spin-gate:8084
+    auth:
+      enabled: true
+      basic:
+        username: admin
+        password: opsmxadmin123

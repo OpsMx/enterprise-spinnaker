@@ -87,10 +87,9 @@ spec:
         secret:
           secretName: {{ template "spinnaker.fullname" .}}-s3
       {{- end }}
-      - configMap:
-          defaultMode: 420
-          name: {{ template "spinnaker.fullname" . }}-spin-config
-        name: config
+      - secret:
+          secretName: {{ template "spinnaker.fullname" . }}-spin-config
+        name: spin-config
       - configMap:
           defaultMode: 420
           name: {{ template "spinnaker.fullname" . }}-spin-pipeline-import
@@ -162,7 +161,7 @@ spec:
         - mountPath: /tmp/config
           name: spin-pipeline-import
         - mountPath: /tmp/config/spin
-          name: config
+          name: spin-config
            
 
 
