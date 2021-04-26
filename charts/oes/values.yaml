@@ -29,7 +29,7 @@ installSpinnaker: true
 ## Installation mode
 ## Available installation modes OES-AP, OES, AP, None
 ##
-installationMode: None
+installationMode: OES-AP
 
 ## OES UI & Gate service type
 ##
