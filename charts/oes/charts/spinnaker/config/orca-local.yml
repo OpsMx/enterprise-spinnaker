@@ -243,7 +243,7 @@ job:
         waitForCompletion: true
         application: spin
         parameters:
-          - defaultValue: "http://oes-sapor:8085"
+          - defaultValue: "http://oes-sapor.<NAMESPACE OF OES>:8085"
             description: Please enter the POLICY Proxy Hostname and Port
             label: Policy Proxy
             mapping: 'manifest.spec.template.spec.containers[0].env[0].value'
@@ -471,6 +471,11 @@ job:
             label: AppScan ProjectID
             mapping: 'manifest.spec.template.spec.containers[0].env[9].value'
             name: appscanid
+          - defaultValue: ""
+            description: Please enter the Aqua Wave Image IDs with camma separated ","
+            label: Aqua Wave Image IDs
+            mapping: 'manifest.spec.template.spec.containers[0].env[10].value'
+            name: aquawave
         manifest:
           apiVersion: batch/v1
           kind: Job
@@ -504,6 +509,8 @@ job:
                       - name: imageids
                         value:
                       - name: appscanid
+                        value:
+                      - name: aquawave
                         value:
                       - name: executionid
                         value: "${execution.id}"
