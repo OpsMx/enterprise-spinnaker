@@ -7,8 +7,7 @@
 
 ## Name of the secret for pulling image from docker registry.
 ## Change it only if you want to create a secret with
-## different name.
-## user opxm11 for internal use
+## different name before installing oes chart and use it.
 imagePullSecret: opsmxdev-secret
 
 ## Quay container image registry credentials to create imagePullSecret
@@ -24,6 +23,7 @@ rbac:
 
 ## Option to skip installation of OpsMx Spinnaker
 ## Setting this to true, will ensure custom ubi8 images of Spinnaker
+## installSpinnaker and installRedis flags are mutually exclusive
 installSpinnaker: true
 
 ## Installation mode
@@ -31,7 +31,7 @@ installSpinnaker: true
 ##
 installationMode: OES-AP
 
-## OES UI & Gate service type
+## OES UI, OES Gate, Spinnaker Deck and Spinnaker Gate service type
 ##
 k8sServiceType: ClusterIP
 
@@ -114,6 +114,7 @@ oesGate:
 ## Install a seperate Redis for OES if installSpinnaker is set to false
 ## If Spinnaker is being installed, redis installed by spinnaker chart can
 ## be re-used
+## installSpinnaker and installRedis flags are mutually exclusive
 ##
 installRedis: false
 
@@ -328,7 +329,7 @@ gate:
     #OAUTH2 Authentication for GitHub
     #####################################################
     oauth2:
-      enabled: true
+      enabled: false
       client:
         clientId: #CLIENT_ID
         clientSecret: #CLIENT_SECRET_ID
@@ -649,7 +650,7 @@ openldap:
       member: cn=ITManager,dc=example,dc=org
 
 
-## ldap configuration used in oes-gate & oes-platform for authentication
+## ldap configuration used in oes-gate, oes-platform and spinnaker gate for authentication
 ## and authorization
 ldap:
   enabled: true
