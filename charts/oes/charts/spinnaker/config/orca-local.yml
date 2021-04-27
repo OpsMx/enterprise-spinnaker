@@ -264,7 +264,7 @@ job:
             mapping: 'manifest.spec.template.spec.containers[0].env[3].value'
             name: gate
           - defaultValue: ""
-            description: Please enter the Image IDs with camma separated ","
+            description: Please enter the Image IDs
             label: Image IDs
             mapping: 'manifest.spec.template.spec.containers[0].env[4].value'
             name: imageids
@@ -361,7 +361,7 @@ job:
             mapping: 'manifest.spec.template.spec.containers[0].env[8].value'
             name: gate
           - defaultValue: ""
-            description: Please enter the Image IDs with camma separated ","
+            description: Please enter the Image IDs
             label: Image IDs
             mapping: 'manifest.spec.template.spec.containers[0].env[9].value'
             name: imageids
@@ -462,20 +462,35 @@ job:
             mapping: 'manifest.spec.template.spec.containers[0].env[7].value'
             name: projectkey
           - defaultValue: ""
-            description: Please enter the Image IDs with camma separated ","
+            description: Please enter the Image IDs
             label: Image IDs
             mapping: 'manifest.spec.template.spec.containers[0].env[8].value'
             name: imageids
           - defaultValue: ""
-            description: Please enter the App Scan ID with camma separated ","
+            description: Please enter the App Scan ID
             label: AppScan ProjectID
             mapping: 'manifest.spec.template.spec.containers[0].env[9].value'
             name: appscanid
           - defaultValue: ""
-            description: Please enter the Aqua Wave Image IDs with camma separated ","
+            description: Please enter the Aqua Wave Image IDs
             label: Aqua Wave Image IDs
             mapping: 'manifest.spec.template.spec.containers[0].env[10].value'
             name: aquawave
+          - defaultValue: ""
+            description: Please enter the Connector Name
+            label: Connector Name
+            mapping: 'manifest.spec.template.spec.containers[0].env[11].value'
+            name: connector
+          - defaultValue: ""
+            description: Please enter the Header
+            label: Header 
+            mapping: 'manifest.spec.template.spec.containers[0].env[12].value'
+            name: header
+          - defaultValue: ""
+            description: Please enter the Connector Data as a payload
+            label: Data
+            mapping: 'manifest.spec.template.spec.containers[0].env[13].value'
+            name: connectordata
         manifest:
           apiVersion: batch/v1
           kind: Job
@@ -511,6 +526,12 @@ job:
                       - name: appscanid
                         value:
                       - name: aquawave
+                        value:
+                      - name: connector
+                        value:
+                      - name: header
+                        value:
+                      - name: connectordata
                         value:
                       - name: executionid
                         value: "${execution.id}"
@@ -588,7 +609,7 @@ job:
             mapping: 'manifest.spec.template.spec.containers[0].env[11].value'
             name: testruninfo
           - defaultValue: ""
-            description: Please enter the Image IDs with camma separated ","
+            description: Please enter the Image IDs
             label: Image IDs
             mapping: 'manifest.spec.template.spec.containers[0].env[12].value'
             name: imageids
