@@ -108,7 +108,7 @@ data:
       rm -rf $3
       unset_debug $debug
       echo "git from github.com $repo/$project over https"
-      git clone https://$git_secret_token:x-oauth-basic@github.com/$repo/$project
+      git clone https://$git_friendly_username:$git_secret_token@github.com/$repo/$project
       set_debug $debug
       #cd -
     }
