@@ -37,7 +37,7 @@ datasources:
 kubernetes:
   agent:
     enabled: {{ .Values.forwarder.enabled }}
-    serverHostName: {{ .Values.forwarder.externalName }}
+    serverInternalHostName: opsmx-controller-controller1
     serverPort: 9003
     caCertfile: /opt/opsmx/controller/ca.crt
     certFile: /opt/opsmx/controller/cert/tls.crt
