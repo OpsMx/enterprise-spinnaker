@@ -37,6 +37,10 @@ saml:
 {{ toYaml .Values.gate.config.saml | indent 2 }}
 {{- end }}
 {{- if .Values.gate.config.oauth2.enabled }}
+security:
+  basic:
+    enabled: true
+  user: {}
 oauth2:
 {{ toYaml .Values.gate.config.oauth2 | indent 2 }}
 {{- end }}
