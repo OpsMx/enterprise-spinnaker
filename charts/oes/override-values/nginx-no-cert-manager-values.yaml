@@ -29,7 +29,7 @@ global:
 
   # Spinnaker Gate URL configuration; url overwhich spinnaker gate will be accessed
   spinGate:
-    protocol: https
+    protocol: http
     host: gate.spinnaker.example.org
     #port: 8084
 
