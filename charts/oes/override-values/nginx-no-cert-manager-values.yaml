@@ -31,13 +31,12 @@ global:
   spinGate:
     protocol: http
     host: gate.spinnaker.example.org
-    #port: 8084
 
     ingress:
       tls: null
 
 
-## OES-UI url configuration
+## OES-UI url configuration; url overwhich oes ui will be accessed
 oesUI:
   protocol: http
   host: oes.domain.com
@@ -46,7 +45,7 @@ oesUI:
     tls: null
 
 
-## OES-Gate url configuration
+## OES-Gate url configuration; url overwhich oes gate will be accessed
 oesGate:
   protocol: http
   host: oes-api.domain.com
