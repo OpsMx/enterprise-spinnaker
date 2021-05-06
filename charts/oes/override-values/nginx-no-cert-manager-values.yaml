@@ -25,9 +25,6 @@ global:
     host: spinnaker.example.org
 
     ingress:
-      annotations:
-        kubernetes.io/ingress.class: nginx
-
       tls: null
 
   # Spinnaker Gate URL configuration; url overwhich spinnaker gate will be accessed
@@ -37,9 +34,6 @@ global:
     #port: 8084
 
     ingress:
-      annotations:
-        kubernetes.io/ingress.class: nginx
-
       tls: null
 
 
@@ -49,9 +43,6 @@ oesUI:
   host: oes.domain.com
 
   ingress:
-    annotations:
-      kubernetes.io/ingress.class: nginx
-
     tls: null
 
 
@@ -61,7 +52,4 @@ oesGate:
   host: oes-api.domain.com
 
   ingress:
-    annotations:
-      kubernetes.io/ingress.class: nginx
-
     tls: null
