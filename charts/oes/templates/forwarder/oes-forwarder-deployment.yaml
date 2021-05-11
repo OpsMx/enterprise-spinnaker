@@ -65,7 +65,7 @@ spec:
           secretName: ca-secret
       - name: jwt-secret
         secret:
-          secretName: jwt-secrets
+          secretName: jwt-secret
       - name: config
         configMap:
           name: opsmx-controller-controller1

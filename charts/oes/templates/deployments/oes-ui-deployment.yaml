@@ -43,20 +43,20 @@ spec:
       - image: {{ template "ui.image" . }}
         name: oes-ui
         ports:
-        - containerPort: 80
+        - containerPort: 8080
           protocol: TCP
         volumeMounts:
         - name: config-dir
           mountPath: /var/www/html/assets/config
         readinessProbe:
           tcpSocket:
-            port: 80
+            port: 8080
           initialDelaySeconds: 15
           periodSeconds: 5
         livenessProbe:
           httpGet:
             path: /health
-            port: 80
+            port: 8080
           initialDelaySeconds: 15
           periodSeconds: 5
       imagePullSecrets:

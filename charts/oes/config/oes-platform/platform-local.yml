@@ -3,6 +3,9 @@ spring:
     url: {{ .Values.db.url }}/platformdb
     username: {{ .Values.db.username }}
     password: {{ .Values.db.password }}
+datasource:
+  secretManagement:
+    source: {{ .Values.secretStore }}
 rbacEnabled: {{ .Values.rbac.create }}
 supportedFeatures:
 {{ toYaml .Values.platform.config.supportedFeatures | indent 2 }}
