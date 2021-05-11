@@ -13,9 +13,9 @@ imagePullSecret: opsmxdev-secret
 ## Quay container image registry credentials to create imagePullSecret
 ##
 imageCredentials:
-  registry: https://quay.io/
-  username: quayID  # Quay username
-  password: quayPassword # Quay password
+  registry: https://docker.io/
+  username: username
+  password: password
   email: info@opsmx.com   # email corresponding to quay registry ID
 
 rbac:
@@ -26,10 +26,21 @@ rbac:
 ## installSpinnaker and installRedis flags are mutually exclusive
 installSpinnaker: true
 
+####################################################
+## Redis configuration
+####################################################
+## Install a seperate Redis for OES if installSpinnaker is set to false
+## If Spinnaker is being installed, redis installed by spinnaker chart can
+## be re-used
+## installSpinnaker and installRedis flags are mutually exclusive
+##
+installRedis: false
+
 ## Installation mode
 ## Available installation modes OES-AP, OES, AP, None
 ##
 installationMode: OES-AP
+secretStore: db # Valid values: db, Vault . Used for storing account and integration secrets 
 
 ## OES UI, OES Gate, Spinnaker Deck and Spinnaker Gate service type
 ##
@@ -46,6 +57,8 @@ global:
 
   certManager:
     installed: true
+  self-signed-certs:
+    enabled: false
 
   ## Set to true to expose oes-ui, oes-gate services over ingress
   ##
@@ -54,7 +67,7 @@ global:
   # Spinnaker Deck URL configuration; url overwhich spinnaker deck will be accessed
   spinDeck:
     protocol: https
-    host: spinnaker.example.org
+    host: spin.example.ops.com
     #port: 9000
 
     ingress:
@@ -67,7 +80,7 @@ global:
   # Spinnaker Gate URL configuration; url overwhich spinnaker gate will be accessed
   spinGate:
     protocol: https
-    host: gate.spinnaker.example.org
+    host: spin-gate.example.ops.com
     #port: 8084
 
     ingress:
@@ -82,7 +95,7 @@ global:
 ## OES-UI url configuration
 oesUI:
   protocol: https
-  host: oes.domain.com
+  host: oes.example.ops.com
   # Use below port when hostname above is an external IP instead of a hostname
   #port: 80
 
@@ -97,7 +110,7 @@ oesUI:
 ## OES-Gate url configuration
 oesGate:
   protocol: https
-  host: oes-api.domain.com
+  host: oes-gate.example.ops.com
   # Use below port when hostname above is an external IP instead of a hostname
   #port: 8084
 
@@ -107,16 +120,6 @@ oesGate:
 
     tls:
       secretName: oes-gate-authtls
-
-####################################################
-## Redis configuration
-####################################################
-## Install a seperate Redis for OES if installSpinnaker is set to false
-## If Spinnaker is being installed, redis installed by spinnaker chart can
-## be re-used
-## installSpinnaker and installRedis flags are mutually exclusive
-##
-installRedis: false
 
 ###############################################################################
 ## Details of redis-master image for OES
@@ -180,9 +183,9 @@ autopilot:
   ## Image specific details
   ##
   image:
-    registry: quay.io/opsmxpublic
-    repository: ubi8-oes-autopilot
-    tag: v3.6.2
+    registry: opsmx11
+    repository: oes-autopilot
+    tag: v3.7-rc3
     pullPolicy: IfNotPresent
 
 
@@ -228,9 +231,9 @@ dashboard:
   ## Image specific details
   ##
   image:
-    registry: quay.io/opsmxpublic
-    repository: ubi8-oes-dashboard
-    tag: v3.6.2
+    registry: opsmx11
+    repository: oes-dashboard
+    tag: 9067c13-1449
     pullPolicy: IfNotPresent
 
   resources: {}
@@ -258,15 +261,16 @@ dashboard:
 ## Values of Forwarder/Controller
 ##
 forwarder:
-  enabled: false
+  enabled: true
   agent:
-    image: quay.io/opsmxpublic/forwarder-agent:v20210118T161303
+    image: quay.io/opsmxpublic/forwarder-agent:v20210426T105924
     serviceType: LoadBalancer
   # Value is also used in sapor configuration for kubernetes.agent.serverHostName
-  externalName: controller-agent.testing.opsmx.com
+    host: opsmx-controller-controller1
+  externalName: controller.exampleopsmx.net
   image:
     repository: quay.io/opsmxpublic/forwarder-controller
-    tag: v1.0.0
+    tag: v20210426T105924
     pullPolicy: IfNotPresent
 
 ###############################################################################
@@ -277,9 +281,9 @@ gate:
   ## Image specific details
   ##
   image:
-    registry: quay.io/opsmxpublic
-    repository: ubi8-oes-gate
-    tag: v3.6.2
+    registry: opsmx11
+    repository: oes-gate
+    tag: 84338d67-4
     pullPolicy: IfNotPresent
 
   resources: {}
@@ -353,9 +357,9 @@ platform:
   ## Image specific details
   ##
   image:
-    registry: quay.io/opsmxpublic
-    repository: ubi8-oes-platform
-    tag: v3.6.2
+    registry: opsmx11
+    repository: oes-platform
+    tag: 5c86963-1474
     pullPolicy: IfNotPresent
 
   resources: {}
@@ -407,9 +411,9 @@ sapor:
   ## Image specific details
   ##
   image:
-    registry: quay.io/opsmxpublic
-    repository: ubi8-oes-sapor
-    tag: v3.6.2
+    registry: opsmx11
+    repository: oes-sapor
+    tag: 306ba54-4
     pullPolicy: IfNotPresent
 
   resources: {}
@@ -486,9 +490,9 @@ ui:
   ## Image specific details
   ##
   image:
-    registry: quay.io/opsmxpublic
-    repository: ubi8-oes-ui
-    tag: v3.6.2
+    registry: opsmx11
+    repository: oes-ui
+    tag: b0e8375d-23
     pullPolicy: IfNotPresent
 
   config:
@@ -505,9 +509,9 @@ visibility:
   ## Image specific details
   ##
   image:
-    registry: quay.io/opsmxpublic
-    repository: ubi8-oes-visibility
-    tag: v3.6.2
+    registry: opsmx11
+    repository: oes-visibility
+    tag: 08dab63-1473
     pullPolicy: IfNotPresent
 
   resources: {}
@@ -997,6 +1001,10 @@ spinnaker:
       host: spingate-x509.domain.com
     pipelinePromotion:
       enabled: false
+      organization: opsmx
+      repository: <any empty repo
+      username: <GitHub_UserName>
+      token: <GitHub_Token>
       ## Namespace in which pipeline promotion job need to run
       # TODO: Implementation pending; currently default namespace is hardcoded
       executionNamespace: default
@@ -1009,7 +1017,7 @@ spinnaker:
   ## Here basic ldap auth is used by default; everything under spinCli will be lifted and pasted in ~/.spin/config
   spinCli:
     gate:
-      endpoint: http://spin-gate:8084
+      endpoint: https://spin-gate.example.opsmx.com # Should same as the spin-gate URL
     auth:
       enabled: true
       basic:
