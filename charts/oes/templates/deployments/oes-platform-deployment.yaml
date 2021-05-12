@@ -52,10 +52,20 @@ spec:
         - mountPath: /opsmx/conf/platform-local.yml
           name: platform-config-volume
           subPath: platform-local.yml
+        - mountPath: /opsmx/conf/bootstrap.yml
+          name: bootstrap-config-volume
+          subPath: bootstrap.yml
       imagePullSecrets:
       - name: {{ .Values.imagePullSecret }}
       volumes:
       - name: platform-config-volume
         configMap:
           name: oes-platform-config
+      - configMap:
+          defaultMode: 420
+          items:
+          - key: bootstrap.yml
+            path: bootstrap.yml
+          name: bootstrap
+        name: bootstrap-config-volume
 {{- end -}}

@@ -26,6 +26,13 @@ spec:
         - name: autopilot-config-volume
           configMap:
             name: oes-autopilot-config
+        - configMap:
+            defaultMode: 420
+            items:
+            - key: bootstrap.yml
+              path: bootstrap.yml
+            name: bootstrap
+          name: bootstrap-config-volume
       imagePullSecrets:
         - name: {{ .Values.imagePullSecret}}
       initContainers:
@@ -49,6 +56,9 @@ spec:
           - name: autopilot-config-volume
             mountPath: /opsmx/conf/autopilot.properties
             subPath: autopilot.properties
+          - mountPath: /opsmx/conf/bootstrap.yml
+            name: bootstrap-config-volume
+            subPath: bootstrap.yml
           readinessProbe:
             tcpSocket:
               port: 8090

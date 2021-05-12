@@ -39,6 +39,9 @@ spec:
         - mountPath: /opsmx/conf/visibility-local.yml
           name: visibility-config
           subPath: visibility-local.yml
+        - mountPath: /opsmx/conf/bootstrap.yml
+          name: bootstrap-config-volume
+          subPath: bootstrap.yml
         resources:
 {{ toYaml .Values.visibility.resources | indent 12 }}
         readinessProbe:
@@ -58,4 +61,11 @@ spec:
       - name: visibility-config
         configMap:
           name: oes-visibility-config
+      - configMap:
+          defaultMode: 420
+          items:
+          - key: bootstrap.yml
+            path: bootstrap.yml
+          name: bootstrap
+        name: bootstrap-config-volume
 {{- end -}}
