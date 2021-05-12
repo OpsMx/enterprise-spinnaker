@@ -1000,7 +1000,7 @@ spinnaker:
       enabled: false
       host: spingate-x509.domain.com
     pipelinePromotion:
-      enabled: false
+      enabled: true
       organization: opsmx
       repository: <any empty repo
       username: <GitHub_UserName>
