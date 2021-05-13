@@ -47,7 +47,7 @@ spec:
         - name: sapor-config-volume
           mountPath: /opt/opsmx/application.yml
           subPath: application.yml
-        - mountPath: /opsmx/conf/bootstrap.yml
+        - mountPath: /opt/opsmx/bootstrap.yml
           name: bootstrap-config-volume
           subPath: bootstrap.yml
         {{- if .Values.sapor.config.caCerts.override }}

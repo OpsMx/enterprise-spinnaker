@@ -16,6 +16,6 @@ data:
     controlHostname: opsmx-controller-controller1
     #agentAdvertisePort: "443"
     serviceAuth:
-      currentKeyName: key1
+      currentKeyName: "public.pem"
 {{- end -}}
 {{- end -}}
