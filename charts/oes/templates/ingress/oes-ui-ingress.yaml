@@ -23,7 +23,7 @@ spec:
           serviceName: oes-ui
           servicePort: 80
         path: /
-{{- if .Values.oesUI.ingress.tls }}
+{{- if .Values.global.ssl.enabled }}
   tls:
   - hosts:
     - {{ .Values.oesUI.host }}

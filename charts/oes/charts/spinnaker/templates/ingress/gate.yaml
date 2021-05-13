@@ -32,7 +32,7 @@ spec:
         backend:
           serviceName: spin-gate
           servicePort: 8084
-{{- if .Values.global.spinGate.ingress.tls }}
+{{- if .Values.global.ssl.enabled }}
   tls:
   - hosts:
     - {{ .Values.global.spinGate.host }}

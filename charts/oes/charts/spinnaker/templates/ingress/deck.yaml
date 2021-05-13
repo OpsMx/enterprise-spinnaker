@@ -32,7 +32,7 @@ spec:
         backend:
           serviceName: spin-deck
           servicePort: 9000
-{{- if .Values.global.spinDeck.ingress.tls }}
+{{- if .Values.global.ssl.enabled }}
   tls:
   - hosts:
     - {{ .Values.global.spinDeck.host }}
