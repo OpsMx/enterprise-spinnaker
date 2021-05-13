@@ -23,7 +23,7 @@ spec:
           serviceName: oes-gate
           servicePort: 8084
         path: /
-{{- if .Values.oesGate.ingress.tls }}
+{{- if .Values.global.ssl.enabled }}
   tls:
   - hosts:
     - {{ .Values.oesGate.host }}

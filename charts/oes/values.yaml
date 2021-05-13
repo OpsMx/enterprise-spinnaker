@@ -47,6 +47,12 @@ global:
   certManager:
     installed: true
 
+  # Below flag is used to setup tls termination at ingress
+  # when this flag is set to false; spinnaker and oes endpoints
+  # will be accessible over http instead of https
+  ssl:
+    enabled: true
+
   ## Set to true to expose oes-ui, oes-gate services over ingress
   ##
   createIngress: true
