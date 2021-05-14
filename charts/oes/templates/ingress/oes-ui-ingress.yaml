@@ -21,7 +21,7 @@ spec:
       paths:
       - backend:
           serviceName: oes-ui
-          servicePort: 80
+          servicePort: 8080
         path: /
 {{- if .Values.oesUI.ingress.tls }}
   tls:
