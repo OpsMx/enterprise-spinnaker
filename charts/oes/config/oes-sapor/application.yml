@@ -1,3 +1,4 @@
+secretManagement.source.config: {{ .Values.secretStore }}
 oes:
   rbac:
     enabled: true

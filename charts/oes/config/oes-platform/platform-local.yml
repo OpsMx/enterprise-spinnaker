@@ -3,6 +3,14 @@ spring:
     url: {{ .Values.db.url }}/platformdb
     username: {{ .Values.db.username }}
     password: {{ .Values.db.password }}
+
+#datasource.url: {{ .Values.db.url }}/visibilitydb
+#postgres.password: {{ .Values.db.password }}
+#postgres.username: {{ .Values.db.username }}
+oes.sapor.url: http://oes-sapor:8085
+oes.autopilot.url: http://oes-autopilot:8090
+oes.visibility.url: http://oes-visibility:8096
+
 datasource:
   secretManagement:
     source: {{ .Values.secretStore }}

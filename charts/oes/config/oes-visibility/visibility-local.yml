@@ -1,8 +1,15 @@
-spring:
-  datasource:
-    url={{ .Values.db.url }}/visibilitydb
-    username={{ .Values.db.username }}
-    password={{ .Values.db.password }}
+#spring:
+#  datasource:
+#    url={{ .Values.db.url }}/visibilitydb
+#    username={{ .Values.db.username }}
+#    password={{ .Values.db.password }}
+
+datasource.url: {{ .Values.db.url }}/visibilitydb
+postgres.password: {{ .Values.db.password }}
+postgres.username: {{ .Values.db.username }}
+
+autopilot.api.url: http://oes-autopilot:8090
+platform.service.url: http://oes-platform:8095
 
 visiblity:
    connectors:
