@@ -1,5 +1,6 @@
-#spring:
-#  datasource:
+spring:
+  datasource:
+{{- if (eq .Values.secretStore "db") }}
 #    url={{ .Values.db.url }}/visibilitydb
 #    username={{ .Values.db.username }}
 #    password={{ .Values.db.password }}
@@ -7,6 +8,7 @@
 datasource.url: {{ .Values.db.url }}/visibilitydb
 postgres.password: {{ .Values.db.password }}
 postgres.username: {{ .Values.db.username }}
+{{- end }}
 
 autopilot.api.url: http://oes-autopilot:8090
 platform.service.url: http://oes-platform:8095
@@ -15,13 +17,13 @@ visiblity:
    connectors:
       configured: {{ .Values.visibility.config.configuredConnectors }}
 
-logging:
-  level:
-    io:
-      swagger:
-        models:
-          parameters:
-            AbstractSerializableParameter: {{ .Values.visibility.config.logLevel }}
+#logging:
+# level:
+#   io:
+#     swagger:
+#       models:
+#         parameters:
+#           AbstractSerializableParameter: {{ .Values.visibility.config.logLevel }}
             
 gate:
 {{- if .Values.oesGate.port }}

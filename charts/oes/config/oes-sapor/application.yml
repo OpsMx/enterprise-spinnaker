@@ -1,3 +1,11 @@
+spring:
+  datasource:
+{{- if (eq .Values.secretStore "db") }}
+    url: {{ .Values.db.url }}/oesdb
+    username: {{ .Values.db.username }}
+    password: {{ .Values.db.password }}
+{{- end }}
+
 secretManagement.source.config: {{ .Values.secretStore }}
 oes:
   rbac:
@@ -7,11 +15,6 @@ oes:
 spinnaker:
   restart:
     endPoint: /webhooks/webhook/restartSpinnaker
-spring:
-  datasource:
-    url: {{ .Values.db.url }}/oesdb
-    username: {{ .Values.db.username }}
-    password: {{ .Values.db.password }}
 datasources:
   platform: {{ .Values.sapor.config.datasources.platform }}
   
