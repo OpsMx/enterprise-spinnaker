@@ -49,7 +49,11 @@ spec:
 {{ toYaml .Values.gate.resources | indent 12 }}
         volumeMounts:
         - name: gate-volume
-          mountPath: /opt/spinnaker/config
+          mountPath: /opt/spinnaker/config/gate.yml
+          subPath: gate.yml
+        - mountPath: /opt/spinnaker/config/bootstrap.yml
+          name: bootstrap-volume
+          subPath: bootstrap.yml
         {{- if .Values.gate.config.saml.enabled }}
         - mountPath: /opt/spinnaker/saml/saml.jks	
           name: saml-jks	
@@ -91,4 +95,11 @@ spec:
         configMap:
           name: oes-gate-config
       {{- end }}
+      - configMap:
+          defaultMode: 420
+          items:
+          - key: bootstrap.yml
+            path: bootstrap.yml
+          name: bootstrap
+        name: bootstrap-volume
 {{- end -}}
