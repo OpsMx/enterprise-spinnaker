@@ -1,0 +1,33 @@
+{{- if true -}}
+apiVersion: batch/v1
+kind: Job
+metadata:
+  labels:
+    app: oes
+    component: oes-config
+{{ include "oes.standard-labels" . | indent 4 }}
+  name: oes-config
+spec:
+  template:
+    metadata:
+      labels:
+        app: oes
+        component: oes-config
+{{ include "oes.standard-labels" . | indent 8 }}
+    spec:
+      containers:
+      - command: ["bash", "/tmp/config/datasource-api.sh" ]
+        name: datasource-creation-api
+        image: quay.io/yeshaswiniopsmx/test-api:v1
+        volumeMounts:
+        - mountPath: /tmp/config
+          name: datasource-creation
+      imagePullSecrets:
+      - name: {{ .Values.imagePullSecret}}
+      restartPolicy: OnFailure
+      volumes:
+      - configMap:
+          defaultMode: 420
+          name: {{ template "spinnaker.fullname" . }}-datasource-creation
+        name: datasource-creation
+{{- end -}}

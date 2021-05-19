@@ -283,7 +283,7 @@ gate:
   image:
     registry: opsmx11
     repository: oes-gate
-    tag: 84338d67-4
+    tag: v0.202105191222
     pullPolicy: IfNotPresent
 
   resources: {}
@@ -492,7 +492,7 @@ ui:
   image:
     registry: opsmx11
     repository: oes-ui
-    tag: b0e8375d-23
+    tag: v0.202105190921
     pullPolicy: IfNotPresent
 
   config:
