@@ -1,4 +1,4 @@
-{{- if true -}}
+{{- if .Values.oesAutoConfiguration -}}
 apiVersion: batch/v1
 kind: Job
 metadata:

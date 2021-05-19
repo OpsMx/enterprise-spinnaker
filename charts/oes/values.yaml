@@ -40,6 +40,7 @@ installRedis: false
 ## Available installation modes OES-AP, OES, AP, None
 ##
 installationMode: OES-AP
+oesAutoConfiguration: true  # Automatically attempt to configure OES with some datasources and Spinnaker
 secretStore: db # Valid values: db, Vault . Used for storing account and integration secrets 
 
 ## OES UI, OES Gate, Spinnaker Deck and Spinnaker Gate service type
