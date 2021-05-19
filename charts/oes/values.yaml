@@ -186,7 +186,7 @@ autopilot:
   image:
     registry: opsmx11
     repository: oes-autopilot
-    tag: v3.7-rc3
+    tag: 6f0c63d3b-2328
     pullPolicy: IfNotPresent
 
 
@@ -234,7 +234,7 @@ dashboard:
   image:
     registry: opsmx11
     repository: oes-dashboard
-    tag: 9067c13-1449
+    tag: 961b141-1458
     pullPolicy: IfNotPresent
 
   resources: {}
@@ -284,7 +284,7 @@ gate:
   image:
     registry: opsmx11
     repository: oes-gate
-    tag: v0.202105191222
+    tag: v0.202105191330
     pullPolicy: IfNotPresent
 
   resources: {}
@@ -360,7 +360,7 @@ platform:
   image:
     registry: opsmx11
     repository: oes-platform
-    tag: 5c86963-1474
+    tag: 2cbfe94-1486
     pullPolicy: IfNotPresent
 
   resources: {}
@@ -414,7 +414,7 @@ sapor:
   image:
     registry: opsmx11
     repository: oes-sapor
-    tag: 306ba54-4
+    tag: v0.202105191233
     pullPolicy: IfNotPresent
 
   resources: {}
@@ -512,7 +512,7 @@ visibility:
   image:
     registry: opsmx11
     repository: oes-visibility
-    tag: 08dab63-1473
+    tag: d7c62f2-1479
     pullPolicy: IfNotPresent
 
   resources: {}
