@@ -36,7 +36,7 @@ spec:
         {{- if .Values.forwarder.enabled }}
         - mountPath: /opt/opsmx/controller/ca.crt	
           name: ca-certs-volume	
-          subPath: ca.crt	
+          subPath: tls.crt	
         - mountPath: /opt/opsmx/controller/cert/tls.crt	
           name: certs-volume	
           subPath: tls.crt	
