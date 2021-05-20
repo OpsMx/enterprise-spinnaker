@@ -35,18 +35,19 @@ data:
 
     if [ "$DECK" == "true" ] && [ "$CLOUDCACHING" == "true" ] && [ "$CLOUDRO" == "true" ] && [ "$CLOUDRW" == "true" ] && [ "$CLOUDRODECK" == "true" ] && [ "$FRONT" == "true" ] && [ "$GATE" == "true" ] && [ "$IGOR" == "true" ] && [ "$ORCA" == "true" ] && [ "$ROSCO" == "true" ] && [ "$ECHOWORKER" == "true" ] && [ "$ECHOSCHEDULER" == "true" ] && [ "$SAPOR" == "true" ] && [ "$PLATFORM" == "true" ] && [ "$AUTOPILOT" == "true" ];
         then
-            echo \"Spinnaker and OES services are Up and Ready\"
+            echo \"Spinnaker and OES services are Up and Ready, sleeping for min..\"
+            sleep 2m
             curl --header "Content-Type: application/json"  --header "x-spinnaker-user: admin" --request POST  --data '{"datasourceType": "OPA", "name": "OPA", "configurationFields": {"endPoint": "opa:8181"}}'   http://oes-platform:8095/platformservice/v2/datasources
             curl --header "Content-Type: application/json"  --header "x-spinnaker-user: admin" --request POST  --data '{"datasourceType": "AUTOPILOT", "name": "Autopilot", "configurationFields": {"username": "admin"} }'   http://oes-platform:8095/platformservice/v2/datasources
-            curl --header "Content-Type: application/json"  --header "x-spinnaker-user: admin" --request POST  --data '{"datasourceType": "ELASTICSEARCH", "name": "elastic-default", "configurationFields": {"endPoint": "https://newoeselastic.opsmx.com", "username": "opsmxuser", "password": "OpsMx@123", "kibanaEndPoint": "https://newoeskibana.opsmx.com", "kibanaPassword": "OpsMx@123", "kibanaUsername": "opsmxuser" }}'   http://oes-platform:8095/platformservice/v2/datasources
-            curl --header "Content-Type: application/json"  --header "x-spinnaker-user: admin" --request POST  --data '{"datasourceType": "PROMETHEUS", "name": "prometheus-default", "configurationFields": {"endPoint": "http://prometheus:9090"} }'   http://oes-platform:8095/platformservice/v2/datasources
+            #curl --header "Content-Type: application/json"  --header "x-spinnaker-user: admin" --request POST  --data '{"datasourceType": "ELASTICSEARCH", "name": "elastic-default", "configurationFields": {"endPoint": "https://newoeselastic.opsmx.com", "username": "opsmxuser", "password": "OpsMx@123", "kibanaEndPoint": "https://newoeskibana.opsmx.com", "kibanaPassword": "OpsMx@123", "kibanaUsername": "opsmxuser" }}'   http://oes-platform:8095/platformservice/v2/datasources
+            #curl --header "Content-Type: application/json"  --header "x-spinnaker-user: admin" --request POST  --data '{"datasourceType": "PROMETHEUS", "name": "prometheus-default", "configurationFields": {"endPoint": "http://prometheus:9090"} }'   http://oes-platform:8095/platformservice/v2/datasources
             curl --header "Content-Type: application/json"  --header "x-spinnaker-user: admin" --request POST http://oes-platform:8095/platformservice/v2/datasources --data '{"datasourceType": "GITHUB", "name": "gitops", "spinEnabled": "false", "configurationFields": {"token": "{{ .Values.spinnaker.gitopsHalyard.repo.token }}", "username": "{{ .Values.spinnaker.gitopsHalyard.repo.username }}" } }'
             curl --header "Content-Type: application/json"  --header "x-spinnaker-user: admin" --request POST http://oes-sapor:8085/oes/accountsConfig/spinnaker --data '{"name": "preview-saas", "url": "{{ .Values.global.spinGate.protocol }}://{{ .Values.global.spinGate.host }}", "authenticationType": "LDAP", "token": "YWRtaW46b3BzbXhhZG1pbjEyMw==", "externalAccountFlag": "true", "halyardConfigurationFlag": "true", "externalAccountConfiguration": {"accountName": "gitops", "endPoint": "https://github.com/{{ .Values.spinnaker.gitopsHalyard.repo.organization }}/{{ .Values.spinnaker.gitopsHalyard.repo.repository }}.git", "provider": "GITHUB"  }, "halConfiguration": {"accountName": "gitops", "endPoint": "https://github.com/{{ .Values.spinnaker.gitopsHalyard.repo.organization }}/{{ .Values.spinnaker.gitopsHalyard.repo.repository }}.git", "accountName": "gitops" , "provider": "GITHUB"  } }'
             break
     else
-        if [ $wait_period -gt 1800 ];
+        if [ $wait_period -gt 2000 ];
         then
-            echo \"Script is timed as the Spinnaker is not ready yet.......\"
+            echo \"Script is timed out as the Spinnaker is not ready yet.......\"
             break
         else
             echo \"Waiting for Spinnaker services to be ready\"
