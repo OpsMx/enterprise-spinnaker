@@ -42,7 +42,7 @@ oes:
 {{- if .Values.oesGate.port }}
     apiUrl: {{ .Values.oesGate.protocol }}://{{ .Values.oesGate.host }}:{{ .Values.oesGate.port }}/visibilityservice/v2/approvalGates/{id}/trigger
 {{- else }}
-    apiUrl: {{ .Values.oesGate.protocol }}://{{ .Values.oesGate.host }}/visibilityservice/v2/approvalGates/{id}/trigger
+    apiUrl: {{ .Values.oesGate.protocol }}://{{ .Values.oesGate.host }}/visibilityservice/v4/approvalGates/{id}/trigger
 {{- end }}
 
   verificationGate:

@@ -6,6 +6,9 @@ spring:
     password: {{ .Values.db.password }}
 {{- end }}
 
+oes.platform.url: http://oes-platform:8095
+oes.visibility.url: http://oes-visibility:8096
+oes.dashboard.url: http://oes-dashboard:8094
 secretManagement.source.config: {{ .Values.secretStore }}
 oes:
   rbac:
