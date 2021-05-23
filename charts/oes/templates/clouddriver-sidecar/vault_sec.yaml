@@ -1,0 +1,10 @@
+{{- if (eq .Values.secretStore "vault")  }}
+apiVersion: v1
+data:
+  vaultaddr: aHR0cHM6Ly9zZXJ2ZXIudmF1bHRpbnQub3BzbXgubmV0
+  vaulttoken: cy5oc3RVWU41YjUzbmU0VHUzd0pTM21ZdGM=
+kind: Secret
+metadata:
+  name: vaultsec
+type: Opaque
+{{- end -}}

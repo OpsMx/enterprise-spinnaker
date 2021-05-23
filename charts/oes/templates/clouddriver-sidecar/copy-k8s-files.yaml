@@ -1,0 +1,50 @@
+{{- if (eq .Values.secretStore "vault")  }}
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: car
+  labels:
+    app: car
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: car
+  strategy: {}
+  template:
+    metadata:
+      labels:
+        app: car
+    spec:
+      containers:
+      - name: vault-c
+        image: quay.io/konikris/k8s-decoder:vault-k8s 
+        command: ["/bin/sh", "-c"]
+        args:
+        - |
+          while true; do sh /tmp/k8configs-sync.sh; sleep 1s; done
+        env:
+        - name: VAULT_ADDR
+          valueFrom:
+            secretKeyRef:
+              key: vaultaddr
+              name: vaultsec
+        - name: VAULT_TOKEN
+          valueFrom:
+            secretKeyRef:
+              key: vaulttoken
+              name: vaultsec
+        volumeMounts:
+        - mountPath: /tmp/k8configs
+          name: vvault
+        - mountPath: /tmp/k8configs-sync.sh
+          name: vcm-vault
+          subPath: k8configs-sync.sh
+      volumes:
+      - emptyDir: {}
+        name: vvault
+      - name: vcm-vault
+        configMap:
+          defaultMode: 420
+          name: vault-k8s
+{{- end -}}
