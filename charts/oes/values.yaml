@@ -186,7 +186,7 @@ autopilot:
   ## Image specific details
   ##
   image:
-    registry: opsmxpublic
+    registry: quay.io/opsmxpublic
     repository: oes-autopilot
     tag: v3.7
     pullPolicy: IfNotPresent
@@ -234,7 +234,7 @@ dashboard:
   ## Image specific details
   ##
   image:
-    registry: opsmxpublic
+    registry: quay.io/opsmxpublic
     repository: oes-dashboard
     tag: v3.7
     pullPolicy: IfNotPresent
@@ -284,7 +284,7 @@ gate:
   ## Image specific details
   ##
   image:
-    registry: opsmxpublic
+    registry: quay.io/opsmxpublic
     repository: oes-gate
     tag: v3.7
     pullPolicy: IfNotPresent
@@ -360,7 +360,7 @@ platform:
   ## Image specific details
   ##
   image:
-    registry: opsmxpublic
+    registry: quay.io/opsmxpublic
     repository: oes-platform
     tag: v3.7
     pullPolicy: IfNotPresent
@@ -414,7 +414,7 @@ sapor:
   ## Image specific details
   ##
   image:
-    registry: opsmxpublic
+    registry: quay.io/opsmxpublic
     repository: oes-sapor
     tag: v3.7
     pullPolicy: IfNotPresent
@@ -493,7 +493,7 @@ ui:
   ## Image specific details
   ##
   image:
-    registry: opsmxpublic
+    registry: quay.io/opsmxpublic
     repository: oes-ui
     tag: v3.7
     pullPolicy: IfNotPresent
@@ -512,7 +512,7 @@ visibility:
   ## Image specific details
   ##
   image:
-    registry: opsmxpublic
+    registry: quay.io/opsmxpublic
     repository: oes-visibility
     tag: v3.7
     pullPolicy: IfNotPresent
