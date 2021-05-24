@@ -13,7 +13,7 @@ imagePullSecret: opsmxdev-secret
 ## Quay container image registry credentials to create imagePullSecret
 ##
 imageCredentials:
-  registry: https://docker.io/
+  registry: https://quay.io/
   username: username
   password: password
   email: info@opsmx.com   # email corresponding to quay registry ID
