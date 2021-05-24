@@ -286,7 +286,7 @@ gate:
   image:
     registry: quay.io/opsmxpublic
     repository: ubi8-oes-gate
-    tag: v3.7
+    tag: v3.7.0.1
     pullPolicy: IfNotPresent
 
   resources: {}
@@ -416,7 +416,7 @@ sapor:
   image:
     registry: quay.io/opsmxpublic
     repository: ubi8-oes-sapor
-    tag: v3.7
+    tag: v3.7.0.1
     pullPolicy: IfNotPresent
 
   resources: {}
@@ -495,7 +495,7 @@ ui:
   image:
     registry: quay.io/opsmxpublic
     repository: ubi8-oes-ui
-    tag: v3.7
+    tag: v3.7.0.1
     pullPolicy: IfNotPresent
 
   config:
