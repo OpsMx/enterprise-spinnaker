@@ -14,23 +14,37 @@ imagePullSecret: opsmxdev-secret
 ##
 imageCredentials:
   registry: https://quay.io/
-  username: quayID  # Quay username
-  password: quayPassword # Quay password
+  username: username
+  password: password
   email: info@opsmx.com   # email corresponding to quay registry ID
 
 rbac:
   create: true
 
+####################################################
 ## Option to skip installation of OpsMx Spinnaker
 ## Setting this to true, will ensure custom ubi8 images of Spinnaker
 ## installSpinnaker and installRedis flags are mutually exclusive
 installSpinnaker: true
 
-## Installation mode
-## Available installation modes OES-AP, OES, AP, None
-##
-installationMode: OES-AP
+####################################################
+## Redis configuration
+####################################################
+## Install a seperate Redis for OES if installSpinnaker is set to false
+## If Spinnaker is being installed, redis installed by spinnaker chart can
+## be re-used
+## installSpinnaker and installRedis flags are mutually exclusive
+installRedis: false
 
+## Installation mode
+## Available installation modes OES-AP, None
+installationMode: OES-AP
+oesAutoConfiguration: true  # Attempt to configure OES with some basic integrations based on best guess
+secretStore: vault # Valid values: db, Vault: Used for storing account and integration secrets. Vault, if used, needs to be installed and configured separately
+vault:
+  address: https://server.vaultint.opsmx.net # Vault Address URL
+  token: 123132 # Vault Root token
+  
 ## OES UI, OES Gate, Spinnaker Deck and Spinnaker Gate service type
 ##
 k8sServiceType: ClusterIP
@@ -46,6 +60,8 @@ global:
 
   certManager:
     installed: true
+  self-signed-certs:
+    enabled: false  # At this point this is not supported
 
   # Below flag is used to setup tls termination at ingress
   # when this flag is set to false; spinnaker and oes endpoints
@@ -60,7 +76,7 @@ global:
   # Spinnaker Deck URL configuration; url overwhich spinnaker deck will be accessed
   spinDeck:
     protocol: https
-    host: spinnaker.example.org
+    host: spin.example.ops.com
     #port: 9000
 
     ingress:
@@ -73,7 +89,7 @@ global:
   # Spinnaker Gate URL configuration; url overwhich spinnaker gate will be accessed
   spinGate:
     protocol: https
-    host: gate.spinnaker.example.org
+    host: spin-gate.example.ops.com
     #port: 8084
 
     ingress:
@@ -88,7 +104,7 @@ global:
 ## OES-UI url configuration
 oesUI:
   protocol: https
-  host: oes.domain.com
+  host: oes.example.ops.com
   # Use below port when hostname above is an external IP instead of a hostname
   #port: 80
 
@@ -103,7 +119,7 @@ oesUI:
 ## OES-Gate url configuration
 oesGate:
   protocol: https
-  host: oes-api.domain.com
+  host: oes-gate.example.ops.com
   # Use below port when hostname above is an external IP instead of a hostname
   #port: 8084
 
@@ -113,16 +129,6 @@ oesGate:
 
     tls:
       secretName: oes-gate-authtls
-
-####################################################
-## Redis configuration
-####################################################
-## Install a seperate Redis for OES if installSpinnaker is set to false
-## If Spinnaker is being installed, redis installed by spinnaker chart can
-## be re-used
-## installSpinnaker and installRedis flags are mutually exclusive
-##
-installRedis: false
 
 ###############################################################################
 ## Details of redis-master image for OES
@@ -188,7 +194,7 @@ autopilot:
   image:
     registry: quay.io/opsmxpublic
     repository: ubi8-oes-autopilot
-    tag: v3.6.2
+    tag: v3.7
     pullPolicy: IfNotPresent
 
 
@@ -236,7 +242,7 @@ dashboard:
   image:
     registry: quay.io/opsmxpublic
     repository: ubi8-oes-dashboard
-    tag: v3.6.2
+    tag: v3.7
     pullPolicy: IfNotPresent
 
   resources: {}
@@ -264,15 +270,16 @@ dashboard:
 ## Values of Forwarder/Controller
 ##
 forwarder:
-  enabled: false
+  enabled: true
   agent:
-    image: quay.io/opsmxpublic/forwarder-agent:v20210118T161303
+    image: quay.io/opsmxpublic/forwarder-agent:v20210426T105924
     serviceType: LoadBalancer
   # Value is also used in sapor configuration for kubernetes.agent.serverHostName
-  externalName: controller-agent.testing.opsmx.com
+    host: opsmx-controller-controller1
+  externalName: controller.exampleopsmx.net
   image:
     repository: quay.io/opsmxpublic/forwarder-controller
-    tag: v1.0.0
+    tag: v20210426T105924
     pullPolicy: IfNotPresent
 
 ###############################################################################
@@ -285,7 +292,7 @@ gate:
   image:
     registry: quay.io/opsmxpublic
     repository: ubi8-oes-gate
-    tag: v3.6.2
+    tag: v3.7.0.1
     pullPolicy: IfNotPresent
 
   resources: {}
@@ -361,7 +368,7 @@ platform:
   image:
     registry: quay.io/opsmxpublic
     repository: ubi8-oes-platform
-    tag: v3.6.2
+    tag: v3.7
     pullPolicy: IfNotPresent
 
   resources: {}
@@ -415,7 +422,7 @@ sapor:
   image:
     registry: quay.io/opsmxpublic
     repository: ubi8-oes-sapor
-    tag: v3.6.2
+    tag: v3.7.0.1
     pullPolicy: IfNotPresent
 
   resources: {}
@@ -494,7 +501,7 @@ ui:
   image:
     registry: quay.io/opsmxpublic
     repository: ubi8-oes-ui
-    tag: v3.6.2
+    tag: v3.7.0.1
     pullPolicy: IfNotPresent
 
   config:
@@ -513,7 +520,7 @@ visibility:
   image:
     registry: quay.io/opsmxpublic
     repository: ubi8-oes-visibility
-    tag: v3.6.2
+    tag: v3.7
     pullPolicy: IfNotPresent
 
   resources: {}
@@ -982,27 +989,29 @@ spinnaker:
     #environment: default
     mTLS:
       enabled: false   # Enable mTLS for Spinnaker Services and SSL for Deck and Gate
-    #repo-type: git # git, S3, vault, only git support at this point
     repo:
       type: git # git, S3, vault, only git support at this point
       organization: OpsMx
-      repository: standard-gitops-repo # Please provide the repo name for GitOps Halyard Directory (Sample Reference: https://github.com/OpsMx/gitops-hal-sample.git).
+      repository: standard-gitops-repo # repo name for GitOps Halyard (Sample Reference: https://github.com/OpsMx/sample-gitops-repo.git).
       dynamicAccRepository: standard-gitops-repo # Please provide the repo name of the GitOps Dynamic Accounts Directory.Can be same as Hal repo or can be different if needed. (Sample Reference: https://github.com/OpsMx/gitops-accounts-sample.git)
-      # Directory in gitops halyard repo under which halyard config exists; change this to / if config is directly available in root directory
-      halConfigPath: gitops-haldir/
+      halConfigPath: /     # Any other value is currently not supported
       username: <GitHub_UserName>
       token: <GitHub_Token>
     secretName: opsmx-gitops-auth 
     # Max time(in secs) that an init container of halyard should wait
     # to fetch External Load Balancer IP of spin-deck and spin-gate
-    spinnakerLBCheckDelay: 10
+    spinnakerLBCheckDelay: 1   # This is only used if not using ingress
     # Promote applications and pipelines from one environment to another environment
       ## x509 authentication for Spinnaker Gate
     gatex509:
       enabled: false
       host: spingate-x509.domain.com
     pipelinePromotion:
-      enabled: false
+      enabled: true
+      organization: opsmx
+      repository: <any empty repo
+      username: <GitHub_UserName>
+      token: <GitHub_Token>
       ## Namespace in which pipeline promotion job need to run
       # TODO: Implementation pending; currently default namespace is hardcoded
       executionNamespace: default
@@ -1012,10 +1021,10 @@ spinnaker:
 
 
   ## Auth mechanism and credentials to be used by spin-cli for creating the sample pipelines
-  ## Here basic ldap auth is used by default; everything under spinCli will be lifted and pasted in ~/.spin/config
+  ## Here basic ldap auth is used by default; everything under spinCli will be pasted in ~/.spin/config
   spinCli:
     gate:
-      endpoint: http://spin-gate:8084
+      endpoint: https://spin-gate.example.opsmx.com # Should same as the spin-gate URL
     auth:
       enabled: true
       basic:

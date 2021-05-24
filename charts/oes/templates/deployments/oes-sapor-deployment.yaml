@@ -22,10 +22,12 @@ spec:
         component: sapor
 {{ include "oes.standard-labels" . | indent 8 }}
     spec:
+      {{- if (eq .Values.db.enabled true) }}
       initContainers:
       - name: db-check
         image: postgres:9.6.5
         command: ['/bin/bash', '-c', "sleep 30;echo Waiting for oes-db to be up and running; pg_isready -h oes-db -p 5432 && echo PostgreSQL DB is ready to receive connections"]
+      {{- end }}
       containers:
       - image: {{ template "sapor.image" . }}
         name: oes-sapor
@@ -47,6 +49,9 @@ spec:
         - name: sapor-config-volume
           mountPath: /opt/opsmx/application.yml
           subPath: application.yml
+        - mountPath: /opt/opsmx/bootstrap.yml
+          name: bootstrap-config-volume
+          subPath: bootstrap.yml
         {{- if .Values.sapor.config.caCerts.override }}
         - name: certs-volume
           mountPath: /etc/pki/ca-trust/extracted/java
@@ -74,7 +79,7 @@ spec:
       volumes:
       {{- if .Values.forwarder.enabled }}
       - secret:
-          secretName: oes-command-secret
+          secretName: oes-control-secret
         name: certs-volume
       - secret:
           secretName: ca-secret
@@ -83,6 +88,13 @@ spec:
       - configMap:
           name: oes-sapor-config
         name: sapor-config-volume
+      - configMap:
+          defaultMode: 420
+          items:
+          - key: bootstrap.yml
+            path: bootstrap.yml
+          name: bootstrap
+        name: bootstrap-config-volume
       {{- if .Values.sapor.config.caCerts.override }}
       - name: certs-volume
         configMap:

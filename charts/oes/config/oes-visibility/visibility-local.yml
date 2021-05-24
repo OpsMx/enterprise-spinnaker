@@ -1,24 +1,38 @@
 spring:
   datasource:
-    url={{ .Values.db.url }}/visibilitydb
-    username={{ .Values.db.username }}
-    password={{ .Values.db.password }}
-
-visiblity:
-   connectors:
-      configured: {{ .Values.visibility.config.configuredConnectors }}
-
-logging:
-  level:
-    io:
-      swagger:
-        models:
-          parameters:
-            AbstractSerializableParameter: {{ .Values.visibility.config.logLevel }}
-            
+{{- if (eq .Values.secretStore "db") }}
+    url: {{ .Values.db.url }}/visibilitydb
+    username: {{ .Values.db.username }}
+    password: {{ .Values.db.password }}
+{{- end }}
+  visiblity:
+    connectors:
+      configured: JIRA,GIT,AUTOPILOT,SONARQUBE,JENKINS,AQUAWAVE
+  logging:
+    level:  
+      io:     
+        swagger:
+          models: 
+            parameters:
+              AbstractSerializableParameter: ERROR
 gate:
 {{- if .Values.oesGate.port }}
   url: {{ .Values.oesGate.protocol }}://{{ .Values.oesGate.host }}:{{ .Values.oesGate.port }}
 {{- else }}
   url: {{ .Values.oesGate.protocol }}://{{ .Values.oesGate.host }}
 {{- end }}
+
+jira.api.url: /rest/api/2/search
+jira.navigate.url: hosturl/browse/{issue_Id}
+git.apiurl: /repos/{username}/{repo}/commits/{commitId}
+git.userurl: /user
+git.navigate.url: https://github.com/OpsMx/{repo_name}/commit/{commit_Id}
+jenkins.api.url: /jenkins/job/{jobname}/{buildId}/api/json
+jenkins.navigate.url: hosturl/jenkins/job/{jobname}/{buildId}
+sonar.navigate.Url: hosturl/dashboard?id={projectKey}
+aquawave.api.url: https://api.aquasec.com/v2/images/{id}
+aquawave.navigate.url: https://cloud.aquasec.com/vs/#/images/{id}
+autopilot.api.url: http://oes-autopilot:8090
+platform.service.url: http://oes-platform:8095
+
+            

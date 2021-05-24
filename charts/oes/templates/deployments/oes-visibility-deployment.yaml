@@ -23,11 +23,12 @@ spec:
         component: visibility
 {{ include "oes.standard-labels" . | indent 8 }}
     spec:
-      initContainers:
+      {{- if (eq .Values.db.enabled true) }}
       initContainers:
       - name: db-check
         image: postgres:9.6.5
         command: ['/bin/bash', '-c', "sleep 30;echo Waiting for oes-db to be up and running; pg_isready -h oes-db -p 5432 && echo PostgreSQL DB is ready to receive connections"]
+      {{- end }}
       containers:
       - image: {{ template "visibility.image" . }}
         name: oes-visibility
@@ -39,6 +40,9 @@ spec:
         - mountPath: /opsmx/conf/visibility-local.yml
           name: visibility-config
           subPath: visibility-local.yml
+        - mountPath: /opsmx/conf/bootstrap.yml
+          name: bootstrap-config-volume
+          subPath: bootstrap.yml
         resources:
 {{ toYaml .Values.visibility.resources | indent 12 }}
         readinessProbe:
@@ -58,4 +62,11 @@ spec:
       - name: visibility-config
         configMap:
           name: oes-visibility-config
+      - configMap:
+          defaultMode: 420
+          items:
+          - key: bootstrap.yml
+            path: bootstrap.yml
+          name: bootstrap
+        name: bootstrap-config-volume
 {{- end -}}

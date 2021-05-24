@@ -596,9 +596,9 @@ volumePermissions:
 ##
 configmap: |-
   # Enable AOF https://redis.io/topics/persistence#append-only-file
-  appendonly yes
+  appendonly no
   # Disable RDB persistence, AOF persistence already enabled.
-  save ""
+  save 60 1000
 
 ## Sysctl InitContainer
 ## used to perform sysctl operation to modify Kernel settings (needed sometimes to avoid warnings)
