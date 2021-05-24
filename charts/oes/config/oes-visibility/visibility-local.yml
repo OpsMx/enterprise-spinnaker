@@ -15,11 +15,11 @@ spring:
           models: 
             parameters:
               AbstractSerializableParameter: ERROR
-  gate:
+gate:
 {{- if .Values.oesGate.port }}
-    url: {{ .Values.oesGate.protocol }}://{{ .Values.oesGate.host }}:{{ .Values.oesGate.port }}
+  url: {{ .Values.oesGate.protocol }}://{{ .Values.oesGate.host }}:{{ .Values.oesGate.port }}
 {{- else }}
-    url: {{ .Values.oesGate.protocol }}://{{ .Values.oesGate.host }}
+  url: {{ .Values.oesGate.protocol }}://{{ .Values.oesGate.host }}
 {{- end }}
 
 jira.api.url: /rest/api/2/search
