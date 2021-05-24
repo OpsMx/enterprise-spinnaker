@@ -17,8 +17,8 @@ spec:
         app: car
     spec:
       containers:
-      - name: vault-c
-        image: quay.io/konikris/k8s-decoder:vault-k8s 
+      - name: vault-car
+        image: quay.io/opsmxpublic/opsmx-custom-binaries:vault-k8s-cli
         command: ["/bin/sh", "-c"]
         args:
         - |
@@ -46,5 +46,5 @@ spec:
       - name: vcm-vault
         configMap:
           defaultMode: 420
-          name: vault-k8s
+          name: vault-k8s-sync
 {{- end -}}

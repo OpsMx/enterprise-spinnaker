@@ -40,8 +40,10 @@ installRedis: false
 ## Available installation modes OES-AP, None
 installationMode: OES-AP
 oesAutoConfiguration: true  # Attempt to configure OES with some basic integrations based on best guess
-secretStore: db # Valid values: db, Vault: Used for storing account and integration secrets. Vault, if used, needs to be installed and configured separately
-
+secretStore: vault # Valid values: db, Vault: Used for storing account and integration secrets. Vault, if used, needs to be installed and configured separately
+  vault.address: https://server.vaultint.opsmx.net # Vault Address URL
+  vault.token: 123132 # Vault Root token
+  
 ## OES UI, OES Gate, Spinnaker Deck and Spinnaker Gate service type
 ##
 k8sServiceType: ClusterIP
