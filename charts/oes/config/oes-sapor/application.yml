@@ -1,3 +1,15 @@
+spring:
+  datasource:
+{{- if (eq .Values.secretStore "db") }}
+    url: {{ .Values.db.url }}/oesdb
+    username: {{ .Values.db.username }}
+    password: {{ .Values.db.password }}
+{{- end }}
+
+oes.platform.url: http://oes-platform:8095
+oes.visibility.url: http://oes-visibility:8096
+oes.dashboard.url: http://oes-dashboard:8094
+secretManagement.source.config: {{ .Values.secretStore }}
 oes:
   rbac:
     enabled: true
@@ -6,30 +18,6 @@ oes:
 spinnaker:
   restart:
     endPoint: /webhooks/webhook/restartSpinnaker
-  authnEnabled: {{ .Values.sapor.config.spinnaker.authnEnabled }}
-  baseurl: {{ .Values.sapor.config.spinnaker.spinGateURL }}
-{{- if .Values.sapor.config.spinnaker.spinExternalGateURL }}
-  externalBaseUrl: {{ .Values.sapor.config.spinnaker.spinExternalGateURL }}
-{{- else }}
-  externalBaseUrl: {{ .Values.global.spinGate.protocol }}://{{ .Values.global.spinGate.host }}
-{{- end }}
-  ldap:
-    enabled: {{ .Values.sapor.config.spinnaker.ldap.ldapEnabled }}
-    username: {{ .Values.sapor.config.spinnaker.ldap.ldapUsername }}
-    password: {{ .Values.sapor.config.spinnaker.ldap.ldapPassword }}
-    adminLoginEnabled: {{ .Values.sapor.config.spinnaker.ldap.ldapAdminLoginEnabled }}
-    adminUsername: {{ .Values.sapor.config.spinnaker.ldap.ldapAdminUsername }}
-    adminPassword: {{ .Values.sapor.config.spinnaker.ldap.ldapAdminPassword }}
-  x509:
-    enabled: {{ .Values.sapor.config.spinnaker.x509.enabled }}
-    client:
-      file: /opt/opsmx/client.p12
-      password: {{ .Values.sapor.config.spinnaker.x509.client.password }}
-spring:
-  datasource:
-    url: {{ .Values.db.url }}/oesdb
-    username: {{ .Values.db.username }}
-    password: {{ .Values.db.password }}
 datasources:
   platform: {{ .Values.sapor.config.datasources.platform }}
   
@@ -37,7 +25,7 @@ datasources:
 kubernetes:
   agent:
     enabled: {{ .Values.forwarder.enabled }}
-    serverHostName: {{ .Values.forwarder.externalName }}
+    serverInternalHostName: opsmx-controller-controller1
     serverPort: 9003
     caCertfile: /opt/opsmx/controller/ca.crt
     certFile: /opt/opsmx/controller/cert/tls.crt

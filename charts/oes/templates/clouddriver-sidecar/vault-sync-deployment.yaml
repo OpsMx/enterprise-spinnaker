@@ -1,0 +1,51 @@
+{{- if (eq .Values.secretStore "vault")  }}
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: oes-vault-sync
+  labels:
+    app: oes-vault-sync
+{{ include "oes.standard-labels" . | indent 4 }}
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: oes-vault-sync
+  strategy: {}
+  template:
+    metadata:
+      labels:
+        app: oes-vault-sync
+    spec:
+      containers:
+      - name: oes-vault-sync
+        image: quay.io/opsmxpublic/opsmx-custom-binaries:vault-k8s-cli
+        command: ["/bin/sh", "-c"]
+        args:
+        - |
+          while true; do sh /tmp/k8configs-sync.sh; sleep 30s; done
+        env:
+        - name: VAULT_ADDR
+          valueFrom:
+            secretKeyRef:
+              key: vaultaddr
+              name: vaultsec
+        - name: VAULT_TOKEN
+          valueFrom:
+            secretKeyRef:
+              key: vaulttoken
+              name: vaultsec
+        volumeMounts:
+        - mountPath: /tmp/k8configs
+          name: vvault
+        - mountPath: /tmp/k8configs-sync.sh
+          name: vcm-vault
+          subPath: k8configs-sync.sh
+      volumes:
+      - emptyDir: {}
+        name: vvault
+      - name: vcm-vault
+        configMap:
+          defaultMode: 420
+          name: vault-k8s-sync
+{{- end -}}

@@ -24,10 +24,12 @@ spec:
         component: platform
 {{ include "oes.standard-labels" . | indent 8 }}
     spec:
+{{- if .Values.db.enabled  }}
       initContainers:
       - name: db-check
         image: postgres:9.6.5
         command: ['/bin/bash', '-c', "sleep 30;echo Waiting for oes-db to be up and running; pg_isready -h oes-db -p 5432 && echo PostgreSQL DB is ready to receive connections"]
+{{- end }}
       containers:
       - image: {{ template "platform.image" . }}
         name: oes-platform
@@ -52,10 +54,20 @@ spec:
         - mountPath: /opsmx/conf/platform-local.yml
           name: platform-config-volume
           subPath: platform-local.yml
+        - mountPath: /opsmx/conf/bootstrap.yml
+          name: bootstrap-config-volume
+          subPath: bootstrap.yml
       imagePullSecrets:
       - name: {{ .Values.imagePullSecret }}
       volumes:
       - name: platform-config-volume
         configMap:
           name: oes-platform-config
+      - configMap:
+          defaultMode: 420
+          items:
+          - key: bootstrap.yml
+            path: bootstrap.yml
+          name: bootstrap
+        name: bootstrap-config-volume
 {{- end -}}

@@ -1,7 +1,7 @@
 apiVersion: v2
 name: oes
-version: 3.6.10
-appVersion: 3.6.2
+version: 3.7.0
+appVersion: 3.7
 description: OES is a non-forked version of OSS spinnaker
 icon: https://www.opsmx.com/images/logo.png
 maintainers:

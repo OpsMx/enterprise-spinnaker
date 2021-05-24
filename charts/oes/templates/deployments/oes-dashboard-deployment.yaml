@@ -34,6 +34,9 @@ spec:
         - mountPath: /opsmx/conf/dashboard-local.yml
           name: dashboard-config
           subPath: dashboard-local.yml
+        - mountPath: /opsmx/conf/bootstrap.yml
+          name: bootstrap-config-volume
+          subPath: bootstrap.yml
         resources:
 {{ toYaml .Values.dashboard.resources | indent 12 }}
         readinessProbe:
@@ -53,4 +56,11 @@ spec:
       - name: dashboard-config
         configMap:
           name: oes-dashboard-config
+      - configMap:
+          defaultMode: 420
+          items:
+          - key: bootstrap.yml
+            path: bootstrap.yml
+          name: bootstrap
+        name: bootstrap-config-volume
 {{- end -}}

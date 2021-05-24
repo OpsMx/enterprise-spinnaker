@@ -10,11 +10,12 @@ metadata:
 {{ include "oes.standard-labels" . | indent 4 }}
 data:
   configFile: |
-    serverNames:
-      - opsmx-controller-controller1
-      - {{ .Values.forwarder.externalName }}
-    kubernetesAPIHostname: opsmx-controller-controller1
-    commandHostname: opsmx-controller-controller1
+    serviceHostname: opsmx-controller-controller1
     agentHostname: {{ .Values.forwarder.externalName }}
+    remoteCommandHostname: {{ .Values.forwarder.externalName }}
+    controlHostname: opsmx-controller-controller1
+    #agentAdvertisePort: "443"
+    serviceAuth:
+      currentKeyName: "public.pem"
 {{- end -}}
 {{- end -}}

@@ -11,16 +11,32 @@ metadata:
 spec:
   selector:
     app: opsmx-controller-controller1
+  type: ClusterIP
+  ports:
+  - name: service-api
+    port: 9002
+    targetPort: service-api
+  - name: control-api
+    port: 9003
+    targetPort: control-api
+  - name: remote-command
+    port: 9004
+    targetPort: remote-command
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: agent-grpc
+  labels:
+    agent.opsmx.com/name: controller1
+    agent.opsmx.com/role: controller
+{{ include "oes.standard-labels" . | indent 4 }}
+spec:
+  selector:
+    app: opsmx-controller-controller1
   type: {{ .Values.forwarder.agent.serviceType }}
   ports:
   - name: agent-grpc
     port: 9001
-    targetPort: agent-grpc
-  - name: k8s-api
-    port: 9002
-    targetPort: k8s-api
-  - name: command
-    port: 9003
-    targetPort: command
 {{- end -}}
 {{- end -}}

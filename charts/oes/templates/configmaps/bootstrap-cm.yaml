@@ -1,0 +1,22 @@
+apiVersion: v1
+data:
+  bootstrap.yml: |-
+    spring:
+      cloud:
+        vault:
+          uri: {{ .Values.vault.address }}
+          token: {{ .Values.vault.token }}
+{{- if (eq .Values.secretStore "vault")  }}
+          enabled: true
+          kv:
+            enabled: true
+{{- else }}
+          enabled: false
+          kv:
+            enabled: false
+{{- end }}
+          generic:
+            enabled: false
+kind: ConfigMap
+metadata:
+  name: bootstrap

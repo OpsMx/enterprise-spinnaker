@@ -1,0 +1,68 @@
+{{- if (eq .Values.secretStore "vault")  }}
+apiVersion: v1
+data:
+  k8configs-sync.sh: |+
+    #!/bin/bash
+    #This script is executed in Clouddriver or its Sidecard container to download the kubeconfig files
+
+    #Make sure vault cli is loaded on the Container and is accessible by the scripts
+    #Ensure the VAULT_ADDR and VAULT_TOKEN is set in the SHELL environment
+    #sleep 3600
+    #Set these variables to your choice
+    export Vaultk8s_PATH='secret/oes-sapor/kubernetes' #Prefix V for Vault
+    export ClouddriverK8S_PATH='/tmp/k8configs' #Prefix L for Local
+    export R_FILE=/tmp/remote.txt
+    export L_FILE=/tmp/local.txt
+    export NEWKEYS=/tmp/newkeys.txt
+
+    #Make sure vault CLI is available
+    command -v vault > /dev/null 2>&1
+    if [ $? -ne 0 ]; then
+      echo "Vault CLI is not available, exiting..."
+      exit
+    fi
+
+    #Create local config path if not exists
+    [ ! -d $ClouddriverK8S_PATH ] && (mkdir -p $ClouddriverK8S_PATH; echo Created k8sconfig directory) #|| echo Content mkdir -p $ClouddriverK8S_PATH
+
+    #Set-1
+    vault kv list $Vaultk8s_PATH | egrep -iv 'Keys|----' > $R_FILE
+
+    #Set-2
+    #ls -1 $ClouddriverK8S_PATH | sed s/\.yml$// > $L_FILE
+
+    #New in Vault
+    #comm -23 $R_FILE $L_FILE > $NEWKEYS
+    #if [ ! -s $NEWKEYS ]; then
+    #  echo "There are no new kubeconfigs to download"
+    #  exit
+    #fi
+
+    #Download new kubeconfig file from Vault
+    #for i in `cat $NEWKEYS`; do
+    for i in `cat $R_FILE`; do
+      echo -en "Fetching kubeconfig file of Account : $i"
+      vault kv get -field='${'$i'}' $Vaultk8s_PATH/$i > $ClouddriverK8S_PATH/$i
+      if [ $? -eq 0 ]; then
+        echo " [success]"
+        echo "  File: $ClouddriverK8S_PATH/$i"
+        kubectl  get po  |grep clouddriver |awk '{print $1}' > file.txt
+        for ns in $(cat file.txt)
+        do
+        echo $ns
+        kubectl cp $ClouddriverK8S_PATH/$i $ns:/tmp/vault
+        done
+        rm -rf file.txt
+        else
+        echo " [failed with return code $?]"
+      fi
+    done
+
+    echo "Completed Kubeconfig downlod syncing and copied to Clouddriver"
+
+
+kind: ConfigMap
+metadata:
+  creationTimestamp: null
+  name: vault-k8s-sync
+{{ end }}

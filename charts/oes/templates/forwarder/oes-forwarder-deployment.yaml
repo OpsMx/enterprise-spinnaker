@@ -30,16 +30,14 @@ spec:
           - containerPort: 9001
             name: agent-grpc
           - containerPort: 9002
-            name: k8s-api
+            name: service-api
           - containerPort: 9003
-            name: command
+            name: control-api
+          - containerPort: 9004
+            name: remote-command
           - containerPort: 9102
             name: metrics
         env:
-          - name: POD_IPS
-            valueFrom:
-              fieldRef:
-                fieldPath: status.podIPs
           - name: POD_NAMESPACE
             valueFrom:
               fieldRef:
@@ -50,6 +48,9 @@ spec:
           readOnly: true
         - name: ca-secret
           mountPath: /app/secrets/ca
+          readOnly: true
+        - name: jwt-secret
+          mountPath: /app/secrets/serviceAuth
           readOnly: true
         resources:
           requests:
@@ -62,6 +63,9 @@ spec:
       - name: ca-secret
         secret:
           secretName: ca-secret
+      - name: jwt-secret
+        secret:
+          secretName: jwt-secret
       - name: config
         configMap:
           name: opsmx-controller-controller1
