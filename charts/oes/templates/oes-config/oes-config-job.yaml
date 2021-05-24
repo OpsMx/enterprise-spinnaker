@@ -28,6 +28,6 @@ spec:
       volumes:
       - configMap:
           defaultMode: 420
-          name: {{ template "spinnaker.fullname" . }}-datasource-creation
+          name: {{ template "oes.fullname" . }}-datasource-creation
         name: datasource-creation
 {{- end -}}
