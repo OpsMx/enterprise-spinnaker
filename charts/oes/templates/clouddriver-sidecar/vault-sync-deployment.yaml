@@ -2,22 +2,23 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: car
+  name: oes-vault-sync
   labels:
-    app: car
+    app: oes-vault-sync
+{{ include "oes.standard-labels" . | indent 4 }}
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: car
+      app: oes-vault-sync
   strategy: {}
   template:
     metadata:
       labels:
-        app: car
+        app: oes-vault-sync
     spec:
       containers:
-      - name: vault-car
+      - name: oes-vault-sync
         image: quay.io/opsmxpublic/opsmx-custom-binaries:vault-k8s-cli
         command: ["/bin/sh", "-c"]
         args:
