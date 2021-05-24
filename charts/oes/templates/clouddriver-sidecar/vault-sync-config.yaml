@@ -50,7 +50,6 @@ data:
         for ns in $(cat file.txt)
         do
         echo $ns
-        kubectl cp $ClouddriverK8S_PATH/$i $ns:/tmp/vault -c init-myservice
         kubectl cp $ClouddriverK8S_PATH/$i $ns:/tmp/vault
         done
         rm -rf file.txt

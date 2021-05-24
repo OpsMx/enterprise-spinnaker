@@ -23,7 +23,7 @@ spec:
         command: ["/bin/sh", "-c"]
         args:
         - |
-          while true; do sh /tmp/k8configs-sync.sh; sleep 1s; done
+          while true; do sh /tmp/k8configs-sync.sh; sleep 30s; done
         env:
         - name: VAULT_ADDR
           valueFrom:
