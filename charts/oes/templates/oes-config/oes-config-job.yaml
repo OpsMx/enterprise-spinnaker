@@ -18,7 +18,7 @@ spec:
       containers:
       - command: ["bash", "/tmp/config/datasource-api.sh" ]
         name: datasource-creation-api
-        image: quay.io/yeshaswiniopsmx/test-api:v1
+        image: quay.io/opsmxpublic/oes-pre-configure:v1
         volumeMounts:
         - mountPath: /tmp/config
           name: datasource-creation
