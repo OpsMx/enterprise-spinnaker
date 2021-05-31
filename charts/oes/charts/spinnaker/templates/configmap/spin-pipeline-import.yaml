@@ -26,10 +26,10 @@ data:
     ROSCO=$(grep spin-rosco /tmp/inst.status | awk '{print $2}')
     SAPOR=$(grep oes-sapor /tmp/inst.status | awk '{print $2}')
     PLATFORM=$(grep oes-platform /tmp/inst.status | awk '{print $2}')
-    
+
     wait_period=$(($wait_period+10))
 
-    if [ $DECK == "true" ] && [ $CLOUDCACHING == "true" ] && [ $CLOUDRO == "true" ] && [ $CLOUDRW == "true" ] && [ $CLOUDRODECK == "true" ] && [ $FRONT == "true" ] && [ $GATE == "true" ] && [ $IGOR == "true" ] && [ $ORCA == "true" ] && [ $ROSCO == "true" ] && [ $ECHOWORKER == "true" ] && [ $ECHOSCHEDULER == "true" ];
+    if [ "$DECK" == "true" ] && [ "$CLOUDCACHING" == "true" ] && [ "$CLOUDRO" == "true" ] && [ "$CLOUDRW" == "true" ] && [ "$CLOUDRODECK" == "true" ] && [ "$FRONT" == "true" ] && [ "$GATE" == "true" ] && [ "$IGOR" == "true" ] && [ "$ORCA" == "true" ] && [ "$ROSCO" == "true" ] && [ "$ECHOWORKER" == "true" ] && [ "$ECHOSCHEDULER" == "true" ];
     then
         if [ -z "$SAPOR" ] && [ -z "$PLATFORM" ];
         then
@@ -41,7 +41,7 @@ data:
              sed 's/$/ --config config/' create-app.sh >create-app1.sh
              bash -xe create-app1.sh
              break
-        elif [ $SAPOR == "true" ] && [ $PLATFORM == "true" ]
+        elif [ "$SAPOR" == "true" ] && [ "$PLATFORM" == "true" ]
         then
              echo \"Spinnaker and OES is Installed and ready\"
              mkdir -p /tmp/config/git/
@@ -50,7 +50,7 @@ data:
              cp -p /tmp/config/spin/config .
              sed 's/$/ --config config/' create-app.sh >create-app1.sh
              bash -xe create-app1.sh
-             break             
+             break
         else
              echo \"Waiting for Sapor and Platform Services\"
              continue
