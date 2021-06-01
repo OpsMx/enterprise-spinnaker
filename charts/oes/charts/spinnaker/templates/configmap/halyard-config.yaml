@@ -156,9 +156,41 @@ data:
     $HAL_COMMAND config deploy ha clouddriver enable
     $HAL_COMMAND config deploy ha echo enable
     {{- end }}
+
+    
     # Enable Authentication by default
-    $HAL_COMMAND config security authn ldap edit --user-dn-pattern="cn={0}" --url=ldap://{{ .Release.Name }}-openldap:389/dc=example,dc=org
+    #{{- if .Values.ldap.enabled }}
+    #$HAL_COMMAND config security authn ldap edit --url {{ .Values.ldap.url }} --user-dn-pattern  {{ .Values.ldap.userDnPattern }}
+    #$HAL_COMMAND config security authn ldap edit --manager-dn {{ .Values.ldap.managerDn }} --manager-password {{ .Values.ldap.managerPassword }}
+    #{{- if .Values.installOpenLdap }}
+    #$HAL_COMMAND config security authn ldap edit --user-dn-pattern="cn={0}" --url=ldap://{{ .Release.Name }}-openldap:389/dc=example,dc=org
+    #$HAL_COMMAND config security authn ldap edit --url ldap://{{ .Release.Name }}-openldap:389 --user-dn-pattern  'cn={0},dc=example,dc=org'
+    #$HAL_COMMAND config security authn ldap edit --manager-dn 'cn=admin,dc=example,dc=org' --manager-password {{ .Values.openldap.adminPassword }}
+    #{{- else }}
+    #$HAL_COMMAND config security authn ldap enable
+    #{{- end }}
+    #{{- else }}
+    #$HAL_COMMAND config security authn ldap disable
+    #{{- end }}
+
+
+
+
+    # Enable Authentication by default
+    {{- if .Values.ldap.enabled }}
+    {{- if .Values.installOpenLdap }}
+    #$HAL_COMMAND config security authn ldap edit --user-dn-pattern="cn={0}" --url=ldap://{{ .Release.Name }}-openldap:389/dc=example,dc=org
+    $HAL_COMMAND config security authn ldap edit --url ldap://{{ .Release.Name }}-openldap:389 --user-dn-pattern  'cn={0},dc=example,dc=org'
+    $HAL_COMMAND config security authn ldap edit --manager-dn 'cn=admin,dc=example,dc=org' --manager-password {{ .Values.openldap.adminPassword }}
+    {{- else }}
+    $HAL_COMMAND config security authn ldap edit --url {{ .Values.ldap.url }} --user-dn-pattern  {{ .Values.ldap.userDnPattern }}
+    $HAL_COMMAND config security authn ldap edit --manager-dn {{ .Values.ldap.managerDn }} --manager-password {{ .Values.ldap.managerPassword }}
+    {{- end }}
     $HAL_COMMAND config security authn ldap enable
+    {{- else }}
+    $HAL_COMMAND config security authn ldap disable
+    {{- end }}
+
     # Use Deck to route to Gate
     {{- if not .Values.gitopsHalyard.enabled }}
     # Configure override urls in halyard config
