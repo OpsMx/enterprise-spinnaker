@@ -13,14 +13,6 @@ spring:
 redis:
   connection: {{ tpl .Values.redis.url . }}
 
-oes:
-  sapor:
-    url: http://oes-sapor:8085
-  autopilot:
-    url: http://oes-autopilot:8090
-  visibility:
-    url: http://oes-visibility:8096
-
 datasource:
   secretManagement:
     source: {{ .Values.secretStore }}
@@ -45,6 +37,12 @@ ldap:
   userDnPattern: {{ .Values.ldap.userDnPattern }}
 
 oes:
+  sapor:
+    url: http://oes-sapor:8085
+  autopilot:
+    url: http://oes-autopilot:8090
+  visibility:
+    url: http://oes-visibility:8096
   approvalGate:
 {{- if .Values.oesGate.port }}
     apiUrl: {{ .Values.oesGate.protocol }}://{{ .Values.oesGate.host }}:{{ .Values.oesGate.port }}/visibilityservice/v2/approvalGates/{id}/trigger
