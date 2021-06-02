@@ -1,5 +1,13 @@
 Steps to migrate from v2.9 to v3.7
 
+1. Create a new namespace for OES 3.7 release
+2. Deploy OES 3.7 release into the new namespace created in step #1.
+3. Create a new database called autopilot_v2.9 in the new namespace created in step #1.
+4. Copy all data from the Autopilot db in OES 3.7 release to the autopilot_v2.9 database created in step #3.
+5. Copy the migration script file to oes-platform pod
+6. Run the script from the new namespace created in step #1.
+
+
 Run the below command to execute the script.
 	
 	python3 <scriptfilename>  <autopilot-v2.9-db-name> <autopilot-v3.7-db-name> <autopilot-v3.7-db-host> <autopilot-v2.9-db-host> <platform-db-host>  <db-port> <ldap-host> <ldap-port> <ldap-user-name> 			<ldap-password> <ldap-admin-group> <oes-gate-url>
