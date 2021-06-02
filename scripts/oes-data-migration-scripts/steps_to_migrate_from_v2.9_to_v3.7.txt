@@ -1,0 +1,7 @@
+Steps to migrate from v2.9 to v3.7
+
+Run the below command to execute the script.
+	
+	python3 <scriptfilename>  <autopilot-v2.9-db-name> <autopilot-v3.7-db-name> <autopilot-v3.7-db-host> <autopilot-v2.9-db-host> <platform-db-host>  <db-port> <ldap-host> <ldap-port> <ldap-user-name> 			<ldap-password> <ldap-admin-group> <oes-gate-url>
+	
+	Ex: 	python3 migration_v2.9_to_v3.7.py opsmx_v2.9 opsmx oes-db oes-db.v29-37 oes-db 5432 oes-ldap 3389 cn=admin,dc=example,dc=com adminroot123 Administrators https://gate.qa-test.opsmx.com
