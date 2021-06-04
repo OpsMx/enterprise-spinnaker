@@ -14,8 +14,8 @@ imagePullSecret: opsmxdev-secret
 ##
 imageCredentials:
   registry: https://quay.io/
-  username: username
-  password: password
+  username: quayID  # Quay username
+  password: quayPassword # Quay password
   email: info@opsmx.com   # email corresponding to quay registry ID
 
 rbac:
@@ -1011,6 +1011,7 @@ spinnaker:
       organization: opsmx
       repository: <any empty repo
       username: <GitHub_UserName>
+      usermail: <GitHub_Usermail>
       token: <GitHub_Token>
       ## Namespace in which pipeline promotion job need to run
       # TODO: Implementation pending; currently default namespace is hardcoded

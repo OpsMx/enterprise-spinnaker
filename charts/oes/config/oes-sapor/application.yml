@@ -6,15 +6,20 @@ spring:
     password: {{ .Values.db.password }}
 {{- end }}
 
-oes.platform.url: http://oes-platform:8095
-oes.visibility.url: http://oes-visibility:8096
-oes.dashboard.url: http://oes-dashboard:8094
-secretManagement.source.config: {{ .Values.secretStore }}
+secretManagement:
+  source:
+    config: {{ .Values.secretStore }}
 oes:
   rbac:
     enabled: true
   admin:
     user: admin
+  platform:
+    url: http://oes-platform:8095
+  visibility:
+    url: http://oes-visibility:8096
+  dashboard:
+    url: http://oes-dashboard:8094
 spinnaker:
   restart:
     endPoint: /webhooks/webhook/restartSpinnaker
