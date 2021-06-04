@@ -902,6 +902,15 @@ spinnaker:
     cluster:
       enabled: false
 
+    ## Redis config file
+    ## ref: https://redis.io/topics/config
+    ##
+    configmap: |-
+      # Enable AOF https://redis.io/topics/persistence#append-only-file
+      appendonly no
+      # Disable RDB persistence, AOF persistence already enabled.
+      save 60 1000
+
     # Use ubi8 custom images
     #image:
     #  registry: docker.io
