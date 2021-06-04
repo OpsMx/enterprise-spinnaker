@@ -4,14 +4,12 @@ spring:
     url: {{ .Values.db.url }}/platformdb
     username: {{ .Values.db.username }}
     password: {{ .Values.db.password }}
+ldap.managerPassword: {{ .Values.ldap.managerPassword }}
+redis.connection: {{ tpl .Values.redis.url . }}
 #datasource.url: {{ .Values.db.url }}/visibilitydb
 #postgres.password: {{ .Values.db.password }}
 #postgres.username: {{ .Values.db.username }}
 {{- end }}
-
-
-redis:
-  connection: {{ tpl .Values.redis.url . }}
 
 datasource:
   secretManagement:
@@ -30,7 +28,6 @@ user:
 ldap:
   url: {{ tpl .Values.ldap.url . }}
   managerDn: {{ .Values.ldap.managerDn }}
-  managerPassword: {{ .Values.ldap.managerPassword }}
   groupSearchBase: {{ .Values.ldap.groupSearchBase }}
   groupSearchFilter: {{ .Values.ldap.groupSearchFilter }}
   groupRoleAttributes: {{ .Values.ldap.groupRoleAttributes }}
