@@ -1006,6 +1006,9 @@ spinnaker:
       halConfigPath: /     # Any other value is currently not supported
       username: <GitHub_UserName>
       token: <GitHub_Token>
+      s3accesskey: <s3_access_key>
+      s3secretkey: <s3_secret_key>
+      s3bucket: <s3_bucket>
     secretName: opsmx-gitops-auth 
     # Max time(in secs) that an init container of halyard should wait
     # to fetch External Load Balancer IP of spin-deck and spin-gate
