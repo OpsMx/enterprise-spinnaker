@@ -14,6 +14,15 @@ We truncate at 24 chars because some Kubernetes name fields are limited to this 
 {{- end -}}
 
 {{/*
+Create a default fully qualified app name.
+We truncate at 24 chars because some Kubernetes name fields are limited to this (by the DNS naming spec).
+*/}}
+{{- define "spinnaker.fullname" -}}
+{{- $name := default "spinnaker" -}}
+{{- printf "%s-%s" .Release.Name $name | trunc 24 | trimSuffix "-" -}}
+{{- end -}}
+
+{{/*
 Common labels for metadata.
 */}}
 {{- define "oes.standard-labels" -}}
