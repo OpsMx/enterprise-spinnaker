@@ -103,7 +103,7 @@ global:
   ## Set it to false if own LDAP is to be configured
   ## ldap configuration used in oes-gate, oes-platform and spinnaker gate for authentication
   ## and authorization
-  
+
   installOpenLdap: true
   ldap:
     enabled: true
@@ -900,6 +900,15 @@ spinnaker:
     nodeSelector: {}
     cluster:
       enabled: false
+
+    ## Redis config file	
+    ## ref: https://redis.io/topics/config	
+    ##	
+    configmap: |-	
+      # Enable AOF https://redis.io/topics/persistence#append-only-file	
+      appendonly no	
+      # Disable RDB persistence, AOF persistence already enabled.	
+      save 60 1000
       
 
     # Use ubi8 custom images
