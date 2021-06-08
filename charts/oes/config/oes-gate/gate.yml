@@ -25,14 +25,14 @@ services:
 cors:
   allowed-origins-pattern: ^https?://(?:localhost|{{ .Values.oesUI.host }}|opsmx.com)(?::[1-9]\d*)?/?
 ldap:
-  enabled: {{ .Values.ldap.enabled }}
-  managerDn: {{ .Values.ldap.managerDn }}
-  groupSearchBase: {{ .Values.ldap.groupSearchBase }}
-  groupSearchFilter: {{ .Values.ldap.groupSearchFilter }}
-  userDnPattern: {{ .Values.ldap.userDnPattern }}
+  enabled: {{ .Values.global.ldap.enabled }}
+  managerDn: {{ .Values.global.ldap.managerDn }}
+  groupSearchBase: {{ .Values.global.ldap.groupSearchBase }}
+  groupSearchFilter: {{ .Values.global.ldap.groupSearchFilter }}
+  userDnPattern: {{ .Values.global.ldap.userDnPattern }}
 {{- if (eq .Values.secretStore "db") }}
-  url: {{ tpl .Values.ldap.url . }}
-  managerPassword: {{ .Values.ldap.managerPassword }}
+  url: {{ tpl .Values.global.ldap.url . }}
+  managerPassword: {{ .Values.global.ldap.managerPassword }}
 {{- end }}
 {{- if .Values.gate.config.saml.enabled }}
 saml:

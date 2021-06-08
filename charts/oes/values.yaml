@@ -14,7 +14,7 @@ imagePullSecret: opsmxdev-secret
 ##
 imageCredentials:
   registry: https://quay.io/
-  username: quayID  # Quay username
+  username: quayID # Quay username
   password: quayPassword # Quay password
   email: info@opsmx.com # email corresponding to quay registry ID
 
@@ -100,6 +100,22 @@ global:
       tls:
         secretName: gate-authtls
 
+  ## Set it to false if own LDAP is to be configured
+  ## ldap configuration used in oes-gate, oes-platform and spinnaker gate for authentication
+  ## and authorization
+  
+  installOpenLdap: true
+  ldap:
+    enabled: true
+    url: ldap://{{ .Release.Name }}-openldap:389
+    managerDn: cn=admin,dc=example,dc=org
+    managerPassword: opsmxadmin123
+    groupSearchBase: ou=groups,dc=example,dc=org
+    groupSearchFilter: member={0}
+    groupRoleAttributes: cn
+    userDnPattern: cn={0},dc=example,dc=org
+
+
 ## OES-UI url configuration
 oesUI:
   protocol: https
@@ -127,6 +143,7 @@ oesGate:
 
     tls:
       secretName: oes-gate-authtls
+
 
 ###############################################################################
 ## Details of redis-master image for OES
@@ -566,11 +583,9 @@ opa:
     pullPolicy: IfNotPresent
 
 ####################################################
-## LDAP configuration
+## OPENLDAP configuration
 ####################################################
-## Set it to false if own LDAP is to be configured
-##
-installOpenLdap: true
+
 ## OpenLDAP custom configuration; will override default configuration of
 ## openldap helm chart
 ##
@@ -657,15 +672,6 @@ openldap:
 
 ## ldap configuration used in oes-gate, oes-platform and spinnaker gate for authentication
 ## and authorization
-ldap:
-  enabled: true
-  url: ldap://{{ .Release.Name }}-openldap:389
-  managerDn: cn=admin,dc=example,dc=org
-  managerPassword: opsmxadmin123
-  groupSearchBase: ou=groups,dc=example,dc=org
-  groupSearchFilter: member={0}
-  groupRoleAttributes: cn
-  userDnPattern: cn={0},dc=example,dc=org
 
 #####################################################
 # Centralized Logging Configuration
@@ -703,17 +709,6 @@ kibana:
 # Spinnaker instance configuration
 #####################################################
 spinnaker:
-  installOpenLdap: true
-  ldap:
-    enabled: true
-    url: ldap://{{ .Release.Name }}-openldap:389
-    managerDn: cn=admin,dc=example,dc=org
-    managerPassword: opsmxadmin123
-    groupSearchBase: ou=groups,dc=example,dc=org
-    groupSearchFilter: member={0}
-    groupRoleAttributes: cn
-    userDnPattern: cn={0},dc=example,dc=org
-
   halyard:
     spinnakerVersion: 1.24.4
     image:
@@ -905,6 +900,7 @@ spinnaker:
     nodeSelector: {}
     cluster:
       enabled: false
+      
 
     # Use ubi8 custom images
     #image:

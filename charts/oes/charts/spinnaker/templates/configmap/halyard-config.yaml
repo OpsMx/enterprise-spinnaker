@@ -163,13 +163,12 @@ data:
 
 
     # Enable Authentication by default
-    {{- if .Values.ldap.enabled }}
-    {{- if .Values.installOpenLdap }}
-    #$HAL_COMMAND config security authn ldap edit --user-dn-pattern="cn={0}" --url=ldap://{{ .Release.Name }}-openldap:389/dc=example,dc=org
+    {{- if .Values.global.ldap.enabled }}
+    {{- if .Values.global.installOpenLdap }}
     $HAL_COMMAND config security authn ldap edit --url ldap://{{ .Release.Name }}-openldap:389 --user-dn-pattern  'cn={0},dc=example,dc=org'
     {{- else }}
-    $HAL_COMMAND config security authn ldap edit --url {{ .Values.ldap.url }} --user-dn-pattern  {{ .Values.ldap.userDnPattern }}
-    $HAL_COMMAND config security authn ldap edit --manager-dn {{ .Values.ldap.managerDn }} --manager-password {{ .Values.ldap.managerPassword }}
+    $HAL_COMMAND config security authn ldap edit --url {{ .Values.global.ldap.url }} --user-dn-pattern  {{ .Values.global.ldap.userDnPattern }}
+    $HAL_COMMAND config security authn ldap edit --manager-dn {{ .Values.global.ldap.managerDn }} --manager-password {{ .Values.global.ldap.managerPassword }}
     {{- end }}
     $HAL_COMMAND config security authn ldap enable
     {{- else }}

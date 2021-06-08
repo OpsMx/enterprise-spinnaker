@@ -21,7 +21,7 @@ home: https://www.opsmx.com/
 dependencies:
   - name: openldap
     version: 1.2.3
-    condition: installOpenLdap
+    condition: global.installOpenLdap
   - name: spinnaker
     version: 2.2.3
     condition: installSpinnaker
