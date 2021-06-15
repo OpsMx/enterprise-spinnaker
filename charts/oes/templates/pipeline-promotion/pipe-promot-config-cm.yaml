@@ -5,7 +5,7 @@ data:
   git_project: {{ .Values.spinnaker.gitopsHalyard.pipelinePromotion.repository }}
   git_refresh_enabled: "true"
   git_repo: {{ .Values.spinnaker.gitopsHalyard.pipelinePromotion.organization }}
-  git_user_email: srini@opsmx.io
+  git_user_email: {{ .Values.spinnaker.gitopsHalyard.pipelinePromotion.usermail }}
   ignore_spin_errors: "false"
   debug: "false"
   pipelineconfig: "false" # Enable pipeline configuration during promotion

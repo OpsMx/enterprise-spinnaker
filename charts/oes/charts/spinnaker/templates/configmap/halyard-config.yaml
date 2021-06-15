@@ -156,14 +156,38 @@ data:
     $HAL_COMMAND config deploy ha clouddriver enable
     $HAL_COMMAND config deploy ha echo enable
     {{- end }}
+
+    
+    
+
+
+
     # Enable Authentication by default
-    $HAL_COMMAND config security authn ldap edit --user-dn-pattern="cn={0}" --url=ldap://{{ .Release.Name }}-openldap:389/dc=example,dc=org
+    {{- if .Values.global.ldap.enabled }}
+    {{- if .Values.global.installOpenLdap }}
+    $HAL_COMMAND config security authn ldap edit --url ldap://{{ .Release.Name }}-openldap:389 --user-dn-pattern  'cn={0},dc=example,dc=org'
+    {{- else }}
+    $HAL_COMMAND config security authn ldap edit --url {{ .Values.global.ldap.url }} --user-dn-pattern  {{ .Values.global.ldap.userDnPattern }}
+    $HAL_COMMAND config security authn ldap edit --manager-dn {{ .Values.global.ldap.managerDn }} --manager-password {{ .Values.global.ldap.managerPassword }}
+    {{- end }}
     $HAL_COMMAND config security authn ldap enable
+    {{- else }}
+    $HAL_COMMAND config security authn ldap disable
+    {{- end }}
+
     # Use Deck to route to Gate
     {{- if not .Values.gitopsHalyard.enabled }}
     # Configure override urls in halyard config
+    {{- if .Values.global.spinDeck.port }}
+    $HAL_COMMAND config security ui edit --no-validate --override-base-url {{ .Values.global.spinDeck.protocol }}://{{ .Values.global.spinDeck.host }}:{{ .Values.global.spinDeck.port }}
+    {{- else }}
     $HAL_COMMAND config security ui edit --no-validate --override-base-url {{ .Values.global.spinDeck.protocol }}://{{ .Values.global.spinDeck.host }}
+    {{- end }}
+    {{- if .Values.global.spinGate.port }}
+    $HAL_COMMAND config security api edit --no-validate --override-base-url {{ .Values.global.spinGate.protocol }}://{{ .Values.global.spinGate.host }}:{{ .Values.global.spinGate.port }}
+    {{- else }}
     $HAL_COMMAND config security api edit --no-validate --override-base-url {{ .Values.global.spinGate.protocol }}://{{ .Values.global.spinGate.host }}
+    {{- end }}
     {{- end }}
     {{- range $index, $feature := .Values.spinnakerFeatureFlags }}
     $HAL_COMMAND config features edit --{{ $feature }} true

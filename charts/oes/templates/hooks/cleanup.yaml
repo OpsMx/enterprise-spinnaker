@@ -1,0 +1,25 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: "oes-cleanup"
+  labels:
+{{ include "oes.standard-labels" . | indent 4 }}
+  annotations:
+    "helm.sh/hook": "pre-delete"
+    "helm.sh/hook-delete-policy": "before-hook-creation"
+spec:
+  template:
+    metadata:
+      labels:
+{{ include "oes.standard-labels" . | indent 8 }}
+    spec:
+      restartPolicy: OnFailure
+      containers:
+      - name: oes-cleanup
+        image: {{ .Values.spinnaker.halyard.image.repository }}:{{ .Values.spinnaker.halyard.image.tag }}
+        command: ["/bin/bash","-c"]
+{{- if .Values.global.certManager.installed }}
+        args: ["kubectl delete issuer letsencrypt-{{ .Release.Namespace }}-spin; kubectl delete ingress {{ template "oes.fullname" . }}-gate {{ template "oes.fullname" . }}-ui {{ template "spinnaker.fullname" . }}-deck {{ template "spinnaker.fullname" . }}-gate; kubectl delete secret ca-secret deck-authtls demo-authtls gate-authtls jwt-secret oes-cacerts oes-control-secret oes-gate-authtls oes-ui-authtls"]
+{{- else }}
+        args: ["kubectl delete ingress {{ template "oes.fullname" . }}-gate {{ template "oes.fullname" . }}-ui {{ template "spinnaker.fullname" . }}-deck {{ template "spinnaker.fullname" . }}-gate; kubectl delete secret ca-secret deck-authtls demo-authtls gate-authtls jwt-secret oes-cacerts oes-control-secret oes-gate-authtls oes-ui-authtls"]
+{{- end }}

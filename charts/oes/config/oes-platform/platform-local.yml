@@ -4,16 +4,12 @@ spring:
     url: {{ .Values.db.url }}/platformdb
     username: {{ .Values.db.username }}
     password: {{ .Values.db.password }}
-ldap.managerPassword: {{ .Values.ldap.managerPassword }}
+ldap.managerPassword: {{ .Values.global.ldap.managerPassword }}
 redis.connection: {{ tpl .Values.redis.url . }}
 #datasource.url: {{ .Values.db.url }}/visibilitydb
 #postgres.password: {{ .Values.db.password }}
 #postgres.username: {{ .Values.db.username }}
 {{- end }}
-
-oes.sapor.url: http://oes-sapor:8085
-oes.autopilot.url: http://oes-autopilot:8090
-oes.visibility.url: http://oes-visibility:8096
 
 datasource:
   secretManagement:
@@ -30,14 +26,20 @@ user:
   source: {{ .Values.platform.config.userSource }}
   {{- end }}
 ldap:
-  url: {{ tpl .Values.ldap.url . }}
-  managerDn: {{ .Values.ldap.managerDn }}
-  groupSearchBase: {{ .Values.ldap.groupSearchBase }}
-  groupSearchFilter: {{ .Values.ldap.groupSearchFilter }}
-  groupRoleAttributes: {{ .Values.ldap.groupRoleAttributes }}
-  userDnPattern: {{ .Values.ldap.userDnPattern }}
+  url: {{ tpl .Values.global.ldap.url . }}
+  managerDn: {{ .Values.global.ldap.managerDn }}
+  groupSearchBase: {{ .Values.global.ldap.groupSearchBase }}
+  groupSearchFilter: {{ .Values.global.ldap.groupSearchFilter }}
+  groupRoleAttributes: {{ .Values.global.ldap.groupRoleAttributes }}
+  userDnPattern: {{ .Values.global.ldap.userDnPattern }}
 
 oes:
+  sapor:
+    url: http://oes-sapor:8085
+  autopilot:
+    url: http://oes-autopilot:8090
+  visibility:
+    url: http://oes-visibility:8096
   approvalGate:
 {{- if .Values.oesGate.port }}
     apiUrl: {{ .Values.oesGate.protocol }}://{{ .Values.oesGate.host }}:{{ .Values.oesGate.port }}/visibilityservice/v2/approvalGates/{id}/trigger

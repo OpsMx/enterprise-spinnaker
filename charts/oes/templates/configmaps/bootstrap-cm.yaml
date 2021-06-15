@@ -4,8 +4,8 @@ data:
     spring:
       cloud:
         vault:
-          uri: {{ .Values.VAULT_URI }}
-          token: {{ .Values.VAULT_TOKEN }}
+          uri: {{ .Values.vault.address }}
+          token: {{ .Values.vault.token }}
 {{- if (eq .Values.secretStore "vault")  }}
           enabled: true
           kv:

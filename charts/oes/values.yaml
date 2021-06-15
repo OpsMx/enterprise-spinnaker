@@ -14,8 +14,8 @@ imagePullSecret: opsmxdev-secret
 ##
 imageCredentials:
   registry: https://quay.io/
-  username: username
-  password: password
+  username: quayID  # Quay username
+  password: quayPassword # Quay password
   email: info@opsmx.com   # email corresponding to quay registry ID
 
 rbac:
@@ -39,12 +39,12 @@ installRedis: false
 ## Installation mode
 ## Available installation modes OES-AP, None
 installationMode: OES-AP
-oesAutoConfiguration: true  # Attempt to configure OES with some basic integrations based on best guess
-secretStore: vault # Valid values: db, Vault: Used for storing account and integration secrets. Vault, if used, needs to be installed and configured separately
+oesAutoConfiguration: true # Attempt to configure OES with some basic integrations based on best guess
+secretStore: db # Valid values: db, Vault: Used for storing account and integration secrets. Vault, if used, needs to be installed and configured separately
 vault:
   address: https://server.vaultint.opsmx.net # Vault Address URL
   token: 123132 # Vault Root token
-  
+
 ## OES UI, OES Gate, Spinnaker Deck and Spinnaker Gate service type
 ##
 k8sServiceType: ClusterIP
@@ -61,7 +61,13 @@ global:
   certManager:
     installed: true
   self-signed-certs:
-    enabled: false  # At this point this is not supported
+    enabled: false # At this point this is not supported
+
+  # Below flag is used to setup tls termination at ingress
+  # when this flag is set to false; spinnaker and oes endpoints
+  # will be accessible over http instead of https
+  ssl:
+    enabled: true
 
   ## Set to true to expose oes-ui, oes-gate services over ingress
   ##
@@ -94,6 +100,21 @@ global:
       tls:
         secretName: gate-authtls
 
+  ## Set it to false if own LDAP is to be configured
+  ## ldap configuration used in oes-gate, oes-platform and spinnaker gate for authentication
+  ## and authorization
+
+  installOpenLdap: true
+  ldap:
+    enabled: true
+    url: ldap://{{ .Release.Name }}-openldap:389
+    managerDn: cn=admin,dc=example,dc=org
+    managerPassword: opsmxadmin123
+    groupSearchBase: ou=groups,dc=example,dc=org
+    groupSearchFilter: member={0}
+    groupRoleAttributes: cn
+    userDnPattern: cn={0},dc=example,dc=org
+
 
 ## OES-UI url configuration
 oesUI:
@@ -109,7 +130,6 @@ oesUI:
     tls:
       secretName: oes-ui-authtls
 
-
 ## OES-Gate url configuration
 oesGate:
   protocol: https
@@ -124,11 +144,11 @@ oesGate:
     tls:
       secretName: oes-gate-authtls
 
+
 ###############################################################################
 ## Details of redis-master image for OES
 ##
 redis:
-
   ## Redis endpoint that is used by oes-gate and oes-platform for caching;
   ## Change this to custom URL if installRedis is set to false
   ## url: redis://{{ .Release.Name }}-redis-master:6379
@@ -191,7 +211,6 @@ autopilot:
     tag: v3.7
     pullPolicy: IfNotPresent
 
-
   resources: {}
   #  requests:
   #    memory: 2Gi
@@ -199,7 +218,6 @@ autopilot:
   #  limits:
   #    memory: 8Gi
   #    cpu: 2
-
 
   config:
     ## Build Analysis
@@ -214,15 +232,14 @@ autopilot:
     ## SSL configuration
     ##
     ssl:
-      enabled: false  # Set it to true if SSL is to be enabled
+      enabled: false # Set it to true if SSL is to be enabled
       keyStore: keystore.p12
       keyStorePassword: dummypwd # Provide keystore password
       keyStoreType: PKCS12
       keyAlias: tomcat
-    
+
     ## server.host.dns.name is fetched from oesUI.host
     ##
-
     ## gate.url is fetched from oesGate.host
     ##
 
@@ -268,7 +285,7 @@ forwarder:
   agent:
     image: quay.io/opsmxpublic/forwarder-agent:v20210426T105924
     serviceType: LoadBalancer
-  # Value is also used in sapor configuration for kubernetes.agent.serverHostName
+    # Value is also used in sapor configuration for kubernetes.agent.serverHostName
     host: opsmx-controller-controller1
   externalName: controller.exampleopsmx.net
   image:
@@ -499,7 +516,6 @@ ui:
     pullPolicy: IfNotPresent
 
   config:
-
     ## Interval at which UI refreshes application dashboard
     setApplicationRefreshInterval: 300000
 
@@ -567,11 +583,9 @@ opa:
     pullPolicy: IfNotPresent
 
 ####################################################
-## LDAP configuration
+## OPENLDAP configuration
 ####################################################
-## Set it to false if own LDAP is to be configured
-##
-installOpenLdap: true
+
 ## OpenLDAP custom configuration; will override default configuration of
 ## openldap helm chart
 ##
@@ -656,18 +670,8 @@ openldap:
       member: cn=admin,dc=example,dc=org
       member: cn=ITManager,dc=example,dc=org
 
-
 ## ldap configuration used in oes-gate, oes-platform and spinnaker gate for authentication
 ## and authorization
-ldap:
-  enabled: true
-  url: ldap://{{ .Release.Name }}-openldap:389
-  managerDn: cn=admin,dc=example,dc=org
-  managerPassword: opsmxadmin123
-  groupSearchBase: ou=groups,dc=example,dc=org
-  groupSearchFilter: member={0}
-  groupRoleAttributes: cn
-  userDnPattern: cn={0},dc=example,dc=org
 
 #####################################################
 # Centralized Logging Configuration
@@ -762,7 +766,7 @@ spinnaker:
     ## https://www.spinnaker.io/reference/halyard/custom/#custom-service-settings
     ## You can use it to add annotations for pods, override the image, etc.
     additionalServiceSettings:
-    ## artifactId to override Spinnaker components images with OpsMx custom images
+      ## artifactId to override Spinnaker components images with OpsMx custom images
       gate.yml:
         healthEndpoint: /health
         kubernetes:
@@ -809,7 +813,8 @@ spinnaker:
 
     ## Uncomment the following resources definitions to control the cpu and memory
     # resources allocated for the halyard pod
-    resources: {}
+    resources:
+      {}
       # requests:
       #   memory: "1Gi"
       #   cpu: "100m"
@@ -833,13 +838,13 @@ spinnaker:
 
   # Configure your Docker registries here
   dockerRegistries:
-  - name: dockerhub
-    address: index.docker.io
-    repositories:
-      - library/alpine
-      - library/ubuntu
-      - library/centos
-      - library/nginx
+    - name: dockerhub
+      address: index.docker.io
+      repositories:
+        - library/alpine
+        - library/ubuntu
+        - library/centos
+        - library/nginx
   # - name: gcr
   #   address: https://gcr.io
   #   username: _json_key
@@ -862,11 +867,11 @@ spinnaker:
     secretKey: config
     # List of contexts from the kubeconfig to make available to Spinnaker
     contexts:
-    - default
+      - default
     deploymentContext: default
     omittedNameSpaces:
-    - kube-system
-    - kube-public
+      - kube-system
+      - kube-public
     onlySpinnakerManaged:
       enabled: true
 
@@ -895,6 +900,15 @@ spinnaker:
     nodeSelector: {}
     cluster:
       enabled: false
+
+    ## Redis config file	
+    ## ref: https://redis.io/topics/config	
+    ##	
+    configmap: |-	
+      # Enable AOF https://redis.io/topics/persistence#append-only-file	
+      appendonly no	
+      # Disable RDB persistence, AOF persistence already enabled.	
+      save 60 1000
 
     # Use ubi8 custom images
     #image:
@@ -931,7 +945,7 @@ spinnaker:
     project: my-project-name
     bucket: "<GCS-BUCKET-NAME>"
     ## if jsonKey is set, will create a secret containing it
-    jsonKey: '<INSERT CLOUD STORAGE JSON HERE>'
+    jsonKey: "<INSERT CLOUD STORAGE JSON HERE>"
     ## override the name of the secret to use for jsonKey, if `jsonKey`
     ## is empty, it will not create a secret assuming you are creating one
     ## external to the chart. the key for that secret should be `key.json`.
@@ -978,25 +992,25 @@ spinnaker:
 
   # Initialize gitOps style Halyard
   gitopsHalyard:
-    enabled: false
+    enabled: true
     # Change this to environment which you want to choose when multiple deployment profiles are specified in halyard config repo; uncomment and change this
     #environment: default
     mTLS:
-      enabled: false   # Enable mTLS for Spinnaker Services and SSL for Deck and Gate
+      enabled: false # Enable mTLS for Spinnaker Services and SSL for Deck and Gate
     repo:
       type: git # git, S3, vault, only git support at this point
       organization: OpsMx
       repository: standard-gitops-repo # repo name for GitOps Halyard (Sample Reference: https://github.com/OpsMx/sample-gitops-repo.git).
       dynamicAccRepository: standard-gitops-repo # Please provide the repo name of the GitOps Dynamic Accounts Directory.Can be same as Hal repo or can be different if needed. (Sample Reference: https://github.com/OpsMx/gitops-accounts-sample.git)
-      halConfigPath: /     # Any other value is currently not supported
+      halConfigPath: / # Any other value is currently not supported
       username: <GitHub_UserName>
       token: <GitHub_Token>
-    secretName: opsmx-gitops-auth 
+    secretName: opsmx-gitops-auth
     # Max time(in secs) that an init container of halyard should wait
     # to fetch External Load Balancer IP of spin-deck and spin-gate
-    spinnakerLBCheckDelay: 1   # This is only used if not using ingress
+    spinnakerLBCheckDelay: 1 # This is only used if not using ingress
     # Promote applications and pipelines from one environment to another environment
-      ## x509 authentication for Spinnaker Gate
+    ## x509 authentication for Spinnaker Gate
     gatex509:
       enabled: false
       host: spingate-x509.domain.com
@@ -1005,6 +1019,7 @@ spinnaker:
       organization: opsmx
       repository: <any empty repo
       username: <GitHub_UserName>
+      usermail: <GitHub_Usermail>
       token: <GitHub_Token>
       ## Namespace in which pipeline promotion job need to run
       # TODO: Implementation pending; currently default namespace is hardcoded
@@ -1012,7 +1027,6 @@ spinnaker:
       ## Spinnaker kubernetes account to use for job execution
       # TODO: Implementation pending; currently default namespace is hardcoded
       executionAccountName: default
-
 
   ## Auth mechanism and credentials to be used by spin-cli for creating the sample pipelines
   ## Here basic ldap auth is used by default; everything under spinCli will be pasted in ~/.spin/config
