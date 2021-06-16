@@ -44,7 +44,9 @@ data:
     # additionalInitScript
     {{ tpl .Values.halyard.additionalInitScript $ | indent 4 }}
     {{- end }}
-    {{- else }}
+    {{- end }}
+
+    {{- if and (.Values.gitopsHalyard.enabled) (eq .Values.gitopsHalyard.repo.type "git") }}
     #!/bin/bash -x
     rm -rf /tmp/spinnaker/.hal
     git clone $GIT_CLONE_PARAM /tmp/spinnaker/test
@@ -54,9 +56,6 @@ data:
     GIT_TOKEN=`echo $GIT_TOKEN | sed 's/ *$//g'`
     DYNAMIC_ACCOUNTS_REPO=`echo $DYNAMIC_ACCOUNTS_REPO | sed 's/ *$//g'`
     sed -i  s/SPINNAKER_NAMESPACE/${SPINNAKER_NAMESPACE}/ /tmp/spinnaker/.hal/config
-    {{- if .Values.gitopsHalyard.mTLS.enabled }}
-    sed -i  s/SPINNAKER_NAMESPACE/${SPINNAKER_NAMESPACE}/g /tmp/spinnaker/.hal/default/service-settings/*
-    {{- end }}
     sed -i  s/RELEASE_NAME/{{ .Release.Name }}/g /tmp/spinnaker/.hal/config
     {{- if .Values.gitopsHalyard.environment }}
     sed -i  s/ENVIRONMENT/{{ .Values.gitopsHalyard.environment }}/g /tmp/spinnaker/.hal/config
@@ -72,4 +71,26 @@ data:
     if [ -f /tmp/spinnaker/.hal/halyard.yaml ]; then
     cp /tmp/spinnaker/.hal/halyard.yaml /tmp/config
     fi
+    {{- end }}
+
+    {{- if and (.Values.gitopsHalyard.enabled) (eq .Values.gitopsHalyard.repo.type "s3") }}
+    #!/bin/bash -x
+    rm -rf /tmp/spinnaker/.hal
+    AWS_ACCESS_KEY_ID=$S3_ACCESSKEY AWS_SECRET_ACCESS_KEY=$S3_SECRETKEY aws s3 cp s3://$S3_BUCKET/config /tmp/spinnaker/.hal/config
+    AWS_ACCESS_KEY_ID=$S3_ACCESSKEY AWS_SECRET_ACCESS_KEY=$S3_SECRETKEY aws s3 cp s3://$S3_BUCKET/default/ /tmp/spinnaker/.hal/default --recursive
+    AWS_ACCESS_KEY_ID=$S3_ACCESSKEY AWS_SECRET_ACCESS_KEY=$S3_SECRETKEY aws s3 cp s3://$S3_BUCKET/halyard.yaml /tmp/spinnaker/.hal/halyard.yaml
+    sed -i  s/SPINNAKER_NAMESPACE/${SPINNAKER_NAMESPACE}/ /tmp/spinnaker/.hal/config
+    sed -i  s/RELEASE_NAME/{{ .Release.Name }}/g /tmp/spinnaker/.hal/config
+    sed -i  s/RELEASE_NAME/{{ .Release.Name }}/g /tmp/spinnaker/.hal/default/service-settings/redis.yml
+    if [ -f /tmp/spinnaker/.hal/default/profiles/fiat-local.yml ]; then
+    sed -i  s/RELEASE_NAME/{{ .Release.Name }}/g /tmp/spinnaker/.hal/default/profiles/fiat-local.yml
+    fi
+    printf 'server.address: 0.0.0.0\n' > /tmp/config/halyard-local.yml
+    if [ -f /tmp/spinnaker/.hal/halyard.yaml ]; then
+    cp /tmp/spinnaker/.hal/halyard.yaml /tmp/config
+    fi
+    {{- end }}
+
+    {{- if .Values.gitopsHalyard.mTLS.enabled }}
+    sed -i  s/SPINNAKER_NAMESPACE/${SPINNAKER_NAMESPACE}/g /tmp/spinnaker/.hal/default/service-settings/*
     {{- end }}
