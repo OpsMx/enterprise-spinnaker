@@ -85,11 +85,29 @@ data:
     if [ -f /tmp/spinnaker/.hal/default/profiles/fiat-local.yml ]; then
     sed -i  s/RELEASE_NAME/{{ .Release.Name }}/g /tmp/spinnaker/.hal/default/profiles/fiat-local.yml
     fi
+    # Copy S3 Specific files
+    cp /tmp/spinnaker/.hal/default/service-settings/clouddriver-caching.yml.s3 /tmp/spinnaker/.hal/default/service-settings/clouddriver-caching.yml
+    cp /tmp/spinnaker/.hal/default/service-settings/clouddriver-ro.yml.s3 /tmp/spinnaker/.hal/default/service-settings/clouddriver-caching.yml
+    cp /tmp/spinnaker/.hal/default/service-settings/clouddriver-rw.yml.s3 /tmp/spinnaker/.hal/default/service-settings/clouddriver-caching.yml
+    cp /tmp/spinnaker/.hal/default/service-settings/clouddriver-ro-deck.yml.s3 /tmp/spinnaker/.hal/default/service-settings/clouddriver-caching.yml
+    cp /tmp/spinnaker/.hal/default/profiles/spinnakerconfig.yml.s3 /tmp/spinnaker/.hal/default/service-settings/clouddriver-caching.yml
+    # Edit and put secrets in there
+    sed -i  s/AWS_ACCESS_KEY_ID/${S3_ACCESSKEY}/g /tmp/spinnaker/.hal/default/service-settings/clouddriver-caching.yml
+    sed -i  s/AWS_ACCESS_KEY_ID/${S3_ACCESSKEY}/g /tmp/spinnaker/.hal/default/service-settings/clouddriver-ro.yml
+    sed -i  s/AWS_ACCESS_KEY_ID/${S3_ACCESSKEY}/g /tmp/spinnaker/.hal/default/service-settings/clouddriver-ro-deck.yml
+    sed -i  s/AWS_ACCESS_KEY_ID/${S3_ACCESSKEY}/g /tmp/spinnaker/.hal/default/service-settings/clouddriver-rw.yml
+    sed -i  s/AWS_SECRET_ACCESS_KEY/${S3_SECRETKEY}/g /tmp/spinnaker/.hal/default/service-settings/clouddriver-caching.yml
+    sed -i  s/AWS_SECRET_ACCESS_KEY/${S3_SECRETKEY}/g /tmp/spinnaker/.hal/default/service-settings/clouddriver-ro.yml
+    sed -i  s/AWS_SECRET_ACCESS_KEY/${S3_SECRETKEY}/g /tmp/spinnaker/.hal/default/service-settings/clouddriver-ro-deck.yml
+    sed -i  s/AWS_SECRET_ACCESS_KEY/${S3_SECRETKEY}/g /tmp/spinnaker/.hal/default/service-settings/clouddriver-rw.yml
+    sed -i  s/AWS_S3_BUCKET/${S3_BUCKET}/g /tmp/spinnaker/.hal/default/profiles/spinnakerconfig.yml
+    sed -i  s/AWS_S3_REGION/${S3_REGION}/g /tmp/spinnaker/.hal/default/profiles/spinnakerconfig.yml
+
     printf 'server.address: 0.0.0.0\n' > /tmp/config/halyard-local.yml
     if [ -f /tmp/spinnaker/.hal/halyard.yaml ]; then
     cp /tmp/spinnaker/.hal/halyard.yaml /tmp/config
     fi
-    {{- end }}
+    {{- end }}  # End of S3
 
     {{- if .Values.gitopsHalyard.mTLS.enabled }}
     sed -i  s/SPINNAKER_NAMESPACE/${SPINNAKER_NAMESPACE}/g /tmp/spinnaker/.hal/default/service-settings/*
