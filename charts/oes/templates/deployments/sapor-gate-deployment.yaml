@@ -33,12 +33,7 @@ spec:
         - containerPort: 8084
           protocol: TCP
         resources:
-          limits:
-            cpu: "2"
-            memory: 650Mi
-          requests:
-            cpu: 300m
-            memory: 650Mi
+{{ toYaml .Values.gate.resources | indent 12 }}
         volumeMounts:
         - mountPath: /opt/spinnaker/config
           name: sapor-gate-files
