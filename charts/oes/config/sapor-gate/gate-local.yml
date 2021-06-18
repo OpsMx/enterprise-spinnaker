@@ -1,0 +1,12 @@
+server:
+  tomcat:
+    httpsServerPort: X-Forwarded-Port
+    internalProxies: .*
+    protocolHeader: X-Forwarded-Proto
+    remoteIpHeader: X-Forwarded-For
+security:
+  basicform:
+    enabled: true
+  user:
+    name: {{ .Values.saporgate.config.username }}
+    password: {{ .Values.saporgate.config.password }}
