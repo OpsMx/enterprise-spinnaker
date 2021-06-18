@@ -433,7 +433,7 @@ sapor:
   image:
     registry: quay.io/opsmxpublic
     repository: ubi8-oes-sapor
-    tag: v3.8
+    tag: v3.8.0.1
     pullPolicy: IfNotPresent
 
   resources: {}
@@ -994,7 +994,7 @@ spinnaker:
   gitopsHalyard:
     enabled: true
     repo:
-      type: git # git, S3, bitbucket. use a different sample values file for s3
+      type: git # git, S3, bitbucket-stash use a different sample values file for s3/stash
       organization: OpsMx
       repository: standard-gitops-repo # repo name for GitOps Halyard (Sample Reference: https://github.com/OpsMx/sample-gitops-repo.git).
       dynamicAccRepository: standard-gitops-repo # Please provide the repo name of the GitOps Dynamic Accounts Directory.Can be same as Hal repo. 
