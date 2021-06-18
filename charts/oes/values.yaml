@@ -198,7 +198,8 @@ db:
   ##
   #storageClassName: default
 ###############################################################################
-##
+## Use this SAPOR GATE Configuration to Enable Basic Authentication for OES SAPOR to communitcate 
+## with spinnaker instead of x509
 ## Values of SAPOR OES Gate
 ##
 saporgate:
