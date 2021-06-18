@@ -46,7 +46,8 @@ data:
     {{- end }}
     {{- end }}
 
-    {{- if and (.Values.gitopsHalyard.enabled) (eq .Values.gitopsHalyard.repo.type "git") }}
+    {{- if .Values.gitopsHalyard.enabled }}
+    {{- if or (eq .Values.gitopsHalyard.repo.type "git") (eq .Values.gitopsHalyard.repo.type "stash") }}
     #!/bin/bash -x
     rm -rf /tmp/spinnaker/.hal
     git clone $GIT_CLONE_PARAM /tmp/spinnaker/test
@@ -71,7 +72,8 @@ data:
     if [ -f /tmp/spinnaker/.hal/halyard.yaml ]; then
     cp /tmp/spinnaker/.hal/halyard.yaml /tmp/config
     fi
-    {{- end }}
+    {{- end }}  # git or stash
+    {{- end }}  # Enabled
 
     {{- if and (.Values.gitopsHalyard.enabled) (eq .Values.gitopsHalyard.repo.type "s3") }}
     #!/bin/bash -x
@@ -90,7 +92,7 @@ data:
     cp /tmp/spinnaker/.hal/default/service-settings/clouddriver-ro.yml.s3 /tmp/spinnaker/.hal/default/service-settings/clouddriver-caching.yml
     cp /tmp/spinnaker/.hal/default/service-settings/clouddriver-rw.yml.s3 /tmp/spinnaker/.hal/default/service-settings/clouddriver-caching.yml
     cp /tmp/spinnaker/.hal/default/service-settings/clouddriver-ro-deck.yml.s3 /tmp/spinnaker/.hal/default/service-settings/clouddriver-caching.yml
-    cp /tmp/spinnaker/.hal/default/profiles/spinnakerconfig.yml.s3 /tmp/spinnaker/.hal/default/service-settings/clouddriver-caching.yml
+    cp /tmp/spinnaker/.hal/default/profiles/spinnakerconfig.yml.s3 /tmp/spinnaker/.hal/default/profiles/spinnakerconfig.yml
     # Edit and put secrets in there
     sed -i  s/AWS_ACCESS_KEY_ID/${S3_ACCESSKEY}/g /tmp/spinnaker/.hal/default/service-settings/clouddriver-caching.yml
     sed -i  s/AWS_ACCESS_KEY_ID/${S3_ACCESSKEY}/g /tmp/spinnaker/.hal/default/service-settings/clouddriver-ro.yml
