@@ -8,5 +8,5 @@ security:
   basicform:
     enabled: true
   user:
-    name: {{ .Values.gate.config.basicauth.username }}
-    password: {{ .Values.gate.config.basicauth.password }}
+    name: {{ .Values.saporgate.config.username }}
+    password: {{ .Values.saporgate.config.password }}

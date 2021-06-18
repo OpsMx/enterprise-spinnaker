@@ -1,4 +1,5 @@
-{{- if .Values.gate.config.basicauth.enabled -}}
+{{- if or (eq .Values.installationMode "OES-AP") (eq .Values.installationMode "OES") -}}
+{{- if .Values.saporgate.enabled }}
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -22,7 +23,7 @@ spec:
 {{ include "oes.standard-labels" . | indent 8 }}
     spec:
       containers:
-      - image: {{ template "gate.image" . }}
+      - image: {{ template "saporgate.image" . }}
         name: sapor-gate
         env:
         - name: JAVA_OPTS
@@ -33,7 +34,7 @@ spec:
         - containerPort: 8084
           protocol: TCP
         resources:
-{{ toYaml .Values.gate.resources | indent 12 }}
+{{ toYaml .Values.saporgate.resources | indent 12 }}
         volumeMounts:
         - mountPath: /opt/spinnaker/config
           name: sapor-gate-files
@@ -50,4 +51,5 @@ spec:
       - name: sapor-gate-files
         secret:
           secretName: sapor-gate-files
+{{- end -}}
 {{- end -}}
