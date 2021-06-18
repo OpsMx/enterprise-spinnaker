@@ -348,6 +348,15 @@ gate:
 
       jksSecretName: oes-saml-jks
       metadataSecretName: metadata-xml
+    #####################################################
+    # Baic AUthentication
+    #####################################################
+    # saml.jks and metadata.xml are to be mounted as secrets
+    # with names oes-saml-jks and oes-saml-metadata resp.
+    basicauth:
+      enabled: true
+      username: srini
+      password: kambh123
 
     #####################################################
     #OAUTH2 Authentication for GitHub
@@ -551,6 +560,8 @@ visibility:
 
     ## Logger level
     logLevel: ERROR
+
+
 
 ###############################################################################
 ## This option enables OES to be configured automatically
