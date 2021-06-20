@@ -221,8 +221,8 @@ saporgate:
   #    cpu: 1500m
 
   config:
-    username: admin
-    password: saporadmin # Any generic String.
+    username: admin      # User name with admin permissions and belonging to admin groups defined in platform service
+    password: saporadmin # Any generic String, need not be the real password
 
 ###############################################################################
 ##
@@ -1022,7 +1022,7 @@ spinnaker:
   gitopsHalyard:
     enabled: true
     repo:
-      type: git # git, S3, bitbucket-stash use a different sample values file for s3/stash
+      type: git # git, S3, stash use a different sample values file for s3/bitbuck-stash
       organization: OpsMx
       repository: standard-gitops-repo # repo name for GitOps Halyard (Sample Reference: https://github.com/OpsMx/sample-gitops-repo.git).
       dynamicAccRepository: standard-gitops-repo # Please provide the repo name of the GitOps Dynamic Accounts Directory.Can be same as Hal repo. 
@@ -1031,7 +1031,7 @@ spinnaker:
       token: <GitHub_Token>
     secretName: opsmx-gitops-auth
     # Promote applications and pipelines from one environment to another or take backup
-    pipelinePromotion:
+    pipelinePromotion:  # guthub only,  Not supportd on S3 or Stash
       enabled: true
       organization: opsmx
       repository: <any empty repo
