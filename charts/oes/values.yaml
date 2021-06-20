@@ -197,6 +197,32 @@ db:
   ## storageClass for DB persistent volume claim (PVC)
   ##
   #storageClassName: default
+###############################################################################
+## Use this SAPOR GATE Configuration to Enable Basic Authentication for OES SAPOR to communitcate 
+## with spinnaker instead of x509
+## Values of SAPOR OES Gate
+##
+saporgate:
+  ## Image specific details
+  ##
+  enabled: true
+  image:
+    registry: quay.io/opsmxpublic
+    repository: ubi8-spin-gate
+    tag: 1.20.0
+    pullPolicy: IfNotPresent
+
+  resources: {}
+  #  requests:
+  #    memory: 500Mi
+  #    cpu: 500m
+  #  limits:
+  #    memory: 1500Mi
+  #    cpu: 1500m
+
+  config:
+    username: admin
+    password: saporadmin # Any generic String.
 
 ###############################################################################
 ##
@@ -551,6 +577,8 @@ visibility:
 
     ## Logger level
     logLevel: ERROR
+
+
 
 ###############################################################################
 ## This option enables OES to be configured automatically
