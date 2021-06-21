@@ -51,7 +51,7 @@ spec:
         - bash
         {{- end }}
         - /tmp/initscript/init.sh
-        {{- if and (.Values.gitopsHalyard.enabled) }}
+        {{- if (.Values.gitopsHalyard.enabled) }}
         {{- if or (eq .Values.gitopsHalyard.repo.type "git") (eq .Values.gitopsHalyard.repo.type "stash") }}
         env:
         - name: SPINNAKER_NAMESPACE

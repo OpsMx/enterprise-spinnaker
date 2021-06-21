@@ -205,7 +205,7 @@ db:
 saporgate:
   ## Image specific details
   ##
-  enabled: true
+  enabled: false
   image:
     registry: quay.io/opsmxpublic
     repository: ubi8-spin-gate
@@ -234,7 +234,7 @@ autopilot:
   image:
     registry: quay.io/opsmxpublic
     repository: ubi8-oes-autopilot
-    tag: v3.8
+    tag: v3.8.0
     pullPolicy: IfNotPresent
 
   resources: {}
@@ -279,7 +279,7 @@ dashboard:
   image:
     registry: quay.io/opsmxpublic
     repository: ubi8-oes-dashboard
-    tag: v3.8
+    tag: v3.8.0
     pullPolicy: IfNotPresent
 
   resources: {}
@@ -329,7 +329,7 @@ gate:
   image:
     registry: quay.io/opsmxpublic
     repository: ubi8-oes-gate
-    tag: v3.8
+    tag: v3.8.0
     pullPolicy: IfNotPresent
 
   resources: {}
@@ -405,7 +405,7 @@ platform:
   image:
     registry: quay.io/opsmxpublic
     repository: ubi8-oes-platform
-    tag: v3.8
+    tag: v3.8.0
     pullPolicy: IfNotPresent
 
   resources: {}
@@ -538,7 +538,7 @@ ui:
   image:
     registry: quay.io/opsmxpublic
     repository: ubi8-oes-ui
-    tag: v3.8
+    tag: v3.8.0
     pullPolicy: IfNotPresent
 
   config:
@@ -556,7 +556,7 @@ visibility:
   image:
     registry: quay.io/opsmxpublic
     repository: ubi8-oes-visibility
-    tag: v3.8
+    tag: v3.8.0
     pullPolicy: IfNotPresent
 
   resources: {}
@@ -1022,22 +1022,33 @@ spinnaker:
   gitopsHalyard:
     enabled: true
     repo:
-      type: git # git, S3, stash use a different sample values file for s3/bitbuck-stash
+      type: git # git, S3, stash(bitbucket server) use a different sample values file for s3/bitbuck-stash
+      ## Configure below fields only if repo type is git/stash. Skip to s3 section if type is s3
+      baseUrlHostName: github.com    # Specify it if git url is something other than github.com
       organization: OpsMx
+      # Specify project name only if repo is under a project
+      projectName: ""
       repository: standard-gitops-repo # repo name for GitOps Halyard (Sample Reference: https://github.com/OpsMx/sample-gitops-repo.git).
       dynamicAccRepository: standard-gitops-repo # Please provide the repo name of the GitOps Dynamic Accounts Directory.Can be same as Hal repo. 
       halConfigPath: / # Any other value is currently not supported
-      username: <GitHub_UserName>
-      token: <GitHub_Token>
+      username: <git/stash_username>  # Username to authenticate with git/stash repo
+      token: <git/stash_token>  # Token corresponding to above username
+      ## Configure below fields only if repo type is s3
+      s3accesskey: <AWS_ACCESS_KEY_ID>
+      s3secretkey: <AWS_SECRET_ACCESS_KEY>
+      s3bucket: <bucket name .e.g testbucket >
     secretName: opsmx-gitops-auth
     # Promote applications and pipelines from one environment to another or take backup
-    pipelinePromotion:  # guthub only,  Not supportd on S3 or Stash
+    pipelinePromotion:  # GitHub only,  Not supportd on S3 or Stash
       enabled: true
       organization: opsmx
       repository: <any empty repo
       username: <GitHub_UserName>
       usermail: <GitHub_Usermail>
       token: <GitHub_Token>
+      baseURL: https://bbdev.opsmx.com
+      projectName: ksrin
+      dynamicAccRepository: test38
       executionNamespace: default   # Do not change
       executionAccountName: default # Do not change
     ## x509 authentication for Spinnaker Gate
