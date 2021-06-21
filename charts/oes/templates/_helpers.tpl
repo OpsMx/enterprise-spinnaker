@@ -52,6 +52,16 @@ Return the proper GATE image name
 {{- end -}}
 
 {{/*
+Return the proper SAPOR GATE image name
+*/}}
+{{- define "saporgate.image" -}}
+{{- $registryName := .Values.saporgate.image.registry -}}
+{{- $repositoryName := .Values.saporgate.image.repository -}}
+{{- $tag := .Values.saporgate.image.tag | toString -}}
+{{- printf "%s/%s:%s" $registryName $repositoryName $tag -}}
+{{- end -}}
+
+{{/*
 Return the proper SAPOR image name
 */}}
 {{- define "sapor.image" -}}

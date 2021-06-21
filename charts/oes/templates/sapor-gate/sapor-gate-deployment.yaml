@@ -1,0 +1,55 @@
+{{- if or (eq .Values.installationMode "OES-AP") (eq .Values.installationMode "OES") -}}
+{{- if .Values.saporgate.enabled }}
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  annotations:
+  labels:
+    app: oes
+    component: sapor-gate
+{{ include "oes.standard-labels" . | indent 4 }}
+  name: sapor-gate
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: oes
+      component: sapor-gate
+  template:
+    metadata:
+      labels:
+        app: oes
+        component: sapor-gate
+{{ include "oes.standard-labels" . | indent 8 }}
+    spec:
+      containers:
+      - image: {{ template "saporgate.image" . }}
+        name: sapor-gate
+        env:
+        - name: JAVA_OPTS
+          value: -XX:MaxRAMPercentage=100.0
+        - name: SPRING_PROFILES_ACTIVE
+          value: overrides,local
+        ports:
+        - containerPort: 8084
+          protocol: TCP
+        resources:
+{{ toYaml .Values.saporgate.resources | indent 12 }}
+        volumeMounts:
+        - mountPath: /opt/spinnaker/config
+          name: sapor-gate-files
+        readinessProbe:
+          failureThreshold: 3
+          httpGet:
+            path: /health
+            port: 8084
+            scheme: HTTP
+          periodSeconds: 10
+          successThreshold: 1
+          timeoutSeconds: 1
+      volumes:
+      - name: sapor-gate-files
+        secret:
+          secretName: sapor-gate-files
+{{- end -}}
+{{- end -}}

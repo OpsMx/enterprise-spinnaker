@@ -1,0 +1,47 @@
+## Quay container image registry credentials to create imagePullSecret
+##
+imageCredentials:
+  username: quayID  # Quay username
+  password: quayPassword # Quay password
+  email: info@opsmx.com   # email corresponding to quay registry ID
+
+spinnaker:  
+  # Initialize gitOps style Halyard
+  gitopsHalyard:
+    enabled: true
+    repo:
+      type: s3 # git, bitbucket-stash or S3, please use another template for github/stash
+      s3accesskey: <AWS_ACCESS_KEY_ID>
+      s3secretkey: <AWS_SECRET_ACCESS_KEY>
+      s3bucket: <bucket name .e.g testbucket >
+    secretName: opsmx-gitops-auth
+    # Promote applications and pipelines from one environment to another or take backup
+    pipelinePromotion:
+      enabled: true
+      organization: <e.g. opsmx>
+      repository: <any empty repo>
+      username: <GitHub_UserName>
+      usermail: <GitHub_Usermail>
+      token: <GitHub_Token>
+      executionNamespace: default   # Do not change
+      executionAccountName: default # Do not change
+    ## x509 authentication for Spinnaker Gate
+    gatex509:
+      enabled: false
+      host: spingate-x509.domain.com
+    # Max time(in secs) that an init container of halyard should wait
+    # to fetch External Load Balancer IP of spin-deck and spin-gate
+    spinnakerLBCheckDelay: 1 # This is only used if not using ingress
+    mTLS:
+      enabled: false # Enable mTLS for Spinnaker Services and SSL for Deck and Gate
+
+  ## Auth mechanism and credentials to be used by spin-cli for creating the sample pipelines
+  ## Here basic ldap auth is used by default; everything under spinCli will be pasted in ~/.spin/config
+  spinCli:
+    gate:
+      endpoint: http://spin-gate:8084 # Should same as the spin-gate URL
+    auth:
+      enabled: true
+      basic:
+        username: admin          # Please updated as required
+        password: opsmxadmin123  # Please updated as required

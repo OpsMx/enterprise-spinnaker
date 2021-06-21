@@ -197,6 +197,32 @@ db:
   ## storageClass for DB persistent volume claim (PVC)
   ##
   #storageClassName: default
+###############################################################################
+## Use this SAPOR GATE Configuration to Enable Basic Authentication for OES SAPOR to communitcate 
+## with spinnaker instead of x509
+## Values of SAPOR OES Gate
+##
+saporgate:
+  ## Image specific details
+  ##
+  enabled: false
+  image:
+    registry: quay.io/opsmxpublic
+    repository: ubi8-spin-gate
+    tag: 1.20.0
+    pullPolicy: IfNotPresent
+
+  resources: {}
+  #  requests:
+  #    memory: 500Mi
+  #    cpu: 500m
+  #  limits:
+  #    memory: 1500Mi
+  #    cpu: 1500m
+
+  config:
+    username: admin      # User name with admin permissions and belonging to admin groups defined in platform service
+    password: saporadmin # Any generic String, need not be the real password
 
 ###############################################################################
 ##
@@ -208,7 +234,7 @@ autopilot:
   image:
     registry: quay.io/opsmxpublic
     repository: ubi8-oes-autopilot
-    tag: v3.7
+    tag: v3.8.0
     pullPolicy: IfNotPresent
 
   resources: {}
@@ -253,7 +279,7 @@ dashboard:
   image:
     registry: quay.io/opsmxpublic
     repository: ubi8-oes-dashboard
-    tag: v3.7
+    tag: v3.8.0
     pullPolicy: IfNotPresent
 
   resources: {}
@@ -303,7 +329,7 @@ gate:
   image:
     registry: quay.io/opsmxpublic
     repository: ubi8-oes-gate
-    tag: v3.7.0.1
+    tag: v3.8.0
     pullPolicy: IfNotPresent
 
   resources: {}
@@ -379,7 +405,7 @@ platform:
   image:
     registry: quay.io/opsmxpublic
     repository: ubi8-oes-platform
-    tag: v3.7
+    tag: v3.8.0
     pullPolicy: IfNotPresent
 
   resources: {}
@@ -433,7 +459,7 @@ sapor:
   image:
     registry: quay.io/opsmxpublic
     repository: ubi8-oes-sapor
-    tag: v3.7.0.1
+    tag: v3.8.0.1
     pullPolicy: IfNotPresent
 
   resources: {}
@@ -512,7 +538,7 @@ ui:
   image:
     registry: quay.io/opsmxpublic
     repository: ubi8-oes-ui
-    tag: v3.7.0.1
+    tag: v3.8.0
     pullPolicy: IfNotPresent
 
   config:
@@ -530,7 +556,7 @@ visibility:
   image:
     registry: quay.io/opsmxpublic
     repository: ubi8-oes-visibility
-    tag: v3.7
+    tag: v3.8.0
     pullPolicy: IfNotPresent
 
   resources: {}
@@ -551,6 +577,8 @@ visibility:
 
     ## Logger level
     logLevel: ERROR
+
+
 
 ###############################################################################
 ## This option enables OES to be configured automatically
@@ -993,48 +1021,53 @@ spinnaker:
   # Initialize gitOps style Halyard
   gitopsHalyard:
     enabled: true
-    # Change this to environment which you want to choose when multiple deployment profiles are specified in halyard config repo; uncomment and change this
-    #environment: default
-    mTLS:
-      enabled: false # Enable mTLS for Spinnaker Services and SSL for Deck and Gate
     repo:
-      type: git # git, S3, vault, only git support at this point
+      type: git # git, S3, stash(bitbucket server) use a different sample values file for s3/bitbuck-stash
+      ## Configure below fields only if repo type is git/stash. Skip to s3 section if type is s3
+      baseUrlHostName: github.com    # Specify it if git url is something other than github.com
       organization: OpsMx
+      # Specify project name only if repo is under a project
+      projectName: ""
       repository: standard-gitops-repo # repo name for GitOps Halyard (Sample Reference: https://github.com/OpsMx/sample-gitops-repo.git).
-      dynamicAccRepository: standard-gitops-repo # Please provide the repo name of the GitOps Dynamic Accounts Directory.Can be same as Hal repo or can be different if needed. (Sample Reference: https://github.com/OpsMx/gitops-accounts-sample.git)
+      dynamicAccRepository: standard-gitops-repo # Please provide the repo name of the GitOps Dynamic Accounts Directory.Can be same as Hal repo. 
       halConfigPath: / # Any other value is currently not supported
-      username: <GitHub_UserName>
-      token: <GitHub_Token>
+      username: <git/stash_username>  # Username to authenticate with git/stash repo
+      token: <git/stash_token>  # Token corresponding to above username
+      ## Configure below fields only if repo type is s3
+      s3accesskey: <AWS_ACCESS_KEY_ID>
+      s3secretkey: <AWS_SECRET_ACCESS_KEY>
+      s3bucket: <bucket name .e.g testbucket >
     secretName: opsmx-gitops-auth
-    # Max time(in secs) that an init container of halyard should wait
-    # to fetch External Load Balancer IP of spin-deck and spin-gate
-    spinnakerLBCheckDelay: 1 # This is only used if not using ingress
-    # Promote applications and pipelines from one environment to another environment
-    ## x509 authentication for Spinnaker Gate
-    gatex509:
-      enabled: false
-      host: spingate-x509.domain.com
-    pipelinePromotion:
+    # Promote applications and pipelines from one environment to another or take backup
+    pipelinePromotion:  # GitHub only,  Not supportd on S3 or Stash
       enabled: true
       organization: opsmx
       repository: <any empty repo
       username: <GitHub_UserName>
       usermail: <GitHub_Usermail>
       token: <GitHub_Token>
-      ## Namespace in which pipeline promotion job need to run
-      # TODO: Implementation pending; currently default namespace is hardcoded
-      executionNamespace: default
-      ## Spinnaker kubernetes account to use for job execution
-      # TODO: Implementation pending; currently default namespace is hardcoded
-      executionAccountName: default
+      baseURL: https://bbdev.opsmx.com
+      projectName: ksrin
+      dynamicAccRepository: test38
+      executionNamespace: default   # Do not change
+      executionAccountName: default # Do not change
+    ## x509 authentication for Spinnaker Gate
+    gatex509:
+      enabled: false
+      host: spingate-x509.domain.com
+    # Max time(in secs) that an init container of halyard should wait
+    # to fetch External Load Balancer IP of spin-deck and spin-gate
+    spinnakerLBCheckDelay: 1 # This is only used if not using ingress
+    mTLS:
+      enabled: false # Enable mTLS for Spinnaker Services and SSL for Deck and Gate
 
   ## Auth mechanism and credentials to be used by spin-cli for creating the sample pipelines
   ## Here basic ldap auth is used by default; everything under spinCli will be pasted in ~/.spin/config
   spinCli:
     gate:
-      endpoint: https://spin-gate.example.opsmx.com # Should same as the spin-gate URL
+      endpoint: http://spin-gate:8084 # Should same as the spin-gate URL
     auth:
       enabled: true
       basic:
-        username: admin
-        password: opsmxadmin123
+        username: admin          # Please updated as required
+        password: opsmxadmin123  # Please updated as required
