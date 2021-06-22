@@ -89,9 +89,9 @@ data:
     fi
     # Copy S3 Specific files
     cp /tmp/spinnaker/.hal/default/service-settings/clouddriver-caching.yml.s3 /tmp/spinnaker/.hal/default/service-settings/clouddriver-caching.yml
-    cp /tmp/spinnaker/.hal/default/service-settings/clouddriver-ro.yml.s3 /tmp/spinnaker/.hal/default/service-settings/clouddriver-caching.yml
-    cp /tmp/spinnaker/.hal/default/service-settings/clouddriver-rw.yml.s3 /tmp/spinnaker/.hal/default/service-settings/clouddriver-caching.yml
-    cp /tmp/spinnaker/.hal/default/service-settings/clouddriver-ro-deck.yml.s3 /tmp/spinnaker/.hal/default/service-settings/clouddriver-caching.yml
+    cp /tmp/spinnaker/.hal/default/service-settings/clouddriver-ro.yml.s3 /tmp/spinnaker/.hal/default/service-settings/clouddriver-ro.yml
+    cp /tmp/spinnaker/.hal/default/service-settings/clouddriver-rw.yml.s3 /tmp/spinnaker/.hal/default/service-settings/clouddriver-rw.yml
+    cp /tmp/spinnaker/.hal/default/service-settings/clouddriver-ro-deck.yml.s3 /tmp/spinnaker/.hal/default/service-settings/clouddriver-ro-deck.yml
     cp /tmp/spinnaker/.hal/default/profiles/spinnakerconfig.yml.s3 /tmp/spinnaker/.hal/default/profiles/spinnakerconfig.yml
     # Edit and put secrets in there
     sed -i  s/AWS_ACCESS_KEY_ID/${S3_ACCESSKEY}/g /tmp/spinnaker/.hal/default/service-settings/clouddriver-caching.yml
