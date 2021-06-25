@@ -3,7 +3,17 @@ entries:
   hello-kubernetes:
   - apiVersion: v2
     appVersion: "1.10"
-    created: "2021-04-30T13:26:23.646422399+05:30"
+    created: "2021-06-25T15:56:37.207467042+05:30"
+    description: A demo application for a Kubernetes cluster.
+    digest: 3197dd41831bd313b60efbf692552f8e0e0e213a70558e2fcf66916e86b9291b
+    name: hello-kubernetes
+    type: application
+    urls:
+    - https://opsmx.github.io/enterprise-spinnaker/hello-world/hello-kubernetes-1.0.1.tgz
+    version: 1.0.1
+  - apiVersion: v2
+    appVersion: "1.10"
+    created: "2021-06-25T15:56:37.207107326+05:30"
     description: A demo application for a Kubernetes cluster.
     digest: 9a8fa36a4a550ba0de0ae4bfdca26ab980987cafce9211a8e135608a395563be
     name: hello-kubernetes
@@ -2220,4 +2230,4 @@ entries:
     urls:
     - https://opsmx.github.io/enterprise-spinnaker/spinnaker-2.2.3.tgz
     version: 2.2.3
-generated: "2021-05-12T22:28:46.487735555+05:30"
+generated: "2021-06-25T15:56:37.206562772+05:30"
