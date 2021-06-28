@@ -10,7 +10,7 @@ imageCredentials:
 global:
   # Spinnaker Deck URL configuration; url overwhich spinnaker deck will be accessed
   spinDeck:
-    host: spin.abhi.ops.com
+    host: spin.example.ops.com
 
   # Spinnaker Gate URL configuration; url overwhich spinnaker gate will be accessed
   spinGate:
