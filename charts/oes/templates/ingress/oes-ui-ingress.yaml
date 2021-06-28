@@ -13,7 +13,7 @@ metadata:
 {{- if .Values.oesUI.ingress.annotations }}
 {{ tpl (toYaml .Values.oesUI.ingress.annotations) . | indent 4 }}
 {{- end }}
-  name: {{ template "oes.fullname" . }}-ui
+  name: oes-ui-ingress
 spec:
   rules:
   - host: {{ .Values.oesUI.host }}
