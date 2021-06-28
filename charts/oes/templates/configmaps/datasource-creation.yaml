@@ -35,8 +35,8 @@ data:
 
     if [ "$DECK" == "true" ] && [ "$CLOUDCACHING" == "true" ] && [ "$CLOUDRO" == "true" ] && [ "$CLOUDRW" == "true" ] && [ "$CLOUDRODECK" == "true" ] && [ "$FRONT" == "true" ] && [ "$GATE" == "true" ] && [ "$IGOR" == "true" ] && [ "$ORCA" == "true" ] && [ "$ROSCO" == "true" ] && [ "$ECHOWORKER" == "true" ] && [ "$ECHOSCHEDULER" == "true" ] && [ "$SAPOR" == "true" ] && [ "$PLATFORM" == "true" ] && [ "$AUTOPILOT" == "true" ];
         then
-            echo \"Spinnaker and OES services are Up and Ready, sleeping for min..\"
-            sleep 2m
+            echo \"Spinnaker and OES services are Up and Ready..\"
+            sleep 5
             curl --header "Content-Type: application/json"  --header "x-spinnaker-user: admin" --request POST  --data '{"datasourceType": "OPA", "name": "OPA", "configurationFields": {"endPoint": "opa:8181"}}'   http://oes-platform:8095/platformservice/v2/datasources
             curl --header "Content-Type: application/json"  --header "x-spinnaker-user: admin" --request POST  --data '{"datasourceType": "AUTOPILOT", "name": "Autopilot", "configurationFields": {"username": "admin"} }'   http://oes-platform:8095/platformservice/v2/datasources
             #curl --header "Content-Type: application/json"  --header "x-spinnaker-user: admin" --request POST  --data '{"datasourceType": "ELASTICSEARCH", "name": "elastic-default", "configurationFields": {"endPoint": "https://newoeselastic.opsmx.com", "username": "opsmxuser", "password": "OpsMx@123", "kibanaEndPoint": "https://newoeskibana.opsmx.com", "kibanaPassword": "OpsMx@123", "kibanaUsername": "opsmxuser" }}'   http://oes-platform:8095/platformservice/v2/datasources
