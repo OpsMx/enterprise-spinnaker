@@ -13,7 +13,7 @@ metadata:
 {{- if .Values.oesGate.ingress.annotations }}
 {{ tpl (toYaml .Values.oesGate.ingress.annotations) . | indent 4 }}
 {{- end }}
-  name: {{ template "oes.fullname" . }}-gate
+  name: oes-gate-ingress
 spec:
   rules:
   - host: {{ .Values.oesGate.host }}
