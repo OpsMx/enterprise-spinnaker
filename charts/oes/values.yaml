@@ -115,6 +115,10 @@ global:
     groupRoleAttributes: cn
     userDnPattern: cn={0},dc=example,dc=org
 
+  ## Use the below flag to exclude pre-delete helm hooks to the
+  ## rendered manifests
+  preDeleteHelmHooks: false
+
 
 ## OES-UI url configuration
 oesUI:
