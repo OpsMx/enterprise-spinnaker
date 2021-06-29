@@ -283,7 +283,7 @@ dashboard:
   image:
     registry: quay.io/opsmxpublic
     repository: ubi8-oes-dashboard
-    tag: v3.8
+    tag: v3.8.0
     pullPolicy: IfNotPresent
 
   resources: {}
@@ -560,7 +560,7 @@ visibility:
   image:
     registry: quay.io/opsmxpublic
     repository: ubi8-oes-visibility
-    tag: v3.8
+    tag: v3.8.0
     pullPolicy: IfNotPresent
 
   resources: {}
