@@ -283,7 +283,7 @@ dashboard:
   image:
     registry: quay.io/opsmxpublic
     repository: ubi8-oes-dashboard
-    tag: v3.8.0
+    tag: v3.8.1
     pullPolicy: IfNotPresent
 
   resources: {}
@@ -463,7 +463,7 @@ sapor:
   image:
     registry: quay.io/opsmxpublic
     repository: ubi8-oes-sapor
-    tag: v3.8.1
+    tag: v3.8.1.1
     pullPolicy: IfNotPresent
 
   resources: {}
@@ -542,7 +542,7 @@ ui:
   image:
     registry: quay.io/opsmxpublic
     repository: ubi8-oes-ui
-    tag: v3.8.1
+    tag: v3.8.1.1
     pullPolicy: IfNotPresent
 
   config:
