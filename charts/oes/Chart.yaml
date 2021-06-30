@@ -3,7 +3,7 @@ name: oes
 version: 3.8.3
 appVersion: 3.8.1
 description: OES is a non-forked version of OSS spinnaker
-icon: https://www.opsmx.com/images/logo.png
+icon: https://raw.githubusercontent.com/OpsMx/enterprise-spinnaker/master/img/opsmx.png
 maintainers:
 - email: abhinay.byrisetty@opsmx.io
   name: abhinaybyrisetty
