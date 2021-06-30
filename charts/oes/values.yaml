@@ -1045,16 +1045,36 @@ spinnaker:
     # Promote applications and pipelines from one environment to another or take backup
     pipelinePromotion:  # GitHub only,  Not supportd on S3 or Stash
       enabled: true
-      organization: opsmx
-      repository: <any empty repo
-      username: <GitHub_UserName>
-      usermail: <GitHub_Usermail>
-      token: <GitHub_Token>
-      baseURL: https://bbdev.opsmx.com
-      projectName: ksrin
-      dynamicAccRepository: test38
-      executionNamespace: default   # Do not change
-      executionAccountName: default # Do not change
+      type: github
+      organization: ksrinimba  # Also called "project" in some repos
+      repository: ryzon7-gitops  # bucket name in case of S3
+      rootFolder: pipeline-promotion/
+      ##### ONLY In case of S3
+      AWS_ACCESS_KEY_ID: DFGHJ
+      AWS_SECRET_ACCESS_KEY: 45678kk
+      ##### S3 config for pipelinePromotion is complete
+      ##### For non-S3 repos
+      baseUrl: "github.com"  #  "git_url"
+      username: ksrinimba
+      token: ghp_38lL4E09LHxod331iZvS3VIGIF
+      branch: master
+      usermail: ksrinimba@gmail.com
+      #password="K438"   ### Token is preferred, Password also might work, try your luck
+      # Instead of username, token/password, sshkey can be provided
+      #API
+      #api_url="https://api.bitbucket.org/2.0/repositories/"   # bitbucket
+      apiUrl: "https://api.github.com/repos"                  # guthub
+      #api_url="https://api.gitlab.com/repos"                  # gitLAB
+      #api_url="https://bb.opsmx.com/api"                      # bitbucket-server(stash)
+
+      createPR: false
+      autoApprovePR: false
+      targetBranch: master
+      approvingUser: "ksrinimba"  ### user who is going to auto-merge
+      approverToken: "9MJn8LNva43EM8Js3b9opM" ## Token for the user to auto-merge
+      #approver_password: ""  ### Token is preferred, Password also might work, try it
+      #approver_secret_sshkey= ???
+
     ## x509 authentication for Spinnaker Gate
     gatex509:
       enabled: false
