@@ -73,7 +73,7 @@ data:
     if [ -f /tmp/spinnaker/.hal/halyard.yaml ]; then
     cp /tmp/spinnaker/.hal/halyard.yaml /tmp/config
     fi
-    chmod 777 -R /tmp/spinnaker
+    chmod 777 -R /tmp/spinnaker/.hal
     {{- end }}  # git or stash
     {{- end }}  # Enabled
 
@@ -113,10 +113,9 @@ data:
     cp /tmp/spinnaker/.hal/halyard.yaml /tmp/config
     fi
     {{- end }}  # End of S3
-    chmod 777 -R /tmp/spinnaker
 
     {{- if .Values.gitopsHalyard.mTLS.enabled }}
     sed -i  s/SPINNAKER_NAMESPACE/${SPINNAKER_NAMESPACE}/g /tmp/spinnaker/.hal/default/service-settings/*
     {{- end }}
-    chmod 777 -R /tmp/spinnaker
+    chmod 777 -R /tmp/spinnaker/.hal
     
