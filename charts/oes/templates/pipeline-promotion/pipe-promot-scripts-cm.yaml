@@ -569,6 +569,4 @@ data:
     \     fi\n    fi\n  fi\n}\n"
 kind: ConfigMap
 metadata:
-  creationTimestamp: null
   name: pipe-promot-scripts
-  namespace: pipe-test
