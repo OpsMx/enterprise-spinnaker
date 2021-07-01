@@ -68,6 +68,7 @@ data:
     if [ -f /tmp/spinnaker/.hal/default/profiles/fiat-local.yml ]; then
     sed -i  s/RELEASE_NAME/{{ .Release.Name }}/g /tmp/spinnaker/.hal/default/profiles/fiat-local.yml
     fi
+    sed -i  s/SPINNAKER_NAMESPACE/${SPINNAKER_NAMESPACE}/ /tmp/spinnaker/.hal/default/profiles/orca-local.yml
     printf 'server.address: 0.0.0.0\n' > /tmp/config/halyard-local.yml
     if [ -f /tmp/spinnaker/.hal/halyard.yaml ]; then
     cp /tmp/spinnaker/.hal/halyard.yaml /tmp/config
@@ -87,6 +88,7 @@ data:
     if [ -f /tmp/spinnaker/.hal/default/profiles/fiat-local.yml ]; then
     sed -i  s/RELEASE_NAME/{{ .Release.Name }}/g /tmp/spinnaker/.hal/default/profiles/fiat-local.yml
     fi
+    sed -i  s/SPINNAKER_NAMESPACE/${SPINNAKER_NAMESPACE}/ /tmp/spinnaker/.hal/default/profiles/orca-local.yml
     # Copy S3 Specific files
     cp /tmp/spinnaker/.hal/default/service-settings/clouddriver-caching.yml.s3 /tmp/spinnaker/.hal/default/service-settings/clouddriver-caching.yml
     cp /tmp/spinnaker/.hal/default/service-settings/clouddriver-ro.yml.s3 /tmp/spinnaker/.hal/default/service-settings/clouddriver-ro.yml
@@ -114,3 +116,4 @@ data:
     {{- if .Values.gitopsHalyard.mTLS.enabled }}
     sed -i  s/SPINNAKER_NAMESPACE/${SPINNAKER_NAMESPACE}/g /tmp/spinnaker/.hal/default/service-settings/*
     {{- end }}
+    

@@ -1,18 +1,40 @@
-{{- if .Values.spinnaker.gitopsHalyard.pipelinePromotion.enabled }}
 apiVersion: v1
 data:
-  git_friendly_username: {{ .Values.spinnaker.gitopsHalyard.pipelinePromotion.username }}
-  git_project: {{ .Values.spinnaker.gitopsHalyard.pipelinePromotion.repository }}
-  git_refresh_enabled: "true"
-  git_repo: {{ .Values.spinnaker.gitopsHalyard.pipelinePromotion.organization }}
-  git_user_email: {{ .Values.spinnaker.gitopsHalyard.pipelinePromotion.usermail }}
-  ignore_spin_errors: "false"
-  debug: "false"
-  pipelineconfig: "false" # Enable pipeline configuration during promotion
-  pipelineconfigdir: "prod-config" # directory to look for under application when syncing to Spinnaker
-  pipelinecreateconf: "false" # Create default parameter-config files in "default-config", useful for 1st time param-creation
+  repo.properties: |
+    #properties file for pipeline promotion scripts
+
+    # Common Stuff
+    repo_type={{ .Values.spinnaker.gitopsHalyard.pipelinePromotion.type }}
+    repo_name={{ .Values.spinnaker.gitopsHalyard.pipelinePromotion.repository }}
+    root_folder={{ .Values.spinnaker.gitopsHalyard.pipelinePromotion.rootFolder }}
+    #S3 Specific
+    AWS_ACCESS_KEY_ID={{ .Values.spinnaker.gitopsHalyard.pipelinePromotion.AWS_ACCESS_KEY_ID }}
+    AWS_SECRET_ACCESS_KEY={{ .Values.spinnaker.gitopsHalyard.pipelinePromotion.AWS_SECRET_ACCESS_KEY }}
+
+    #git mandatory patameters
+    git_url={{ .Values.spinnaker.gitopsHalyard.pipelinePromotion.baseUrl }}
+    git_project={{ .Values.spinnaker.gitopsHalyard.pipelinePromotion.organization }}
+    git_user={{ .Values.spinnaker.gitopsHalyard.pipelinePromotion.username }}
+    git_branch={{ .Values.spinnaker.gitopsHalyard.pipelinePromotion.branch }}
+    #git_password={{ .Values.spinnaker.gitopsHalyard.pipelinePromotion.password }}
+    #API
+    git_api_url={{ .Values.spinnaker.gitopsHalyard.pipelinePromotion.apiUrl }}  # bitbucket
+
+    #Auto PR requirements
+    merge_branch={{ .Values.spinnaker.gitopsHalyard.pipelinePromotion.createPR }}
+    auto_merge={{ .Values.spinnaker.gitopsHalyard.pipelinePromotion.autoApprovePR }}
+    git_approve_user={{ .Values.spinnaker.gitopsHalyard.pipelinePromotion.approvingUser }}
+    target_branch={{ .Values.spinnaker.gitopsHalyard.pipelinePromotion.targetBranch }}
+
+    #optional
+    #git_user_email={{ .Values.spinnaker.gitopsHalyard.pipelinePromotion.usermail }}
+
+    #delete pipeLine
+    delete_on_sync_spin={{ .Values.spinnaker.gitopsHalyard.pipelinePromotion.deleteOnSyncSpin }}
+    delete_on_sync_repo={{ .Values.spinnaker.gitopsHalyard.pipelinePromotion.deleteOnSyncRepo }}
+    #git_approve_user_password={{ .Values.spinnaker.gitopsHalyard.pipelinePromotion.approver_password }}
+    #git_secret_sshkey={{ .Values.spinnaker.gitopsHalyard.pipelinePromotion.secret_sshkey }}
 kind: ConfigMap
 metadata:
+  creationTimestamp: null
   name: pipe-promot-config
-  namespace: {{ .Values.spinnaker.gitopsHalyard.pipelinePromotion.executionNamespace }}
-{{- end }}
