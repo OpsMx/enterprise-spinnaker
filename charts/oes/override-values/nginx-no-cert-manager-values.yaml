@@ -4,7 +4,7 @@
 # Values customized for below state of the cluster
 # 1. nginx ingress controller installed
 # 2. cert-manager not installed
-# 3. no gitops style installation
+# 3. gitops style installation disabled
 # 4. pipeline-promotion disabled in spinnaker
 
 ## Quay container image registry credentials to create imagePullSecret
@@ -60,9 +60,6 @@ oesGate:
 spinnaker:
   ## Option to enable HA in Spinnaker; Enabled by default
   enableHA: false
-
-  ## Centralized Monitoring enable for Prometheus
-  enableCentralMonitoring: false
 
   # Initialize gitOps style Halyard
   gitopsHalyard:

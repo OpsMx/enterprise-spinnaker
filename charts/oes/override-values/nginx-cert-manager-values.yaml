@@ -4,7 +4,7 @@
 # Values customized for below state of the cluster
 # 1. nginx ingress controller installed
 # 2. cert-manager installed
-# 3. no-gitops style disabled
+# 3. gitops style disabled
 # 4. pipeline-promotion disabled
 # 5. HA disabled
 
@@ -37,9 +37,6 @@ oesGate:
 spinnaker:
   ## Option to enable HA in Spinnaker; Enabled by default
   enableHA: false
-
-  ## Centralized Monitoring enable for Prometheus
-  enableCentralMonitoring: false
 
   # Initialize gitOps style Halyard
   gitopsHalyard:
