@@ -4,8 +4,8 @@
 # Values customized for below state of the cluster
 # 1. nginx ingress controller installed
 # 2. cert-manager not installed
-# 3. spinnaker shall be installed by this chart
-# 4. OES to be installed in full mode
+# 3. no gitops style installation
+# 4. pipeline-promotion disabled in spinnaker
 
 ## Quay container image registry credentials to create imagePullSecret
 ##
@@ -19,13 +19,19 @@ global:
   certManager:
     installed: false
 
+  # Below flag is used to setup tls termination at ingress
+  # when this flag is set to false; spinnaker and oes endpoints
+  # will be accessible over http instead of https
+  ssl:
+    enabled: false
+
   # Spinnaker Deck URL configuration; url overwhich spinnaker deck will be accessed
   spinDeck:
     protocol: http
     host: spinnaker.example.org
 
     ingress:
-      tls: null
+      tls: null #this doesn't currently work due to a bug in helm; bug reported in community https://github.com/helm/helm/issues/9696
 
   # Spinnaker Gate URL configuration; url overwhich spinnaker gate will be accessed
   spinGate:
@@ -33,7 +39,7 @@ global:
     host: gate.spinnaker.example.org
 
     ingress:
-      tls: null
+      tls: null #this doesn't currently work due to a bug in helm; bug reported in community https://github.com/helm/helm/issues/9696
 
 
 ## OES-UI url configuration; url overwhich oes ui will be accessed
@@ -42,7 +48,7 @@ oesUI:
   host: oes.domain.com
 
   ingress:
-    tls: null
+    tls: null #this doesn't currently work due to a bug in helm; bug reported in community https://github.com/helm/helm/issues/9696
 
 
 ## OES-Gate url configuration; url overwhich oes gate will be accessed
@@ -51,4 +57,18 @@ oesGate:
   host: oes-api.domain.com
 
   ingress:
-    tls: null
+    tls: null #this doesn't currently work due to a bug in helm; bug reported in community https://github.com/helm/helm/issues/9696
+
+spinnaker:
+  ## Option to enable HA in Spinnaker; Enabled by default
+  enableHA: false
+
+  ## Centralized Monitoring enable for Prometheus
+  enableCentralMonitoring: false
+
+  # Initialize gitOps style Halyard
+  gitopsHalyard:
+    enabled: false
+    # Promote applications and pipelines from one environment to another or take backup
+    pipelinePromotion:  # GitHub only,  Not supportd on S3 or Stash
+      enabled: false

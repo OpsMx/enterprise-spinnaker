@@ -4,28 +4,47 @@
 # Values customized for below state of the cluster
 # 1. nginx ingress controller installed
 # 2. cert-manager installed
-# 3. spinnaker shall be installed by this chart
-# 4. OES to be installed in full mode
+# 3. no-gitops style disabled
+# 4. pipeline-promotion disabled
+# 5. HA disabled
 
 ## Quay container image registry credentials to create imagePullSecret
 ##
 imageCredentials:
   username: quayID  # Quay username
   password: quayPassword # Quay password
+  email: info@opsmx.com   # email corresponding to quay registry ID
 
+## Declare all the global variables under this
+## Global variables can be accessed across all the charts including sub-charts
 global:
   # Spinnaker Deck URL configuration; url overwhich spinnaker deck will be accessed
   spinDeck:
-    host: spinnaker.example.org
+    host: spin.example.ops.com
 
   # Spinnaker Gate URL configuration; url overwhich spinnaker gate will be accessed
   spinGate:
-    host: gate.spinnaker.example.org
+    host: spin-gate.example.ops.com
+
 
 ## OES-UI url configuration
 oesUI:
-  host: oes.domain.com
+  host: oes.example.ops.com
 
 ## OES-Gate url configuration
 oesGate:
-  host: oes-api.domain.com
+  host: oes-gate.example.ops.com
+
+spinnaker:
+  ## Option to enable HA in Spinnaker; Enabled by default
+  enableHA: false
+
+  ## Centralized Monitoring enable for Prometheus
+  enableCentralMonitoring: false
+
+  # Initialize gitOps style Halyard
+  gitopsHalyard:
+    enabled: false
+    # Promote applications and pipelines from one environment to another or take backup
+    pipelinePromotion:  # GitHub only,  Not supportd on S3 or Stash
+      enabled: false
