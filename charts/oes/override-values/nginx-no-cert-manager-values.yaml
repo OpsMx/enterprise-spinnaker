@@ -41,7 +41,6 @@ global:
     ingress:
       tls: null #this doesn't currently work due to a bug in helm; bug reported in community https://github.com/helm/helm/issues/9696
 
-
 ## OES-UI url configuration; url overwhich oes ui will be accessed
 oesUI:
   protocol: http
@@ -49,7 +48,6 @@ oesUI:
 
   ingress:
     tls: null #this doesn't currently work due to a bug in helm; bug reported in community https://github.com/helm/helm/issues/9696
-
 
 ## OES-Gate url configuration; url overwhich oes gate will be accessed
 oesGate:
