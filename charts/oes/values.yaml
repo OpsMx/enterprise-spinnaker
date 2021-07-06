@@ -1041,6 +1041,7 @@ spinnaker:
       s3accesskey: <AWS_ACCESS_KEY_ID>
       s3secretkey: <AWS_SECRET_ACCESS_KEY>
       s3bucket: <bucket name .e.g testbucket >
+      s3region: <regionof bucket>
     secretName: opsmx-gitops-auth
     # Promote applications and pipelines from one environment to another or take backup
     pipelinePromotion:  # GitHub only,  Not supportd on S3 or Stash
