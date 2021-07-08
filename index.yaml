@@ -2376,6 +2376,17 @@ entries:
     urls:
     - https://opsmx.github.io/enterprise-spinnaker/opsmx-autopilot-2.0.0.tgz
     version: 2.0.0
+  rest-app:
+  - apiVersion: v2
+    appVersion: 0.1.0
+    created: "2021-07-08T12:31:24.031392622+05:30"
+    description: A Helm chart for Kubernetes
+    digest: 28c81b680b4adae9f5d113ed3bd86e69d3cf30587a6f0d6d669ef1ca35a1437a
+    name: rest-app
+    type: application
+    urls:
+    - https://opsmx.github.io/enterprise-spinnaker/rest-app-0.1.0.tgz
+    version: 0.1.0
   spinnaker:
   - apiVersion: v1
     appVersion: 1.24.2
@@ -2389,7 +2400,8 @@ entries:
       name: minio
       repository: ""
       version: 8.0.9
-    description: Open source, multi-cloud continuous delivery platform for releasing software changes with high velocity and confidence.
+    description: Open source, multi-cloud continuous delivery platform for releasing
+      software changes with high velocity and confidence.
     digest: 5163749ffa5339a60e6b89a6253e6014f9044102200829d4e28af98aaf1e7e99
     home: http://spinnaker.io/
     icon: https://pbs.twimg.com/profile_images/669205226994319362/O7OjwPrh_400x400.png
@@ -2426,7 +2438,8 @@ entries:
       name: minio
       repository: https://helm.min.io/
       version: 8.0.9
-    description: Open source, multi-cloud continuous delivery platform for releasing software changes with high velocity and confidence.
+    description: Open source, multi-cloud continuous delivery platform for releasing
+      software changes with high velocity and confidence.
     digest: d48694495f65fc04f97e5817bd847a0358b43eb575502308367b1eab7bf13164
     home: http://spinnaker.io/
     icon: https://pbs.twimg.com/profile_images/669205226994319362/O7OjwPrh_400x400.png
@@ -2463,7 +2476,8 @@ entries:
       name: minio
       repository: https://helm.min.io/
       version: 8.0.9
-    description: Open source, multi-cloud continuous delivery platform for releasing software changes with high velocity and confidence.
+    description: Open source, multi-cloud continuous delivery platform for releasing
+      software changes with high velocity and confidence.
     digest: 307d961140717b6d3583ee81fe6da40d0ef5912fa9539be0de7247001eb813ee
     home: http://spinnaker.io/
     icon: https://pbs.twimg.com/profile_images/669205226994319362/O7OjwPrh_400x400.png
@@ -2495,7 +2509,8 @@ entries:
       name: minio
       repository: https://kubernetes-charts.storage.googleapis.com/
       version: 5.0.9
-    description: Open source, multi-cloud continuous delivery platform for releasing software changes with high velocity and confidence.
+    description: Open source, multi-cloud continuous delivery platform for releasing
+      software changes with high velocity and confidence.
     digest: 3d75da6c05659cf784807ebd3c604b714adfbc4f5cab34307e24e2dab5ea9f00
     home: http://spinnaker.io/
     icon: https://pbs.twimg.com/profile_images/669205226994319362/O7OjwPrh_400x400.png
@@ -2515,4 +2530,4 @@ entries:
     urls:
     - https://opsmx.github.io/enterprise-spinnaker/spinnaker-2.2.3.tgz
     version: 2.2.3
-generated: "2021-06-30T16:28:02.880035059+05:30"
+generated: "2021-07-08T12:31:24.031066755+05:30"
