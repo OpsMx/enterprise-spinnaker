@@ -1,0 +1,17 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: opsmx-rest-service-1
+spec:
+  type: LoadBalancer
+  ports:
+    - port: 8080
+      targetPort: 8080
+      protocol: TCP
+      name: canary
+    - port: 9090
+      targetPort: 9090
+      protocol: TCP
+      name: reports
+  selector:
+    app: opsmx-restapp-1
