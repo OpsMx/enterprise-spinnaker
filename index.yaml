@@ -2379,9 +2379,9 @@ entries:
   rest-app:
   - apiVersion: v2
     appVersion: 0.1.0
-    created: "2021-07-08T15:38:10.29713981+05:30"
+    created: "2021-07-09T13:07:47.44815464+05:30"
     description: A Helm chart for Kubernetes
-    digest: 0d6f8b1006f45ba5d6cf24849920af1c61d375b0dc768bb6505016dd0f4c46d3
+    digest: b052c3e5b017eabf3396a2e3383d1f49a392912a9ea62aee262f10ecc20a49a3
     name: rest-app
     type: application
     urls:
@@ -2530,4 +2530,4 @@ entries:
     urls:
     - https://opsmx.github.io/enterprise-spinnaker/spinnaker-2.2.3.tgz
     version: 2.2.3
-generated: "2021-07-08T15:38:10.29658934+05:30"
+generated: "2021-07-09T13:07:47.447798925+05:30"
