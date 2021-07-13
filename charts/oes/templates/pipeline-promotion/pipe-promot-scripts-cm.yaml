@@ -254,7 +254,7 @@ data:
       # get the pipeline data from spinnaker and store in root_folder
       get_pipelines_data
       #upload spinnaker pipelines data and upload to s3 folder
-      aws s3 cp $tempdir$s3_folder s3://$bucket_name/$s3_folder --recursive
+      aws s3 cp $tempdir/$bucket_name/$s3_folder s3://$bucket_name/$s3_folder --recursive
       if [ "$?" != 0 ]; then
               echo "[ERROR]: Failed to upload to bucket" $bucket_name
       else
