@@ -101,10 +101,10 @@ data:
     sed -i  s/AWS_ACCESS_KEY_ID/${S3_ACCESSKEY}/g /tmp/spinnaker/.hal/default/service-settings/clouddriver-ro.yml
     sed -i  s/AWS_ACCESS_KEY_ID/${S3_ACCESSKEY}/g /tmp/spinnaker/.hal/default/service-settings/clouddriver-ro-deck.yml
     sed -i  s/AWS_ACCESS_KEY_ID/${S3_ACCESSKEY}/g /tmp/spinnaker/.hal/default/service-settings/clouddriver-rw.yml
-    sed -i  s/AWS_SECRET_ACCESS_KEY/${S3_SECRETKEY}/g /tmp/spinnaker/.hal/default/service-settings/clouddriver-caching.yml
-    sed -i  s/AWS_SECRET_ACCESS_KEY/${S3_SECRETKEY}/g /tmp/spinnaker/.hal/default/service-settings/clouddriver-ro.yml
-    sed -i  s/AWS_SECRET_ACCESS_KEY/${S3_SECRETKEY}/g /tmp/spinnaker/.hal/default/service-settings/clouddriver-ro-deck.yml
-    sed -i  s/AWS_SECRET_ACCESS_KEY/${S3_SECRETKEY}/g /tmp/spinnaker/.hal/default/service-settings/clouddriver-rw.yml
+    sed -i  s%AWS_SECRET_ACCESS_KEY%${S3_SECRETKEY}%g /tmp/spinnaker/.hal/default/service-settings/clouddriver-caching.yml
+    sed -i  s%AWS_SECRET_ACCESS_KEY%${S3_SECRETKEY}%g /tmp/spinnaker/.hal/default/service-settings/clouddriver-ro.yml
+    sed -i  s%AWS_SECRET_ACCESS_KEY%${S3_SECRETKEY}%g /tmp/spinnaker/.hal/default/service-settings/clouddriver-ro-deck.yml
+    sed -i  s%AWS_SECRET_ACCESS_KEY%${S3_SECRETKEY}%g /tmp/spinnaker/.hal/default/service-settings/clouddriver-rw.yml
     sed -i  s/AWS_S3_BUCKET/${S3_BUCKET}/g /tmp/spinnaker/.hal/default/profiles/spinnakerconfig.yml
     sed -i  s/AWS_S3_REGION/${S3_REGION}/g /tmp/spinnaker/.hal/default/profiles/spinnakerconfig.yml
 
