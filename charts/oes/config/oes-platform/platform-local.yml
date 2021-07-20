@@ -18,7 +18,7 @@ rbacEnabled: {{ .Values.rbac.create }}
 supportedFeatures:
 {{ toYaml .Values.platform.config.supportedFeatures | indent 2 }}
 userGroup:
-  adminGroups: {{ .Values.platform.config.adminGroups }}
+  superAdminGroups: {{ .Values.platform.config.adminGroups }}
 user:
   {{- if .Values.gate.config.saml.enabled }}
   source: {{ .Values.gate.config.saml.userSource }}
@@ -42,9 +42,9 @@ oes:
     url: http://oes-visibility:8096
   approvalGate:
 {{- if .Values.oesGate.port }}
-    apiUrl: {{ .Values.oesGate.protocol }}://{{ .Values.oesGate.host }}:{{ .Values.oesGate.port }}/visibilityservice/v2/approvalGates/{id}/trigger
+    apiUrl: {{ .Values.oesGate.protocol }}://{{ .Values.oesGate.host }}:{{ .Values.oesGate.port }}/visibilityservice/v5/approvalGates/{id}/trigger
 {{- else }}
-    apiUrl: {{ .Values.oesGate.protocol }}://{{ .Values.oesGate.host }}/visibilityservice/v4/approvalGates/{id}/trigger
+    apiUrl: {{ .Values.oesGate.protocol }}://{{ .Values.oesGate.host }}/visibilityservice/v5/approvalGates/{id}/trigger
 {{- end }}
 
   verificationGate:
