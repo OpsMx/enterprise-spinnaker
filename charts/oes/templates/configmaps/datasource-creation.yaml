@@ -43,7 +43,7 @@ data:
             #curl --header "Content-Type: application/json"  --header "x-spinnaker-user: admin" --request POST  --data '{"datasourceType": "PROMETHEUS", "name": "prometheus-default", "configurationFields": {"endPoint": "http://prometheus:9090"} }'   http://oes-platform:8095/platformservice/v2/datasources
 
 
-        {{- if .Values.spinnaker.gitopsHalyard.enabled -}}
+        {{- if .Values.spinnaker.gitopsHalyard.enabled }}
 
             STORAGE_TYPE={{ .Values.spinnaker.gitopsHalyard.repo.type }}
             USERNAME={{ .Values.spinnaker.spinCli.auth.basic.username }}
@@ -75,7 +75,7 @@ data:
               break
             fi
 
-        {{- end -}}
+        {{- end }}
 
     else
         if [ $wait_period -gt 2000 ];
