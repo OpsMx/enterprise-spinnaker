@@ -1,4 +1,4 @@
-{{- if or (eq .Values.installationMode "OES-AP") (eq .Values.installationMode "AP") (eq .Values.installationMode "OES") -}}
+{{- if (eq .Values.installationMode "OES-AP") -}}
 apiVersion: v1
 data:
   platform-local.yml: |
