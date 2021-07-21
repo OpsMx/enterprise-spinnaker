@@ -23,19 +23,19 @@ oes:
     url: http://oes-dashboard:8094
 pipeline-promotion:
   github:
-    enabled: {{ .Values.spinnaker.gitopsHalyard.pipelinePromotion.enabled }}
+    enabled: true
     username:  {{ .Values.spinnaker.gitopsHalyard.pipelinePromotion.username }}
     token: {{ .Values.spinnaker.gitopsHalyard.pipelinePromotion.token }}
     branch: {{ .Values.spinnaker.gitopsHalyard.pipelinePromotion.branch }}
     cloneUrl: https://{{ .Values.spinnaker.gitopsHalyard.pipelinePromotion.username }}:{{ .Values.spinnaker.gitopsHalyard.pipelinePromotion.token }}@{{ .Values.spinnaker.gitopsHalyard.pipelinePromotion.baseUrl }}/{{ .Values.spinnaker.gitopsHalyard.pipelinePromotion.organization }}/{{ .Values.spinnaker.gitopsHalyard.pipelinePromotion.repository }}
   bitbucket:
-    enabled: {{ .Values.spinnaker.gitopsHalyard.pipelinePromotion.enabled }}
+    enabled: false
     username:  {{ .Values.spinnaker.gitopsHalyard.pipelinePromotion.username }}
     token: {{ .Values.spinnaker.gitopsHalyard.pipelinePromotion.token }}
     branch: {{ .Values.spinnaker.gitopsHalyard.pipelinePromotion.branch }}
     cloneUrl: https://{{ .Values.spinnaker.gitopsHalyard.pipelinePromotion.username }}:{{ .Values.spinnaker.gitopsHalyard.pipelinePromotion.token }}@{{ .Values.spinnaker.gitopsHalyard.pipelinePromotion.baseUrl }}/{{ .Values.spinnaker.gitopsHalyard.pipelinePromotion.organization }}/{{ .Values.spinnaker.gitopsHalyard.pipelinePromotion.repository }}
   amazonS3:
-    enabled: {{ .Values.spinnaker.gitopsHalyard.pipelinePromotion.enabled }}
+    enabled: false
     accessKeyId: {{ .Values.spinnaker.gitopsHalyard.pipelinePromotion.AWS_ACCESS_KEY_ID }}
     secretAccessKey: {{ .Values.spinnaker.gitopsHalyard.pipelinePromotion.AWS_SECRET_ACCESS_KEY }}
     region: {{ .Values.spinnaker.gitopsHalyard.pipelinePromotion.awsregion }}

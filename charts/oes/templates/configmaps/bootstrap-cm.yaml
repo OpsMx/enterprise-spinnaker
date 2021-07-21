@@ -17,6 +17,9 @@ data:
 {{- end }}
           generic:
             enabled: false
+    jasypt:
+      encryptor:
+        password: Q7udUkHPuA3VnNlOtksSgQ
 kind: ConfigMap
 metadata:
   name: bootstrap
