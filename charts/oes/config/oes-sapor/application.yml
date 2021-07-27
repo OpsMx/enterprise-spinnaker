@@ -23,23 +23,35 @@ oes:
     url: http://oes-dashboard:8094
 pipeline-promotion:
   github:
+    {{ if eq .Values.spinnaker.gitopsHalyard.repo.type "git" }}
     enabled: true
-    username:  {{ .Values.spinnaker.gitopsHalyard.pipelinePromotion.username }}
-    token: {{ .Values.spinnaker.gitopsHalyard.pipelinePromotion.token }}
-    branch: {{ .Values.spinnaker.gitopsHalyard.pipelinePromotion.branch }}
-    cloneUrl: https://{{ .Values.spinnaker.gitopsHalyard.pipelinePromotion.username }}:{{ .Values.spinnaker.gitopsHalyard.pipelinePromotion.token }}@{{ .Values.spinnaker.gitopsHalyard.pipelinePromotion.baseUrl }}/{{ .Values.spinnaker.gitopsHalyard.pipelinePromotion.organization }}/{{ .Values.spinnaker.gitopsHalyard.pipelinePromotion.repository }}
+    {{ else }}
+    enabled: false
+    {{ end }}
+    username:  {{ .Values.spinnaker.gitopsHalyard.repo.username }}
+    token: {{ .Values.spinnaker.gitopsHalyard.repo.token }}
+    branch: master
+    cloneUrl: https://{{ .Values.spinnaker.gitopsHalyard.repo.username }}:{{ .Values.spinnaker.gitopsHalyard.repo.token }}@{{ .Values.spinnaker.gitopsHalyard.repo.baseUrl }}/{{ .Values.spinnaker.gitopsHalyard.repo.organization }}/{{ .Values.spinnaker.gitopsHalyard.repo.repository }}
   bitbucket:
+    {{ if eq .Values.spinnaker.gitopsHalyard.repo.type "stash" }}
+    enabled: true
+    {{ else }}
     enabled: false
-    username:  {{ .Values.spinnaker.gitopsHalyard.pipelinePromotion.username }}
-    token: {{ .Values.spinnaker.gitopsHalyard.pipelinePromotion.token }}
-    branch: {{ .Values.spinnaker.gitopsHalyard.pipelinePromotion.branch }}
-    cloneUrl: https://{{ .Values.spinnaker.gitopsHalyard.pipelinePromotion.username }}:{{ .Values.spinnaker.gitopsHalyard.pipelinePromotion.token }}@{{ .Values.spinnaker.gitopsHalyard.pipelinePromotion.baseUrl }}/{{ .Values.spinnaker.gitopsHalyard.pipelinePromotion.organization }}/{{ .Values.spinnaker.gitopsHalyard.pipelinePromotion.repository }}
+    {{ end }}
+    username:  {{ .Values.spinnaker.gitopsHalyard.repo.username }}
+    token: {{ .Values.spinnaker.gitopsHalyard.repo.token }}
+    branch: master
+    cloneUrl: https://{{ .Values.spinnaker.gitopsHalyard.repo.username }}:{{ .Values.spinnaker.gitopsHalyard.repo.token }}@{{ .Values.spinnaker.gitopsHalyard.repo.baseUrl }}/{{ .Values.spinnaker.gitopsHalyard.repo.organization }}/{{ .Values.spinnaker.gitopsHalyard.repo.projectName }}/{{ .Values.spinnaker.gitopsHalyard.repo.repository }}
   amazonS3:
+    {{ if eq .Values.spinnaker.gitopsHalyard.repo.type "s3" }}
+    enabled: true
+    {{ else }}
     enabled: false
-    accessKeyId: {{ .Values.spinnaker.gitopsHalyard.pipelinePromotion.AWS_ACCESS_KEY_ID }}
-    secretAccessKey: {{ .Values.spinnaker.gitopsHalyard.pipelinePromotion.AWS_SECRET_ACCESS_KEY }}
-    region: {{ .Values.spinnaker.gitopsHalyard.pipelinePromotion.awsregion }}
-    bucketName: {{ .Values.spinnaker.gitopsHalyard.pipelinePromotion.repository }} 
+    {{ end }}
+    accessKeyId: {{ .Values.spinnaker.gitopsHalyard.repo.s3accesskey }}
+    secretAccessKey: {{ .Values.spinnaker.gitopsHalyard.repo.s3secretkey }}
+    region: {{ .Values.spinnaker.gitopsHalyard.repo.s3region }}
+    bucketName: {{ .Values.spinnaker.gitopsHalyard.repo.s3bucket }} 
 spinnaker:
   restart:
     endPoint: /webhooks/webhook/restartSpinnaker
