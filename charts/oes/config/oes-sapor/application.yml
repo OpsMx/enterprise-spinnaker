@@ -31,7 +31,7 @@ pipeline-promotion:
     username:  {{ .Values.spinnaker.gitopsHalyard.repo.username }}
     token: {{ .Values.spinnaker.gitopsHalyard.repo.token }}
     branch: master
-    cloneUrl: https://{{ .Values.spinnaker.gitopsHalyard.repo.username }}:{{ .Values.spinnaker.gitopsHalyard.repo.token }}@{{ .Values.spinnaker.gitopsHalyard.repo.baseUrl }}/{{ .Values.spinnaker.gitopsHalyard.repo.organization }}/{{ .Values.spinnaker.gitopsHalyard.repo.repository }}
+    cloneUrl: https://{{ .Values.spinnaker.gitopsHalyard.repo.username }}:{{ .Values.spinnaker.gitopsHalyard.repo.token }}@{{ .Values.spinnaker.gitopsHalyard.repo.baseUrlHostName }}/{{ .Values.spinnaker.gitopsHalyard.repo.organization }}/{{ .Values.spinnaker.gitopsHalyard.repo.repository }}
   bitbucket:
     {{ if eq .Values.spinnaker.gitopsHalyard.repo.type "stash" }}
     enabled: true
@@ -41,7 +41,7 @@ pipeline-promotion:
     username:  {{ .Values.spinnaker.gitopsHalyard.repo.username }}
     token: {{ .Values.spinnaker.gitopsHalyard.repo.token }}
     branch: master
-    cloneUrl: https://{{ .Values.spinnaker.gitopsHalyard.repo.username }}:{{ .Values.spinnaker.gitopsHalyard.repo.token }}@{{ .Values.spinnaker.gitopsHalyard.repo.baseUrl }}/{{ .Values.spinnaker.gitopsHalyard.repo.organization }}/{{ .Values.spinnaker.gitopsHalyard.repo.projectName }}/{{ .Values.spinnaker.gitopsHalyard.repo.repository }}
+    cloneUrl: https://{{ .Values.spinnaker.gitopsHalyard.repo.username }}:{{ .Values.spinnaker.gitopsHalyard.repo.token }}@{{ .Values.spinnaker.gitopsHalyard.repo.baseUrlHostName }}/{{ .Values.spinnaker.gitopsHalyard.repo.organization }}/{{ .Values.spinnaker.gitopsHalyard.repo.projectName }}/{{ .Values.spinnaker.gitopsHalyard.repo.repository }}
   amazonS3:
     {{ if eq .Values.spinnaker.gitopsHalyard.repo.type "s3" }}
     enabled: true
