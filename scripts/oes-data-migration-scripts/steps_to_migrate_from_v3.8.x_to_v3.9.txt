@@ -3,8 +3,8 @@ Steps to migrate from v3.8.x to v3.9
 1. Copy the file : migration_v3.8.x_to_v3.9.py to some path in platform pod.
 2. Run the below command to execute the script.
 
-	python3 <scriptfilename>  <platform-db-name> <platform-db-host> <visibility-db-name> <visibility-db-host> <db-port> <oes-visibility-url> <oes-admin-user>  
+	python3 <scriptfilename>  <platform-db-name> <platform-db-host> <visibility-db-name> <visibility-db-host> <sapor-db-name> <sapor-db-host> <oes-visibility-url> <db-port> <oes-admin-user>  
 	
-	Replace <scriptfilename>  <platform-db-name> <platform-db-host> <visibility-db-name> <visibility-db-host> <db-port> <oes-visibility-url> <oes-admin-user>     with valid values
+	Replace <scriptfilename>  <platform-db-name> <platform-db-host> <visibility-db-name> <visibility-db-host> <sapor-db-name> <sapor-db-host> <oes-visibility-url> <db-port> <oes-admin-user>     with valid values
 	
-	Ex: 	python3 migration_v3.8.x_to_v3.9.py platformdb oes-db visibilitydb oes-db 5432 http://oes-visibility:8096 admin
+	Ex: 	python3 migration_v3.8.x_to_v3.9.py platformdb oes-db  visibilitydb oes-db  oesdb oes-db http://oes-visibility:8096 5432 admin
