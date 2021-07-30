@@ -33,7 +33,8 @@ def perform_migration(input_string):
         print("Migrating pipeline json")
         pipeline_jsons = fetch_pipeline_json()
         for pipeline_json in pipeline_jsons:
-            migrate_pipeline_json(pipeline_json[0], pipeline_json[1])
+            if pipeline_json is not None and len(pipeline_json) > 0:
+                migrate_pipeline_json(pipeline_json[0], pipeline_json[1])
 
         print("Migrating Cloud Configuration entity")
         alter_cloud_configuration()
@@ -105,21 +106,22 @@ def migrate_pipeline_json(id, pipeline_json):
     try:
         cur = platform_conn.cursor()
         pipe_json = json.loads(pipeline_json)
-        stages = pipe_json['stages']
-        if stages is not None and len(stages)>0:
-            for stage in stages:
-                gate_type = stage['type']
-                if gate_type is not None and len(gate_type)>0:
-                    if str(gate_type).strip() == 'Visibility Approval':
-                        migrate_approval_gate(stage)
-                    elif str(gate_type).strip() == 'Verification':
-                        migrate_verification_gate(stage)
-                    elif str(gate_type).strip() == 'Test Verification':
-                        migrate_test_verification_gate(stage)
-                    elif str(gate_type).strip() == 'Policy Stage':
-                        migrate_policy_gate(stage)
-            pipe_json['stages'] = stages
-            cur.execute("update pipeline set pipeline_json = '"+str(json.dumps(pipe_json))+"' where id="+str(id))
+        if len(pipe_json) > 0:
+            stages = pipe_json['stages']
+            if stages is not None and len(stages)>0:
+                for stage in stages:
+                    gate_type = stage['type']
+                    if gate_type is not None and len(gate_type)>0:
+                        if str(gate_type).strip() == 'Visibility Approval':
+                            migrate_approval_gate(stage)
+                        elif str(gate_type).strip() == 'Verification':
+                            migrate_verification_gate(stage)
+                        elif str(gate_type).strip() == 'Test Verification':
+                            migrate_test_verification_gate(stage)
+                        elif str(gate_type).strip() == 'Policy Stage':
+                            migrate_policy_gate(stage)
+                pipe_json['stages'] = stages
+                cur.execute("update pipeline set pipeline_json = '"+str(json.dumps(pipe_json))+"' where id="+str(id))
 
     except Exception as e:
         print("Exception occured while migrating pipeline json : ", e)
@@ -170,36 +172,43 @@ def migrate_approval_gate(stage):
                 url_components = str(gateurl).split("/")
                 approval_gate_id = url_components[len(url_components) - 2]
                 configured_tool_connectors = fetch_configured_tool_connectors(approval_gate_id)
-                for configured_tool_connector in configured_tool_connectors:
-                    connector_type = configured_tool_connector['connectorType']
-                    if connector_type is not None:
-                        if str(connector_type).strip().upper() == 'JIRA':
-                            configure_jira(configured_tool_connector, jiraid)
-                        elif str(connector_type).strip().upper() == 'GIT':
-                            configure_git(configured_tool_connector, gitcommitid, gitrepo)
-                        elif str(connector_type).strip().upper() == 'JENKINS':
-                            configure_jenkins(configured_tool_connector, jenkinsartifact, jenkinsbuild, jenkinsjob)
-                        elif str(connector_type).strip().upper() == 'AUTOPILOT':
-                            configure_autopilot(canaryid, configured_tool_connector)
-                        elif str(connector_type).strip().upper() == 'SONARQUBE':
-                            configure_sonarqube(configured_tool_connector, projectkey)
-                        elif str(connector_type).strip().upper() == 'APPSCAN':
-                            configure_appscan(appscanid, configured_tool_connector)
-                        elif str(connector_type).strip().upper() == 'AQUAWAVE':
-                            configure_aquawave(aquawave, configured_tool_connector)
-                        connectors.append(configured_tool_connector)
-                        gateurl = str(gateurl).strip().replace("v4", "v5")
-                        gateurl = str(gateurl).strip().replace("v3", "v5")
-                        gateurl = str(gateurl).strip().replace("v2", "v5")
-                        gateurl = str(gateurl).strip().replace("v1", "v5")
-                        new_parameters = {"imageIds": imageids,
-                                          "connectors": connectors,
-                                          "gateUrl": gateurl}
-                        stage['parameters'] = new_parameters
+                if configured_tool_connectors is not None and len(configured_tool_connectors) > 0:
+                    for configured_tool_connector in configured_tool_connectors:
+                        connector_type = configured_tool_connector['connectorType']
+                        if connector_type is not None:
+                            if str(connector_type).strip().upper() == 'JIRA':
+                                configure_jira(configured_tool_connector, jiraid)
+                            elif str(connector_type).strip().upper() == 'GIT':
+                                configure_git(configured_tool_connector, gitcommitid, gitrepo)
+                            elif str(connector_type).strip().upper() == 'JENKINS':
+                                configure_jenkins(configured_tool_connector, jenkinsartifact, jenkinsbuild, jenkinsjob)
+                            elif str(connector_type).strip().upper() == 'AUTOPILOT':
+                                configure_autopilot(canaryid, configured_tool_connector)
+                            elif str(connector_type).strip().upper() == 'SONARQUBE':
+                                configure_sonarqube(configured_tool_connector, projectkey)
+                            elif str(connector_type).strip().upper() == 'APPSCAN':
+                                configure_appscan(appscanid, configured_tool_connector)
+                            elif str(connector_type).strip().upper() == 'AQUAWAVE':
+                                configure_aquawave(aquawave, configured_tool_connector)
+                            connectors.append(configured_tool_connector)
+                            set_new_parameters(connectors, gateurl, imageids, stage)
+                else:
+                    set_new_parameters(connectors, gateurl, imageids, stage)
 
     except Exception as e:
         print("Exception occured while migrating approval gate : ", e)
         raise e
+
+
+def set_new_parameters(connectors, gateurl, imageids, stage):
+    gateurl = str(gateurl).strip().replace("v4", "v5")
+    gateurl = str(gateurl).strip().replace("v3", "v5")
+    gateurl = str(gateurl).strip().replace("v2", "v5")
+    gateurl = str(gateurl).strip().replace("v1", "v5")
+    new_parameters = {"imageIds": imageids,
+                      "connectors": connectors,
+                      "gateUrl": gateurl}
+    stage['parameters'] = new_parameters
 
 
 def configure_aquawave(aquawave, configured_tool_connector):
