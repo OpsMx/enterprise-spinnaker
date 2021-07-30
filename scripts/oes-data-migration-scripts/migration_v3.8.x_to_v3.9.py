@@ -34,18 +34,24 @@ def perform_migration(input_string):
         pipeline_jsons = fetch_pipeline_json()
         for pipeline_json in pipeline_jsons:
             migrate_pipeline_json(pipeline_json[0], pipeline_json[1])
+
+        print("Migrating Cloud Configuration entity")
+        alter_cloud_configuration()
+        print("Successfully configured Cloud Configuration entity to table to v3.9")
         print("Successfully migrated to v3.9")
 
         platform_conn.commit()
         visibility_conn.commit()
+        oesdb_conn.commit()
     except Exception as e:
         platform_conn.rollback()
         visibility_conn.rollback()
+        oesdb_conn.rollback()
         print ('Exception occured during migration : ', e)
     finally:
         platform_conn.close()
         visibility_conn.close()
-
+        oesdb_conn.close()
 
 def alter_approval_gate_parameter():
     try:
@@ -293,18 +299,30 @@ def update_user_group(user_group_id):
         print ('Exception occured while updating user_group table: ', e)
         raise e
 
+def alter_cloud_configuration():
+    try:
+        cur = oesdb_conn.cursor()
+        cur.execute("ALTER TABLE cloud_configuration ALTER COLUMN bakery_secret_key TYPE varchar(10000) USING bakery_secret_key::varchar")
+        cur.execute("ALTER TABLE cloud_configuration ALTER COLUMN secret_key TYPE varchar(10000) USING secret_key::varchar")
+    except Exception as e:
+        print("Exception occured while altering the cloud_configuration table : ", e)
+        raise e
+
+
 if __name__ == '__main__':
     n = len(sys.argv)
-    if n != 8:
-        print ('Please pass valid 7 arguments <platform-db-name> <platform-db-host> <visibility-db-name> <visibility-db-host> <db-port> <oes-visibility-url> <oes-admin-user>')
+    if n != 10:
+        print ('Please pass valid 9 arguments <platform-db-name> <platform-db-host> <visibility-db-name> <visibility-db-host> <sapor-db-name> <sapor-db-host> <oes-visibility-url> <db-port> <oes-admin-user>')
 
     platform_db = sys.argv[1]
     platform_host = sys.argv[2]
     visibility_db = sys.argv[3]
     visibility_host = sys.argv[4]
-    port = sys.argv[5]
-    oes_visibility_url = sys.argv[6]
-    oes_admin_user = sys.argv[7]
+    oes_db = sys.argv[5]
+    oes_host = sys.argv[6]    
+    oes_visibility_url = sys.argv[7]
+    port = sys.argv[8]
+    oes_admin_user = sys.argv[9]
 
     # Establishing the platform db connection
 
@@ -315,10 +333,19 @@ if __name__ == '__main__':
 
     visibility_conn = psycopg2.connect(database=visibility_db, user='postgres', password='networks123', host=visibility_host, port=port)
     print("Visibility database connection established successfully")
+    
+    
+    # Establishing the sapor db connection
 
+    oesdb_conn = psycopg2.connect(database=oes_db,
+            user='postgres', password='networks123',
+            host=oes_host, port=port)
+    print ('Opened sapor database connection successfully')
+    
     # Getting input of admin groups
 
     input_string = \
         input('Enter admin groups to be configure in separated by comma:: '
               )
     perform_migration(input_string)
+    
