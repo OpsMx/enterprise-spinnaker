@@ -1,6 +1,7 @@
-1. Goto location /opsmx/workdir/datamigration in platform container
-2. You will find a file named : migration_v3.8.x_to_v3.9.py
-3. Run the below command to execute the script.
+Steps to migrate from v3.8.x to v3.9
+
+1. Copy the file : migration_v3.8.x_to_v3.9.py to some path in platform pod.
+2. Run the below command to execute the script.
 
 	python3 <scriptfilename>  <platform-db-name> <platform-db-host> <visibility-db-name> <visibility-db-host> <sapor-db-name> <sapor-db-host> <oes-visibility-url> <db-port> <oes-admin-user>  
 	
