@@ -64,7 +64,7 @@ data:
     [[ \"$command\" == \"download\" ]]; then\n\tsync_spinnaker_from_repo\nelif [[
     \"$command\" == \"upload\" ]]; then\n        echo \"executing upload\"\n\t#statement\n\tsync_repo_from_spinnaker\nelse\n\techo
     \"ERROR: unknown command\"\n\nfi\necho \"Done executing\"\n"
-  git.sh: "#!/bin/bash\nsource scripts/spin.sh\n\ngit_repo=$repo_name\ntempdir=\"/tmp/\"\npull_requred=false\nsetup_git()
+  git.sh: "#!/bin/bash\nsource scripts/spin.sh\n\ngit_repo=$repo_name\ntempdir=\"/tmp/\"\npull_requred=false\nif [[ $git_branch == \"\" ]]\nthen\ngit_branch=\"master\"\nfi\nsetup_git()
     {\n  echo \"Setting up the Git \"\n  local name=${git_user:-spinnaker}\n  local
     email=${git_user_email:-spinnaker@symphony.com}\n  git config --global user.email
     \"$email\"\n  git config --global user.name \"$name\"\n}\ngit_clone_http() {\n
