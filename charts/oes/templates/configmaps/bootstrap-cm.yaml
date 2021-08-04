@@ -17,6 +17,9 @@ data:
 {{- end }}
           generic:
             enabled: false
+    jasypt:
+      encryptor:
+        password: {{ .Values.sapor.config.encrypt.key }}
 kind: ConfigMap
 metadata:
   name: bootstrap
