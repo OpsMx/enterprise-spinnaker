@@ -10,6 +10,10 @@ def perform_migration(input_string):
     try:
         print ('Migrating from v3.8.x to v3.9')
 
+        print("Migrating UserGroups to map as single group and to lowercase")
+        usergroups = fetch_usergroups_data()
+        migration_usergroups_data(usergroups)
+
         # Modify existing user_group table
         modifyUserGroupTable()
 
@@ -17,7 +21,7 @@ def perform_migration(input_string):
         print ('Printing all admin group names given:: ', input_string)
         admin_groups = input_string.split(',')
         for group_name in admin_groups:
-            map_user_group_admin(group_name)
+            map_user_group_admin(group_name.lower())
         print("Successfully configured admin groups to table to v3.9")
 
         print("Migrating approval gate parameter entity")
@@ -53,6 +57,62 @@ def perform_migration(input_string):
         platform_conn.close()
         visibility_conn.close()
         oesdb_conn.close()
+
+def fetch_usergroups_data():
+    try:
+        cur = platform_conn.cursor()
+        cur.execute("select id,name from user_group")
+        return cur.fetchall()
+    except Exception as e:
+        print("Exception occurred while fetching user_group data : ", e)
+        raise e
+
+
+def migration_usergroups_data(usergroups):
+    print("Total usergroups: ",usergroups)
+    user_groups_map = {usergroup[0]: usergroup[1] for usergroup in usergroups}
+    for usergroup in usergroups:
+        user_group_name = usergroup[1].lower()
+        if (user_group_name in user_groups_map.values()) and (user_group_name != usergroup[1]):
+            user_group_id = list(user_groups_map.keys())[list(user_groups_map.values()).index(user_group_name)]
+            update_usergroup_permission_data(usergroup[0], user_group_id)
+            delete_old_user_group_data(usergroup[0])
+        else:
+            update_usergroup_name_tolower(usergroup[0], user_group_name)
+
+
+def update_usergroup_permission_data(old_user_group_id, new_user_group_id):
+    try:
+        cur = platform_conn.cursor()
+        cur.execute("select count(*) from user_group_permission where group_id ="+ str(old_user_group_id))
+        result = cur.fetchone()[0]
+        print("Total usergroups permission for user_group_id: count: ", old_user_group_id, result)
+        if result > 0:
+            cur.execute("update user_group_permission set group_id = "+str(new_user_group_id)+" where group_id ="+str(old_user_group_id))
+    except Exception as e:
+        print("Exception occurred while updating data from user_group_permission table : ", e)
+        raise e
+
+
+def delete_old_user_group_data(old_user_group_id):
+    try:
+        cur = platform_conn.cursor()
+        cur.execute("delete from user_group where id =" + str(old_user_group_id))
+    except Exception as e:
+        print("Exception occurred while deleting data from user_group table : ", e)
+        raise e
+
+
+def update_usergroup_name_tolower(user_group_id, user_group_name):
+    try:
+        cur = platform_conn.cursor()
+        cur.execute("select count(*) from user_group where name='"+user_group_name+"'")
+        result = cur.fetchone()[0]
+        if result == 0:
+            cur.execute("UPDATE user_group SET name ='"+user_group_name+ "' WHERE id =" + str(user_group_id))
+    except Exception as e:
+        print('Exception occurred while updating user_group table name to lowercase: ', e)
+        raise e
 
 def alter_approval_gate_parameter():
     try:
