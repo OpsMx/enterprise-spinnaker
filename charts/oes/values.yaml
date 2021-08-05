@@ -1035,6 +1035,7 @@ spinnaker:
       repository: standard-gitops-repo # repo name for GitOps Halyard (Sample Reference: https://github.com/OpsMx/sample-gitops-repo.git).
       dynamicAccRepository: standard-gitops-repo # Please provide the repo name of the GitOps Dynamic Accounts Directory.Can be same as Hal repo. 
       halConfigPath: / # Any other value is currently not supported
+      dynAccntConfigPath: dynaccount/ #relative path from repository root folder
       username: <git/stash_username>  # Username to authenticate with git/stash repo
       token: <git/stash_token>  # Token corresponding to above username
       ## Configure below fields only if repo type is s3
