@@ -1,3 +1,13 @@
+pollers:
+  oldPipelineCleanup:
+    enabled: true                  # This enables old pipeline execution cleanup (default: false)
+    intervalMs: 3600000            # How many milliseconds between pipeline cleanup runs (default: 1hr or 3600000)
+    thresholdDays: 30              # How old a pipeline execution must be to be deleted (default: 30)
+    minimumPipelineExecutions: 5   # How many executions to keep around (default: 5)
+
+tasks:
+  daysOfExecutionHistory: 180      # How many days to keep old task executions around.
+
 job:
   preconfigured:
     kubernetes:
@@ -38,6 +48,8 @@ job:
                     volumeMounts:
                     - mountPath: /home/opsmx/scripts
                       name: pipe-promot-scripts
+                    - mountPath: /home/opsmx/config
+                      name: pipe-promot-config
                     - mountPath: /home/opsmx/.spin
                       name: spin-cli-config
                     env:
@@ -47,67 +59,21 @@ job:
                         value: 'will be replaced'
                       - name: command
                         value: 'upload'
-                      - name: git_friendly_username
-                        valueFrom:
-                          configMapKeyRef:
-                            name: pipe-promot-config
-                            key: git_friendly_username
-                      - name: git_friendly_username
-                        valueFrom:
-                          configMapKeyRef:
-                            name: pipe-promot-config
-                            key: git_friendly_username
-                      - name: git_project
-                        valueFrom:
-                          configMapKeyRef:
-                            name: pipe-promot-config
-                            key: git_project
-                      - name: git_refresh_enabled
-                        valueFrom:
-                          configMapKeyRef:
-                            name: pipe-promot-config
-                            key: git_refresh_enabled
-                      - name: git_repo
-                        valueFrom:
-                          configMapKeyRef:
-                            name: pipe-promot-config
-                            key: git_repo
-                      - name: git_user_email
-                        valueFrom:
-                          configMapKeyRef:
-                            name: pipe-promot-config
-                            key: git_user_email
-                      - name: ignore_spin_errors
-                        valueFrom:
-                          configMapKeyRef:
-                            name: pipe-promot-config
-                            key: ignore_spin_errors
                       - name: git_secret_token
                         valueFrom:
                           secretKeyRef:
                             name: git-token
                             key: git_secret_token
-                      - name: debug
+                      - name: git_pr_token
                         valueFrom:
-                          configMapKeyRef:
-                            name: pipe-promot-config
-                            key: debug
-                      - name: pipelineconfig
-                        valueFrom:
-                          configMapKeyRef:
-                            name: pipe-promot-config
-                            key: pipelineconfig
-                      - name: pipelineconfigdir
-                        valueFrom:
-                          configMapKeyRef:
-                            name: pipe-promot-config
-                            key: pipelineconfigdir
-                      - name: pipelinecreateconf
-                        valueFrom:
-                          configMapKeyRef:
-                            name: pipe-promot-config
-                            key: pipelinecreateconf
+                          secretKeyRef:
+                            name: git-token
+                            key: git_pr_token
                   volumes:
+                  - configMap:
+                      defaultMode: 420
+                      name: pipe-promot-config
+                    name: pipe-promot-config
                   - configMap:
                       defaultMode: 420
                       name: pipe-promot-scripts
@@ -155,6 +121,8 @@ job:
                     volumeMounts:
                     - mountPath: /home/opsmx/scripts
                       name: pipe-promot-scripts
+                    - mountPath: /home/opsmx/config
+                      name: pipe-promot-config
                     - mountPath: /home/opsmx/.spin
                       name: spin-cli-config
                     env:
@@ -164,67 +132,21 @@ job:
                         value: 'will be replaced'
                       - name: command
                         value: 'download'
-                      - name: git_friendly_username
-                        valueFrom:
-                          configMapKeyRef:
-                            name: pipe-promot-config
-                            key: git_friendly_username
-                      - name: git_friendly_username
-                        valueFrom:
-                          configMapKeyRef:
-                            name: pipe-promot-config
-                            key: git_friendly_username
-                      - name: git_project
-                        valueFrom:
-                          configMapKeyRef:
-                            name: pipe-promot-config
-                            key: git_project
-                      - name: git_refresh_enabled
-                        valueFrom:
-                          configMapKeyRef:
-                            name: pipe-promot-config
-                            key: git_refresh_enabled
-                      - name: git_repo
-                        valueFrom:
-                          configMapKeyRef:
-                            name: pipe-promot-config
-                            key: git_repo
-                      - name: git_user_email
-                        valueFrom:
-                          configMapKeyRef:
-                            name: pipe-promot-config
-                            key: git_user_email
-                      - name: ignore_spin_errors
-                        valueFrom:
-                          configMapKeyRef:
-                            name: pipe-promot-config
-                            key: ignore_spin_errors
                       - name: git_secret_token
                         valueFrom:
                           secretKeyRef:
                             name: git-token
                             key: git_secret_token
-                      - name: debug
+                      - name: git_pr_token
                         valueFrom:
-                          configMapKeyRef:
-                            name: pipe-promot-config
-                            key: debug
-                      - name: pipelineconfig
-                        valueFrom:
-                          configMapKeyRef:
-                            name: pipe-promot-config
-                            key: pipelineconfig
-                      - name: pipelineconfigdir
-                        valueFrom:
-                          configMapKeyRef:
-                            name: pipe-promot-config
-                            key: pipelineconfigdir
-                      - name: pipelinecreateconf
-                        valueFrom:
-                          configMapKeyRef:
-                            name: pipe-promot-config
-                            key: pipelinecreateconf
+                          secretKeyRef:
+                            name: git-token
+                            key: git_pr_token
                   volumes:
+                  - configMap:
+                      defaultMode: 420
+                      name: pipe-promot-config
+                    name: pipe-promot-config
                   - configMap:
                       defaultMode: 420
                       name: pipe-promot-scripts
@@ -241,7 +163,7 @@ job:
         cloudProvider: kubernetes
         account: default
         waitForCompletion: true
-        application: spin
+        application: sampleapp
         parameters:
           - defaultValue: "http://oes-sapor:8085"
             description: Please enter the POLICY Proxy Hostname and Port
@@ -308,7 +230,7 @@ job:
                 restartPolicy: Never
       - label: VerificationGate
         cloudProvider: kubernetes
-        application: spin
+        application: sampleapp
         description: Stage for Verification Gate
         propertyFile: verificationgate
         account: default
@@ -414,7 +336,7 @@ job:
       - label: VisibilityApproval
         cloudProvider: kubernetes
         credentials: default
-        application: spin
+        application: sampleapp
         description: Stage for Visibility Approval
         propertyFile: visibilityapprove
         account: default
@@ -548,7 +470,7 @@ job:
                 restartPolicy: Never
       - label: TestVerification
         cloudProvider: kubernetes
-        application: spin
+        application: sampleapp
         description: Stage for TestVerification
         propertyFile: testverification
         account: default
