@@ -148,7 +148,7 @@ data:
     echo "This Host is :"
     hostname; hostname -i
     cd /tmp
-    CMBOM=$(kubectl get configmap | grep boms | awk '{print $1}')
+    CMBOM=$(kubectl get configmap | grep custombom | awk '{print $1}')
     kubectl get configmap $CMBOM -o "jsonpath={.data['boms\.enc']}" > halyard-custombom.enc
     cat halyard-custombom.enc | base64 -d | base64 -d > spin-boms.tar.gz
     du spin-boms.tar.gz halyard-custombom.enc
