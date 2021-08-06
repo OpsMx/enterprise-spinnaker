@@ -9,6 +9,7 @@ spring:
 secretManagement:
   source:
     config: {{ .Values.secretStore }}
+  encryption: true
 oes:
   rbac:
     enabled: true
@@ -20,9 +21,42 @@ oes:
     url: http://oes-visibility:8096
   dashboard:
     url: http://oes-dashboard:8094
+pipeline-promotion:
+  github:
+    {{ if eq .Values.spinnaker.gitopsHalyard.repo.type "git" }}
+    enabled: true
+    {{ else }}
+    enabled: false
+    {{ end }}
+    username:  {{ .Values.spinnaker.gitopsHalyard.repo.username }}
+    token: {{ .Values.spinnaker.gitopsHalyard.repo.token }}
+    branch: master
+    cloneUrl: https://{{ .Values.spinnaker.gitopsHalyard.repo.username }}:{{ .Values.spinnaker.gitopsHalyard.repo.token }}@{{ .Values.spinnaker.gitopsHalyard.repo.baseUrlHostName }}/{{ .Values.spinnaker.gitopsHalyard.repo.organization }}/{{ .Values.spinnaker.gitopsHalyard.repo.repository }}
+  bitbucket:
+    {{ if eq .Values.spinnaker.gitopsHalyard.repo.type "stash" }}
+    enabled: true
+    {{ else }}
+    enabled: false
+    {{ end }}
+    username:  {{ .Values.spinnaker.gitopsHalyard.repo.username }}
+    token: {{ .Values.spinnaker.gitopsHalyard.repo.token }}
+    branch: master
+    cloneUrl: https://{{ .Values.spinnaker.gitopsHalyard.repo.username }}:{{ .Values.spinnaker.gitopsHalyard.repo.token }}@{{ .Values.spinnaker.gitopsHalyard.repo.baseUrlHostName }}/{{ .Values.spinnaker.gitopsHalyard.repo.organization }}/{{ .Values.spinnaker.gitopsHalyard.repo.projectName }}/{{ .Values.spinnaker.gitopsHalyard.repo.repository }}
+  amazonS3:
+    {{ if eq .Values.spinnaker.gitopsHalyard.repo.type "s3" }}
+    enabled: true
+    {{ else }}
+    enabled: false
+    {{ end }}
+    accessKeyId: {{ .Values.spinnaker.gitopsHalyard.repo.s3accesskey }}
+    secretAccessKey: {{ .Values.spinnaker.gitopsHalyard.repo.s3secretkey }}
+    region: {{ .Values.spinnaker.gitopsHalyard.repo.s3region }}
+    bucketName: {{ .Values.spinnaker.gitopsHalyard.repo.s3bucket }} 
 spinnaker:
   restart:
     endPoint: /webhooks/webhook/restartSpinnaker
+  encrypt:
+    key: {{ .Values.sapor.config.encrypt.key }}
 datasources:
   platform: {{ .Values.sapor.config.datasources.platform }}
   

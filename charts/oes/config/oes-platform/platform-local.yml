@@ -5,7 +5,8 @@ spring:
     username: {{ .Values.db.username }}
     password: {{ .Values.db.password }}
 ldap.managerPassword: {{ .Values.global.ldap.managerPassword }}
-redis.connection: {{ tpl .Values.redis.url . }}
+redis:
+    connection: {{ tpl .Values.redis.url . }}
 #datasource.url: {{ .Values.db.url }}/visibilitydb
 #postgres.password: {{ .Values.db.password }}
 #postgres.username: {{ .Values.db.username }}
@@ -18,7 +19,7 @@ rbacEnabled: {{ .Values.rbac.create }}
 supportedFeatures:
 {{ toYaml .Values.platform.config.supportedFeatures | indent 2 }}
 userGroup:
-  adminGroups: {{ .Values.platform.config.adminGroups }}
+  superAdminGroups: {{ .Values.platform.config.adminGroups }}
 user:
   {{- if .Values.gate.config.saml.enabled }}
   source: {{ .Values.gate.config.saml.userSource }}
@@ -26,6 +27,7 @@ user:
   source: {{ .Values.platform.config.userSource }}
   {{- end }}
 ldap:
+  enabled: {{ .Values.global.ldap.enabled }}
   url: {{ tpl .Values.global.ldap.url . }}
   managerDn: {{ .Values.global.ldap.managerDn }}
   groupSearchBase: {{ .Values.global.ldap.groupSearchBase }}
@@ -42,9 +44,9 @@ oes:
     url: http://oes-visibility:8096
   approvalGate:
 {{- if .Values.oesGate.port }}
-    apiUrl: {{ .Values.oesGate.protocol }}://{{ .Values.oesGate.host }}:{{ .Values.oesGate.port }}/visibilityservice/v2/approvalGates/{id}/trigger
+    apiUrl: {{ .Values.oesGate.protocol }}://{{ .Values.oesGate.host }}:{{ .Values.oesGate.port }}/visibilityservice/v5/approvalGates/{id}/trigger
 {{- else }}
-    apiUrl: {{ .Values.oesGate.protocol }}://{{ .Values.oesGate.host }}/visibilityservice/v4/approvalGates/{id}/trigger
+    apiUrl: {{ .Values.oesGate.protocol }}://{{ .Values.oesGate.host }}/visibilityservice/v5/approvalGates/{id}/trigger
 {{- end }}
 
   verificationGate:
