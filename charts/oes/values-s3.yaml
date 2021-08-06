@@ -33,7 +33,7 @@ sapor:
   config:
     encrypt:
       enabled: true
-      key: <<>encryption key>> # ex: Q7udUkHPuA3VnNlOtksSgQ
+      key: <<>encryption key>> # ex: Q7udUkHPuA3VnNlOtksSgQ     #encryption key needed for sapor to startup from 3.9
 
 spinnaker:  
   # Initialize gitOps style Halyard
@@ -50,10 +50,8 @@ spinnaker:
       enabled: true
       type: s3  # git, s3, stash
       repository: testbucket # bucket name in case of S3
-      rootFolder: pipeline-promotion/
+      rootFolder: pipeline/
       ##### ONLY In case of S3
-      ##### S3 config for pipelinePromotion is complete
-      ##### For non-S3 repos
       usermail: mail@ops.com
       AWS_ACCESS_KEY_ID: <access_key>
       AWS_SECRET_ACCESS_KEY: <secret_key>
