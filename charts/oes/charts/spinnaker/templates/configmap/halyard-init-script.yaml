@@ -138,3 +138,25 @@ data:
       kubectl apply -f /tmp/spinnaker/pipeline-decrypted/ -n ${SPINNAKER_NAMESPACE}
      fi
     fi
+
+    # Added by Saga, for Air-gapped install
+    {{- if not .Values.gcs.enabled }}
+    printf 'spinnaker.config.input.gcs.enabled: false\n' >> /tmp/config/halyard-local.yml
+
+    # Copy of copyBoms.sh from callCopyBoms.sh from old Airgapped procedure
+    #Purpose: Copies BOM files to /home/spinnaker/.hal/.boms
+    echo "This Host is :"
+    hostname; hostname -i
+    cd /tmp
+    CMBOM=$(kubectl get configmap | grep boms | awk '{print $1}')
+    kubectl get configmap $CMBOM -o "jsonpath={.data['boms\.enc']}" > halyard-custombom.enc
+    cat halyard-custombom.enc | base64 -d | base64 -d > spin-boms.tar.gz
+    du spin-boms.tar.gz halyard-custombom.enc
+    tar -xzvf spin-boms.tar.gz
+    # [ ! -d /home/spinnaker/.hal ] && mkdir -pv /home/spinnaker/.hal 
+    # cp -rv .boms /home/spinnaker/.hal/
+    [ ! -d /tmp/spinnaker/.hal ] && mkdir -pv /tmp/spinnaker/.hal 
+    cp -rv .boms /tmp/spinnaker/.hal/
+        
+    echo "DONE - Deploying BOM"
+    {{- end }}
