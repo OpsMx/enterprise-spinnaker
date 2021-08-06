@@ -41,16 +41,11 @@ spinnaker:
       type: stash # git, S3, stash, only git support at this point
       baseUrlHostName: bbdev.opsmx.com    #  https://bbdev.opsmx.com/scm/ksrin/test38.git
       organization: scm                   #  https://bbdev.opsmx.com/scm/ksrin/test38.git
-      projectName: ksrin                  #  https://bbdev.opsmx.com/scm/ksrin/test38.git
-      repository: test38                  #  https://bbdev.opsmx.com/scm/ksrin/test38.git
-      dynamicAccRepository: test38        #  https://bbdev.opsmx.com/scm/ksrin/test38.git
-      repository: stanops39 # repo name for GitOps Halyard (Sample Reference: https://github.com/OpsMx/sample-gitops-repo.git).
-      dynamicAccRepository: stanops39 # Please provide the repo name of the GitOps Dynamic Accounts Directory.Can be same as Hal repo. 
+      projectName: <proj_name>                  #  https://bbdev.opsmx.com/scm/ksrin/test38.git
+      repository: <repo name> # repo name for GitOps Halyard (Sample Reference: https://github.com/OpsMx/sample-gitops-repo.git).
+      dynamicAccRepository: <dynamic rep> # Please provide the repo name of the GitOps Dynamic Accounts Directory.Can be same as Hal repo. 
       halConfigPath: / #hal config path configuration path supports relative path from the root folder must be same as  dynAccntConfigPath
       dynAccntConfigPath: / #dymanic account configuration path supports relative path from the root folder must be same as halConfigPath
-      username: kishore438  # Username to authenticate with git/stash repo
-      token: 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  # Token corresponding to above username
-      ## Configure below fields only if repo type is s3
       username: <user name>               # Authenticating User-Name
       token:  <password>                  # Authenticating password
     secretName: opsmx-gitops-auth
@@ -58,11 +53,11 @@ spinnaker:
     pipelinePromotion:
       enabled: true
       type: stash  #type of the repo
-      repository: pipelinerepo # git repo to upload or download pipelines
-      rootFolder: opsmx/pipelinePromotion # the path in repo to where the pipelines json to be uploaded
+      repository: <repo_name> # git repo to upload or download pipelines
+      rootFolder: <path_to_save_the_files> # the path in repo to where the pipelines json to be uploaded ex: opsmx/pipelinePromotion
       baseUrl: bbdev.opsmx.com # stash url without https or anything
-      organization: ksrin #project where repo is created
-      username: kishore.goli #username for authentication
+      organization: <project_name> #project where repo is created
+      username: <username> #username for authentication
       token: "sdfakh14232" # personal access token for authenticating
       branch: testbranch #branch to push the changes
       #merging opstions

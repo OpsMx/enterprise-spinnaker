@@ -48,10 +48,8 @@ spinnaker:
       dynamicAccRepository: stanops39 # Please provide the repo name of the GitOps Dynamic Accounts Directory.Can be same as Hal repo. 
       halConfigPath: / #hal config path configuration path supports relative path from the root folder must be same as  dynAccntConfigPath
       dynAccntConfigPath: / #dymanic account configuration path supports relative path from the root folder must be same as halConfigPath
-      username: kishore438  # Username to authenticate with git/stash repo
-      token: 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  # Token corresponding to above username
-    secretName: opsmx-gitops-auth
-      token:  <password>                  # Authenticating password
+      username: <git_user>  # Username to authenticate with git/stash repo
+      token: <git_toke>  # Token corresponding to above username
     secretName: opsmx-gitops-auth
     # Promote applications and pipelines from one environment to another or take backup
     pipelinePromotion:
@@ -70,8 +68,7 @@ spinnaker:
       autoApprovePR: false
       targetBranch: master # the branch to which pr to be raised
       approvingUser: <approver_user>  ### user who is going to approve the pr
-      approverToken: A0NzcyOjczbhQqs05XLlGmEuB3jz1FTQq+ ## approver user token
-
+      approverToken: <approver_token> ## approver user token
 
       #for deleting pipeline in spinnaker
       deleteOnSyncSpin: false
