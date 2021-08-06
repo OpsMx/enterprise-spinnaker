@@ -24,7 +24,7 @@ sapor:
   config:
     encrypt:
       enabled: true
-      key: <<>encryption key>> # ex: Q7udUkHPuA3VnNlOtksSgQ
+      key: <<encryption key>> # ex: Q7udUkHPuA3VnNlOtksSgQ     #encryption key needed for sapor to startup from 3.9
 ## OES-UI url configuration
 oesUI:
   host: oes.example.ops.com
@@ -44,8 +44,8 @@ spinnaker:
       organization: <project_name> # project name 
       # Specify project name only if repo is under a project
       projectName: ""
-      repository: stanops39 # repo name for GitOps Halyard (Sample Reference: https://github.com/OpsMx/sample-gitops-repo.git).
-      dynamicAccRepository: stanops39 # Please provide the repo name of the GitOps Dynamic Accounts Directory.Can be same as Hal repo. 
+      repository: stesrep # repo name for GitOps Halyard (Sample Reference: https://github.com/OpsMx/sample-gitops-repo.git).
+      dynamicAccRepository: testrepo # Please provide the repo name of the GitOps Dynamic Accounts Directory.Can be same as Hal repo. 
       halConfigPath: / #hal config path configuration path supports relative path from the root folder must be same as  dynAccntConfigPath
       dynAccntConfigPath: / #dymanic account configuration path supports relative path from the root folder must be same as halConfigPath
       username: <git_user>  # Username to authenticate with git/stash repo
@@ -56,13 +56,13 @@ spinnaker:
       enabled: true
       type: git  # git, s3, stash
       organization: <project_name>   # Also called "project" in some repos
-      repository: stanops39 # bucket name in case of S3
+      repository: test # bucket name in case of S3
       rootFolder: pipeline/
       baseUrl: github.com  #  "git_url"
       username: <git_user> # git user
       token: <git_token> # ex: ghp_lqNYLgwGsUO0obycpcr2qyqDf # user token
       branch: <branch name> # branch to which changes needs to be pushed ex: testbranch
-      usermail: krish@company.com
+      usermail: example@example.com
       apiUrl: <api_url> # ex: "https://api.github.com/repos"  # api url to create PRs
       createPR: false
       autoApprovePR: false

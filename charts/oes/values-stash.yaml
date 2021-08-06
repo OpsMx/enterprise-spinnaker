@@ -24,7 +24,7 @@ sapor:
   config:
     encrypt:
       enabled: true
-      key: <<>encryption key>> # ex: Q7udUkHPuA3VnNlOtksSgQ
+      key: <<encryption key>> # ex: Q7udUkHPuA3VnNlOtksSgQ     #encryption key needed for sapor to startup from 3.9
 ## OES-UI url configuration
 oesUI:
   host: oes.example.ops.com
@@ -39,7 +39,7 @@ spinnaker:
     enabled: true
     repo:
       type: stash # git, S3, stash, only git support at this point
-      baseUrlHostName: bbdev.opsmx.com    #  https://bbdev.opsmx.com/scm/ksrin/test38.git
+      baseUrlHostName: example.stash.com #ex: bbdev.opsmx.com    #  https://bbdev.opsmx.com/scm/ksrin/test38.git
       organization: scm                   #  https://bbdev.opsmx.com/scm/ksrin/test38.git
       projectName: <proj_name>                  #  https://bbdev.opsmx.com/scm/ksrin/test38.git
       repository: <repo name> # repo name for GitOps Halyard (Sample Reference: https://github.com/OpsMx/sample-gitops-repo.git).
@@ -55,18 +55,18 @@ spinnaker:
       type: stash  #type of the repo
       repository: <repo_name> # git repo to upload or download pipelines
       rootFolder: <path_to_save_the_files> # the path in repo to where the pipelines json to be uploaded ex: opsmx/pipelinePromotion
-      baseUrl: bbdev.opsmx.com # stash url without https or anything
+      baseUrl: example.stash.com # stash url without https or anything
       organization: <project_name> #project where repo is created
       username: <username> #username for authentication
-      token: "sdfakh14232" # personal access token for authenticating
-      branch: testbranch #branch to push the changes
+      token: <token> # personal access token for authenticating
+      branch: <branchname> #branch to push the changes ex: testbranch
       #merging opstions
-      apiUrl: bbdev.opsmx.com/rest/api/1.0/projects #api url for curl commands
+      apiUrl: example.statsh.com/rest/api/1.0/proects #ex: bbdev.opsmx.com/rest/api/1.0/projects #api url for curl commands
       createPR: false #make it true if you want to create PR
       autoApprovePR: false # make it true if you want to auto merge
-      approvingUser: kishore_kumar # this user needed to approve pr
-      approverToken: asdfhsahfohoeww
-      targetBranch: master
+      approvingUser: <approver_username> # this user needed to approve pr
+      approverToken: <approver_token>
+      targetBranch: master # or the branch to whch PR needs to be raised and merged
 
       #for deleting pipeline in spinnaker
       deleteOnSyncSpin: false
