@@ -165,6 +165,7 @@ def fetch_pipeline_json():
 def migrate_pipeline_json(id, pipeline_json):
     try:
         cur = platform_conn.cursor()
+        pipeline_json = str(pipeline_json).replace("\\u", "\\\\")
         pipe_json = json.loads(pipeline_json)
         if len(pipe_json) > 0:
             stages = pipe_json['stages']
@@ -180,8 +181,12 @@ def migrate_pipeline_json(id, pipeline_json):
                             migrate_test_verification_gate(stage)
                         elif str(gate_type).strip() == 'Policy Stage':
                             migrate_policy_gate(stage)
+
                 pipe_json['stages'] = stages
-                cur.execute("update pipeline set pipeline_json = '"+str(json.dumps(pipe_json))+"' where id="+str(id))
+
+                cur.execute("update pipeline set pipeline_json = '"+str(json.dumps(pipe_json).replace("\\\\", "\\u").replace("'", "\\u0027"))+"' where id="+str(id))
+    except KeyError as ke:
+        pass
 
     except Exception as e:
         print("Exception occured while migrating pipeline json : ", e)
@@ -211,21 +216,18 @@ def migrate_approval_gate(stage):
         stage['type'] = 'approval'
         parameters = stage['parameters']
         if parameters is not None and len(parameters) > 0:
-            canaryid = parameters['canaryid']
-            gitrepo = parameters['gitrepo']
-            jenkinsartifact = parameters['jenkinsartifact']
-            jenkinsbuild = parameters['jenkinsbuild']
-            appscanid = parameters['appscanid']
-            aquawave = parameters['aquawave']
-            jenkinsjob = parameters['jenkinsjob']
-            projectkey = parameters['projectkey']
-            connector = parameters['connector']
-            jiraid = parameters['jiraid']
-            header = parameters['header']
-            gitcommitid = parameters['gitcommitid']
-            connectordata = parameters['connectordata']
-            imageids = parameters['imageids']
-            gateurl = parameters['gateurl']
+            canaryid = get_canaryid(parameters)
+            gitrepo = get_gitrepo(parameters)
+            jenkinsartifact = get_jenkinsartifact(parameters)
+            jenkinsbuild = get_jenkinsbuild(parameters)
+            appscanid = get_appscanid(parameters)
+            aquawave = get_aquawave(parameters)
+            jenkinsjob = get_jenkinsjob(parameters)
+            projectkey = get_projectkey(parameters)
+            jiraid = get_jiraid(parameters)
+            gitcommitid = get_gitcommitid(parameters)
+            imageids = get_imageids(parameters)
+            gateurl = get_gateurl(parameters)
 
             connectors = []
             if gateurl is not None and len(gateurl)>0:
@@ -258,6 +260,114 @@ def migrate_approval_gate(stage):
     except Exception as e:
         print("Exception occured while migrating approval gate : ", e)
         raise e
+
+
+def get_canaryid(parameters):
+    canaryid = ''
+    try:
+        canaryid = parameters['canaryid']
+    except KeyError as ke:
+        pass
+    return canaryid
+
+
+def get_gitrepo(parameters):
+    gitrepo = ''
+    try:
+        gitrepo = parameters['gitrepo']
+    except KeyError as ke:
+        pass
+    return gitrepo
+
+
+def get_jenkinsartifact(parameters):
+    jenkinsartifact = ''
+    try:
+        jenkinsartifact = parameters['jenkinsartifact']
+    except KeyError as ke:
+        pass
+    return jenkinsartifact
+
+
+def get_jenkinsbuild(parameters):
+    jenkinsbuild = ''
+    try:
+        parameters['jenkinsbuild']
+    except KeyError as ke:
+        pass
+    return jenkinsbuild
+
+
+def get_appscanid(parameters):
+    appscanid = ''
+    try:
+        appscanid = parameters['appscanid']
+    except KeyError as ke:
+        pass
+    return appscanid
+
+
+def get_aquawave(parameters):
+    aquawave = ''
+    try:
+        aquawave = parameters['aquawave']
+    except KeyError as ke:
+        pass
+    return aquawave
+
+
+def get_jenkinsjob(parameters):
+    jenkinsjob = ''
+    try:
+        jenkinsjob = parameters['jenkinsjob']
+    except KeyError as ke:
+        pass
+    return jenkinsjob
+
+
+def get_projectkey(parameters):
+    projectkey = ''
+    try:
+        projectkey = parameters['projectkey']
+    except KeyError as ke:
+        pass
+    return projectkey
+
+
+def get_jiraid(parameters):
+    jiraid = ''
+    try:
+        jiraid = parameters['jiraid']
+    except KeyError as ke:
+        pass
+    return jiraid
+
+
+def get_gitcommitid(parameters):
+    gitcommitid = ''
+    try:
+        gitcommitid = parameters['gitcommitid']
+    except KeyError as ke:
+        pass
+    return gitcommitid
+
+
+def get_imageids(parameters):
+    imageids = ''
+    try:
+        imageids = parameters['imageids']
+    except KeyError as ke:
+        pass
+    return imageids
+
+
+def get_gateurl(parameters):
+    gateurl = None
+    try:
+        gateurl = parameters['gateurl']
+    except KeyError as ke:
+        pass
+    return gateurl
 
 
 def set_new_parameters(connectors, gateurl, imageids, stage):
