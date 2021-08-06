@@ -358,6 +358,8 @@ gate:
 
     ## Set it to true to disable LDAP authentication and enable file based authentication
     ## Reach out over support@opsmx.com for pre-configured user credentials
+    commonGate:
+            enabled: false
     fileBasedAuthentication:
       enabled: false
     server:
@@ -431,7 +433,7 @@ platform:
 
     ## Admin Groups available in ldap
     ##
-    adminGroups: admin, Administrators
+    adminGroups: admin
 
     ## Source of Users for authorization
     ## Supported sources:- ldap, file, gate
@@ -523,6 +525,9 @@ sapor:
         client:
           password: changeit
 
+    encrypt:
+      enabled: true
+      key: <ecnryption_key>
     ## Set the below field to true if datasource configurations from platform
     datasources:
       platform: true
