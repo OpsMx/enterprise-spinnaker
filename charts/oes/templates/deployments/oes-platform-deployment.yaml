@@ -21,7 +21,7 @@ spec:
         configmap/checksum: {{ (.Files.Glob "config/oes-platform/platform-local.yml").AsConfig | sha256sum }}
 {{- if .Values.platform.annotations }}
         prometheus.io/path: {{ .Values.platform.annotations.prometheus_io_path }}
-        prometheus.io/port: {{ .Values.platform.annotations.prometheus_io_port }}
+        prometheus.io/port: "{{ .Values.platform.annotations.prometheus_io_port }}"
         prometheus.io/scrape: "true"
 {{- end }}
       labels:

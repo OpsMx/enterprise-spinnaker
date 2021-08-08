@@ -19,7 +19,7 @@ spec:
         configmap/checksum: {{ (.Files.Glob "config/oes-gate/gate.yml").AsConfig | sha256sum }}
 {{- if .Values.gate.annotations }}
         prometheus.io/path: {{ .Values.gate.annotations.prometheus_io_path }}
-        prometheus.io/port: {{ .Values.gate.annotations.prometheus_io_port }}
+        prometheus.io/port: "{{ .Values.gate.annotations.prometheus_io_port }}"
         prometheus.io/scrape: "true"
 {{- end }}
       labels:

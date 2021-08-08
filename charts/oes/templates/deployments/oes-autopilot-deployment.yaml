@@ -23,7 +23,7 @@ spec:
         configmap/checksum: {{ (.Files.Glob "config/autopilot/autopilot.properties").AsConfig | sha256sum }}
 {{- if .Values.autopilot.annotations }}
         prometheus.io/path: {{ .Values.autopilot.annotations.prometheus_io_path }}
-        prometheus.io/port: {{ .Values.autopilot.annotations.prometheus_io_port }}
+        prometheus.io/port: "{{ .Values.autopilot.annotations.prometheus_io_port }}"
         prometheus.io/scrape: "true"
 {{- end }}
     spec:
