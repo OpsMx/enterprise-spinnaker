@@ -149,6 +149,7 @@ oesGate:
       secretName: oes-gate-authtls
 
 
+
 ###############################################################################
 ## Details of redis-master image for OES
 ##
@@ -241,6 +242,9 @@ autopilot:
     tag: v3.9.0
     pullPolicy: IfNotPresent
 
+  annotations:
+    prometheus_io_path: /mgmt/prometheus
+    prometheus_io_port: "8090"
   resources: {}
   #  requests:
   #    memory: 2Gi
@@ -286,6 +290,9 @@ dashboard:
     tag: v3.9.0
     pullPolicy: IfNotPresent
 
+  annotations:
+    prometheus_io_path: /mgmt/prometheus
+    prometheus_io_port: "8094"
   resources: {}
   #  requests:
   #    memory: 500Mi
@@ -336,6 +343,9 @@ gate:
     tag: v3.9.0
     pullPolicy: IfNotPresent
 
+  annotations:
+    prometheus_io_path: /prometheus
+    prometheus_io_port: "8084"
   resources: {}
   #  requests:
   #    memory: 500Mi
@@ -416,6 +426,9 @@ platform:
     tag: v3.9.0
     pullPolicy: IfNotPresent
 
+  annotations:
+    prometheus_io_path: /mgmt/prometheus
+    prometheus_io_port: "8095"
   resources: {}
   #  requests:
   #    memory: 500Mi
@@ -470,6 +483,9 @@ sapor:
     tag: v3.9.0
     pullPolicy: IfNotPresent
 
+  annotations:
+    prometheus_io_path: /mgmt/prometheus
+    prometheus_io_port: "8085"
   resources: {}
   #  requests:
   #    memory: 100Mi
@@ -571,6 +587,9 @@ visibility:
     tag: v3.9.0
     pullPolicy: IfNotPresent
 
+  annotations:
+    prometheus_io_path: /mgmt/prometheus
+    prometheus_io_port: "8096"
   resources: {}
   #  requests:
   #    memory: 500Mi

@@ -18,6 +18,11 @@ spec:
     metadata:
       annotations:
         configmap/checksum: {{ (.Files.Glob "config/oes-dashboard/dashboard-local.yml").AsConfig | sha256sum }}
+{{- if .Values.dashboard.annotations }}
+        prometheus.io/path: {{ .Values.dashboard.annotations.prometheus_io_path }}
+        prometheus.io/port: {{ .Values.dashboard.annotations.prometheus_io_port }}
+        prometheus.io/scrape: "true"
+{{- end }}
       labels:
         app: oes
         component: dashboard
