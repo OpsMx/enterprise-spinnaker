@@ -320,14 +320,14 @@ dashboard:
 forwarder:
   enabled: true
   agent:
-    image: quay.io/opsmxpublic/forwarder-agent:v20210426T105924
+    image: quay.io/opsmxpublic/forwarder-agent:v20210722T133815
     serviceType: LoadBalancer
     # Value is also used in sapor configuration for kubernetes.agent.serverHostName
     host: opsmx-controller-controller1
   externalName: controller.exampleopsmx.net
   image:
     repository: quay.io/opsmxpublic/forwarder-controller
-    tag: v20210426T105924
+    tag: v20210722T133815
     pullPolicy: IfNotPresent
 
 ###############################################################################
