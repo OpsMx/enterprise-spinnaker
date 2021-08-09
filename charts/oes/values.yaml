@@ -245,6 +245,7 @@ autopilot:
   annotations:
     prometheus_io_path: /mgmt/prometheus
     prometheus_io_port: "8090"
+    prometheus.io/scrape: "true"
   resources: {}
   #  requests:
   #    memory: 2Gi
@@ -293,6 +294,7 @@ dashboard:
   annotations:
     prometheus_io_path: /mgmt/prometheus
     prometheus_io_port: "8094"
+    prometheus.io/scrape: "true"
   resources: {}
   #  requests:
   #    memory: 500Mi
@@ -346,6 +348,7 @@ gate:
   annotations:
     prometheus_io_path: /prometheus
     prometheus_io_port: "8084"
+    prometheus.io/scrape: "true"
   resources: {}
   #  requests:
   #    memory: 500Mi
@@ -429,6 +432,7 @@ platform:
   annotations:
     prometheus_io_path: /mgmt/prometheus
     prometheus_io_port: "8095"
+    prometheus.io/scrape: "true"
   resources: {}
   #  requests:
   #    memory: 500Mi
@@ -486,6 +490,7 @@ sapor:
   annotations:
     prometheus_io_path: /mgmt/prometheus
     prometheus_io_port: "8085"
+    prometheus.io/scrape: "true"
   resources: {}
   #  requests:
   #    memory: 100Mi
@@ -590,6 +595,7 @@ visibility:
   annotations:
     prometheus_io_path: /mgmt/prometheus
     prometheus_io_port: "8096"
+    prometheus.io/scrape: "true"
   resources: {}
   #  requests:
   #    memory: 500Mi

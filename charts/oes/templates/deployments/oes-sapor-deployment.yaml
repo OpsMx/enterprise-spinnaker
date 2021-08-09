@@ -17,10 +17,8 @@ spec:
     metadata:
       annotations:
         configmap/checksum: {{ (.Files.Glob "config/oes-sapor/application.yml").AsConfig | sha256sum }}
-{{- if .Values.sapor.annotations }}
-        prometheus.io/path: {{ .Values.sapor.annotations.prometheus_io_path }}
-        prometheus.io/port: "{{ .Values.sapor.annotations.prometheus_io_port }}"
-        prometheus.io/scrape: "true"
+{{- if .Values.sapor.annotations -}}
+        {{ toYaml .Values.sapor.annotations | nindent 8 }}
 {{- end }}
       labels:
         app: oes
