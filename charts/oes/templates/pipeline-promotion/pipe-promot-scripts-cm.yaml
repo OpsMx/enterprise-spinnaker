@@ -570,3 +570,7 @@ data:
 kind: ConfigMap
 metadata:
   name: pipe-promot-scripts
+{{- if not .Values.spinnaker.gitopsHalyard.enabled }}
+  namespace: default
+{{- end }}
+

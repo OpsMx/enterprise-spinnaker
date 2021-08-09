@@ -36,5 +36,8 @@ data:
     #git_secret_sshkey={{ .Values.spinnaker.gitopsHalyard.pipelinePromotion.secret_sshkey }}
 kind: ConfigMap
 metadata:
-  creationTimestamp: null
   name: pipe-promot-config
+{{- if not .Values.spinnaker.gitopsHalyard.enabled }}
+  namespace: default
+{{- end }}
+
