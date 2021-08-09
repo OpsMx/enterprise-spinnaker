@@ -17,6 +17,9 @@ spec:
     metadata:
       annotations:
         configmap/checksum: {{ (.Files.Glob "config/oes-sapor/application.yml").AsConfig | sha256sum }}
+{{- if .Values.sapor.annotations -}}
+        {{ toYaml .Values.sapor.annotations | nindent 8 }}
+{{- end }}
       labels:
         app: oes
         component: sapor
