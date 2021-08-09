@@ -115,7 +115,7 @@ cors:
   {{- if .Values.gate.config.commonGate.enabled }}
   allowed-origins-pattern: ^https?://(?:localhost|{{ .Values.oesUI.host }}|{{ .Values.global.spinDeck.host }}|opsmx.com)(?::[1-9]\d*)?/?
   {{ else }}
-  allowed-origins-pattern: ^https?://(?:localhost|{{ .Values.oesUI.host }}|opsmx.com)(?::[1-9]\d*)?/
+  allowed-origins-pattern: ^https?://(?:localhost|{{ .Values.oesUI.host }}|opsmx.com)(?::[1-9]\d*)?/?
   {{- end }}
 ldap:
   enabled: {{ .Values.global.ldap.enabled }}
