@@ -149,6 +149,7 @@ oesGate:
       secretName: oes-gate-authtls
 
 
+
 ###############################################################################
 ## Details of redis-master image for OES
 ##
@@ -241,6 +242,10 @@ autopilot:
     tag: v3.9.0
     pullPolicy: IfNotPresent
 
+  annotations:
+    prometheus_io_path: /mgmt/prometheus
+    prometheus_io_port: "8090"
+    prometheus.io/scrape: "true"
   resources: {}
   #  requests:
   #    memory: 2Gi
@@ -286,6 +291,10 @@ dashboard:
     tag: v3.9.0
     pullPolicy: IfNotPresent
 
+  annotations:
+    prometheus_io_path: /mgmt/prometheus
+    prometheus_io_port: "8094"
+    prometheus.io/scrape: "true"
   resources: {}
   #  requests:
   #    memory: 500Mi
@@ -313,14 +322,14 @@ dashboard:
 forwarder:
   enabled: true
   agent:
-    image: quay.io/opsmxpublic/forwarder-agent:v20210426T105924
+    image: quay.io/opsmxpublic/forwarder-agent:v20210722T133815
     serviceType: LoadBalancer
     # Value is also used in sapor configuration for kubernetes.agent.serverHostName
     host: opsmx-controller-controller1
   externalName: controller.exampleopsmx.net
   image:
     repository: quay.io/opsmxpublic/forwarder-controller
-    tag: v20210426T105924
+    tag: v20210722T133815
     pullPolicy: IfNotPresent
 
 ###############################################################################
@@ -336,6 +345,10 @@ gate:
     tag: v3.9.0
     pullPolicy: IfNotPresent
 
+  annotations:
+    prometheus_io_path: /prometheus
+    prometheus_io_port: "8084"
+    prometheus.io/scrape: "true"
   resources: {}
   #  requests:
   #    memory: 500Mi
@@ -416,6 +429,10 @@ platform:
     tag: v3.9.0
     pullPolicy: IfNotPresent
 
+  annotations:
+    prometheus_io_path: /mgmt/prometheus
+    prometheus_io_port: "8095"
+    prometheus.io/scrape: "true"
   resources: {}
   #  requests:
   #    memory: 500Mi
@@ -470,6 +487,10 @@ sapor:
     tag: v3.9.0
     pullPolicy: IfNotPresent
 
+  annotations:
+    prometheus_io_path: /mgmt/prometheus
+    prometheus_io_port: "8085"
+    prometheus.io/scrape: "true"
   resources: {}
   #  requests:
   #    memory: 100Mi
@@ -571,6 +592,10 @@ visibility:
     tag: v3.9.0
     pullPolicy: IfNotPresent
 
+  annotations:
+    prometheus_io_path: /mgmt/prometheus
+    prometheus_io_port: "8096"
+    prometheus.io/scrape: "true"
   resources: {}
   #  requests:
   #    memory: 500Mi
