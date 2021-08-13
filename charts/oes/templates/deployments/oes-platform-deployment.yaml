@@ -60,9 +60,22 @@ spec:
         - mountPath: /opsmx/conf/bootstrap.yml
           name: bootstrap-config-volume
           subPath: bootstrap.yml
+        {{- if .Values.global.customCerts.enabled }}
+        - mountPath: /etc/pki/ca-trust/extracted/java/cacerts
+          subPath: cacerts
+          name: cacerts
+        {{- end }}
       imagePullSecrets:
       - name: {{ .Values.imagePullSecret }}
       volumes:
+      {{- if .Values.global.customCerts.enabled }}
+      - name: cacerts
+        secret:
+          secretName: {{ .Values.global.customCerts.secretName }}
+          items:
+          - key: cacerts
+            path: cacerts
+      {{- end }}
       - name: platform-config-volume
         configMap:
           name: oes-platform-config

@@ -60,8 +60,9 @@ global:
 
   certManager:
     installed: true
-  self-signed-certs:
-    enabled: false # At this point this is not supported
+  customCerts:
+    enabled: true
+    secretName: self-signed-certs  # Needs two Keys: cacerts and ca # TODO: Document procedure for creating this one
 
   # Below flag is used to setup tls termination at ingress
   # when this flag is set to false; spinnaker and oes endpoints
@@ -555,11 +556,6 @@ sapor:
     ## Set the below field to true if datasource configurations from platform
     datasources:
       platform: true
-
-    ## Set the below field to true if default java cacert is to be overriden
-    ##
-    caCerts:
-      override: false
 
 ###############################################################################
 ##

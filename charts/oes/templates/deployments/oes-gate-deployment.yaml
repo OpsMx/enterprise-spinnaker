@@ -68,6 +68,11 @@ spec:
           name: metadata-xml	
           subPath: metadata.xml
         {{- end }} 
+        {{- if .Values.global.customCerts.enabled }}
+        - mountPath: /etc/pki/ca-trust/extracted/java/cacerts
+          subPath: cacerts
+          name: cacerts
+        {{- end }}
         readinessProbe:
           tcpSocket:
             port: 8084
@@ -89,6 +94,14 @@ spec:
       - secret:	
           secretName: {{ .Values.gate.config.saml.metadataSecretName }}
         name: metadata-xml
+      {{- end }}
+      {{- if .Values.global.customCerts.enabled }}
+      - name: cacerts
+        secret:
+          secretName: {{ .Values.global.customCerts.secretName }}
+          items:
+          - key: cacerts
+            path: cacerts
       {{- end }}
       {{- if .Values.autoConfiguration.enabled }}
       - configMap:

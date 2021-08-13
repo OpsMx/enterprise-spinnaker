@@ -36,6 +36,14 @@ spec:
               path: bootstrap.yml
             name: bootstrap
           name: bootstrap-config-volume
+        {{- if .Values.global.customCerts.enabled }}
+        - name: cacerts
+          secret:
+            secretName: {{ .Values.global.customCerts.secretName }}
+            items:
+            - key: cacerts
+              path: cacerts
+        {{- end }}
       imagePullSecrets:
         - name: {{ .Values.imagePullSecret}}
       {{- if (eq .Values.db.enabled true) }}
@@ -64,6 +72,11 @@ spec:
           - mountPath: /opsmx/conf/bootstrap.yml
             name: bootstrap-config-volume
             subPath: bootstrap.yml
+          {{- if .Values.global.customCerts.enabled }}
+          - mountPath: /etc/pki/ca-trust/extracted/java/cacerts
+            subPath: cacerts
+            name: cacerts
+          {{- end }}
           readinessProbe:
             tcpSocket:
               port: 8090

@@ -55,9 +55,10 @@ spec:
         - mountPath: /opt/opsmx/bootstrap.yml
           name: bootstrap-config-volume
           subPath: bootstrap.yml
-        {{- if .Values.sapor.config.caCerts.override }}
-        - name: certs-volume
-          mountPath: /etc/pki/ca-trust/extracted/java
+        {{- if .Values.global.customCerts.enabled }}
+        - mountPath: /etc/pki/ca-trust/extracted/java/cacerts
+          subPath: cacerts
+          name: cacerts
         {{- end }}
         {{- if .Values.sapor.config.spinnaker.x509.enabled }}
         - name: certs-x509-volume
@@ -84,9 +85,14 @@ spec:
       - secret:
           secretName: oes-control-secret
         name: certs-volume
-      - secret:
-          secretName: ca-secret
-        name: ca-certs-volume
+      {{- end }}
+      {{- if .Values.global.customCerts.enabled }}
+      - name: cacerts
+        secret:
+          secretName: {{ .Values.global.customCerts.secretName }}
+          items:
+          - key: cacerts
+            path: cacerts
       {{- end }}
       - configMap:
           name: oes-sapor-config
