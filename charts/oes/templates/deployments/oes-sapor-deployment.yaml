@@ -104,11 +104,6 @@ spec:
             path: bootstrap.yml
           name: bootstrap
         name: bootstrap-config-volume
-      {{- if .Values.sapor.config.caCerts.override }}
-      - name: certs-volume
-        configMap:
-          name: sapor-certs
-      {{- end -}}
       {{- if .Values.sapor.config.spinnaker.x509.enabled }}
       - name: certs-x509-volume
         configMap:
