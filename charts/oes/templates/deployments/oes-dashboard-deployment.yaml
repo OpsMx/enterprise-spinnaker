@@ -72,11 +72,10 @@ spec:
       - name: dashboard-config
         configMap:
           name: oes-dashboard-config
-      - configMap:
-          defaultMode: 420
+      - secret:
           items:
           - key: bootstrap.yml
             path: bootstrap.yml
-          name: bootstrap
+          secretName: bootstrap
         name: bootstrap-config-volume
 {{- end -}}

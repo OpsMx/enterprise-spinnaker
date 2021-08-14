@@ -114,11 +114,10 @@ spec:
         configMap:
           name: oes-gate-config
       {{- end }}
-      - configMap:
-          defaultMode: 420
+      - secret:
           items:
           - key: bootstrap.yml
             path: bootstrap.yml
-          name: bootstrap
+          secretName: bootstrap
         name: bootstrap-volume
 {{- end -}}

@@ -78,11 +78,10 @@ spec:
       - name: visibility-config
         configMap:
           name: oes-visibility-config
-      - configMap:
-          defaultMode: 420
+      - secret:
           items:
           - key: bootstrap.yml
             path: bootstrap.yml
-          name: bootstrap
+          secretName: bootstrap
         name: bootstrap-config-volume
 {{- end -}}
