@@ -48,6 +48,9 @@ spec:
         volumeMounts:
         - name: config-dir
           mountPath: /var/www/html/assets/config
+        - mountPath: /etc/nginx/nginx.conf
+          name: nginx-config
+          subPath: nginx.conf
         readinessProbe:
           tcpSocket:
             port: 8080
@@ -75,4 +78,8 @@ spec:
           name: oes-ui-config
         name: config-dir
       {{- end }}
+      - configMap:
+          defaultMode: 420
+          name: oes-ui-nginxconf
+        name: nginx-config
 {{- end -}}
