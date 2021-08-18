@@ -145,11 +145,6 @@ file:
 authn:
   mode: session
 google: {}
-logging:
-  level:
-    com.netflix.spinnaker.gate.security: INFO
-    org.springframework.security: INFO
-    org.springframework.web: INFO
 redis:
   connection: {{ tpl .Values.redis.url . }}
 server:
@@ -159,4 +154,10 @@ server:
     protocolHeader: X-Forwarded-Proto
     remoteIpHeader: X-Forwarded-For
     internalProxies: .*
+
+logging:
+  level:
+    com.netflix.spinnaker.gate.security: DEBUG
+    org.springframework.security: DEBUG
+    org.springframework.web: DEBUG
 

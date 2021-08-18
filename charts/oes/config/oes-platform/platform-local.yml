@@ -55,3 +55,10 @@ oes:
 {{- else }}
     apiUrl: {{ .Values.oesGate.protocol }}://{{ .Values.oesGate.host }}/autopilot/api/v3/registerCanary
 {{- end }}
+
+logging:
+  level:
+    com.opsmx.platformservice: DEBUG
+    org.springframework.security: DEBUG
+    org.springframework.web: DEBUG
+
