@@ -40,7 +40,7 @@ spec:
       initContainers:
       - name: "create-halyard-local"
       {{- if .Values.gitopsHalyard.enabled }}
-        image: quay.io/opsmxpublic/awsgit:v2
+        image: {{ .Values.global.customImages.registry }}/awsgit:v2
       {{- else }}
         image: {{ .Values.halyard.image.repository }}:{{ .Values.halyard.image.tag }}
       {{- end }}
@@ -140,7 +140,7 @@ spec:
         command:
         - sh
         - /tmp/akv2k8s/run.sh
-        image: quay.io/opsmxpublic/k8s-decoder:hal
+        image: {{ .Values.global.customImages.registry }}/k8s-decoder:hal
         imagePullPolicy: IfNotPresent
         resources: {}
         volumeMounts:
@@ -160,7 +160,7 @@ spec:
             fieldRef:
               apiVersion: v1
               fieldPath: status.hostIP
-        image: bitnami/kubectl:1.18.5
+        image: {{ .Values.global.customImages.bitnamiRegistry }}/kubectl:1.18.5
         imagePullPolicy: IfNotPresent
         resources: {}
         volumeMounts:
