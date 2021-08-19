@@ -40,7 +40,7 @@ spec:
       initContainers:
       - name: "create-halyard-local"
       {{- if .Values.gitopsHalyard.enabled }}
-        image: quay.io/opsmxpublic/awsgit:v1
+        image: quay.io/opsmxpublic/awsgit:v2
       {{- else }}
         image: {{ .Values.halyard.image.repository }}:{{ .Values.halyard.image.tag }}
       {{- end }}

@@ -21,9 +21,102 @@ services:
   {{- else }}
     externalUrl: {{ .Values.oesUI.protocol }}://{{ .Values.oesUI.host }}
   {{- end }}
+{{- if .Values.gate.config.commonGate.enabled }}
+  keel:
+    enabled: false
+  clouddriver:
+    host: 0.0.0.0
+    port: 7002
+    baseUrl: http://spin-clouddriver-caching:7002
+    enabled: true
+  clouddriverCaching:
+    host: 0.0.0.0
+    port: 7002
+    baseUrl: http://spin-clouddriver-caching:7002
+    enabled: true
+  clouddriverRo:
+    host: 0.0.0.0
+    port: 7002
+    baseUrl: http://spin-clouddriver-ro:7002
+    enabled: true
+  clouddriverRoDeck:
+    host: 0.0.0.0
+    port: 7002
+    baseUrl: http://spin-clouddriver-ro-deck:7002
+    enabled: true
+  clouddriverRw:
+    host: 0.0.0.0
+    port: 7002
+    baseUrl: http://spin-clouddriver-rw:7002
+    enabled: true
+  deck:
+    host: 0.0.0.0
+    port: 9000
+    baseUrl: {{ .Values.global.spinDeck.protocol }}://{{ .Values.global.spinDeck.host }}
+    enabled: true
+  echo:
+    host: 0.0.0.0
+    port: 8089
+    baseUrl: http://spin-echo-worker:8089
+    enabled: true
+  echoScheduler:
+    host: 0.0.0.0
+    port: 8089
+    baseUrl: http://spin-echo-scheduler:8089
+    enabled: true
+  echoWorker:
+    host: 0.0.0.0
+    port: 8089
+    baseUrl: http://spin-echo-worker:8089
+    enabled: true
+  fiat:
+    host: 0.0.0.0
+    port: 7003
+    baseUrl: http://spin-fiat:7003
+    enabled: false
+  front50:
+    host: 0.0.0.0
+    port: 8080
+    baseUrl: http://spin-front50:8080
+    enabled: true
+  gate:
+    host: 0.0.0.0
+    port: 8084
+    baseUrl: {{ .Values.oesGate.protocol }}://{{ .Values.oesGate.host }}
+    enabled: true
+  igor:
+    host: 0.0.0.0
+    port: 8088
+    baseUrl: http://spin-igor:8088
+    enabled: true
+  kayenta:
+    host: 0.0.0.0
+    port: 8090
+    baseUrl: http://spin-kayenta:8090
+    enabled: false
+  orca:
+    host: 0.0.0.0
+    port: 8083
+    baseUrl: http://spin-orca:8083
+    enabled: true
+  redis:
+    host: 0.0.0.0
+    port: 6379
+    baseUrl: redis://:password@{{ .Release.Name}}-redis-master:6379
+    enabled: true
+  rosco:
+    host: 0.0.0.0
+    port: 8087
+    baseUrl: http://spin-rosco:8087
+    enabled: true
+{{- end }}
   user: {}
 cors:
+  {{- if .Values.gate.config.commonGate.enabled }}
+  allowed-origins-pattern: ^https?://(?:localhost|{{ .Values.oesUI.host }}|{{ .Values.global.spinDeck.host }}|opsmx.com)(?::[1-9]\d*)?/?
+  {{ else }}
   allowed-origins-pattern: ^https?://(?:localhost|{{ .Values.oesUI.host }}|opsmx.com)(?::[1-9]\d*)?/?
+  {{- end }}
 ldap:
   enabled: {{ .Values.global.ldap.enabled }}
   managerDn: {{ .Values.global.ldap.managerDn }}

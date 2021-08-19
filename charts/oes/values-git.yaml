@@ -1,0 +1,87 @@
+## Quay container image registry credentials to create imagePullSecret
+##
+imageCredentials:
+  username: quayID  # Quay username
+  password: quayPassword # Quay password
+  email: info@opsmx.com   # email corresponding to quay registry ID
+  
+## Declare all the global variables under this
+## Global variables can be accessed across all the charts including sub-charts
+global:
+  # Spinnaker Deck URL configuration; url overwhich spinnaker deck will be accessed
+  spinDeck:
+    host: spin.example.ops.com
+
+  # Spinnaker Gate URL configuration; url overwhich spinnaker gate will be accessed
+  spinGate:
+    host: spin-gate.example.ops.com
+gate:
+   config:
+    # to use common gate for both oes and spinnaker
+     commonGate:
+            enabled: false
+sapor:
+  config:
+    encrypt:
+      enabled: true
+      key: <<encryption key>> # ex: Q7udUkHPuA3VnNlOtksSgQ     #encryption key needed for sapor to startup from 3.9
+## OES-UI url configuration
+oesUI:
+  host: oes.example.ops.com
+
+## OES-Gate url configuration
+oesGate:
+  host: oes-gate.example.ops.com
+
+spinnaker:
+  # Initialize gitOps style Halyard
+  gitopsHalyard:
+    enabled: true
+    repo:
+      type: git # git, s3, stash(bitbucket server) use a different sample values file for s3/bitbuck-stash
+      ## Configure below fields only if repo type is git/stash. Skip to s3 section if type is s3
+      baseUrlHostName: github.com    # Specify it if git url is something other than github.com
+      organization: <project_name> # project name 
+      # Specify project name only if repo is under a project
+      projectName: ""
+      repository: stesrep # repo name for GitOps Halyard (Sample Reference: https://github.com/OpsMx/sample-gitops-repo.git).
+      dynamicAccRepository: testrepo # Please provide the repo name of the GitOps Dynamic Accounts Directory.Can be same as Hal repo. 
+      halConfigPath: / #hal config path configuration path supports relative path from the root folder must be same as  dynAccntConfigPath
+      dynAccntConfigPath: / #dymanic account configuration path supports relative path from the root folder must be same as halConfigPath
+      username: <git_user>  # Username to authenticate with git/stash repo
+      token: <git_toke>  # Token corresponding to above username
+    secretName: opsmx-gitops-auth
+    # Promote applications and pipelines from one environment to another or take backup
+    pipelinePromotion:
+      enabled: true
+      type: git  # git, s3, stash
+      organization: <project_name>   # Also called "project" in some repos
+      repository: test # bucket name in case of S3
+      rootFolder: pipeline/
+      baseUrl: github.com  #  "git_url"
+      username: <git_user> # git user
+      token: <git_token> # ex: ghp_lqNYLgwGsUO0obycpcr2qyqDf # user token
+      branch: <branch name> # branch to which changes needs to be pushed ex: testbranch
+      usermail: example@example.com
+      apiUrl: <api_url> # ex: "https://api.github.com/repos"  # api url to create PRs
+      createPR: false
+      autoApprovePR: false
+      targetBranch: master # the branch to which pr to be raised
+      approvingUser: <approver_user>  ### user who is going to approve the pr
+      approverToken: <approver_token> ## approver user token
+
+      #for deleting pipeline in spinnaker
+      deleteOnSyncSpin: false
+      #not implemented
+      deleteOnSyncRepo: false
+
+  ## Auth mechanism and credentials to be used by spin-cli for creating the sample pipelines
+  ## Here basic ldap auth is used by default; everything under spinCli will be pasted in ~/.spin/config
+  spinCli:
+    gate:
+      endpoint: http://spin-gate:8084 # Should same as the spin-gate URL
+    auth:
+      enabled: true
+      basic:
+        username: admin          # Please updated as required
+        password: opsmxadmin123  # Please updated as required

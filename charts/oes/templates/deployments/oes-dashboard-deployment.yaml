@@ -18,6 +18,9 @@ spec:
     metadata:
       annotations:
         configmap/checksum: {{ (.Files.Glob "config/oes-dashboard/dashboard-local.yml").AsConfig | sha256sum }}
+{{- if .Values.dashboard.annotations -}}
+        {{ toYaml .Values.dashboard.annotations | nindent 8 }}
+{{- end }}
       labels:
         app: oes
         component: dashboard
