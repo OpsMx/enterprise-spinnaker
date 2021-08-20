@@ -35,7 +35,7 @@ data:
         then
              echo \"Spinnaker is Installed and ready\"
              mkdir -p /tmp/config/git/
-             git clone https://github.com/OpsMx/sample-pipelines.git /tmp/config/git/
+             git -c http.sslVerify=false clone https://github.com/OpsMx/sample-pipelines.git /tmp/config/git/
              cd /tmp/config/git
              cp -p /tmp/config/spin/config .
              sed 's/$/ --config config/' create-app.sh >create-app1.sh
@@ -45,7 +45,7 @@ data:
         then
              echo \"Spinnaker and OES is Installed and ready\"
              mkdir -p /tmp/config/git/
-             git clone https://github.com/OpsMx/sample-pipelines.git /tmp/config/git/
+             git -c http.sslVerify=false clone https://github.com/OpsMx/sample-pipelines.git /tmp/config/git/
              cd /tmp/config/git
              cp -p /tmp/config/spin/config .
              sed 's/$/ --config config/' create-app.sh >create-app1.sh
@@ -58,7 +58,7 @@ data:
     else
         if [ $wait_period -gt 1800 ];
         then
-            echo \"Script is timed as the Spinnaker is not ready yet.......\"
+            echo \"Script is timed out as the Spinnaker is not ready in 30 min.......\"
             break
         else
             echo \"Waiting for Spinnaker services to be ready\"
