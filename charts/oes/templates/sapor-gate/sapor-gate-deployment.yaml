@@ -1,4 +1,4 @@
-{{- if or (eq .Values.installationMode "OES-AP") (eq .Values.installationMode "OES") -}}
+{{- if (eq .Values.installationMode "OES-AP") -}}
 {{- if .Values.saporgate.enabled }}
 apiVersion: apps/v1
 kind: Deployment
