@@ -20,9 +20,21 @@ global:
 oesUI:
   host: oes.example.ops.com
 
+gate:
+   config:
+    # to use common gate for both oes and spinnaker
+     commonGate:
+            enabled: false
 ## OES-Gate url configuration
 oesGate:
   host: oes-gate.example.ops.com
+  
+sapor:
+  config:
+    encrypt:
+      enabled: true
+      key: <<>encryption key>> # ex: Q7udUkHPuA3VnNlOtksSgQ     #encryption key needed for sapor to startup from 3.9
+
 spinnaker:  
   # Initialize gitOps style Halyard
   gitopsHalyard:
@@ -34,15 +46,19 @@ spinnaker:
       s3bucket: <bucket name .e.g testbucket >
     secretName: opsmx-gitops-auth
     # Promote applications and pipelines from one environment to another or take backup
-    pipelinePromotion:
+    pipelinePromotion:  # GitHub only,  Not supportd on S3 or Stash
       enabled: true
-      organization: <e.g. opsmx>
-      repository: <any empty repo>
-      username: <GitHub_UserName>
-      usermail: <GitHub_Usermail>
-      token: <GitHub_Token>
-      executionNamespace: default   # Do not change
-      executionAccountName: default # Do not change
+      type: s3  # git, s3, stash
+      repository: testbucket # bucket name in case of S3
+      rootFolder: pipeline/
+      ##### ONLY In case of S3
+      usermail: mail@ops.com
+      AWS_ACCESS_KEY_ID: <access_key>
+      AWS_SECRET_ACCESS_KEY: <secret_key>
+      #for deleting pipeline in spinnaker
+      deleteOnSyncSpin: true
+      #not implemented
+      deleteOnSyncRepo: false
     ## x509 authentication for Spinnaker Gate
     gatex509:
       enabled: false

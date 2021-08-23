@@ -29,7 +29,7 @@ data:
     SAPOR=$(grep oes-sapor /tmp/inst.status | awk '{print $2}')
     PLATFORM=$(grep oes-platform /tmp/inst.status | awk '{print $2}')
     AUTOPILOT=$(grep oes-autopilot /tmp/inst.status | awk '{print $2}')
-  
+
 
     wait_period=$(($wait_period+10))
 
@@ -41,9 +41,49 @@ data:
             curl --header "Content-Type: application/json"  --header "x-spinnaker-user: admin" --request POST  --data '{"datasourceType": "AUTOPILOT", "name": "Autopilot", "configurationFields": {"username": "admin"} }'   http://oes-platform:8095/platformservice/v2/datasources
             #curl --header "Content-Type: application/json"  --header "x-spinnaker-user: admin" --request POST  --data '{"datasourceType": "ELASTICSEARCH", "name": "elastic-default", "configurationFields": {"endPoint": "https://newoeselastic.opsmx.com", "username": "opsmxuser", "password": "OpsMx@123", "kibanaEndPoint": "https://newoeskibana.opsmx.com", "kibanaPassword": "OpsMx@123", "kibanaUsername": "opsmxuser" }}'   http://oes-platform:8095/platformservice/v2/datasources
             #curl --header "Content-Type: application/json"  --header "x-spinnaker-user: admin" --request POST  --data '{"datasourceType": "PROMETHEUS", "name": "prometheus-default", "configurationFields": {"endPoint": "http://prometheus:9090"} }'   http://oes-platform:8095/platformservice/v2/datasources
-            curl --header "Content-Type: application/json"  --header "x-spinnaker-user: admin" --request POST http://oes-platform:8095/platformservice/v2/datasources --data '{"datasourceType": "GITHUB", "name": "gitops", "spinEnabled": "false", "configurationFields": {"token": "{{ .Values.spinnaker.gitopsHalyard.repo.token }}", "username": "{{ .Values.spinnaker.gitopsHalyard.repo.username }}" } }'
-            curl --header "Content-Type: application/json"  --header "x-spinnaker-user: admin" --request POST http://oes-sapor:8085/oes/accountsConfig/spinnaker --data '{"name": "preview-saas", "url": "{{ .Values.global.spinGate.protocol }}://{{ .Values.global.spinGate.host }}", "authenticationType": "LDAP", "token": "YWRtaW46b3BzbXhhZG1pbjEyMw==", "externalAccountFlag": "true", "halyardConfigurationFlag": "true", "externalAccountConfiguration": {"accountName": "gitops", "endPoint": "https://github.com/{{ .Values.spinnaker.gitopsHalyard.repo.organization }}/{{ .Values.spinnaker.gitopsHalyard.repo.repository }}.git", "provider": "GITHUB"  }, "halConfiguration": {"accountName": "gitops", "endPoint": "https://github.com/{{ .Values.spinnaker.gitopsHalyard.repo.organization }}/{{ .Values.spinnaker.gitopsHalyard.repo.repository }}.git", "accountName": "gitops" , "provider": "GITHUB"  } }'
+
+
+        {{- if .Values.spinnaker.gitopsHalyard.enabled }}
+
+            STORAGE_TYPE={{ .Values.spinnaker.gitopsHalyard.repo.type }}
+            USERNAME={{ .Values.spinnaker.spinCli.auth.basic.username }}
+            PASSWORD={{ .Values.spinnaker.spinCli.auth.basic.password }}
+            TOKEN=$(echo -n "$USERNAME":"$PASSWORD" | base64)
+            response=$(curl -s {{ .Values.oesGate.protocol }}://{{ .Values.oesGate.host }}/oes/accountsConfig/v1/spinnaker -u $USERNAME:$PASSWORD)
+            name=$(echo $response | jq '.[].name')
+            if [ -z "$name" ];
+            then
+              if [[ "$STORAGE_TYPE"  ==  "git" ]];
+              then
+                  curl --header "Content-Type: application/json"  --header "x-spinnaker-user: admin" --request POST http://oes-platform:8095/platformservice/v2/datasources --data '{"datasourceType": "GITHUB", "name": "gitops", "spinEnabled": "false", "configurationFields": {"token": "{{ .Values.spinnaker.gitopsHalyard.repo.token }}", "username": "{{ .Values.spinnaker.gitopsHalyard.repo.username }}" } }'
+                  curl --header "Content-Type: application/json"  --header "x-spinnaker-user: admin" --request POST http://oes-sapor:8085/oes/accountsConfig/spinnaker --data '{"name": "preview-saas", "url": "{{ .Values.global.spinGate.protocol }}://{{ .Values.global.spinGate.host }}", "authenticationType": "LDAP", "token": "'"${TOKEN}"'", "externalAccountFlag": "true", "halyardConfigurationFlag": "true", "externalAccountConfiguration": {"accountName": "gitops", "endPoint": "https://github.com/{{ .Values.spinnaker.gitopsHalyard.repo.organization }}/{{ .Values.spinnaker.gitopsHalyard.repo.repository }}.git", "provider": "GITHUB"  }, "halConfiguration": {"accountName": "gitops", "endPoint": "https://github.com/{{ .Values.spinnaker.gitopsHalyard.repo.organization }}/{{ .Values.spinnaker.gitopsHalyard.repo.repository }}.git", "accountName": "gitops" , "provider": "GITHUB"  } }'
+                  break
+              fi
+              if [[ "$STORAGE_TYPE"  ==  "stash" ]];
+              then
+                if [[ "{{ .Values.spinnaker.gitopsHalyard.repo.projectName }}" ]]
+                  curl --header "Content-Type: application/json"  --header "x-spinnaker-user: admin" --request POST http://oes-platform:8095/platformservice/v2/datasources --data '{"datasourceType": "BITBUCKET", "name": "gitops-bitbucket", "spinEnabled": "false", "configurationFields": {"authType":"bearer","username": "{{ .Values.spinnaker.gitopsHalyard.repo.username }}","token": "{{ .Values.spinnaker.gitopsHalyard.repo.token }}","read":"","write":""} }'
+                  curl --header "Content-Type: application/json"  --header "x-spinnaker-user: admin" --request POST http://oes-sapor:8085/oes/accountsConfig/spinnaker --data '{"name": "preview-saas", "url": "{{ .Values.global.spinGate.protocol }}://{{ .Values.global.spinGate.host }}", "authenticationType": "LDAP", "token": "'"${TOKEN}"'", "externalAccountFlag": "true", "halyardConfigurationFlag": "true", "externalAccountConfiguration": {"accountName": "gitops-bitbucket", "endPoint": "https://{{ .Values.spinnaker.gitopsHalyard.repo.baseUrlHostName }}/{{ .Values.spinnaker.gitopsHalyard.repo.organization }}/{{ .Values.spinnaker.gitopsHalyard.repo.projectName }}/{{ .Values.spinnaker.gitopsHalyard.repo.repository }}.git", "provider": "BITBUCKET"  }, "halConfiguration": {"accountName": "gitops", "endPoint": "https://{{ .Values.spinnaker.gitopsHalyard.repo.baseUrlHostName }}/{{ .Values.spinnaker.gitopsHalyard.repo.organization }}/{{ .Values.spinnaker.gitopsHalyard.repo.projectName }}/{{ .Values.spinnaker.gitopsHalyard.repo.repository }}.git", "accountName": "gitops-bitbucket" , "provider": "BITBUCKET"  } }'
+                  break
+                else
+                  curl --header "Content-Type: application/json"  --header "x-spinnaker-user: admin" --request POST http://oes-platform:8095/platformservice/v2/datasources --data '{"datasourceType": "BITBUCKET", "name": "gitops-bitbucket", "spinEnabled": "false", "configurationFields": {"authType":"bearer","username": "{{ .Values.spinnaker.gitopsHalyard.repo.username }}","token": "{{ .Values.spinnaker.gitopsHalyard.repo.token }}","read":"","write":""} }'
+                  curl --header "Content-Type: application/json"  --header "x-spinnaker-user: admin" --request POST http://oes-sapor:8085/oes/accountsConfig/spinnaker --data '{"name": "preview-saas", "url": "{{ .Values.global.spinGate.protocol }}://{{ .Values.global.spinGate.host }}", "authenticationType": "LDAP", "token": "'"${TOKEN}"'", "externalAccountFlag": "true", "halyardConfigurationFlag": "true", "externalAccountConfiguration": {"accountName": "gitops-bitbucket", "endPoint": "https://{{ .Values.spinnaker.gitopsHalyard.repo.baseUrlHostName }}/{{ .Values.spinnaker.gitopsHalyard.repo.organization }}/{{ .Values.spinnaker.gitopsHalyard.repo.repository }}.git", "provider": "BITBUCKET"  }, "halConfiguration": {"accountName": "gitops", "endPoint": "https://{{ .Values.spinnaker.gitopsHalyard.repo.baseUrlHostName }}/{{ .Values.spinnaker.gitopsHalyard.repo.organization }}/{{ .Values.spinnaker.gitopsHalyard.repo.repository }}.git", "accountName": "gitops-bitbucket" , "provider": "BITBUCKET"  } }'
+                  break
+                fi
+              fi
+              if [[ "$STORAGE_TYPE"  ==  "s3" ]];
+              then
+                curl --header "Content-Type: application/json"  --header "x-spinnaker-user: admin" --request POST http://oes-platform:8095/platformservice/v2/datasources --data '{"datasourceType":"AMAZONS3","name":"gitops-s3","configurationFields":{"access_id":"{{ .Values.spinnaker.gitopsHalyard.repo.s3accesskey }}","secret_key":"{{ .Values.spinnaker.gitopsHalyard.repo.s3secretkey }}"},"spinnakerNames":[""],"spinEnabled":false} }'
+                curl --header "Content-Type: application/json"  --header "x-spinnaker-user: admin" --request POST http://oes-sapor:8085/oes/accountsConfig/v1/spinnaker --data '{"name": "preview-saas", "url": "{{ .Values.global.spinGate.protocol }}://{{ .Values.global.spinGate.host }}", "authenticationType": "LDAP", "token": "'"${TOKEN}"'" , "externalAccountFlag": "true", "externalAccountConfiguration": {"accountName": "gitops-s3","config":{"bucketName":"{{ .Values.spinnaker.gitopsHalyard.repo.s3bucket }}","region":"{{ .Values.spinnaker.gitopsHalyard.repo.s3region }}","endPoint":""},"provider": "AMAZONS3"}}'
+              fi
+            else
+              echo "Spinnaker is already Integrated"
+              break
+            fi
+        {{ else }}
             break
+        {{- end }}
+
     else
         if [ $wait_period -gt 2000 ];
         then

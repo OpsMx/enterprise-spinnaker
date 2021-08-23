@@ -149,6 +149,7 @@ oesGate:
       secretName: oes-gate-authtls
 
 
+
 ###############################################################################
 ## Details of redis-master image for OES
 ##
@@ -238,9 +239,13 @@ autopilot:
   image:
     registry: quay.io/opsmxpublic
     repository: ubi8-oes-autopilot
-    tag: v3.8.3
+    tag: v3.9.0
     pullPolicy: IfNotPresent
 
+  annotations:
+    prometheus_io_path: /mgmt/prometheus
+    prometheus_io_port: "8090"
+    prometheus.io/scrape: "true"
   resources: {}
   #  requests:
   #    memory: 2Gi
@@ -283,9 +288,13 @@ dashboard:
   image:
     registry: quay.io/opsmxpublic
     repository: ubi8-oes-dashboard
-    tag: v3.8.3
+    tag: v3.9.0
     pullPolicy: IfNotPresent
 
+  annotations:
+    prometheus_io_path: /mgmt/prometheus
+    prometheus_io_port: "8094"
+    prometheus.io/scrape: "true"
   resources: {}
   #  requests:
   #    memory: 500Mi
@@ -313,14 +322,14 @@ dashboard:
 forwarder:
   enabled: true
   agent:
-    image: quay.io/opsmxpublic/forwarder-agent:v20210426T105924
+    image: quay.io/opsmxpublic/forwarder-agent:v20210722T133815
     serviceType: LoadBalancer
     # Value is also used in sapor configuration for kubernetes.agent.serverHostName
     host: opsmx-controller-controller1
   externalName: controller.exampleopsmx.net
   image:
     repository: quay.io/opsmxpublic/forwarder-controller
-    tag: v20210426T105924
+    tag: v20210722T133815
     pullPolicy: IfNotPresent
 
 ###############################################################################
@@ -333,9 +342,13 @@ gate:
   image:
     registry: quay.io/opsmxpublic
     repository: ubi8-gate
-    tag: v3.8.3
+    tag: v3.9.0
     pullPolicy: IfNotPresent
 
+  annotations:
+    prometheus_io_path: /prometheus
+    prometheus_io_port: "8084"
+    prometheus.io/scrape: "true"
   resources: {}
   #  requests:
   #    memory: 500Mi
@@ -358,6 +371,10 @@ gate:
 
     ## Set it to true to disable LDAP authentication and enable file based authentication
     ## Reach out over support@opsmx.com for pre-configured user credentials
+    # common gate for both spin and oes
+    commonGate:
+            enabled: false
+     
     fileBasedAuthentication:
       enabled: false
     server:
@@ -409,9 +426,13 @@ platform:
   image:
     registry: quay.io/opsmxpublic
     repository: ubi8-oes-platform
-    tag: v3.8.3
+    tag: v3.9.0
     pullPolicy: IfNotPresent
 
+  annotations:
+    prometheus_io_path: /mgmt/prometheus
+    prometheus_io_port: "8095"
+    prometheus.io/scrape: "true"
   resources: {}
   #  requests:
   #    memory: 500Mi
@@ -431,7 +452,7 @@ platform:
 
     ## Admin Groups available in ldap
     ##
-    adminGroups: admin, Administrators
+    adminGroups: admin
 
     ## Source of Users for authorization
     ## Supported sources:- ldap, file, gate
@@ -463,9 +484,13 @@ sapor:
   image:
     registry: quay.io/opsmxpublic
     repository: ubi8-oes-sapor
-    tag: v3.8.3
+    tag: v3.9.0
     pullPolicy: IfNotPresent
 
+  annotations:
+    prometheus_io_path: /mgmt/prometheus
+    prometheus_io_port: "8085"
+    prometheus.io/scrape: "true"
   resources: {}
   #  requests:
   #    memory: 100Mi
@@ -522,7 +547,11 @@ sapor:
         enabled: false
         client:
           password: changeit
-
+          
+    #encryption key needed for sapor to startup from 3.9
+    encrypt:
+      enabled: true
+      key: <ecnryption_key>
     ## Set the below field to true if datasource configurations from platform
     datasources:
       platform: true
@@ -542,7 +571,7 @@ ui:
   image:
     registry: quay.io/opsmxpublic
     repository: ubi8-oes-ui
-    tag: v3.8.3
+    tag: v3.9.0
     pullPolicy: IfNotPresent
 
   config:
@@ -560,9 +589,13 @@ visibility:
   image:
     registry: quay.io/opsmxpublic
     repository: ubi8-oes-visibility
-    tag: v3.8.3
+    tag: v3.9.0
     pullPolicy: IfNotPresent
 
+  annotations:
+    prometheus_io_path: /mgmt/prometheus
+    prometheus_io_port: "8096"
+    prometheus.io/scrape: "true"
   resources: {}
   #  requests:
   #    memory: 500Mi
@@ -742,7 +775,7 @@ kibana:
 #####################################################
 spinnaker:
   halyard:
-    spinnakerVersion: 1.24.4
+    spinnakerVersion: 1.26.6
     image:
       repository: quay.io/opsmxpublic/ubi8-spin-halyard
       tag: opsmx-1.40.0
@@ -803,37 +836,37 @@ spinnaker:
         healthEndpoint: /health
         kubernetes:
           useExecHealthCheck: false
-        artifactId: quay.io/opsmxpublic/ubi8-spin-gate:1.20.0
+        artifactId: quay.io/opsmxpublic/ubi8-oes-spin-gate:1.22.1
       deck.yml:
         artifactId: quay.io/opsmxpublic/ubi8-oes-deck:3.5.1
       clouddriver.yml:
-        artifactId: quay.io/opsmxpublic/ubi8-spin-clouddriver:7.2.2
+        artifactId: quay.io/opsmxpublic/ubi8-spin-clouddriver:8.0.4
       clouddriver-caching.yml:
-        artifactId: quay.io/opsmxpublic/ubi8-spin-clouddriver:7.2.2
+        artifactId: quay.io/opsmxpublic/ubi8-spin-clouddriver:8.0.4
       clouddriver-rw.yml:
-        artifactId: quay.io/opsmxpublic/ubi8-spin-clouddriver:7.2.2
+        artifactId: quay.io/opsmxpublic/ubi8-spin-clouddriver:8.0.4
       clouddriver-ro.yml:
-        artifactId: quay.io/opsmxpublic/ubi8-spin-clouddriver:7.2.2
+        artifactId: quay.io/opsmxpublic/ubi8-spin-clouddriver:8.0.4
       clouddriver-ro-deck.yml:
-        artifactId: quay.io/opsmxpublic/ubi8-spin-clouddriver:7.2.2
+        artifactId: quay.io/opsmxpublic/ubi8-spin-clouddriver:8.0.4
       echo.yml:
-        artifactId: quay.io/opsmxpublic/ubi8-spin-echo:2.15.2
+        artifactId: quay.io/opsmxpublic/ubi8-spin-echo:2.17.1
       echo-scheduler.yml:
-        artifactId: quay.io/opsmxpublic/ubi8-spin-echo:2.15.2
+        artifactId: quay.io/opsmxpublic/ubi8-spin-echo:2.17.1
       echo-worker.yml:
-        artifactId: quay.io/opsmxpublic/ubi8-spin-echo:2.15.2
+        artifactId: quay.io/opsmxpublic/ubi8-spin-echo:2.17.1
       fiat.yml:
-        artifactId: quay.io/opsmxpublic/ubi8-spin-fiat:1.14.1
+        artifactId: quay.io/opsmxpublic/ubi8-spin-fiat:1.16.0
       front50.yml:
-        artifactId: quay.io/opsmxpublic/ubi8-oes-front50:0.26.1
+        artifactId: quay.io/opsmxpublic/ubi8-oes-front50:0.27.1
       igor.yml:
-        artifactId: quay.io/opsmxpublic/ubi8-spin-igor:1.14.0
+        artifactId: quay.io/opsmxpublic/ubi8-spin-igor:1.16.0
       kayenta.yml:
-        artifactId: quay.io/opsmxpublic/ubi8-spin-kayenta:0.19.0
+        artifactId: quay.io/opsmxpublic/ubi8-spin-kayenta:0.21.0
       orca.yml:
-        artifactId: quay.io/opsmxpublic/ubi8-oes-orca:2.18.1
+        artifactId: quay.io/opsmxpublic/ubi8-oes-orca:2.20.3
       rosco.yml:
-        artifactId: quay.io/opsmxpublic/ubi8-spin-rosco:0.23.0
+        artifactId: quay.io/opsmxpublic/ubi8-spin-rosco:0.25.0
     ## Uncomment if you want to add extra commands to the init script
     ## run by the init container before halyard is started.
     ## The content will be passed through `tpl`, so value interpolation is supported.
@@ -1035,6 +1068,7 @@ spinnaker:
       repository: standard-gitops-repo # repo name for GitOps Halyard (Sample Reference: https://github.com/OpsMx/sample-gitops-repo.git).
       dynamicAccRepository: standard-gitops-repo # Please provide the repo name of the GitOps Dynamic Accounts Directory.Can be same as Hal repo. 
       halConfigPath: / # Any other value is currently not supported
+      dynAccntConfigPath: dynaccount/ #relative path from repository root folder
       username: <git/stash_username>  # Username to authenticate with git/stash repo
       token: <git/stash_token>  # Token corresponding to above username
       ## Configure below fields only if repo type is s3
@@ -1047,18 +1081,18 @@ spinnaker:
     pipelinePromotion:  # GitHub only,  Not supportd on S3 or Stash
       enabled: true
       type: git  # git, s3, stash
-      organization: krish  # Also called "project" in some repos
-      repository: my-gitops  # bucket name in case of S3
-      rootFolder: pipeline-promotion/
+      organization: <project_name>  # Also called "project" in some repos
+      repository: <repo_name>  # bucket name in case of S3
+      rootFolder: pipeline/
       ##### ONLY In case of S3
-      AWS_ACCESS_KEY_ID: DFGHJ
-      AWS_SECRET_ACCESS_KEY: 45678kk
+      AWS_ACCESS_KEY_ID: <access_key>
+      AWS_SECRET_ACCESS_KEY: <secret_key>
       ##### S3 config for pipelinePromotion is complete
       ##### For non-S3 repos
-      baseUrl: "github.com"  #  "git_url"
-      username: krish
-      token: lL4E09LHxod331iZvS3VIGIF
-      branch: master
+      baseUrl: example.repo.com  #  "git_url"
+      username: <username>
+      token: <token>
+      branch: samplerepo
       usermail: krish@company.com
       #password="K438"   ### Token is preferred, Password also might work, try your luck
       # Instead of username, token/password, sshkey can be provided
@@ -1070,9 +1104,9 @@ spinnaker:
 
       createPR: false
       autoApprovePR: false
-      targetBranch: master
-      approvingUser: "krish"  ### user who is going to auto-merge
-      approverToken: "9MJnNva43EM8Js3b9opM" ## Token for the user to auto-merge
+      targetBranch: master # can be any branch to which PR to be raised
+      approvingUser: <approver_user>  ### user who is going to auto-merge
+      approverToken: <token> ## Token for the user to auto-merge
 
     ## x509 authentication for Spinnaker Gate
     gatex509:
