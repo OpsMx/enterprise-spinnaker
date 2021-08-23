@@ -6,6 +6,10 @@ metadata:
     app: oes
     component: gate
 {{ include "oes.standard-labels" . | indent 4 }}
+{{- if .Values.gate.serviceAnnotations }}
+  annotations:
+{{ toYaml .Values.gate.serviceAnnotations | indent 4 }}
+{{- end }}
   name: oes-gate
 spec:
   type: {{ .Values.k8sServiceType }}

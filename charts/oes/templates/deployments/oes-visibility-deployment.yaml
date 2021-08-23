@@ -61,6 +61,10 @@ spec:
           periodSeconds: 60
       imagePullSecrets:
       - name: {{ .Values.imagePullSecret}}
+      {{- if .Values.visibility.nodeSelector }}
+      nodeSelector:
+{{ toYaml .Values.visibility.nodeSelector | indent 8 }}
+      {{- end }}
       volumes:
       - name: visibility-config
         configMap:

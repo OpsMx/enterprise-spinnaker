@@ -62,6 +62,10 @@ spec:
           subPath: bootstrap.yml
       imagePullSecrets:
       - name: {{ .Values.imagePullSecret }}
+      {{- if .Values.platform.nodeSelector }}
+      nodeSelector:
+{{ toYaml .Values.platform.nodeSelector | indent 8 }}
+      {{- end }}
       volumes:
       - name: platform-config-volume
         configMap:

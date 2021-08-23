@@ -39,6 +39,10 @@ spec:
       imagePullSecrets:
         - name: {{ .Values.imagePullSecret}}
       {{- if (eq .Values.db.enabled true) }}
+      {{- if .Values.autopilot.nodeSelector }}
+      nodeSelector:
+{{ toYaml .Values.autopilot.nodeSelector | indent 8 }}
+      {{- end }}
       initContainers:
       - name: db-check
         image: postgres:9.6.5

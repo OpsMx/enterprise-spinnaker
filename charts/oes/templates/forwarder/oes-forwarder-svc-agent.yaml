@@ -7,6 +7,10 @@ metadata:
     agent.opsmx.com/name: controller1
     agent.opsmx.com/role: controller
 {{ include "oes.standard-labels" . | indent 4 }}
+{{- if .Values.ui.ServiceAnnotations }}
+  annotations:
+{{ toYaml .Values.forwarder.serviceAnnotations | indent 4 }}
+{{- end }}
 spec:
   selector:
     app: opsmx-controller-controller1
@@ -30,6 +34,10 @@ metadata:
     agent.opsmx.com/name: controller1
     agent.opsmx.com/role: controller
 {{ include "oes.standard-labels" . | indent 4 }}
+{{- if .Values.forwarder.serviceAnnotations }}
+  annotations:
+{{ toYaml .Values.forwarder.serviceAnnotations | indent 4 }}
+{{- end }}
 spec:
   selector:
     app: opsmx-controller-controller1

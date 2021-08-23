@@ -6,6 +6,10 @@ metadata:
     app: oes
     component: ui
 {{ include "oes.standard-labels" . | indent 4 }}
+{{- if .Values.ui.serviceAnnotations }}
+  annotations:
+{{ toYaml .Values.ui.serviceAnnotations | indent 4 }}
+{{- end }}
   name: oes-ui
 spec:
   type: {{ .Values.k8sServiceType }}
