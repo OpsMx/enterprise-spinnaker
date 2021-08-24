@@ -1,4 +1,4 @@
-{{- if or (eq .Values.installationMode "OES-AP") (eq .Values.installationMode "AP") (eq .Values.installationMode "OES") -}}
+{{- if (eq .Values.installationMode "OES-AP") -}}
 apiVersion: v1
 kind: Service
 metadata:
@@ -6,6 +6,10 @@ metadata:
     app: oes
     component: ui
 {{ include "oes.standard-labels" . | indent 4 }}
+{{- if .Values.ui.serviceAnnotations }}
+  annotations:
+{{ toYaml .Values.ui.serviceAnnotations | indent 4 }}
+{{- end }}
   name: oes-ui
 spec:
   type: {{ .Values.k8sServiceType }}

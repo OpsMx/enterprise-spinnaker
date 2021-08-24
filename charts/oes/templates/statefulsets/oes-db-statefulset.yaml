@@ -1,5 +1,4 @@
-{{- if .Values.db.enabled  -}}
-{{- if or (eq .Values.installationMode "OES-AP") (eq .Values.installationMode "AP") (eq .Values.installationMode "OES") -}}
+{{- if and (.Values.db.enabled) (eq .Values.installationMode "OES-AP") -}}
 apiVersion: apps/v1
 kind: StatefulSet
 metadata:
@@ -65,5 +64,4 @@ spec:
       {{- if .Values.db.storageClassName }}
       storageClassName: {{ .Values.db.storageClassName }}
       {{- end -}}
-{{- end -}}
 {{- end -}}

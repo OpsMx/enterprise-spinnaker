@@ -1,4 +1,4 @@
-{{- if or (eq .Values.installationMode "OES-AP") (eq .Values.installationMode "OES") -}}
+{{- if (eq .Values.installationMode "OES-AP") -}}
 {{- if .Values.opa.enabled -}}
 apiVersion: apps/v1
 kind: Deployment
@@ -25,5 +25,9 @@ spec:
           args:
             - "run"
             - "--server"
+      {{- if .Values.opa.nodeSelector }}
+      nodeSelector:
+{{ toYaml .Values.opa.nodeSelector | indent 8 }}
+      {{- end }}
 {{- end -}}
 {{- end -}}

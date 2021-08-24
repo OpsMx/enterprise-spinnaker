@@ -1,5 +1,4 @@
-{{- if or (eq .Values.installationMode "OES-AP") (eq .Values.installationMode "OES") -}}
-{{- if .Values.forwarder.enabled }}
+{{- if and (eq .Values.installationMode "OES-AP") (.Values.forwarder.enabled) -}}
 apiVersion: v1
 kind: ConfigMap
 metadata:
@@ -17,5 +16,4 @@ data:
     #agentAdvertisePort: "443"
     serviceAuth:
       currentKeyName: "public.pem"
-{{- end -}}
 {{- end -}}

@@ -99,7 +99,7 @@ Parameter | Description | Default
 `imageCredentials.email` | Email associated with docker account | `info@opsmx.com`
 `rbac.create` | Enable or disable rbac | `true`
 `installSpinnaker` | If true, install Spinnaker along with OES Extensions | `true`
-`installationMode` | The installation mode. Available installation modes are **OES-AP** (both OES 3.0 and Autopilot), **OES** (Only OES 3.0), **AP** (Only Autopilot) and **None**(Skip OES installation) | `OES-AP`
+`installationMode` | The installation mode. Available installation modes are **OES-AP** (for OES that includes Autopilot) and **None**(Skip OES installation) | `OES-AP`
 `global.certManager.installed` | Disable this flag if cert-manager is not installed, when set to true issuer and TLS certs for ingress are automatically created | `true`
 `global.createIngress` | If true, exposes OES ui & gate services over Ingress | `false`
 `global.spinDeck.protocol` | Change this to https if TLS is enabled for ingress endpoint | `http`
