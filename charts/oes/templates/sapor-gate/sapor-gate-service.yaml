@@ -1,5 +1,4 @@
-{{- if or (eq .Values.installationMode "OES-AP") (eq .Values.installationMode "OES") -}}
-{{- if .Values.saporgate.enabled }}
+{{- if and (eq .Values.installationMode "OES-AP") (.Values.saporgate.enabled) -}}
 apiVersion: v1
 kind: Service
 metadata:
@@ -18,5 +17,4 @@ spec:
   selector:
     app: oes
     component: sapor-gate
-{{- end -}}
 {{- end -}}

@@ -7,6 +7,10 @@ metadata:
     app: spin
     stack: deck
 {{ include "oes.standard-labels" . | indent 4 }}
+{{- if .Values.global.spinDeck.serviceAnnotations }}
+  annotations:
+{{ toYaml .Values.global.spinDeck.serviceAnnotations | indent 4 }}
+{{- end }}
   name: spin-deck-lb
 spec:
   type: {{ .Values.k8sServiceType }}
@@ -24,6 +28,10 @@ metadata:
     app: spin
     stack: gate
 {{ include "oes.standard-labels" . | indent 4 }}
+{{- if .Values.global.spinGate.serviceAnnotations }}
+  annotations:
+{{ toYaml .Values.global.spinGate.serviceAnnotations | indent 4 }}
+{{- end }}
   name: spin-gate-lb
 spec:
   type: {{ .Values.k8sServiceType }}
@@ -42,6 +50,10 @@ metadata:
   labels:
     app: spin
     cluster: spin-gate
+{{- if .Values.global.spinGate.serviceAnnotations }}
+  annotations:
+{{ toYaml .Values.global.spinGate.serviceAnnotations | indent 4 }}
+{{- end }}
   name: spin-x509gate
 spec:
   ports:

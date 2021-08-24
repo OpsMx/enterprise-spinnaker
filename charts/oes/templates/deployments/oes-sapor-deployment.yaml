@@ -1,4 +1,4 @@
-{{- if or (eq .Values.installationMode "OES-AP") (eq .Values.installationMode "OES") -}}
+{{- if (eq .Values.installationMode "OES-AP") -}}
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -79,6 +79,10 @@ spec:
           periodSeconds: 60
       imagePullSecrets:
       - name: {{ .Values.imagePullSecret }}
+      {{- if .Values.sapor.nodeSelector }}
+      nodeSelector:
+{{ toYaml .Values.sapor.nodeSelector | indent 8 }}
+      {{- end }}
       volumes:
       {{- if .Values.forwarder.enabled }}
       - secret:

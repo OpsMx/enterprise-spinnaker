@@ -1,5 +1,4 @@
-{{- if or (eq .Values.installationMode "OES-AP") (eq .Values.installationMode "OES") -}}
-{{- if .Values.forwarder.enabled }}
+{{- if and (eq .Values.installationMode "OES-AP") (.Values.forwarder.enabled) -}}
 apiVersion: v1
 kind: Service
 metadata:
@@ -8,6 +7,10 @@ metadata:
     agent.opsmx.com/name: controller1
     agent.opsmx.com/role: controller
 {{ include "oes.standard-labels" . | indent 4 }}
+{{- if .Values.ui.ServiceAnnotations }}
+  annotations:
+{{ toYaml .Values.forwarder.serviceAnnotations | indent 4 }}
+{{- end }}
 spec:
   selector:
     app: opsmx-controller-controller1
@@ -31,6 +34,10 @@ metadata:
     agent.opsmx.com/name: controller1
     agent.opsmx.com/role: controller
 {{ include "oes.standard-labels" . | indent 4 }}
+{{- if .Values.forwarder.serviceAnnotations }}
+  annotations:
+{{ toYaml .Values.forwarder.serviceAnnotations | indent 4 }}
+{{- end }}
 spec:
   selector:
     app: opsmx-controller-controller1
@@ -38,5 +45,4 @@ spec:
   ports:
   - name: agent-grpc
     port: 9001
-{{- end -}}
 {{- end -}}
