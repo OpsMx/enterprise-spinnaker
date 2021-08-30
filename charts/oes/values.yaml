@@ -179,9 +179,9 @@ redis:
     # password: ""
   nodeSelector: {}
 
-    ## Redis config file
-    ## ref: https://redis.io/topics/config
-    ##
+  ## Redis config file
+  ## ref: https://redis.io/topics/config
+  ##
   configmap: |-
     # Enable AOF https://redis.io/topics/persistence#append-only-file
     appendonly no
@@ -399,12 +399,12 @@ gate:
 
     ## Regex of OES-UI URL to allow cross origin requests; this is framed using oesUI.host
 
-    ## Set it to true to disable LDAP authentication and enable file based authentication
-    ## Reach out over support@opsmx.com for pre-configured user credentials
     # common gate for both spin and oes
     commonGate:
             enabled: false
      
+    ## Set it to true to disable LDAP authentication and enable file based authentication
+    ## Reach out over support@opsmx.com for pre-configured user credentials
     fileBasedAuthentication:
       enabled: false
     server:
