@@ -34,7 +34,7 @@ installSpinnaker: true
 ## If Spinnaker is being installed, redis installed by spinnaker chart can
 ## be re-used
 ## installSpinnaker and installRedis flags are mutually exclusive
-installRedis: false
+installRedis: true
 
 ## Installation mode
 ## Available installation modes OES-AP, None
@@ -171,6 +171,27 @@ redis:
   password: password
   cluster:
     enabled: false
+
+  # External Redis option will be enabled if in-cluster redis is disabled
+  external:
+    host: "<EXTERNAL-REDIS-HOST-NAME>"
+    port: 6379
+    # password: ""
+  nodeSelector: {}
+
+    ## Redis config file
+    ## ref: https://redis.io/topics/config
+    ##
+  configmap: |-
+    # Enable AOF https://redis.io/topics/persistence#append-only-file
+    appendonly no
+    # Disable RDB persistence, AOF persistence already enabled.
+    save 60 1000
+
+  # Uncomment if you don't want to create a PVC for redis
+  #  master:
+  #    persistence:
+  #      enabled: false
 
 ###############################################################################
 ##
@@ -955,37 +976,6 @@ spinnaker:
   # Ref: https://kubernetes.io/docs/user-guide/node-selection/
   # nodeSelector to provide to each of the Spinnaker components
   nodeSelector: {}
-
-  # Redis password to use for the in-cluster redis service
-  # Enable redis to use in-cluster redis
-  redis:
-    enabled: true
-    # External Redis option will be enabled if in-cluster redis is disabled
-    external:
-      host: "<EXTERNAL-REDIS-HOST-NAME>"
-      port: 6379
-      # password: ""
-    image:
-      registry: quay.io/opsmxpublic
-      repository: bitnami-redis
-    password: password
-    nodeSelector: {}
-    cluster:
-      enabled: false
-
-    ## Redis config file	
-    ## ref: https://redis.io/topics/config	
-    ##	
-    configmap: |-	
-      # Enable AOF https://redis.io/topics/persistence#append-only-file	
-      appendonly no	
-      # Disable RDB persistence, AOF persistence already enabled.	
-      save 60 1000
-
-  # Uncomment if you don't want to create a PVC for redis
-  #  master:
-  #    persistence:
-  #      enabled: false
 
   # Minio access/secret keys for the in-cluster S3 usage
   # Minio is not exposed publically
