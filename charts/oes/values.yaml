@@ -52,14 +52,19 @@ k8sServiceType: ClusterIP
 ## Declare all the global variables under this
 ## Global variables can be accessed across all the charts including sub-charts
 global:
+  ## Custom Images registry where all the OSS and customized images used in the helm chart are stored
+  ## List of images: busybox:1.28, bitnami-kubectl:1.18, postgres:9.6.5, oes-pre-configure:v2, create-secret:v10
+  customImages:
+    registry: quay.io/opsmxpublic
+
   ## Set this to false if cert-manager is not installed
   ## If cert-manager is installed, an issuer will be created
   ## by OES helm chart which generates certs for tls automatically
   ## If cert-manager is not installed, specify secrets with
   ## certificates under oesUI.tls.secretName & oesGate.tls.secretName
-
   certManager:
     installed: true
+
   customCerts:
     enabled: true
     secretName: self-signed-certs  # Needs two Keys: cacerts and ca # TODO: Document procedure for creating this one
@@ -160,6 +165,9 @@ redis:
   ## url: redis://{{ .Release.Name }}-redis-master:6379
   ##
   url: redis://:password@{{ .Release.Name }}-redis-master:6379
+  image:
+    registry: quay.io/opsmxpublic
+    repository: bitnami-redis
   password: password
   cluster:
     enabled: false
@@ -957,6 +965,9 @@ spinnaker:
       host: "<EXTERNAL-REDIS-HOST-NAME>"
       port: 6379
       # password: ""
+    image:
+      registry: quay.io/opsmxpublic
+      repository: bitnami-redis
     password: password
     nodeSelector: {}
     cluster:
@@ -971,11 +982,6 @@ spinnaker:
       # Disable RDB persistence, AOF persistence already enabled.	
       save 60 1000
 
-    # Use ubi8 custom images
-    #image:
-    #  registry: docker.io
-    #  repository: devopsmx/ubi8-oes-redis
-    #  tag: 4.0.14
   # Uncomment if you don't want to create a PVC for redis
   #  master:
   #    persistence:
@@ -985,7 +991,13 @@ spinnaker:
   # Minio is not exposed publically
   minio:
     enabled: true
-    imageTag: RELEASE.2019-02-13T19-48-27Z
+    image:
+      repository: quay.io/opsmxpublic/minio
+      tag: RELEASE.2019-02-13T19-48-27Z
+
+    mcImage:
+      repository: quay.io/opsmxpublic/minio-mc
+      tag: RELEASE.2020-11-25T23-04-07Z
     serviceType: ClusterIP
     accessKey: spinnakeradmin
     secretKey: spinnakeradmin
@@ -994,11 +1006,6 @@ spinnaker:
     persistence:
       enabled: true
       size: 10Gi
-    # Use ubi8 custom images
-    #image:
-    #  repository: devopsmx/ubi8-oes-minio
-    #  tag: RELEASE.2019-09-18T21-55-05Z
-    #  pullPolicy: IfNotPresent
 
   # Google Cloud Storage
   gcs:
@@ -1056,6 +1063,7 @@ spinnaker:
     enabled: true
     repo:
       type: git # git, s3, stash(bitbucket server) use a different sample values file for s3/bitbuck-stash
+      configArgs: "http.sslVerify=true"
       ## Configure below fields only if repo type is git/stash. Skip to s3 section if type is s3
       baseUrlHostName: github.com    # Specify it if git url is something other than github.com
       organization: OpsMx
@@ -1077,6 +1085,7 @@ spinnaker:
     pipelinePromotion:  # GitHub only,  Not supportd on S3 or Stash
       enabled: true
       type: git  # git, s3, stash
+      gitConfig: git config --global http.sslVerify false
       organization: project_name  # Also called "project" in some repos
       repository: repo_name  # bucket name in case of S3
       rootFolder: pipeline/

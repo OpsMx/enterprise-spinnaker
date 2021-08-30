@@ -52,7 +52,7 @@ spec:
       {{- end }}
       {{- if .Values.tls.enabled }}
       - name: {{ .Chart.Name }}-init-tls
-        image: {{ .Values.global.customImages.dockerRegistry }}/busybox:1.28
+        image: {{ .Values.global.customImages.registry }}/busybox:1.28
         command: ['sh', '-c', 'cp /tls/* /certs']
         imagePullPolicy: {{ .Values.image.pullPolicy }}
         volumeMounts:
@@ -64,7 +64,7 @@ spec:
 {{ toYaml .Values.initResources | indent 10 }}
       {{- if .Values.tls.CA.enabled }}
       - name: {{ .Chart.Name }}-init-catls
-        image: {{ .Values.global.customImages.dockerRegistry }}/busybox:1.28
+        image: {{ .Values.global.customImages.registry }}/busybox:1.28
         command: ['sh', '-c', 'cp /catls/ca.crt /certs']
         volumeMounts:
           - name: catls

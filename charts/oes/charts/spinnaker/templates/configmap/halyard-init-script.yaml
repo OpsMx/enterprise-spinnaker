@@ -50,7 +50,7 @@ data:
     {{- if or (eq .Values.gitopsHalyard.repo.type "git") (eq .Values.gitopsHalyard.repo.type "stash") }}
     #!/bin/bash -x
     rm -rf /tmp/spinnaker/.hal
-    git -c http.sslVerify=false clone $GIT_CLONE_PARAM /tmp/spinnaker/test
+    git -c {{ .Values.gitopsHalyard.repo.configArgs }} clone $GIT_CLONE_PARAM /tmp/spinnaker/test
     cp -pr /tmp/spinnaker/test/{{ .Values.gitopsHalyard.repo.halConfigPath }} /tmp/spinnaker/.hal
     if [ -d "/tmp/spinnaker/test/pipeline-promotion/" ]
     then

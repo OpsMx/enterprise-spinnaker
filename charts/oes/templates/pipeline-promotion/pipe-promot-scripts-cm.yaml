@@ -67,7 +67,7 @@ data:
   git.sh: "#!/bin/bash\nsource scripts/spin.sh\n\ngit_repo=$repo_name\ntempdir=\"/tmp/\"\npull_requred=false\nif [[ $git_branch == \"\" ]]\nthen\ngit_branch=\"master\"\nfi\nsetup_git()
     {\n  echo \"Setting up the Git \"\n  local name=${git_user:-spinnaker}\n  local
     email=${git_user_email:-spinnaker@symphony.com}\n  git config --global user.email
-    \"$email\"\n  git config --global user.name \"$name\"\n  git config --global http.sslVerify false\n}\n  git_clone_http() {\n
+    \"$email\"\n  git config --global user.name \"$name\"\n  {{ .Values.gitopsHalyard.pipelinePromotion.gitConfig }} \n}\n  git_clone_http() {\n
     \ echo \"cloning $git_project/$git_repo over https\"\n  if [[ $repo_type == \"git\"
     || $repo_type == \"bitbucket\" ]]; then\n    clone_result=$(git clone https://$git_user:${git_secret_token}@${git_url}/${git_project}/${git_repo}.git
     $tempdir/$git_repo)\n  elif [[ $repo_type == \"stash\" ]]; then\n    #statements\n

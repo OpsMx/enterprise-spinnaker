@@ -28,7 +28,7 @@ spec:
       {{- if (eq .Values.db.enabled true) }}
       initContainers:
       - name: db-check
-        image: {{ .Values.global.customImages.dockerRegistry }}/postgres:9.6.5
+        image: {{ .Values.global.customImages.registry }}/postgres:9.6.5
         command: ['/bin/bash', '-c', "sleep 30;echo Waiting for oes-db to be up and running; pg_isready -h oes-db -p 5432 && echo PostgreSQL DB is ready to receive connections"]
       {{- end }}
       containers:

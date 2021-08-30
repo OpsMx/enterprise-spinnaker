@@ -58,7 +58,7 @@ oes:
 
 logging:
   level:
-    com.opsmx.platformservice: DEBUG
-    org.springframework.security: DEBUG
-    org.springframework.web: DEBUG
+    com.opsmx.platformservice: INFO
+    org.springframework.security: INFO
+    org.springframework.web: INFO
 

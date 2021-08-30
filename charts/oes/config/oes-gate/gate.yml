@@ -157,7 +157,10 @@ server:
 
 logging:
   level:
-    com.netflix.spinnaker.gate.security: DEBUG
-    org.springframework.security: DEBUG
-    org.springframework.web: DEBUG
+    com.netflix.spinnaker.gate.security: INFO
+    org.springframework.security: INFO
+    org.springframework.web: INFO
+    #com.netflix.spinnaker.gate.security: DEBUG
+    #org.springframework.security: DEBUG
+    #org.springframework.web: DEBUG
 
