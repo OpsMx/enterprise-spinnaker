@@ -65,6 +65,10 @@ global:
   certManager:
     installed: true
 
+  # common gate for both spin and oes
+  commonGate:
+    enabled: true
+
   customCerts:
     enabled: true
     secretName: self-signed-certs  # Needs two Keys: cacerts and ca # TODO: Document procedure for creating this one
@@ -398,10 +402,6 @@ gate:
     ##
 
     ## Regex of OES-UI URL to allow cross origin requests; this is framed using oesUI.host
-
-    # common gate for both spin and oes
-    commonGate:
-            enabled: false
      
     ## Set it to true to disable LDAP authentication and enable file based authentication
     ## Reach out over support@opsmx.com for pre-configured user credentials

@@ -21,7 +21,7 @@ services:
   {{- else }}
     externalUrl: {{ .Values.oesUI.protocol }}://{{ .Values.oesUI.host }}
   {{- end }}
-{{- if .Values.gate.config.commonGate.enabled }}
+{{- if .Values.global.commonGate.enabled }}
   keel:
     enabled: false
   clouddriver:
@@ -52,7 +52,11 @@ services:
   deck:
     host: 0.0.0.0
     port: 9000
+    {{- if .Values.global.spinDeck.port }}
+    baseUrl: {{ .Values.global.spinDeck.protocol }}://{{ .Values.global.spinDeck.host }}:{{ .Values.global.spinDeck.port }}
+    {{- else }}
     baseUrl: {{ .Values.global.spinDeck.protocol }}://{{ .Values.global.spinDeck.host }}
+    {{- end }}
     enabled: true
   echo:
     host: 0.0.0.0
@@ -82,7 +86,11 @@ services:
   gate:
     host: 0.0.0.0
     port: 8084
+    {{- if .Values.oesGate.port }}
+    baseUrl: {{ .Values.oesGate.protocol }}://{{ .Values.oesGate.host }}:{{ .Values.oesGate.port }}
+    {{- else }}
     baseUrl: {{ .Values.oesGate.protocol }}://{{ .Values.oesGate.host }}
+    {{- end }}
     enabled: true
   igor:
     host: 0.0.0.0
@@ -102,7 +110,7 @@ services:
   redis:
     host: 0.0.0.0
     port: 6379
-    baseUrl: redis://:password@{{ .Release.Name}}-redis-master:6379
+    baseUrl: {{ .Values.redis.url }}
     enabled: true
   rosco:
     host: 0.0.0.0
@@ -112,7 +120,7 @@ services:
 {{- end }}
   user: {}
 cors:
-  {{- if .Values.gate.config.commonGate.enabled }}
+  {{- if .Values.global.commonGate.enabled }}
   allowed-origins-pattern: ^https?://(?:localhost|{{ .Values.oesUI.host }}|{{ .Values.global.spinDeck.host }}|opsmx.com)(?::[1-9]\d*)?/?
   {{ else }}
   allowed-origins-pattern: ^https?://(?:localhost|{{ .Values.oesUI.host }}|opsmx.com)(?::[1-9]\d*)?/?
@@ -154,6 +162,29 @@ server:
     protocolHeader: X-Forwarded-Proto
     remoteIpHeader: X-Forwarded-For
     internalProxies: .*
+{{- if .Values.global.commonGate.enabled }}
+spinnaker:
+  extensibility:
+    plugins:
+    deck-proxy:
+      enabled: true
+      plugins:
+        Opsmx.VerificationGatePlugin:
+          enabled: true
+          version: 1.0.1
+        Opsmx.TestVerificationGatePlugin:
+          enabled: true
+          version: 1.0.1
+        Opsmx.PolicyGatePlugin:
+          enabled: true
+          version: 1.0.1
+        Opsmx.VisibilityApprovalPlugin:
+          enabled: true
+          version: 1.0.1
+    repositories:
+        opsmx-repo:
+          url: https://raw.githubusercontent.com/OpsMx/spinnakerPluginRepository/v3.9.0/plugins.json
+{{- end }}
 
 logging:
   level:

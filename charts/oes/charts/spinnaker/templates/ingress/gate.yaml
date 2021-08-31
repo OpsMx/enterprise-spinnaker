@@ -1,4 +1,4 @@
-{{- if and (.Values.global.createIngress) (not .Values.gitopsHalyard.mTLS.enabled) }}
+{{- if and (.Values.global.createIngress) (not .Values.gitopsHalyard.mTLS.enabled) (not .Values.global.commonGate.enabled) }}
 apiVersion: extensions/v1beta1
 kind: Ingress
 metadata:
