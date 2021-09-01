@@ -71,7 +71,7 @@ global:
 
   customCerts:
     enabled: true
-    secretName: self-signed-certs  # Needs two Keys: cacerts and ca # TODO: Document procedure for creating this one
+    secretName: oes-cacerts #TODO: Document procedure for creating this one and enhance scripts to merge cacerts created by controller and this
 
   # Below flag is used to setup tls termination at ingress
   # when this flag is set to false; spinnaker and oes endpoints
