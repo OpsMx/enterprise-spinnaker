@@ -39,7 +39,7 @@ spec:
       {{- end }}
       {{- if .Values.customLdifFiles }}
       - name: {{ .Chart.Name }}-init-ldif
-        image: {{ .Values.global.customImages.dockerRegistry }}/busybox:1.28
+        image: {{ .Values.global.customImages.registry }}/busybox:1.28
         command: ['sh', '-c', 'cp /customldif/* /ldifworkingdir']
         imagePullPolicy: {{ .Values.image.pullPolicy }}
         volumeMounts:
