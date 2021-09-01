@@ -981,7 +981,7 @@ spinnaker:
     enabled: true
     image:
       repository: quay.io/opsmxpublic/minio
-      tag: RELEASE.2019-02-13T19-48-27Z
+      tag: RELEASE.2020-01-03T19-12-21Z
 
     mcImage:
       repository: quay.io/opsmxpublic/minio-mc

@@ -300,11 +300,7 @@ spec:
         lifecycle:
           postStart:
             exec:
-              {{- if .Values.global.commonGate.enabled }}
-              command: ["/bin/sh", "-c", "until hal --ready; do sleep 10 ;done;hal deploy apply --exclude-service-names=gate"]
-              {{- else }}
               command: ["/bin/sh", "-c", "until hal --ready; do sleep 10 ;done;hal deploy apply"]
-              {{- end }}
         {{- end }}
         ports:
         - containerPort: 8064
