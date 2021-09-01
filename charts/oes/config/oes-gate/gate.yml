@@ -109,8 +109,8 @@ services:
     enabled: true
   redis:
     host: 0.0.0.0
-    port: 6379
-    baseUrl: {{ .Values.redis.url }}
+    port: {{ .Values.redis.port }}
+    baseUrl: {{ tpl .Values.redis.url . }}:{{ .Values.redis.port }}
     enabled: true
   rosco:
     host: 0.0.0.0
@@ -154,7 +154,7 @@ authn:
   mode: session
 google: {}
 redis:
-  connection: {{ tpl .Values.redis.url . }}
+  connection: {{ tpl .Values.redis.url . }}:{{ .Values.redis.port }}
 server:
   session:
     timeoutInSeconds: {{ .Values.gate.config.server.session.timeoutInSeconds }}

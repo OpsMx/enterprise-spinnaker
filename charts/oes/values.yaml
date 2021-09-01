@@ -24,16 +24,12 @@ rbac:
 ####################################################
 ## Option to skip installation of OpsMx Spinnaker
 ## Setting this to true, will ensure custom ubi8 images of Spinnaker
-## installSpinnaker and installRedis flags are mutually exclusive
 installSpinnaker: true
 
 ####################################################
 ## Redis configuration
 ####################################################
-## Install a seperate Redis for OES if installSpinnaker is set to false
-## If Spinnaker is being installed, redis installed by spinnaker chart can
-## be re-used
-## installSpinnaker and installRedis flags are mutually exclusive
+## Set it to false only if OES needs to be configured with external redis
 installRedis: true
 
 ## Installation mode
@@ -54,6 +50,7 @@ k8sServiceType: ClusterIP
 global:
   ## Custom Images registry where all the OSS and customized images used in the helm chart are stored
   ## List of images: busybox:1.28, bitnami-kubectl:1.18, postgres:9.6.5, oes-pre-configure:v2, create-secret:v10
+  ## awsgit:v2, k8s-decoder:hal, bitnami-kubectl:1.18.5
   customImages:
     registry: quay.io/opsmxpublic
 
@@ -168,7 +165,8 @@ redis:
   ## Change this to custom URL if installRedis is set to false
   ## url: redis://{{ .Release.Name }}-redis-master:6379
   ##
-  url: redis://:password@{{ .Release.Name }}-redis-master:6379
+  url: redis://:password@{{ .Release.Name }}-redis-master
+  port: 6379
   image:
     registry: quay.io/opsmxpublic
     repository: bitnami-redis
