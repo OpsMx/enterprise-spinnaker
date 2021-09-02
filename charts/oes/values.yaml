@@ -80,6 +80,8 @@ global:
     host: spin.example.ops.com
     #port: 9000
 
+    serviceAnnotations: {}
+
     ingress:
       annotations:
         ingress.kubernetes.io/ssl-redirect: "true"
@@ -92,6 +94,8 @@ global:
     protocol: https
     host: spin-gate.example.ops.com
     #port: 8084
+
+    serviceAnnotations: {}
 
     ingress:
       annotations:
@@ -240,7 +244,7 @@ autopilot:
   image:
     registry: quay.io/opsmxpublic
     repository: ubi8-oes-autopilot
-    tag: v3.9.0
+    tag: v3.9.1.2
     pullPolicy: IfNotPresent
 
   annotations:
@@ -289,7 +293,7 @@ dashboard:
   image:
     registry: quay.io/opsmxpublic
     repository: ubi8-oes-dashboard
-    tag: v3.9.0
+    tag: v3.9.1.2
     pullPolicy: IfNotPresent
 
   annotations:
@@ -332,7 +336,7 @@ forwarder:
     repository: quay.io/opsmxpublic/forwarder-controller
     tag: v20210722T133815
     pullPolicy: IfNotPresent
-
+  serviceAnnotations: {}
 ###############################################################################
 ##
 ## Values of OES Gate
@@ -343,8 +347,10 @@ gate:
   image:
     registry: quay.io/opsmxpublic
     repository: ubi8-gate
-    tag: v3.9.0
+    tag: v3.9.1.2
     pullPolicy: IfNotPresent
+
+  serviceAnnotations: {}
 
   annotations:
     prometheus_io_path: /prometheus
@@ -425,7 +431,7 @@ platform:
   image:
     registry: quay.io/opsmxpublic
     repository: ubi8-oes-platform
-    tag: v3.9.0
+    tag: v3.9.1.3
     pullPolicy: IfNotPresent
 
   annotations:
@@ -483,7 +489,7 @@ sapor:
   image:
     registry: quay.io/opsmxpublic
     repository: ubi8-oes-sapor
-    tag: v3.9.0
+    tag: v3.9.1.2
     pullPolicy: IfNotPresent
 
   annotations:
@@ -570,8 +576,9 @@ ui:
   image:
     registry: quay.io/opsmxpublic
     repository: ubi8-oes-ui
-    tag: v3.9.0
+    tag: v3.9.1.2
     pullPolicy: IfNotPresent
+  serviceAnnotations: {}
 
   config:
     ## Interval at which UI refreshes application dashboard
@@ -588,7 +595,7 @@ visibility:
   image:
     registry: quay.io/opsmxpublic
     repository: ubi8-oes-visibility
-    tag: v3.9.0
+    tag: v3.9.1.2
     pullPolicy: IfNotPresent
 
   annotations:
