@@ -754,6 +754,36 @@ openldap:
       description: read and execute group
       member: cn=admin,dc=example,dc=org
       member: cn=ITManager,dc=example,dc=org
+    10-users.ldif: |-
+      dn: cn=user1,dc=example,dc=org
+      objectClass: simpleSecurityObject
+      objectClass: organizationalRole
+      cn: user1
+      userpassword: {SSHA}Y9L4AsYL16WLK10qDZ62pTScFnaWb0nz
+
+      dn: cn=user2,dc=example,dc=org
+      objectClass: simpleSecurityObject
+      objectClass: organizationalRole
+      cn: user2
+      userpassword: {SSHA}DasTBI0eut1F83Bh1F1HXmDT8juJj3pY
+
+      dn: cn=user3,dc=example,dc=org
+      objectClass: simpleSecurityObject
+      objectClass: organizationalRole
+      cn: user3
+      userpassword: {SSHA}Qu1FW7BdLMndwM/Gf+zc3a8VIMAymbuv
+
+      dn: cn=developers,ou=groups,dc=example,dc=org
+      changetype: modify
+      add: member
+      member: cn=user1,dc=example,dc=org
+      member: cn=user3,dc=example,dc=org
+
+      dn: cn=QA,ou=groups,dc=example,dc=org
+      changetype: modify
+      add: member
+      member: cn=user2,dc=example,dc=org
+      member: cn=user3,dc=example,dc=org
 
 ## ldap configuration used in oes-gate, oes-platform and spinnaker gate for authentication
 ## and authorization

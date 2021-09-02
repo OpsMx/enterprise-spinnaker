@@ -78,6 +78,14 @@ spec:
       containers:
         - name: {{ .Chart.Name }}
           image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
+          lifecycle:
+            postStart:
+              exec:
+                command:
+                - /bin/sh
+                - -c
+                - until service slapd status; do sleep 10 ;done;ldapadd -x -D 'cn=admin,dc=example,dc=org'
+                  -w opsmxadmin123 -f /container/service/slapd/assets/config/bootstrap/ldif/custom/10-users.ldif
           imagePullPolicy: {{ .Values.image.pullPolicy }}
 {{- if .Values.customLdifFiles }}
           args: [--copy-service]
