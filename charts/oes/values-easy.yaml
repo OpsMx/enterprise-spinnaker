@@ -1,0 +1,84 @@
+
+easyInstallation: true
+
+## Quay container image registry credentials to create imagePullSecret
+##
+imageCredentials:
+  username: opsmxguest  # Quay username
+  password: OpsMx@321 # Quay password
+  email: info@opsmx.com   # email corresponding to quay registry ID
+k8sServiceType: NodePort  
+## Declare all the global variables under this
+## Global variables can be accessed across all the charts including sub-charts
+global:
+  # Spinnaker Deck URL configuration; url overwhich spinnaker deck will be accessed
+  ## Set this to false if cert-manager is not installed
+  ## If cert-manager is installed, an issuer will be created
+  ## by OES helm chart which generates certs for tls automatically
+  ## If cert-manager is not installed, specify secrets with
+  ## certificates under oesUI.tls.secretName & oesGate.tls.secretName
+
+  certManager:
+    installed: false
+  self-signed-certs:
+    enabled: false # At this point this is not supported
+
+  # Below flag is used to setup tls termination at ingress
+  # when this flag is set to false; spinnaker and oes endpoints
+  # will be accessible over http instead of https
+  ssl:
+    enabled: false
+
+  ## Set to true to expose oes-ui, oes-gate services over ingress
+  ##
+  createIngress: false
+
+
+  spinDeck:
+          protocol: http
+          host: 34.136.186.227
+          port: 32110
+
+  # Spinnaker Gate URL configuration; url overwhich spinnaker gate will be accessed
+  spinGate:
+          protocol: http
+          host: 34.136.186.227
+          port: 32111
+gate:
+   config:
+    # to use common gate for both oes and spinnaker
+     commonGate:
+            enabled: false
+sapor:
+  config:
+    encrypt:
+      enabled: true
+      key: QFGFGDjyggkfZjhgkhk # ex: Q7udUkHPuA3VnNlOtksSgQ     #encryption key needed for sapor to startup from 3.9
+## OES-UI url configuration
+oesUI:
+  protocol: http
+  host: 34.136.186.227
+  port: 32112
+
+## OES-Gate url configuration
+oesGate:
+  protocol: http
+  host: 34.136.186.227
+  port: 32113
+
+
+spinnaker:
+  # Initialize gitOps style Halyard
+  gitopsHalyard:
+    enabled: false
+    pipelinePromotion:
+            enabled: false
+  ## Here basic ldap auth is used by default; everything under spinCli will be pasted in ~/.spin/config
+  spinCli:
+    gate:
+      endpoint: http://spin-gate:8084 # Should same as the spin-gate URL
+    auth:
+      enabled: true
+      basic:
+        username: admin          # Please updated as required
+        password: opsmxadmin123  # Please updated as required

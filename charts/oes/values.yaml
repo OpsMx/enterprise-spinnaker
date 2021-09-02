@@ -4,7 +4,7 @@
 # Default values for OES chart.
 ## This is a YAML-formatted file.
 ## Declare variables to be passed into your templates.
-
+easyInstallation: false
 ## Name of the secret for pulling image from docker registry.
 ## Change it only if you want to create a secret with
 ## different name before installing oes chart and use it.
@@ -57,7 +57,8 @@ global:
   ## by OES helm chart which generates certs for tls automatically
   ## If cert-manager is not installed, specify secrets with
   ## certificates under oesUI.tls.secretName & oesGate.tls.secretName
-
+  commonGate:
+     enabled: false
   certManager:
     installed: true
   self-signed-certs:
@@ -372,8 +373,6 @@ gate:
     ## Set it to true to disable LDAP authentication and enable file based authentication
     ## Reach out over support@opsmx.com for pre-configured user credentials
     # common gate for both spin and oes
-    commonGate:
-            enabled: false
      
     fileBasedAuthentication:
       enabled: false
@@ -810,13 +809,36 @@ spinnaker:
         ## otherwise its harmless and will likely become default behavior in the future
         ## According to the linked github issue.
         gate-local.yml:
-          server:
-            tomcat:
-              protocolHeader: X-Forwarded-Proto
-              remoteIpHeader: X-Forwarded-For
-              internalProxies: .*
-              httpsServerPort: X-Forwarded-Port
-
+                server:
+                  tomcat:
+                    httpsServerPort: X-Forwarded-Port
+                    internalProxies: .*
+                    protocolHeader: X-Forwarded-Proto
+                    remoteIpHeader: X-Forwarded-For
+                spinnaker:
+                  extensibility:
+                    plugins:
+                    deck-proxy:
+                      enabled: true
+                      plugins:
+                        Opsmx.VerificationGatePlugin:
+                          enabled: true
+                          version: 1.0.1
+                        Opsmx.TestVerificationGatePlugin:
+                          enabled: true
+                          version: 1.0.1
+                        Opsmx.PolicyGatePlugin:
+                          enabled: true
+                          version: 1.0.1
+                        Opsmx.CustomStagePlugin:
+                          enabled: true
+                          version: 1.0.1
+                        Opsmx.VisibilityApprovalPlugin:
+                          enabled: true
+                          version: 1.0.1
+                    repositories:
+                      opsmx-repo:
+                        url: https://raw.githubusercontent.com/opsmx/spinnakerPluginRepository/v3.9.0/plugins.json
         ##If opa is installed and enabled  and spinnaker is installed,
         ##Then you can enable policy in spinnaker through front50-local yaml.
         ##If you don't want to configure make it as false or
@@ -826,7 +848,18 @@ spinnaker:
             opa:
               enabled: true
               url: http://oes-sapor.{{ .Release.Namespace }}:8085
-
+        fiat-local.yml:
+                auth:
+                  groupMembership:
+                    service: ldap
+                    ldap:
+                      url: ldap://RELEASE_NAME-openldap:389
+                      managerDn: cn=admin,dc=example,dc=org
+                      managerPassword: opsmxadmin123
+                      groupSearchBase: ou=groups,dc=example,dc=org
+                      groupSearchFilter: member={0}
+                      groupRoleAttributes: cn
+                      userDnPattern: cn={0},dc=example,dc=org
     ## Define custom settings for Spinnaker services. Read more for details:
     ## https://www.spinnaker.io/reference/halyard/custom/#custom-service-settings
     ## You can use it to add annotations for pods, override the image, etc.

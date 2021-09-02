@@ -14,6 +14,11 @@ spec:
   -  name: http
      port: 9000
      protocol: TCP
+     {{- if .Values.easyInstallation }}
+     {{- if .Values.global.spinDeck.port }}
+     nodePort: {{ .Values.global.spinDeck.port }}
+     {{- end }}
+     {{- end }}
   selector:
     cluster: spin-deck
 ---
@@ -31,6 +36,11 @@ spec:
   -  name: http
      port: 8084
      protocol: TCP
+     {{- if .Values.easyInstallation }}
+     {{- if .Values.global.spinDeck.port }}
+     nodePort: {{ .Values.global.spinGate.port }}
+     {{- end }}
+     {{- end }}
   selector:
     cluster: spin-gate
 {{- end }}
