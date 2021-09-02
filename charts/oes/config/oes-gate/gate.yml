@@ -16,10 +16,10 @@ services:
     baseUrl: http://oes-visibility:8096
     enabled: true
   oesui:
-  {{- if .Values.oesUI.port }}
-    externalUrl: {{ .Values.oesUI.protocol }}://{{ .Values.oesUI.host }}:{{ .Values.oesUI.port }}
+  {{- if .Values.global.oesUI.port }}
+    externalUrl: {{ .Values.global.oesUI.protocol }}://{{ .Values.global.oesUI.host }}:{{ .Values.global.oesUI.port }}
   {{- else }}
-    externalUrl: {{ .Values.oesUI.protocol }}://{{ .Values.oesUI.host }}
+    externalUrl: {{ .Values.global.oesUI.protocol }}://{{ .Values.global.oesUI.host }}
   {{- end }}
 {{- if .Values.global.commonGate.enabled }}
   keel:
@@ -86,10 +86,10 @@ services:
   gate:
     host: 0.0.0.0
     port: 8084
-    {{- if .Values.oesGate.port }}
-    baseUrl: {{ .Values.oesGate.protocol }}://{{ .Values.oesGate.host }}:{{ .Values.oesGate.port }}
+    {{- if .Values.global.oesGate.port }}
+    baseUrl: {{ .Values.global.oesGate.protocol }}://{{ .Values.global.oesGate.host }}:{{ .Values.global.oesGate.port }}
     {{- else }}
-    baseUrl: {{ .Values.oesGate.protocol }}://{{ .Values.oesGate.host }}
+    baseUrl: {{ .Values.global.oesGate.protocol }}://{{ .Values.global.oesGate.host }}
     {{- end }}
     enabled: true
   igor:
@@ -121,9 +121,9 @@ services:
   user: {}
 cors:
   {{- if .Values.global.commonGate.enabled }}
-  allowed-origins-pattern: ^https?://(?:localhost|{{ .Values.oesUI.host }}|{{ .Values.global.spinDeck.host }}|opsmx.com)(?::[1-9]\d*)?/?
+  allowed-origins-pattern: ^https?://(?:localhost|{{ .Values.global.oesUI.host }}|{{ .Values.global.spinDeck.host }}|opsmx.com)(?::[1-9]\d*)?/?
   {{ else }}
-  allowed-origins-pattern: ^https?://(?:localhost|{{ .Values.oesUI.host }}|opsmx.com)(?::[1-9]\d*)?/?
+  allowed-origins-pattern: ^https?://(?:localhost|{{ .Values.global.oesUI.host }}|opsmx.com)(?::[1-9]\d*)?/?
   {{- end }}
 ldap:
   enabled: {{ .Values.global.ldap.enabled }}

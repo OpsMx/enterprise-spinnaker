@@ -1,8 +1,8 @@
 {
-{{- if .Values.oesGate.port }}
-    "endPointUrl": "{{ .Values.oesGate.protocol }}://{{ .Values.oesGate.host }}:{{ .Values.oesGate.port }}/",
+{{- if .Values.global.oesGate.port }}
+    "endPointUrl": "{{ .Values.global.oesGate.protocol }}://{{ .Values.global.oesGate.host }}:{{ .Values.global.oesGate.port }}/",
 {{- else }}
-    "endPointUrl": "{{ .Values.oesGate.protocol }}://{{ .Values.oesGate.host }}/",
+    "endPointUrl": "{{ .Values.global.oesGate.protocol }}://{{ .Values.global.oesGate.host }}/",
 {{- end }}
     "setApplicationInterval": {{ .Values.ui.config.setApplicationRefreshInterval }}
 }

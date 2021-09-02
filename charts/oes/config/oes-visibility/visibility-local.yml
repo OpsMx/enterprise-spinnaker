@@ -16,10 +16,10 @@ spring:
             parameters:
               AbstractSerializableParameter: ERROR
 gate:
-{{- if .Values.oesGate.port }}
-  url: {{ .Values.oesGate.protocol }}://{{ .Values.oesGate.host }}:{{ .Values.oesGate.port }}
+{{- if .Values.global.oesGate.port }}
+  url: {{ .Values.global.oesGate.protocol }}://{{ .Values.global.oesGate.host }}:{{ .Values.global.oesGate.port }}
 {{- else }}
-  url: {{ .Values.oesGate.protocol }}://{{ .Values.oesGate.host }}
+  url: {{ .Values.global.oesGate.protocol }}://{{ .Values.global.oesGate.host }}
 {{- end }}
 
 jira:

@@ -43,17 +43,17 @@ oes:
   visibility:
     url: http://oes-visibility:8096
   approvalGate:
-{{- if .Values.oesGate.port }}
-    apiUrl: {{ .Values.oesGate.protocol }}://{{ .Values.oesGate.host }}:{{ .Values.oesGate.port }}/visibilityservice/v5/approvalGates/{id}/trigger
+{{- if .Values.global.oesGate.port }}
+    apiUrl: {{ .Values.global.oesGate.protocol }}://{{ .Values.global.oesGate.host }}:{{ .Values.global.oesGate.port }}/visibilityservice/v5/approvalGates/{id}/trigger
 {{- else }}
-    apiUrl: {{ .Values.oesGate.protocol }}://{{ .Values.oesGate.host }}/visibilityservice/v5/approvalGates/{id}/trigger
+    apiUrl: {{ .Values.global.oesGate.protocol }}://{{ .Values.global.oesGate.host }}/visibilityservice/v5/approvalGates/{id}/trigger
 {{- end }}
 
   verificationGate:
-{{- if .Values.oesGate.port }}
-    apiUrl: {{ .Values.oesGate.protocol }}://{{ .Values.oesGate.host }}:{{ .Values.oesGate.port }}/autopilot/api/v3/registerCanary
+{{- if .Values.global.oesGate.port }}
+    apiUrl: {{ .Values.global.oesGate.protocol }}://{{ .Values.global.oesGate.host }}:{{ .Values.global.oesGate.port }}/autopilot/api/v3/registerCanary
 {{- else }}
-    apiUrl: {{ .Values.oesGate.protocol }}://{{ .Values.oesGate.host }}/autopilot/api/v3/registerCanary
+    apiUrl: {{ .Values.global.oesGate.protocol }}://{{ .Values.global.oesGate.host }}/autopilot/api/v3/registerCanary
 {{- end }}
 
 logging:

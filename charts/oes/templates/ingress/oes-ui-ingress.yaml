@@ -10,13 +10,13 @@ metadata:
     cert-manager.io/issuer: letsencrypt-{{ .Release.Namespace }}-spin
     kubernetes.io/tls-acme: "true"
 {{- end }}
-{{- if .Values.oesUI.ingress.annotations }}
-{{ tpl (toYaml .Values.oesUI.ingress.annotations) . | indent 4 }}
+{{- if .Values.global.oesUI.ingress.annotations }}
+{{ tpl (toYaml .Values.global.oesUI.ingress.annotations) . | indent 4 }}
 {{- end }}
   name: oes-ui-ingress
 spec:
   rules:
-  - host: {{ .Values.oesUI.host }}
+  - host: {{ .Values.global.oesUI.host }}
     http:
       paths:
       - backend:
@@ -26,8 +26,8 @@ spec:
 {{- if .Values.global.ssl.enabled }}
   tls:
   - hosts:
-    - {{ .Values.oesUI.host }}
-{{ toYaml .Values.oesUI.ingress.tls | indent 4 }}
+    - {{ .Values.global.oesUI.host }}
+{{ toYaml .Values.global.oesUI.ingress.tls | indent 4 }}
 {{- end }}
 {{- end }}
 {{- end }}
