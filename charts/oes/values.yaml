@@ -1142,7 +1142,7 @@ spinnaker:
   ## Here basic ldap auth is used by default; everything under spinCli will be pasted in ~/.spin/config
   spinCli:
     gate:
-      endpoint: http://spin-gate:8084 # Should same as the spin-gate URL
+      endpoint: http://oes-gate:8084 # Should same as the spin-gate URL
     auth:
       enabled: true
       basic:
