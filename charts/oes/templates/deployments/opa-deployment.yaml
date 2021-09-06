@@ -37,6 +37,10 @@ spec:
           volumeMounts:
           - mountPath: /tmp
             name: opa-persist
+      {{- if .Values.opa.nodeSelector }}
+      nodeSelector:
+{{ toYaml .Values.opa.nodeSelector | indent 8 }}
+      {{- end }}
       restartPolicy: Always
       volumes:
         - configMap:
