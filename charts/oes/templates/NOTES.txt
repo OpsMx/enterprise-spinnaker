@@ -36,7 +36,7 @@ To learn more about the release, try:
 
   Once the service is up and running, connect using below url
 
-  {{ .Values.oesUI.protocol }}://{{ .Values.oesUI.host }}
+  {{ .Values.global.oesUI.protocol }}://{{ .Values.global.oesUI.host }}
 
 
 {{- else }}

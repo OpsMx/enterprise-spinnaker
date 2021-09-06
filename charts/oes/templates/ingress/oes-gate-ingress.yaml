@@ -10,13 +10,13 @@ metadata:
     cert-manager.io/issuer: letsencrypt-{{ .Release.Namespace }}-spin
     kubernetes.io/tls-acme: "true"
 {{- end }}
-{{- if .Values.oesGate.ingress.annotations }}
-{{ tpl (toYaml .Values.oesGate.ingress.annotations) . | indent 4 }}
+{{- if .Values.global.oesGate.ingress.annotations }}
+{{ tpl (toYaml .Values.global.oesGate.ingress.annotations) . | indent 4 }}
 {{- end }}
   name: oes-gate-ingress
 spec:
   rules:
-  - host: {{ .Values.oesGate.host }}
+  - host: {{ .Values.global.oesGate.host }}
     http:
       paths:
       - backend:
@@ -26,8 +26,8 @@ spec:
 {{- if .Values.global.ssl.enabled }}
   tls:
   - hosts:
-    - {{ .Values.oesGate.host }}
-{{ toYaml .Values.oesGate.ingress.tls | indent 4 }}
+    - {{ .Values.global.oesGate.host }}
+{{ toYaml .Values.global.oesGate.ingress.tls | indent 4 }}
 {{- end }}
 {{- end }}
 {{- end }}
