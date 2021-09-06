@@ -4,8 +4,8 @@ easyInstallation: true
 ## Quay container image registry credentials to create imagePullSecret
 ##
 imageCredentials:
-  username: opsmxguest  # Quay username
-  password: OpsMx@321 # Quay password
+  username: quayusername  # Quay username
+  password: quaypassword # Quay password
   email: info@opsmx.com   # email corresponding to quay registry ID
 k8sServiceType: NodePort  
 ## Declare all the global variables under this
@@ -36,13 +36,13 @@ global:
 
   spinDeck:
           protocol: http
-          host: 34.136.186.227
+          host: ip_address
           port: 32110
 
   # Spinnaker Gate URL configuration; url overwhich spinnaker gate will be accessed
   spinGate:
           protocol: http
-          host: 34.136.186.227
+          host: ip_address
           port: 32111
 gate:
    config:
@@ -57,13 +57,13 @@ sapor:
 ## OES-UI url configuration
 oesUI:
   protocol: http
-  host: 34.136.186.227
+  host: ip_address
   port: 32112
 
 ## OES-Gate url configuration
 oesGate:
   protocol: http
-  host: 34.136.186.227
+  host: ip_address
   port: 32113
 
 
@@ -73,12 +73,3 @@ spinnaker:
     enabled: false
     pipelinePromotion:
             enabled: false
-  ## Here basic ldap auth is used by default; everything under spinCli will be pasted in ~/.spin/config
-  spinCli:
-    gate:
-      endpoint: http://spin-gate:8084 # Should same as the spin-gate URL
-    auth:
-      enabled: true
-      basic:
-        username: admin          # Please updated as required
-        password: opsmxadmin123  # Please updated as required
