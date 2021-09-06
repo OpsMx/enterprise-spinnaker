@@ -16,14 +16,115 @@ services:
     baseUrl: http://oes-visibility:8096
     enabled: true
   oesui:
-  {{- if .Values.oesUI.port }}
-    externalUrl: {{ .Values.oesUI.protocol }}://{{ .Values.oesUI.host }}:{{ .Values.oesUI.port }}
+  {{- if .Values.global.oesUI.port }}
+    externalUrl: {{ .Values.global.oesUI.protocol }}://{{ .Values.global.oesUI.host }}:{{ .Values.global.oesUI.port }}
   {{- else }}
-    externalUrl: {{ .Values.oesUI.protocol }}://{{ .Values.oesUI.host }}
+    externalUrl: {{ .Values.global.oesUI.protocol }}://{{ .Values.global.oesUI.host }}
   {{- end }}
+{{- if .Values.global.commonGate.enabled }}
+  keel:
+    enabled: false
+  clouddriver:
+    host: 0.0.0.0
+    port: 7002
+    baseUrl: http://spin-clouddriver-caching:7002
+    enabled: true
+  clouddriverCaching:
+    host: 0.0.0.0
+    port: 7002
+    baseUrl: http://spin-clouddriver-caching:7002
+    enabled: true
+  clouddriverRo:
+    host: 0.0.0.0
+    port: 7002
+    baseUrl: http://spin-clouddriver-ro:7002
+    enabled: true
+  clouddriverRoDeck:
+    host: 0.0.0.0
+    port: 7002
+    baseUrl: http://spin-clouddriver-ro-deck:7002
+    enabled: true
+  clouddriverRw:
+    host: 0.0.0.0
+    port: 7002
+    baseUrl: http://spin-clouddriver-rw:7002
+    enabled: true
+  deck:
+    host: 0.0.0.0
+    port: 9000
+    {{- if .Values.global.spinDeck.port }}
+    baseUrl: {{ .Values.global.spinDeck.protocol }}://{{ .Values.global.spinDeck.host }}:{{ .Values.global.spinDeck.port }}
+    {{- else }}
+    baseUrl: {{ .Values.global.spinDeck.protocol }}://{{ .Values.global.spinDeck.host }}
+    {{- end }}
+    enabled: true
+  echo:
+    host: 0.0.0.0
+    port: 8089
+    baseUrl: http://spin-echo-worker:8089
+    enabled: true
+  echoScheduler:
+    host: 0.0.0.0
+    port: 8089
+    baseUrl: http://spin-echo-scheduler:8089
+    enabled: true
+  echoWorker:
+    host: 0.0.0.0
+    port: 8089
+    baseUrl: http://spin-echo-worker:8089
+    enabled: true
+  fiat:
+    host: 0.0.0.0
+    port: 7003
+    baseUrl: http://spin-fiat:7003
+    enabled: false
+  front50:
+    host: 0.0.0.0
+    port: 8080
+    baseUrl: http://spin-front50:8080
+    enabled: true
+  gate:
+    host: 0.0.0.0
+    port: 8084
+    {{- if .Values.global.oesGate.port }}
+    baseUrl: {{ .Values.global.oesGate.protocol }}://{{ .Values.global.oesGate.host }}:{{ .Values.global.oesGate.port }}
+    {{- else }}
+    baseUrl: {{ .Values.global.oesGate.protocol }}://{{ .Values.global.oesGate.host }}
+    {{- end }}
+    enabled: true
+  igor:
+    host: 0.0.0.0
+    port: 8088
+    baseUrl: http://spin-igor:8088
+    enabled: true
+  kayenta:
+    host: 0.0.0.0
+    port: 8090
+    baseUrl: http://spin-kayenta:8090
+    enabled: false
+  orca:
+    host: 0.0.0.0
+    port: 8083
+    baseUrl: http://spin-orca:8083
+    enabled: true
+  redis:
+    host: 0.0.0.0
+    port: {{ .Values.redis.port }}
+    baseUrl: {{ tpl .Values.redis.url . }}:{{ .Values.redis.port }}
+    enabled: true
+  rosco:
+    host: 0.0.0.0
+    port: 8087
+    baseUrl: http://spin-rosco:8087
+    enabled: true
+{{- end }}
   user: {}
 cors:
-  allowed-origins-pattern: ^https?://(?:localhost|{{ .Values.oesUI.host }}|opsmx.com)(?::[1-9]\d*)?/?
+  {{- if .Values.global.commonGate.enabled }}
+  allowed-origins-pattern: ^https?://(?:localhost|{{ .Values.global.oesUI.host }}|{{ .Values.global.spinDeck.host }}|opsmx.com)(?::[1-9]\d*)?/?
+  {{ else }}
+  allowed-origins-pattern: ^https?://(?:localhost|{{ .Values.global.oesUI.host }}|opsmx.com)(?::[1-9]\d*)?/?
+  {{- end }}
 ldap:
   enabled: {{ .Values.global.ldap.enabled }}
   managerDn: {{ .Values.global.ldap.managerDn }}
@@ -52,13 +153,8 @@ file:
 authn:
   mode: session
 google: {}
-logging:
-  level:
-    com.netflix.spinnaker.gate.security: INFO
-    org.springframework.security: INFO
-    org.springframework.web: INFO
 redis:
-  connection: {{ tpl .Values.redis.url . }}
+  connection: {{ tpl .Values.redis.url . }}:{{ .Values.redis.port }}
 server:
   session:
     timeoutInSeconds: {{ .Values.gate.config.server.session.timeoutInSeconds }}
@@ -66,4 +162,36 @@ server:
     protocolHeader: X-Forwarded-Proto
     remoteIpHeader: X-Forwarded-For
     internalProxies: .*
+{{- if .Values.global.commonGate.enabled }}
+spinnaker:
+  extensibility:
+    plugins:
+    deck-proxy:
+      enabled: true
+      plugins:
+        Opsmx.VerificationGatePlugin:
+          enabled: true
+          version: 1.0.1
+        Opsmx.TestVerificationGatePlugin:
+          enabled: true
+          version: 1.0.1
+        Opsmx.PolicyGatePlugin:
+          enabled: true
+          version: 1.0.1
+        Opsmx.VisibilityApprovalPlugin:
+          enabled: true
+          version: 1.0.1
+    repositories:
+        opsmx-repo:
+          url: https://raw.githubusercontent.com/OpsMx/spinnakerPluginRepository/v3.9.0/plugins.json
+{{- end }}
+
+logging:
+  level:
+    com.netflix.spinnaker.gate.security: INFO
+    org.springframework.security: INFO
+    org.springframework.web: INFO
+    #com.netflix.spinnaker.gate.security: DEBUG
+    #org.springframework.security: DEBUG
+    #org.springframework.web: DEBUG
 

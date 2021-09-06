@@ -28,7 +28,7 @@ spec:
       {{- if (eq .Values.db.enabled true) }}
       initContainers:
       - name: db-check
-        image: postgres:9.6.5
+        image: {{ .Values.global.customImages.registry }}/postgres:9.6.5
         command: ['/bin/bash', '-c', "sleep 30;echo Waiting for oes-db to be up and running; pg_isready -h oes-db -p 5432 && echo PostgreSQL DB is ready to receive connections"]
       {{- end }}
       containers:
@@ -55,9 +55,10 @@ spec:
         - mountPath: /opt/opsmx/bootstrap.yml
           name: bootstrap-config-volume
           subPath: bootstrap.yml
-        {{- if .Values.sapor.config.caCerts.override }}
-        - name: certs-volume
-          mountPath: /etc/pki/ca-trust/extracted/java
+        {{- if .Values.global.customCerts.enabled }}
+        - mountPath: /etc/pki/ca-trust/extracted/java/cacerts
+          subPath: cacerts
+          name: cacerts
         {{- end }}
         {{- if .Values.sapor.config.spinnaker.x509.enabled }}
         - name: certs-x509-volume
@@ -92,21 +93,23 @@ spec:
           secretName: ca-secret
         name: ca-certs-volume
       {{- end }}
+      {{- if .Values.global.customCerts.enabled }}
+      - name: cacerts
+        secret:
+          secretName: {{ .Values.global.customCerts.secretName }}
+          items:
+          - key: cacerts
+            path: cacerts
+      {{- end }}
       - configMap:
           name: oes-sapor-config
         name: sapor-config-volume
-      - configMap:
-          defaultMode: 420
+      - secret:
           items:
           - key: bootstrap.yml
             path: bootstrap.yml
-          name: bootstrap
+          secretName: bootstrap
         name: bootstrap-config-volume
-      {{- if .Values.sapor.config.caCerts.override }}
-      - name: certs-volume
-        configMap:
-          name: sapor-certs
-      {{- end -}}
       {{- if .Values.sapor.config.spinnaker.x509.enabled }}
       - name: certs-x509-volume
         configMap:

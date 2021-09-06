@@ -183,10 +183,14 @@ data:
     {{- else }}
     $HAL_COMMAND config security ui edit --no-validate --override-base-url {{ .Values.global.spinDeck.protocol }}://{{ .Values.global.spinDeck.host }}
     {{- end }}
-    {{- if .Values.global.spinGate.port }}
+    {{- if and (.Values.global.spinGate.port) (not .Values.global.commonGate.enabled) }}
     $HAL_COMMAND config security api edit --no-validate --override-base-url {{ .Values.global.spinGate.protocol }}://{{ .Values.global.spinGate.host }}:{{ .Values.global.spinGate.port }}
-    {{- else }}
+    {{- else if (not .Values.global.commonGate.enabled) }}
     $HAL_COMMAND config security api edit --no-validate --override-base-url {{ .Values.global.spinGate.protocol }}://{{ .Values.global.spinGate.host }}
+    {{- else if and (.Values.global.commonGate.enabled) (.Values.global.oesGate.port) }}
+    $HAL_COMMAND config security api edit --no-validate --override-base-url {{ .Values.global.oesGate.protocol }}://{{ .Values.global.oesGate.host }}:{{ .Values.global.oesGate.port }}
+    {{- else if (.Values.global.commonGate.enabled) }}
+    $HAL_COMMAND config security api edit --no-validate --override-base-url {{ .Values.global.oesGate.protocol }}://{{ .Values.global.oesGate.host }}
     {{- end }}
     {{- end }}
     {{- range $index, $feature := .Values.spinnakerFeatureFlags }}

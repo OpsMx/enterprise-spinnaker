@@ -49,7 +49,7 @@ Install OpsMx Enterprise for Spinnaker
 
 - Your Kubernetes cluster shall support persistent volumes
 
-- It is assumed that an nginx ingress controller is installed on the cluster, by default ingress resources are created for oes-ui, oes-gate, spin-deck and spin-gate services. Customize the hosts for OES using the options in the values.yaml under oesUI, oesGate, spinDeck, spinGate. If any other ingress controller is installed, set createIngress flag to false and configure your ingress.
+- It is assumed that an nginx ingress controller is installed on the cluster, by default ingress resources are created for oes-ui, oes-gate, spin-deck and spin-gate services. Customize the hosts for OES using the options in the values.yaml under global.oesUI, oesGate, spinDeck, spinGate. If any other ingress controller is installed, set createIngress flag to false and configure your ingress.
 
 - To enable mutual TLS for Spinnaker Services and SSL features provided by Spinnaker Life Cycle Management (LCM), it is required to install nginx ingress from kubernetes community and cert-manager before installing OES. Please refer the table below for options to be enabled for LCM
   Instructions to install nginx ingress
@@ -110,10 +110,10 @@ Parameter | Description | Default
 `global.spinGate.host` | Host using which spinnaker gate needs to be accessed | `gate.spinnaker.example.org`
 `global.spinGate.ingress.annotations` | Annotations for spinnaker gate ingress resource | ``
 `global.spinGate.ingress.tls.secretName` | Change this value if your own certificate is put into a specific secret | `gate-authtls`
-`oesUI.protocol` | Change this to https if TLS is enabled for ingress endpoint | `http`
-`oesUI.host` | Host using which UI needs to be accessed | `oes.domain.com`
-`oesGate.protocol` | Change this to https if TLS is enabled for ingress endpoint | `http`
-`oesGate.host` | Host using which Gate needs to be accessed | `oes-api.domain.com`
+`global.oesUI.protocol` | Change this to https if TLS is enabled for ingress endpoint | `http`
+`global.oesUI.host` | Host using which UI needs to be accessed | `oes.domain.com`
+`global.oesGate.protocol` | Change this to https if TLS is enabled for ingress endpoint | `http`
+`global.oesGate.host` | Host using which Gate needs to be accessed | `oes-api.domain.com`
 `k8sServiceType` | Service Type of oes-ui, oes-gate, spin-deck-ui, spin-gate | `LoadBalancer`
 `installRedis` | If true, OES will install its own Redis for caching. This option is mutually exclusive with installSpinnaker | `false`
 `redis.url` | Set custom URL if installRedis is set to false | `redis://{{ .Release.Name }}-redis-master:6379`
@@ -127,7 +127,7 @@ Parameter | Description | Default
 `autopilot.config.ssl.keyStoreType` | SSL keystore type | `PKCS12`
 `autopilot.config.ssl.keyAlias` | SSL key alias | `tomcat`
 `dashboard.spinnakerLink` | Specify if dashboard needs to be configured with a different spinnaker | `{{ .Values.spinnaker.ingress.protocol }}://{{ .Values.spinnaker.ingress.host }}`
-`gate.config.oesUIcors` | Regex of OES-UI URL to prevent cross origin attacks | `^https?://(?:localhost|OES_UI_LOADBALANCER_IP|opsmx.com)(?::[1-9]\d*)?/?`
+`gate.config.global.oesUIcors` | Regex of OES-UI URL to prevent cross origin attacks | `^https?://(?:localhost|OES_UI_LOADBALANCER_IP|opsmx.com)(?::[1-9]\d*)?/?`
 `gate.config.fileBasedAuthentication` | Set it to true to disable LDAP authentication and enable file based authentication | `false`
 `gate.config.saml` | SAML configuration for oes gate authn and authz | ``
 `gate.config.saml.jksSecretName` | Set this value to use an existing secret in which saml jks exists | `oes-saml-jks`

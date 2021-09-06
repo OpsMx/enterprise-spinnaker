@@ -1,0 +1,27 @@
+apiVersion: v1
+data:
+  opa-persist.sh: |
+    set -x
+    sleep 20
+    BASEURL=$GATEURL
+    USERPASS="-u ${GATEUSER}:${GATEPASS}"
+    curl $USERPASS $BASEURL/oes/v1/policies/list > listofpolicies.json
+    #Get the policy NAMES
+    [ -s "listofpolicies.json" ] && cat listofpolicies.json | jq .[] | jq -r .policyName > policies || echo "No policies exist"; sleep 3600
+    #for each NAME
+    while read -e name; do
+      #Get content
+      curl $USERPASS $BASEURL/oes/v1/policy/$name > tmp.json
+
+      #Get Policy ID
+      ID=`cat tmp.json|jq .response | jq '.policyId'`
+      #Delete Policy ID
+      cat tmp.json|jq .response | jq 'del(.policyId)'  > update.json
+
+      #update
+      curl $USERPASS -X PUT -H "Content-Type: application/json" -d @update.json $BASEURL/oes/v1/policy/$ID
+    done <  policies
+    #endFOR
+kind: ConfigMap
+metadata:
+  name: opa-persist

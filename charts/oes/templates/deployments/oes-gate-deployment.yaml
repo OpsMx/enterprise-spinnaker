@@ -68,6 +68,11 @@ spec:
           name: metadata-xml	
           subPath: metadata.xml
         {{- end }} 
+        {{- if .Values.global.customCerts.enabled }}
+        - mountPath: /etc/pki/ca-trust/extracted/java/cacerts
+          subPath: cacerts
+          name: cacerts
+        {{- end }}
         readinessProbe:
           tcpSocket:
             port: 8084
@@ -94,6 +99,14 @@ spec:
           secretName: {{ .Values.gate.config.saml.metadataSecretName }}
         name: metadata-xml
       {{- end }}
+      {{- if .Values.global.customCerts.enabled }}
+      - name: cacerts
+        secret:
+          secretName: {{ .Values.global.customCerts.secretName }}
+          items:
+          - key: cacerts
+            path: cacerts
+      {{- end }}
       {{- if .Values.autoConfiguration.enabled }}
       - configMap:
           name: oes-gate-config
@@ -105,11 +118,10 @@ spec:
         configMap:
           name: oes-gate-config
       {{- end }}
-      - configMap:
-          defaultMode: 420
+      - secret:
           items:
           - key: bootstrap.yml
             path: bootstrap.yml
-          name: bootstrap
+          secretName: bootstrap
         name: bootstrap-volume
 {{- end -}}
