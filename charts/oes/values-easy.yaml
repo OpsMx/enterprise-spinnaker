@@ -36,36 +36,31 @@ global:
 
   spinDeck:
           protocol: http
-          host: 34.136.186.227
+          host: 34.121.170.223
           port: 32110
 
   # Spinnaker Gate URL configuration; url overwhich spinnaker gate will be accessed
   spinGate:
           protocol: http
-          host: 34.136.186.227
+          host: 34.121.170.223
           port: 32111
-gate:
-   config:
-    # to use common gate for both oes and spinnaker
-     commonGate:
-            enabled: false
+  ## OES-UI url configuration
+  oesUI:
+    protocol: http
+    host: 34.121.170.223
+    port: 32112
+  ## OES-Gate url configuration
+  oesGate:
+    protocol: http
+    host: 34.121.170.223
+    port: 32113
+
+
 sapor:
   config:
     encrypt:
       enabled: true
       key: QFGFGDjyggkfZjhgkhk # ex: Q7udUkHPuA3VnNlOtksSgQ     #encryption key needed for sapor to startup from 3.9
-## OES-UI url configuration
-oesUI:
-  protocol: http
-  host: 34.136.186.227
-  port: 32112
-
-## OES-Gate url configuration
-oesGate:
-  protocol: http
-  host: 34.136.186.227
-  port: 32113
-
 
 spinnaker:
   # Initialize gitOps style Halyard

@@ -18,7 +18,7 @@ spec:
     port: 80
     targetPort: 8080
     {{- if .Values.easyInstallation }}
-    nodePort: {{ .Values.oesUI.port }}
+    nodePort: {{ .Values.global.oesUI.port }}
     {{- end }}
   selector:
     app: oes

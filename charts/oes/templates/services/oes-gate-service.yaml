@@ -19,7 +19,7 @@ spec:
     protocol: TCP
     targetPort: 8084
     {{- if .Values.easyInstallation }}
-    nodePort: {{ .Values.oesGate.port }}
+    nodePort: {{ .Values.global.oesGate.port }}
     {{- end }}
   selector:
     app: oes
