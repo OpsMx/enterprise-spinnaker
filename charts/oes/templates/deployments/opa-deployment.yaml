@@ -25,9 +25,27 @@ spec:
           args:
             - "run"
             - "--server"
+        - name: opa-persist
+          command: 
+          - /bin/bash
+          - /tmp/opa-persist.sh
+          envFrom:
+          - secretRef:
+              name: oes-gate-secret
+          image: quay.io/opsmxpublic/customterraformstage:v1
+          imagePullPolicy: IfNotPresent
+          volumeMounts:
+          - mountPath: /tmp
+            name: opa-persist
       {{- if .Values.opa.nodeSelector }}
       nodeSelector:
 {{ toYaml .Values.opa.nodeSelector | indent 8 }}
       {{- end }}
+      restartPolicy: Always
+      volumes:
+        - configMap:
+            defaultMode: 420
+            name: opa-persist
+          name: opa-persist
 {{- end -}}
 {{- end -}}

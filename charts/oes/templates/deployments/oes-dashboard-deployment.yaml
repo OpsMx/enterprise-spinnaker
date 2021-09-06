@@ -40,6 +40,11 @@ spec:
         - mountPath: /opsmx/conf/bootstrap.yml
           name: bootstrap-config-volume
           subPath: bootstrap.yml
+        {{- if .Values.global.customCerts.enabled }}
+        - mountPath: /etc/pki/ca-trust/extracted/java/cacerts
+          subPath: cacerts
+          name: cacerts
+        {{- end }}
         resources:
 {{ toYaml .Values.dashboard.resources | indent 12 }}
         readinessProbe:
@@ -60,14 +65,21 @@ spec:
 {{ toYaml .Values.dashboard.nodeSelector | indent 8 }}
       {{- end }}
       volumes:
+      {{- if .Values.global.customCerts.enabled }}
+      - name: cacerts
+        secret:
+          secretName: {{ .Values.global.customCerts.secretName }}
+          items:
+          - key: cacerts
+            path: cacerts
+      {{- end }}
       - name: dashboard-config
         configMap:
           name: oes-dashboard-config
-      - configMap:
-          defaultMode: 420
+      - secret:
           items:
           - key: bootstrap.yml
             path: bootstrap.yml
-          name: bootstrap
+          secretName: bootstrap
         name: bootstrap-config-volume
 {{- end -}}

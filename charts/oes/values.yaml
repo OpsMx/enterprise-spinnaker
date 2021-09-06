@@ -24,17 +24,13 @@ rbac:
 ####################################################
 ## Option to skip installation of OpsMx Spinnaker
 ## Setting this to true, will ensure custom ubi8 images of Spinnaker
-## installSpinnaker and installRedis flags are mutually exclusive
 installSpinnaker: true
 
 ####################################################
 ## Redis configuration
 ####################################################
-## Install a seperate Redis for OES if installSpinnaker is set to false
-## If Spinnaker is being installed, redis installed by spinnaker chart can
-## be re-used
-## installSpinnaker and installRedis flags are mutually exclusive
-installRedis: false
+## Set it to false only if OES needs to be configured with external redis
+installRedis: true
 
 ## Installation mode
 ## Available installation modes OES-AP, None
@@ -52,16 +48,27 @@ k8sServiceType: ClusterIP
 ## Declare all the global variables under this
 ## Global variables can be accessed across all the charts including sub-charts
 global:
+  ## Custom Images registry where all the OSS and customized images used in the helm chart are stored
+  ## List of images: busybox:1.28, bitnami-kubectl:1.18, postgres:9.6.5, oes-pre-configure:v2, create-secret:v10
+  ## awsgit:v2, k8s-decoder:hal, bitnami-kubectl:1.18.5
+  customImages:
+    registry: quay.io/opsmxpublic
+
   ## Set this to false if cert-manager is not installed
   ## If cert-manager is installed, an issuer will be created
   ## by OES helm chart which generates certs for tls automatically
   ## If cert-manager is not installed, specify secrets with
   ## certificates under oesUI.tls.secretName & oesGate.tls.secretName
-
   certManager:
     installed: true
-  self-signed-certs:
-    enabled: false # At this point this is not supported
+
+  # common gate for both spin and oes
+  commonGate:
+    enabled: true
+
+  customCerts:
+    enabled: true
+    secretName: oes-cacerts #TODO: Document procedure for creating this one and enhance scripts to merge cacerts created by controller and this
 
   # Below flag is used to setup tls termination at ingress
   # when this flag is set to false; spinnaker and oes endpoints
@@ -104,6 +111,34 @@ global:
       tls:
         secretName: gate-authtls
 
+  ## OES-UI url configuration
+  oesUI:
+    protocol: https
+    host: oes.example.ops.com
+    # Use below port when hostname above is an external IP instead of a hostname
+    #port: 80
+
+    ingress:
+      annotations:
+        kubernetes.io/ingress.class: nginx
+
+      tls:
+        secretName: oes-ui-authtls
+
+  ## OES-Gate url configuration
+  oesGate:
+    protocol: https
+    host: oes-gate.example.ops.com
+    # Use below port when hostname above is an external IP instead of a hostname
+    #port: 8084
+
+    ingress:
+      annotations:
+        kubernetes.io/ingress.class: nginx
+
+      tls:
+        secretName: oes-gate-authtls
+
   ## Set it to false if own LDAP is to be configured
   ## ldap configuration used in oes-gate, oes-platform and spinnaker gate for authentication
   ## and authorization
@@ -121,38 +156,7 @@ global:
 
   ## Use the below flag to exclude pre-delete helm hooks to the
   ## rendered manifests
-  preDeleteHelmHooks: false
-
-
-## OES-UI url configuration
-oesUI:
-  protocol: https
-  host: oes.example.ops.com
-  # Use below port when hostname above is an external IP instead of a hostname
-  #port: 80
-
-  ingress:
-    annotations:
-      kubernetes.io/ingress.class: nginx
-
-    tls:
-      secretName: oes-ui-authtls
-
-## OES-Gate url configuration
-oesGate:
-  protocol: https
-  host: oes-gate.example.ops.com
-  # Use below port when hostname above is an external IP instead of a hostname
-  #port: 8084
-
-  ingress:
-    annotations:
-      kubernetes.io/ingress.class: nginx
-
-    tls:
-      secretName: oes-gate-authtls
-
-
+  preDeleteHelmHooks: true
 
 ###############################################################################
 ## Details of redis-master image for OES
@@ -162,10 +166,35 @@ redis:
   ## Change this to custom URL if installRedis is set to false
   ## url: redis://{{ .Release.Name }}-redis-master:6379
   ##
-  url: redis://:password@{{ .Release.Name }}-redis-master:6379
+  url: redis://:password@{{ .Release.Name }}-redis-master
+  port: 6379
+  image:
+    registry: quay.io/opsmxpublic
+    repository: bitnami-redis
   password: password
   cluster:
     enabled: false
+
+  # External Redis option will be enabled if in-cluster redis is disabled
+  external:
+    host: "<EXTERNAL-REDIS-HOST-NAME>"
+    port: 6379
+    # password: ""
+  nodeSelector: {}
+
+  ## Redis config file
+  ## ref: https://redis.io/topics/config
+  ##
+  configmap: |-
+    # Enable AOF https://redis.io/topics/persistence#append-only-file
+    appendonly no
+    # Disable RDB persistence, AOF persistence already enabled.
+    save 60 1000
+
+  # Uncomment if you don't want to create a PVC for redis
+  #  master:
+  #    persistence:
+  #      enabled: false
 
 ###############################################################################
 ##
@@ -374,13 +403,9 @@ gate:
     ##
 
     ## Regex of OES-UI URL to allow cross origin requests; this is framed using oesUI.host
-
+     
     ## Set it to true to disable LDAP authentication and enable file based authentication
     ## Reach out over support@opsmx.com for pre-configured user credentials
-    # common gate for both spin and oes
-    commonGate:
-            enabled: false
-     
     fileBasedAuthentication:
       enabled: false
     server:
@@ -562,11 +587,6 @@ sapor:
     datasources:
       platform: true
 
-    ## Set the below field to true if default java cacert is to be overriden
-    ##
-    caCerts:
-      override: false
-
 ###############################################################################
 ##
 ## Values of OES UI
@@ -741,6 +761,36 @@ openldap:
       description: read and execute group
       member: cn=admin,dc=example,dc=org
       member: cn=ITManager,dc=example,dc=org
+    10-users.ldif: |-
+      dn: cn=user1,dc=example,dc=org
+      objectClass: simpleSecurityObject
+      objectClass: organizationalRole
+      cn: user1
+      userpassword: {SSHA}Y9L4AsYL16WLK10qDZ62pTScFnaWb0nz
+
+      dn: cn=user2,dc=example,dc=org
+      objectClass: simpleSecurityObject
+      objectClass: organizationalRole
+      cn: user2
+      userpassword: {SSHA}DasTBI0eut1F83Bh1F1HXmDT8juJj3pY
+
+      dn: cn=user3,dc=example,dc=org
+      objectClass: simpleSecurityObject
+      objectClass: organizationalRole
+      cn: user3
+      userpassword: {SSHA}Qu1FW7BdLMndwM/Gf+zc3a8VIMAymbuv
+
+      dn: cn=developers,ou=groups,dc=example,dc=org
+      changetype: modify
+      add: member
+      member: cn=user1,dc=example,dc=org
+      member: cn=user3,dc=example,dc=org
+
+      dn: cn=QA,ou=groups,dc=example,dc=org
+      changetype: modify
+      add: member
+      member: cn=user2,dc=example,dc=org
+      member: cn=user3,dc=example,dc=org
 
 ## ldap configuration used in oes-gate, oes-platform and spinnaker gate for authentication
 ## and authorization
@@ -959,44 +1009,17 @@ spinnaker:
   # nodeSelector to provide to each of the Spinnaker components
   nodeSelector: {}
 
-  # Redis password to use for the in-cluster redis service
-  # Enable redis to use in-cluster redis
-  redis:
-    enabled: true
-    # External Redis option will be enabled if in-cluster redis is disabled
-    external:
-      host: "<EXTERNAL-REDIS-HOST-NAME>"
-      port: 6379
-      # password: ""
-    password: password
-    nodeSelector: {}
-    cluster:
-      enabled: false
-
-    ## Redis config file	
-    ## ref: https://redis.io/topics/config	
-    ##	
-    configmap: |-	
-      # Enable AOF https://redis.io/topics/persistence#append-only-file	
-      appendonly no	
-      # Disable RDB persistence, AOF persistence already enabled.	
-      save 60 1000
-
-    # Use ubi8 custom images
-    #image:
-    #  registry: docker.io
-    #  repository: devopsmx/ubi8-oes-redis
-    #  tag: 4.0.14
-  # Uncomment if you don't want to create a PVC for redis
-  #  master:
-  #    persistence:
-  #      enabled: false
-
   # Minio access/secret keys for the in-cluster S3 usage
   # Minio is not exposed publically
   minio:
     enabled: true
-    imageTag: RELEASE.2019-02-13T19-48-27Z
+    image:
+      repository: quay.io/opsmxpublic/minio
+      tag: RELEASE.2020-01-03T19-12-21Z
+
+    mcImage:
+      repository: quay.io/opsmxpublic/minio-mc
+      tag: RELEASE.2020-11-25T23-04-07Z
     serviceType: ClusterIP
     accessKey: spinnakeradmin
     secretKey: spinnakeradmin
@@ -1005,11 +1028,6 @@ spinnaker:
     persistence:
       enabled: true
       size: 10Gi
-    # Use ubi8 custom images
-    #image:
-    #  repository: devopsmx/ubi8-oes-minio
-    #  tag: RELEASE.2019-09-18T21-55-05Z
-    #  pullPolicy: IfNotPresent
 
   # Google Cloud Storage
   gcs:
@@ -1067,6 +1085,7 @@ spinnaker:
     enabled: true
     repo:
       type: git # git, s3, stash(bitbucket server) use a different sample values file for s3/bitbuck-stash
+      configArgs: "http.sslVerify=true"
       ## Configure below fields only if repo type is git/stash. Skip to s3 section if type is s3
       baseUrlHostName: github.com    # Specify it if git url is something other than github.com
       organization: OpsMx
@@ -1076,29 +1095,30 @@ spinnaker:
       dynamicAccRepository: standard-gitops-repo # Please provide the repo name of the GitOps Dynamic Accounts Directory.Can be same as Hal repo. 
       halConfigPath: / # Any other value is currently not supported
       dynAccntConfigPath: dynaccount/ #relative path from repository root folder
-      username: <git/stash_username>  # Username to authenticate with git/stash repo
-      token: <git/stash_token>  # Token corresponding to above username
+      username: git/stash_username  # Username to authenticate with git/stash repo
+      token: git/stash_token  # Token corresponding to above username
       ## Configure below fields only if repo type is s3
-      s3accesskey: <AWS_ACCESS_KEY_ID>
-      s3secretkey: <AWS_SECRET_ACCESS_KEY>
-      s3bucket: <bucket name .e.g testbucket >
-      s3region: <regionof bucket>
+      s3accesskey: AWS_ACCESS_KEY_ID
+      s3secretkey: AWS_SECRET_ACCESS_KEY
+      s3bucket: bucket name.e.g-testbucket 
+      s3region: regionofbucket
     secretName: opsmx-gitops-auth
     # Promote applications and pipelines from one environment to another or take backup
     pipelinePromotion:  # GitHub only,  Not supportd on S3 or Stash
       enabled: true
       type: git  # git, s3, stash
-      organization: <project_name>  # Also called "project" in some repos
-      repository: <repo_name>  # bucket name in case of S3
+      gitConfig: "git config --global http.sslVerify false"
+      organization: project_name  # Also called "project" in some repos
+      repository: repo_name  # bucket name in case of S3
       rootFolder: pipeline/
       ##### ONLY In case of S3
-      AWS_ACCESS_KEY_ID: <access_key>
-      AWS_SECRET_ACCESS_KEY: <secret_key>
+      AWS_ACCESS_KEY_ID: access_key
+      AWS_SECRET_ACCESS_KEY: secret_key
       ##### S3 config for pipelinePromotion is complete
       ##### For non-S3 repos
       baseUrl: example.repo.com  #  "git_url"
-      username: <username>
-      token: <token>
+      username: username
+      token: token
       branch: samplerepo
       usermail: krish@company.com
       #password="K438"   ### Token is preferred, Password also might work, try your luck
@@ -1112,8 +1132,8 @@ spinnaker:
       createPR: false
       autoApprovePR: false
       targetBranch: master # can be any branch to which PR to be raised
-      approvingUser: <approver_user>  ### user who is going to auto-merge
-      approverToken: <token> ## Token for the user to auto-merge
+      approvingUser: approver_user  ### user who is going to auto-merge
+      approverToken: token ## Token for the user to auto-merge
 
     ## x509 authentication for Spinnaker Gate
     gatex509:
@@ -1129,9 +1149,9 @@ spinnaker:
   ## Here basic ldap auth is used by default; everything under spinCli will be pasted in ~/.spin/config
   spinCli:
     gate:
-      endpoint: http://spin-gate:8084 # Should same as the spin-gate URL
+      endpoint: http://oes-gate:8084 # Should same as the spin-gate URL
     auth:
       enabled: true
       basic:
-        username: admin          # Please updated as required
-        password: opsmxadmin123  # Please updated as required
+        username: admin          # Please update as required
+        password: opsmxadmin123  # Please update as required
