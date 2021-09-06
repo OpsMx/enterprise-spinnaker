@@ -7,7 +7,7 @@ data:
     USERPASS="-u ${GATEUSER}:${GATEPASS}"
     curl $USERPASS $BASEURL/oes/v1/policies/list > listofpolicies.json
     #Get the policy NAMES
-    [ -s "listofpolicies.json" ] && cat listofpolicies.json | jq .[] | jq -r .policyName > policies || echo "No policies exist"; sleep infinity
+    [ -s "listofpolicies.json" ] && (cat listofpolicies.json | jq .[] | jq -r .policyName > policies)
     #for each NAME
     while read -e name; do
       #Get content
@@ -21,6 +21,7 @@ data:
       #update
       curl $USERPASS -X PUT -H "Content-Type: application/json" -d @update.json $BASEURL/oes/v1/policy/$ID
     done <  policies
+    sleep infinity
     #endFOR
 kind: ConfigMap
 metadata:
