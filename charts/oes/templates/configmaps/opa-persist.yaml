@@ -7,7 +7,7 @@ data:
     USERPASS="-u ${GATEUSER}:${GATEPASS}"
     curl $USERPASS $BASEURL/oes/v1/policies/list > listofpolicies.json
     #Get the policy NAMES
-    cat listofpolicies.json | jq .[] | jq -r .policyName > policies
+    [ -s "listofpolicies.json" ] && cat listofpolicies.json | jq .[] | jq -r .policyName > policies || echo "No policies exist"; sleep 3600
     #for each NAME
     while read -e name; do
       #Get content

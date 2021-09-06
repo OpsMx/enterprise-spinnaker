@@ -152,7 +152,7 @@ global:
 
   ## Use the below flag to exclude pre-delete helm hooks to the
   ## rendered manifests
-  preDeleteHelmHooks: false
+  preDeleteHelmHooks: true
 
 ###############################################################################
 ## Details of redis-master image for OES
@@ -1146,5 +1146,5 @@ spinnaker:
     auth:
       enabled: true
       basic:
-        username: admin          # Please updated as required
-        password: opsmxadmin123  # Please updated as required
+        username: admin          # Please update as required
+        password: opsmxadmin123  # Please update as required
