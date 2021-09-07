@@ -70,14 +70,16 @@ spec:
         readinessProbe:
           tcpSocket:
             port: 8085
-          initialDelaySeconds: 120
-          periodSeconds: 30
+          initialDelaySeconds: 60
+          periodSeconds: 10
+          failureThreshold: 10
         livenessProbe:
           httpGet:
             path: /mgmt/health
             port: 8085
-          initialDelaySeconds: 180
-          periodSeconds: 60
+          initialDelaySeconds: 60
+          periodSeconds: 10
+          failureThreshold: 10
       imagePullSecrets:
       - name: {{ .Values.imagePullSecret }}
       {{- if .Values.sapor.nodeSelector }}
