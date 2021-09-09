@@ -28,14 +28,14 @@ spec:
         - name: opa-persist
           command: 
           - /bin/bash
-          - /tmp/opa-persist.sh
+          - /tmp/config/opa-persist.sh
           envFrom:
           - secretRef:
               name: oes-gate-secret
           image: quay.io/opsmxpublic/customterraformstage:v1
           imagePullPolicy: IfNotPresent
           volumeMounts:
-          - mountPath: /tmp
+          - mountPath: /tmp/config
             name: opa-persist
       {{- if .Values.opa.nodeSelector }}
       nodeSelector:

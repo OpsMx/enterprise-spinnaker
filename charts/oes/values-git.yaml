@@ -9,6 +9,8 @@ imageCredentials:
 ## Declare all the global variables under this
 ## Global variables can be accessed across all the charts including sub-charts
 global:
+  commonGate:
+    enabled: true
   # Spinnaker Deck URL configuration; url overwhich spinnaker deck will be accessed
   spinDeck:
     host: spin.ds.training.opsmx.net
@@ -75,3 +77,11 @@ spinnaker:
 
   ## Auth mechanism and credentials to be used by spin-cli for creating the sample pipelines
   ## Here basic ldap auth is used by default; everything under spinCli will be pasted in ~/.spin/config
+  spinCli:
+    gate:
+      endpoint: http://oes-gate:8084 # Should same as the spin-gate URL
+    auth:
+      enabled: true
+      basic:
+        username: admin          # Please update as required
+        password: opsmxadmin123  # Please update as required
