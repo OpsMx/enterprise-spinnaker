@@ -1,0 +1,12 @@
+apiVersion: v1
+data:
+  app-config.yml: |
+ {{- tpl (.Files.Get "config/oes-datascience/app-config.yml") . | nindent 4 }}
+  minio-credentials: |
+{{- tpl (.Files.Get "config/oes-datascience/minio-credentials.config") . | nindent 4 }}
+kind: ConfigMap
+metadata:
+  labels:
+    app: oes
+    component: datascience
+  name: oes-datascience-config

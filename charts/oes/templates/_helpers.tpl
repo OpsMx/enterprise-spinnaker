@@ -52,6 +52,16 @@ Return the proper GATE image name
 {{- end -}}
 
 {{/*
+Return the proper datascience image name
+*/}}
+{{- define "datascience.image" -}}
+{{- $registryName := .Values.datascience.image.registry -}}
+{{- $repositoryName := .Values.datascience.image.repository -}}
+{{- $tag := .Values.datascience.image.tag | toString -}}
+{{- printf "%s/%s:%s" $registryName $repositoryName $tag -}}
+{{- end -}}
+
+{{/*
 Return the proper SAPOR GATE image name
 */}}
 {{- define "saporgate.image" -}}

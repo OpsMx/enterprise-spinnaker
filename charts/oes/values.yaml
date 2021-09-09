@@ -159,6 +159,20 @@ global:
   preDeleteHelmHooks: true
 
 ###############################################################################
+## Details of rabbitmq message bus image for OES
+##
+rabbitmq:
+  ## rabbitmq  endpoint that is used by oes-gate and oes-platform for caching;
+  ## Change this to custom URL if installRedis is set to false
+  ## url: rabbitmq-service
+  ## url: default port 5672
+  url: rabbitmq-service
+  port: 5672
+  image:
+    registry: docker.io/rabbitmq
+    repository: 3-management 
+
+###############################################################################
 ## Details of redis-master image for OES
 ##
 redis:
@@ -270,9 +284,9 @@ autopilot:
   ## Image specific details
   ##
   image:
-    registry: quay.io/opsmxpublic
-    repository: ubi8-oes-autopilot
-    tag: v3.9.1.2
+    registry: docker.io/opsmx11
+    repository: autopilot-ds
+    tag: ced13f8ce-47
     pullPolicy: IfNotPresent
 
   annotations:
@@ -365,6 +379,27 @@ forwarder:
     tag: v20210722T133815
     pullPolicy: IfNotPresent
   serviceAnnotations: {}
+###############################################################################
+##
+## Values of OES datascience
+##
+datascience:
+  ## Image specific details
+  ##
+  image:
+    registry: docker.io/opsmx11
+    repository: oes-datascience
+    tag: ced13f8ce-29
+    pullPolicy: IfNotPresent
+
+  serviceAnnotations: {}
+
+  annotations:
+    prometheus_io_path: /prometheus
+    prometheus_io_port: "8084"
+    prometheus.io/scrape: "true"
+  resources: {}
+  config: {}
 ###############################################################################
 ##
 ## Values of OES Gate

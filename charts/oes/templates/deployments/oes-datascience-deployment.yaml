@@ -1,0 +1,54 @@
+{{- if (eq .Values.installationMode "OES-AP") -}}
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: oes
+    component: datascience
+{{ include "oes.standard-labels" . | indent 4 }}
+  name: oes-datascience
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: oes
+      component: datascience
+  template:
+    metadata:
+      labels:
+        app: oes
+        component: datascience
+{{ include "oes.standard-labels" . | indent 8 }}
+    spec:
+      containers:
+      - image: {{ template "datascience.image" . }}
+        imagePullPolicy: IfNotPresent
+        name: oes-datascience
+        ports:
+        - containerPort: 5005
+          name: backend
+          protocol: TCP
+        readinessProbe:
+          failureThreshold: 3
+          initialDelaySeconds: 60
+          periodSeconds: 10
+          successThreshold: 1
+          tcpSocket:
+            port: 5005
+          timeoutSeconds: 1
+        volumeMounts:
+        - mountPath: /home/ubuntu/.aws/credentials
+          name: datascience-config-volume
+          subPath: minio-credentials
+        - mountPath: /home/ubuntu/datascience/app_config.yaml
+          name: datascience-config-volume
+          subPath: app-config.yml
+      imagePullSecrets:
+      - name: opsmxdev-secret
+      - name: opsmx11-secret
+      volumes:
+      - configMap:
+          defaultMode: 420
+          name: oes-datascience-config
+        name: datascience-config-volume
+{{- end -}}
