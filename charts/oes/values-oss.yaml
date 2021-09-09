@@ -5,10 +5,6 @@
 ## This is a YAML-formatted file.
 ## Declare variables to be passed into your templates.
 
-## Option to select spinnaker as required helm chart
-## Setting this to true, will ensure Open Source Spinnaker is installed
-installSpinnaker: true
-
 ## Installation mode
 ## Available installation mode - None
 ## Do not change this field; OES installation shall be skipped
@@ -16,11 +12,26 @@ installationMode: None
 
 ## Set to true to expose spinnaker and deck services as LoadBalancers
 ##
-createIngress: false
+createIngress: true
 
 ## OES UI & Gate service type
 ##
-k8sServiceType: LoadBalancer
+k8sServiceType: ClusterIP
+
+## Declare all the global variables under this
+## Global variables can be accessed across all the charts including sub-charts
+global:
+  # to use common gate for both oes and spinnaker
+  commonGate:
+    enabled: false
+
+  # Spinnaker Deck URL configuration; url overwhich spinnaker deck will be accessed
+  spinDeck:
+    host: spin.example.ops.com
+
+  # Spinnaker Gate URL configuration; url overwhich spinnaker gate will be accessed
+  spinGate:
+    host: spin-gate.example.ops.com
 
 #####################################################
 # Spinnaker instance configuration

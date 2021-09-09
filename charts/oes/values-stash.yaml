@@ -10,7 +10,7 @@ imageCredentials:
 global:
   # to use common gate for both oes and spinnaker
   commonGate:
-    enabled: false
+    enabled: true
 
   # Spinnaker Deck URL configuration; url overwhich spinnaker deck will be accessed
   spinDeck:
