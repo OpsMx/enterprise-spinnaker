@@ -1060,6 +1060,9 @@ spinnaker:
     secretKey: spinnakeradmin
     region: us-east-1
     bucket: "spinnaker"
+    oesAutopilotBucket:
+        enabled: true
+        name: "autopilot"
     nodeSelector: {}
     persistence:
       enabled: true
