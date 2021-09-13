@@ -157,6 +157,36 @@ global:
   ## Use the below flag to exclude pre-delete helm hooks to the
   ## rendered manifests
   preDeleteHelmHooks: true
+  # Minio access/secret keys for the in-cluster S3 usage
+  # Minio is not exposed publically
+  minio:
+    enabled: true
+    image:
+      repository: quay.io/opsmxpublic/minio
+      tag: RELEASE.2020-01-03T19-12-21Z
+    mcImage:
+      repository: quay.io/opsmxpublic/minio-mc
+      tag: RELEASE.2020-11-25T23-04-07Z
+    serviceType: ClusterIP
+    accessKey: spinnakeradmin
+    secretKey: spinnakeradmin
+    region: us-east-1
+    securityContext:
+      enabled: true
+      runAsUser: 1000
+      runAsGroup: 1000
+      fsGroup: 1000
+    buckets:
+    - name: "spinnaker"
+      policy: none
+      purge: false
+    - name: "autopilot"
+      policy: none
+      purge: false
+    nodeSelector: {}
+    persistence:
+      enabled: true
+      size: 10Gi
 
 ###############################################################################
 ## Details of rabbitmq message bus image for OES
@@ -1044,29 +1074,6 @@ spinnaker:
   # nodeSelector to provide to each of the Spinnaker components
   nodeSelector: {}
 
-  # Minio access/secret keys for the in-cluster S3 usage
-  # Minio is not exposed publically
-  minio:
-    enabled: true
-    image:
-      repository: quay.io/opsmxpublic/minio
-      tag: RELEASE.2020-01-03T19-12-21Z
-
-    mcImage:
-      repository: quay.io/opsmxpublic/minio-mc
-      tag: RELEASE.2020-11-25T23-04-07Z
-    serviceType: ClusterIP
-    accessKey: spinnakeradmin
-    secretKey: spinnakeradmin
-    region: us-east-1
-    bucket: "spinnaker"
-    oesAutopilotBucket:
-        enabled: true
-        name: "autopilot"
-    nodeSelector: {}
-    persistence:
-      enabled: true
-      size: 10Gi
 
   # Google Cloud Storage
   gcs:
