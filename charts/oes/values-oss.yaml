@@ -5,10 +5,6 @@
 ## This is a YAML-formatted file.
 ## Declare variables to be passed into your templates.
 
-## Option to select spinnaker as required helm chart
-## Setting this to true, will ensure Open Source Spinnaker is installed
-installSpinnaker: true
-
 ## Installation mode
 ## Available installation mode - None
 ## Do not change this field; OES installation shall be skipped
@@ -16,18 +12,33 @@ installationMode: None
 
 ## Set to true to expose spinnaker and deck services as LoadBalancers
 ##
-createIngress: false
+createIngress: true
 
 ## OES UI & Gate service type
 ##
-k8sServiceType: LoadBalancer
+k8sServiceType: ClusterIP
+
+## Declare all the global variables under this
+## Global variables can be accessed across all the charts including sub-charts
+global:
+  # to use common gate for both oes and spinnaker
+  commonGate:
+    enabled: false
+
+  # Spinnaker Deck URL configuration; url overwhich spinnaker deck will be accessed
+  spinDeck:
+    host: spin.example.ops.com
+
+  # Spinnaker Gate URL configuration; url overwhich spinnaker gate will be accessed
+  spinGate:
+    host: spin-gate.example.ops.com
 
 #####################################################
 # Spinnaker instance configuration
 #####################################################
 spinnaker:
   halyard:
-    spinnakerVersion: 1.24.4
+    spinnakerVersion: 1.26.6
     image:
       repository: quay.io/opsmxpublic/ubi8-spin-halyard
       tag: opsmx-1.40.0
@@ -78,25 +89,37 @@ spinnaker:
         healthEndpoint: /health
         kubernetes:
           useExecHealthCheck: false
-        artifactId: quay.io/opsmxpublic/ubi8-spin-gate:1.20.0
+        artifactId: quay.io/opsmxpublic/ubi8-oes-spin-gate:1.22.1
       deck.yml:
-        artifactId: quay.io/opsmxpublic/ubi8-spin-deck:3.5.1
+        artifactId: quay.io/opsmxpublic/ubi8-oes-deck:3.5.1
       clouddriver.yml:
-        artifactId: quay.io/opsmxpublic/ubi8-spin-clouddriver:7.2.2
+        artifactId: quay.io/opsmxpublic/ubi8-spin-clouddriver:8.0.4
+      clouddriver-caching.yml:
+        artifactId: quay.io/opsmxpublic/ubi8-spin-clouddriver:8.0.4
+      clouddriver-rw.yml:
+        artifactId: quay.io/opsmxpublic/ubi8-spin-clouddriver:8.0.4
+      clouddriver-ro.yml:
+        artifactId: quay.io/opsmxpublic/ubi8-spin-clouddriver:8.0.4
+      clouddriver-ro-deck.yml:
+        artifactId: quay.io/opsmxpublic/ubi8-spin-clouddriver:8.0.4
       echo.yml:
-        artifactId: quay.io/opsmxpublic/ubi8-spin-echo:2.15.2
+        artifactId: quay.io/opsmxpublic/ubi8-spin-echo:2.17.1
+      echo-scheduler.yml:
+        artifactId: quay.io/opsmxpublic/ubi8-spin-echo:2.17.1
+      echo-worker.yml:
+        artifactId: quay.io/opsmxpublic/ubi8-spin-echo:2.17.1
       fiat.yml:
-        artifactId: quay.io/opsmxpublic/ubi8-spin-fiat:1.14.1
+        artifactId: quay.io/opsmxpublic/ubi8-spin-fiat:1.16.0
       front50.yml:
-        artifactId: quay.io/opsmxpublic/ubi8-spin-front50:0.26.1
+        artifactId: quay.io/opsmxpublic/ubi8-oes-front50:0.27.1
       igor.yml:
-        artifactId: quay.io/opsmxpublic/ubi8-spin-igor:1.14.0
+        artifactId: quay.io/opsmxpublic/ubi8-spin-igor:1.16.0
       kayenta.yml:
-        artifactId: quay.io/opsmxpublic/ubi8-spin-kayenta:0.19.0
+        artifactId: quay.io/opsmxpublic/ubi8-spin-kayenta:0.21.0
       orca.yml:
-        artifactId: quay.io/opsmxpublic/ubi8-spin-orca:2.18.1
+        artifactId: quay.io/opsmxpublic/ubi8-oes-orca:2.20.3
       rosco.yml:
-        artifactId: quay.io/opsmxpublic/ubi8-spin-rosco:0.23.0
+        artifactId: quay.io/opsmxpublic/ubi8-spin-rosco:0.25.0
     ## Uncomment if you want to add extra commands to the init script
     ## run by the init container before halyard is started.
     ## The content will be passed through `tpl`, so value interpolation is supported.
@@ -208,29 +231,17 @@ spinnaker:
   # nodeSelector to provide to each of the Spinnaker components
   nodeSelector: {}
 
-  # Redis password to use for the in-cluster redis service
-  # Enable redis to use in-cluster redis
-  redis:
-    enabled: true
-    # External Redis option will be enabled if in-cluster redis is disabled
-    external:
-      host: "<EXTERNAL-REDIS-HOST-NAME>"
-      port: 6379
-      # password: ""
-    password: password
-    nodeSelector: {}
-    cluster:
-      enabled: false
-  # Uncomment if you don't want to create a PVC for redis
-  #  master:
-  #    persistence:
-  #      enabled: false
-
   # Minio access/secret keys for the in-cluster S3 usage
   # Minio is not exposed publically
   minio:
     enabled: true
-    imageTag: RELEASE.2019-02-13T19-48-27Z
+    image:
+      repository: quay.io/opsmxpublic/minio
+      tag: RELEASE.2020-01-03T19-12-21Z
+
+    mcImage:
+      repository: quay.io/opsmxpublic/minio-mc
+      tag: RELEASE.2020-11-25T23-04-07Z
     serviceType: ClusterIP
     accessKey: spinnakeradmin
     secretKey: spinnakeradmin
@@ -406,6 +417,36 @@ openldap:
       description: read and execute group
       member: cn=admin,dc=example,dc=org
       member: cn=ITManager,dc=example,dc=org
+    10-users.ldif: |-
+      dn: cn=user1,dc=example,dc=org
+      objectClass: simpleSecurityObject
+      objectClass: organizationalRole
+      cn: user1
+      userpassword: {SSHA}Y9L4AsYL16WLK10qDZ62pTScFnaWb0nz
+
+      dn: cn=user2,dc=example,dc=org
+      objectClass: simpleSecurityObject
+      objectClass: organizationalRole
+      cn: user2
+      userpassword: {SSHA}DasTBI0eut1F83Bh1F1HXmDT8juJj3pY
+
+      dn: cn=user3,dc=example,dc=org
+      objectClass: simpleSecurityObject
+      objectClass: organizationalRole
+      cn: user3
+      userpassword: {SSHA}Qu1FW7BdLMndwM/Gf+zc3a8VIMAymbuv
+
+      dn: cn=developers,ou=groups,dc=example,dc=org
+      changetype: modify
+      add: member
+      member: cn=user1,dc=example,dc=org
+      member: cn=user3,dc=example,dc=org
+
+      dn: cn=QA,ou=groups,dc=example,dc=org
+      changetype: modify
+      add: member
+      member: cn=user2,dc=example,dc=org
+      member: cn=user3,dc=example,dc=org
 
 ## ldap configuration used in oes-gate & oes-platform for authentication
 ## and authorization
