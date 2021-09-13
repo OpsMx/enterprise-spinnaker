@@ -1058,6 +1058,7 @@ spinnaker:
     serviceType: ClusterIP
     accessKey: spinnakeradmin
     secretKey: spinnakeradmin
+    region: us-east-1
     bucket: "spinnaker"
     nodeSelector: {}
     persistence:
