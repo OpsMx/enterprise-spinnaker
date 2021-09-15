@@ -1,4 +1,4 @@
-{{- if (eq .Values.installationMode "OES-AP") -}}
+{{- if or (eq .Values.installationMode "OES-AP")  (eq .Values.installationMode "EASY") -}}
 apiVersion: apps/v1
 kind: Deployment
 metadata:

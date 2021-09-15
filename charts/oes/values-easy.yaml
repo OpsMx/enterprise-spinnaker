@@ -1,12 +1,10 @@
-
-easyInstallation: true
-
 ## Quay container image registry credentials to create imagePullSecret
 ##
 imageCredentials:
   username: quayusername  # Quay username
   password: quaypassword # Quay password
   email: info@opsmx.com   # email corresponding to quay registry ID
+
 k8sServiceType: NodePort  
 ## Declare all the global variables under this
 ## Global variables can be accessed across all the charts including sub-charts
@@ -54,6 +52,10 @@ global:
     protocol: http
     host: ip_address
     port: 32113
+
+## Installation mode
+## Available installation modes OES-AP, None
+installationMode: EASY
 
 
 sapor:

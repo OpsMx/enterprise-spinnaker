@@ -4,7 +4,6 @@
 # Default values for OES chart.
 ## This is a YAML-formatted file.
 ## Declare variables to be passed into your templates.
-easyInstallation: false
 ## Name of the secret for pulling image from docker registry.
 ## Change it only if you want to create a secret with
 ## different name before installing oes chart and use it.

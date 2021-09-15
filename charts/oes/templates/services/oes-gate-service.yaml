@@ -1,4 +1,4 @@
-{{- if (eq .Values.installationMode "OES-AP") -}}
+{{- if or (eq .Values.installationMode "OES-AP")  (eq .Values.installationMode "EASY") -}}
 apiVersion: v1
 kind: Service
 metadata:
@@ -18,7 +18,7 @@ spec:
     port: 8084
     protocol: TCP
     targetPort: 8084
-    {{- if .Values.easyInstallation }}
+    {{- if eq .Values.installationMode "EASY" }}
     nodePort: {{ .Values.global.oesGate.port }}
     {{- end }}
   selector:
