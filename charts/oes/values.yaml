@@ -581,7 +581,9 @@ sapor:
     #encryption key needed for sapor to startup from 3.9
     encrypt:
       enabled: true
-      key: <ecnryption_key>
+      # This key shall match the encryption key specified in the spinnakerConfig.yaml configuration
+      # #encryption key needed for sapor to startup from 3.9
+      key: Q7udUkHPuA3VnNlOtksSgQ
     ## Set the below field to true if datasource configurations from platform
     datasources:
       platform: true

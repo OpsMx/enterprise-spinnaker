@@ -32,7 +32,9 @@ sapor:
   config:
     encrypt:
       enabled: true
-      key: <<encryption key>> # ex: Q7udUkHPuA3VnNlOtksSgQ     #encryption key needed for sapor to startup from 3.9
+      # This key shall match the encryption key specified in the spinnakerConfig.yaml configuration
+      # #encryption key needed for sapor to startup from 3.9
+      key: Q7udUkHPuA3VnNlOtksSgQ
 
 spinnaker:
   # Initialize gitOps style Halyard
