@@ -108,15 +108,15 @@ spec:
             path: cacerts
       {{- end }}
       {{- if .Values.autoConfiguration.enabled }}
-      - configMap:
-          name: oes-gate-config
+      - secret:
+          secretName: oes-gate-config
         name: config-temp
       - emptyDir: {}
         name: gate-volume
       {{- else }}
       - name: gate-volume
-        configMap:
-          name: oes-gate-config
+        secret:
+          secretName: oes-gate-config
       {{- end }}
       - secret:
           items:
