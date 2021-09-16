@@ -81,8 +81,8 @@ spec:
             path: cacerts
       {{- end }}
       - name: platform-config-volume
-        configMap:
-          name: oes-platform-config
+        secret:
+          secretName: oes-platform-config
       - secret:
           items:
           - key: bootstrap.yml
