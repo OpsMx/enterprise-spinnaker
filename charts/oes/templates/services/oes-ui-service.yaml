@@ -17,7 +17,7 @@ spec:
   - name: "oes-ui-service"
     port: 80
     targetPort: 8080
-    {{- if .Values.easyInstallation }}
+    {{- if eq  .Values.installationMode "EASY" }}
     nodePort: {{ .Values.global.oesUI.port }}
     {{- end }}
   selector:
