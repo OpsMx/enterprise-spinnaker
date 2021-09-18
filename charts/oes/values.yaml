@@ -1088,6 +1088,7 @@ spinnaker:
 
   ## Centralized Monitoring enable for Prometheus
   enableCentralMonitoring: false
+  autoInstallSampleApps: true   # Set this to FALSE if upgrading
 
   # Initialize gitOps style Halyard
   gitopsHalyard:
