@@ -150,6 +150,7 @@ spec:
             fieldRef:
               apiVersion: v1
               fieldPath: status.hostIP
+      {{- if .Values.autoInstallSampleApps }}
       - command:
         - bash
         - /tmp/config/spin-pipeline-import.sh
@@ -162,6 +163,7 @@ spec:
           name: spin-pipeline-import
         - mountPath: /tmp/config/spin
           name: spin-config
+      {{- end }}
            
 
 
