@@ -77,7 +77,11 @@ services:
     host: 0.0.0.0
     port: 7003
     baseUrl: http://spin-fiat:7003
+    {{- if .Values.global.commonGate.spinnakerRBAC }}
+    enabled: true
+    {{- else }}
     enabled: false
+    {{- end }}
   front50:
     host: 0.0.0.0
     port: 8080
@@ -136,6 +140,11 @@ ldap:
   managerPassword: {{ .Values.global.ldap.managerPassword }}
 {{- end }}
 {{- if .Values.gate.config.saml.enabled }}
+security:
+  basic:
+    enabled: true
+  user: {}
+
 saml:
 {{ toYaml .Values.gate.config.saml | indent 2 }}
 {{- end }}

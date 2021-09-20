@@ -65,6 +65,7 @@ global:
   # common gate for both spin and oes
   commonGate:
     enabled: true
+    spinnakerRBAC: false
 
   customCerts:
     enabled: false
@@ -421,7 +422,7 @@ gate:
     # kubectl create secret generic oessamljks --from-file=oessaml.jks
     # kubectl create secret generic samljks-password --from-literal password=changeit 
     saml:
-      enabled: true
+      enabled: false
       userSource: gate  # Groups will be obtained from SAML
       keyStore: /opt/spinnaker/saml/oessaml.jks  # The key in this secret must be oessaml.jks
       keyStorePassword: changeit
