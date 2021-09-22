@@ -260,7 +260,7 @@ db:
   image:
     registry: quay.io/opsmxpublic
     repository: ubi8-oes-db
-    tag: v2.0.0
+    tag: v2.0.1
     pullPolicy: IfNotPresent
 
   ## Strategy to rollout statefulset pods
@@ -426,10 +426,54 @@ datascience:
 
   annotations:
     prometheus_io_path: /prometheus
-    prometheus_io_port: "8084"
+    prometheus_io_port: "5005"
     prometheus.io/scrape: "true"
   resources: {}
   config: {}
+###############################################################################
+##
+## Values of OES auditservice
+##
+audit:
+  ## Image specific details
+  ##
+  image:
+    registry: docker.io/opsmx11
+    repository: oes-audit-service
+    tag: 7106c82-22
+    pullPolicy: IfNotPresent
+
+  serviceAnnotations: {}
+
+  annotations:
+    prometheus_io_path: /prometheus
+    prometheus_io_port: "8097"
+    prometheus.io/scrape: "true"
+  resources: {}
+  config: {}
+###############################################################################
+##
+## Values of OES auditclient
+##
+auditClient:
+  ## Image specific details
+  ##
+  image:
+    registry: docker.io/opsmx11
+    repository: oes-audit-client
+    tag: cff1364-6
+    pullPolicy: IfNotPresent
+
+  serviceAnnotations: {}
+
+  annotations:
+    prometheus_io_path: /prometheus
+    prometheus_io_port: "8098"
+    prometheus.io/scrape: "true"
+  resources: {}
+  config: {}
+
+ 
 ###############################################################################
 ##
 ## Values of OES Gate
