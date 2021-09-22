@@ -103,8 +103,8 @@ spec:
           - key: cacerts
             path: cacerts
       {{- end }}
-      - configMap:
-          name: oes-sapor-config
+      - secret:
+          secretName: oes-sapor-config
         name: sapor-config-volume
       - secret:
           items:

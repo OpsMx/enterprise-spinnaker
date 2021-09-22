@@ -64,9 +64,10 @@ global:
   # common gate for both spin and oes
   commonGate:
     enabled: true
+    spinnakerRBAC: false
 
   customCerts:
-    enabled: true
+    enabled: false
     secretName: oes-cacerts #TODO: Document procedure for creating this one and enhance scripts to merge cacerts created by controller and this
 
   # Below flag is used to setup tls termination at ingress
@@ -156,6 +157,50 @@ global:
   ## Use the below flag to exclude pre-delete helm hooks to the
   ## rendered manifests
   preDeleteHelmHooks: true
+  # Minio access/secret keys for the in-cluster S3 usage
+  # Minio is not exposed publically
+  minio:
+    enabled: true
+    image:
+      repository: quay.io/opsmxpublic/minio
+      tag: RELEASE.2020-01-03T19-12-21Z
+    mcImage:
+      repository: quay.io/opsmxpublic/minio-mc
+      tag: RELEASE.2020-11-25T23-04-07Z
+    serviceType: ClusterIP
+    accessKey: spinnakeradmin
+    secretKey: spinnakeradmin
+    region: us-east-1
+    securityContext:
+      enabled: true
+      runAsUser: 1000
+      runAsGroup: 1000
+      fsGroup: 1000
+    buckets:
+    - name: "spinnaker"
+      policy: none
+      purge: false
+    - name: "autopilot"
+      policy: none
+      purge: false
+    nodeSelector: {}
+    persistence:
+      enabled: true
+      size: 10Gi
+
+###############################################################################
+## Details of rabbitmq message bus image for OES
+##
+rabbitmq:
+  ## rabbitmq  endpoint that is used by oes-gate and oes-platform for caching;
+  ## Change this to custom URL if installRedis is set to false
+  ## url: rabbitmq-service
+  ## url: default port 5672
+  url: rabbitmq-service
+  port: 5672
+  image:
+    registry: docker.io/rabbitmq
+    repository: 3-management 
 
 ###############################################################################
 ## Details of redis-master image for OES
@@ -269,9 +314,9 @@ autopilot:
   ## Image specific details
   ##
   image:
-    registry: quay.io/opsmxpublic
-    repository: ubi8-oes-autopilot
-    tag: v3.9.1.2
+    registry: docker.io/opsmx11
+    repository: autopilot-ds
+    tag: ced13f8ce-47
     pullPolicy: IfNotPresent
 
   annotations:
@@ -366,6 +411,27 @@ forwarder:
   serviceAnnotations: {}
 ###############################################################################
 ##
+## Values of OES datascience
+##
+datascience:
+  ## Image specific details
+  ##
+  image:
+    registry: docker.io/opsmx11
+    repository: oes-datascience
+    tag: ced13f8ce-29
+    pullPolicy: IfNotPresent
+
+  serviceAnnotations: {}
+
+  annotations:
+    prometheus_io_path: /prometheus
+    prometheus_io_port: "8084"
+    prometheus.io/scrape: "true"
+  resources: {}
+  config: {}
+###############################################################################
+##
 ## Values of OES Gate
 ##
 gate:
@@ -414,17 +480,24 @@ gate:
     #####################################################
     # SAML AUthentication
     #####################################################
-    # saml.jks and metadata.xml are to be mounted as secrets
-    # with names oes-saml-jks and oes-saml-metadata resp.
+    # keytool -genkey -v -keystore oessaml.jks -alias saml -keyalg RSA -keysize 2048 -validity 10000
+    # oessaml.jks and oesmetadata.xml are mounted as secrets, create them as follows
+    # kubectl create secret generic oesmetadataxml --from-file=oesmetadata.xml
+    # kubectl create secret generic oessamljks --from-file=oessaml.jks
+    # kubectl create secret generic samljks-password --from-literal password=changeit 
     saml:
       enabled: false
+      userSource: gate  # Groups will be obtained from SAML
+      keyStore: /opt/spinnaker/saml/oessaml.jks  # The key in this secret must be oessaml.jks
       keyStorePassword: changeit
       keyStoreAliasName: saml
-      issuerId: spind
-      userSource: gate
-
-      jksSecretName: oes-saml-jks
-      metadataSecretName: metadata-xml
+      metadataUrl: /opt/spinnaker/saml/oesmetadata.xml # The key in this secret must be oesmetadata.xml
+      redirectProtocol: https
+      redirectHostname: oes-gate.ryzon7-gitops.opsmx.org  # OES gate host name
+      redirectBasePath: /
+      issuerId: ryzonoesgate
+      jksSecretName: oessamljks
+      metadataSecretName: oesmetadataxml
 
     #####################################################
     #OAUTH2 Authentication for GitHub
@@ -1044,25 +1117,6 @@ spinnaker:
   # nodeSelector to provide to each of the Spinnaker components
   nodeSelector: {}
 
-  # Minio access/secret keys for the in-cluster S3 usage
-  # Minio is not exposed publically
-  minio:
-    enabled: true
-    image:
-      repository: quay.io/opsmxpublic/minio
-      tag: RELEASE.2020-01-03T19-12-21Z
-
-    mcImage:
-      repository: quay.io/opsmxpublic/minio-mc
-      tag: RELEASE.2020-11-25T23-04-07Z
-    serviceType: ClusterIP
-    accessKey: spinnakeradmin
-    secretKey: spinnakeradmin
-    bucket: "spinnaker"
-    nodeSelector: {}
-    persistence:
-      enabled: true
-      size: 10Gi
 
   # Google Cloud Storage
   gcs:
@@ -1114,6 +1168,7 @@ spinnaker:
 
   ## Centralized Monitoring enable for Prometheus
   enableCentralMonitoring: false
+  autoInstallSampleApps: true   # Set this to FALSE if upgrading
 
   # Initialize gitOps style Halyard
   gitopsHalyard:
