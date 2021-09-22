@@ -61,12 +61,12 @@ spec:
           name: bootstrap-volume
           subPath: bootstrap.yml
         {{- if .Values.gate.config.saml.enabled }}
-        - mountPath: /opt/spinnaker/saml/saml.jks	
+        - mountPath: {{ .Values.gate.config.saml.keyStore }}
           name: saml-jks	
-          subPath: saml.jks	
-        - mountPath: /opt/spinnaker/saml/metadata.xml
+          subPath: oessaml.jks	
+        - mountPath: {{ .Values.gate.config.saml.metadataUrl }}
           name: metadata-xml	
-          subPath: metadata.xml
+          subPath: oesmetadata.xml
         {{- end }} 
         {{- if .Values.global.customCerts.enabled }}
         - mountPath: /etc/pki/ca-trust/extracted/java/cacerts
@@ -108,15 +108,15 @@ spec:
             path: cacerts
       {{- end }}
       {{- if .Values.autoConfiguration.enabled }}
-      - configMap:
-          name: oes-gate-config
+      - secret:
+          secretName: oes-gate-config
         name: config-temp
       - emptyDir: {}
         name: gate-volume
       {{- else }}
       - name: gate-volume
-        configMap:
-          name: oes-gate-config
+        secret:
+          secretName: oes-gate-config
       {{- end }}
       - secret:
           items:

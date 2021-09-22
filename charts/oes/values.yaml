@@ -65,9 +65,10 @@ global:
   # common gate for both spin and oes
   commonGate:
     enabled: true
+    spinnakerRBAC: false
 
   customCerts:
-    enabled: true
+    enabled: false
     secretName: oes-cacerts #TODO: Document procedure for creating this one and enhance scripts to merge cacerts created by controller and this
 
   # Below flag is used to setup tls termination at ingress
@@ -480,17 +481,24 @@ gate:
     #####################################################
     # SAML AUthentication
     #####################################################
-    # saml.jks and metadata.xml are to be mounted as secrets
-    # with names oes-saml-jks and oes-saml-metadata resp.
+    # keytool -genkey -v -keystore oessaml.jks -alias saml -keyalg RSA -keysize 2048 -validity 10000
+    # oessaml.jks and oesmetadata.xml are mounted as secrets, create them as follows
+    # kubectl create secret generic oesmetadataxml --from-file=oesmetadata.xml
+    # kubectl create secret generic oessamljks --from-file=oessaml.jks
+    # kubectl create secret generic samljks-password --from-literal password=changeit 
     saml:
       enabled: false
+      userSource: gate  # Groups will be obtained from SAML
+      keyStore: /opt/spinnaker/saml/oessaml.jks  # The key in this secret must be oessaml.jks
       keyStorePassword: changeit
       keyStoreAliasName: saml
-      issuerId: spind
-      userSource: gate
-
-      jksSecretName: oes-saml-jks
-      metadataSecretName: metadata-xml
+      metadataUrl: /opt/spinnaker/saml/oesmetadata.xml # The key in this secret must be oesmetadata.xml
+      redirectProtocol: https
+      redirectHostname: oes-gate.ryzon7-gitops.opsmx.org  # OES gate host name
+      redirectBasePath: /
+      issuerId: ryzonoesgate
+      jksSecretName: oessamljks
+      metadataSecretName: oesmetadataxml
 
     #####################################################
     #OAUTH2 Authentication for GitHub
@@ -647,7 +655,9 @@ sapor:
     #encryption key needed for sapor to startup from 3.9
     encrypt:
       enabled: true
-      key: <ecnryption_key>
+      # This key shall match the encryption key specified in the spinnakerConfig.yaml configuration
+      # #encryption key needed for sapor to startup from 3.9
+      key: Q7udUkHPuA3VnNlOtksSgQ
     ## Set the below field to true if datasource configurations from platform
     datasources:
       platform: true
@@ -1125,6 +1135,7 @@ spinnaker:
 
   ## Centralized Monitoring enable for Prometheus
   enableCentralMonitoring: false
+  autoInstallSampleApps: true   # Set this to FALSE if upgrading
 
   # Initialize gitOps style Halyard
   gitopsHalyard:
