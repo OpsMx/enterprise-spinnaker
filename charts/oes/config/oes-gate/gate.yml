@@ -15,6 +15,12 @@ services:
   visibility:
     baseUrl: http://oes-visibility:8096
     enabled: true
+  auditservice:
+     baseUrl: "http://oes-audit:8097"
+     enabled: true
+  auditclient:
+     baseUrl: "http://oes-audit-client:8098"
+     enabled: true
   oesui:
   {{- if .Values.global.oesUI.port }}
     externalUrl: {{ .Values.global.oesUI.protocol }}://{{ .Values.global.oesUI.host }}:{{ .Values.global.oesUI.port }}
