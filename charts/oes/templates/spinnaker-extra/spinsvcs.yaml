@@ -19,8 +19,8 @@ spec:
      port: 9000
      protocol: TCP
   -  name: https
-     port: 9000
-    targetPort: 9000
+     port: 443
+     targetPort: 9000
   selector:
     cluster: spin-deck
 ---
