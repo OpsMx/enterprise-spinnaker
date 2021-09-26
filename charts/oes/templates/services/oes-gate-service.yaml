@@ -18,6 +18,9 @@ spec:
     port: 8084
     protocol: TCP
     targetPort: 8084
+  - name: "https"
+    port: 443
+    targetPort: 8084
   selector:
     app: oes
     component: gate

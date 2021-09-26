@@ -3,7 +3,7 @@
 {{- if not .Values.kubeConfig.enabled }}
 {{- if .Values.rbac.create }}
 apiVersion: rbac.authorization.k8s.io/v1
-kind: ClusterRoleBinding
+kind: RoleBinding  # ClusterRoleBinding, if we have access accross the cluster
 metadata:
   {{- if .Values.serviceAccount.spinnakerName }}
   name: {{ .Values.serviceAccount.spinnakerName }}
@@ -14,8 +14,8 @@ metadata:
 {{ include "spinnaker.standard-labels" . | indent 4 }}
 roleRef:
   apiGroup: rbac.authorization.k8s.io
-  kind: ClusterRole
-  name: cluster-admin
+  kind: Role             # ClusteRoleBinding if we have access accross the cluster
+  name: spinnaker-role   # cluster-admin if we have the access
 subjects:
 - namespace: {{ .Release.Namespace }}
   kind: ServiceAccount

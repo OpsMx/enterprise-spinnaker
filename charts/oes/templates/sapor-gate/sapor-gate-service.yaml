@@ -1,4 +1,4 @@
-{{- if and (eq .Values.installationMode "OES-AP") (.Values.saporgate.enabled) -}}
+{{- if .Values.saporgate.enabled -}}
 apiVersion: v1
 kind: Service
 metadata:
@@ -8,7 +8,7 @@ metadata:
 {{ include "oes.standard-labels" . | indent 4 }}
   name: sapor-gate
 spec:
-  type: {{ .Values.k8sServiceType }}
+  type: ClusterIP
   ports:
   - name: "sapor-gate-service"
     port: 8084
