@@ -80,14 +80,11 @@ case "$COMPONENT" in
 
     ## If external IP is not available
     if [ -z "$ENDPOINT_IP" ]; then
-      ## Fetch the nodePort & nodeport and replace in app-config.js
-      ENDPOINT_IP=$(kubectl get ep kubernetes -n default -o jsonpath="{.subsets[].addresses[].ip}")
-      PORT=$(kubectl get svc oes-gate -o jsonpath="{.spec.ports[].nodePort}")
-      sed -i "s/OES_GATE_IP/$ENDPOINT_IP/g" /var/www/html/assets/config/app-config.json
-      sed -i "s/8084/$PORT/g" /var/www/html/assets/config/app-config.json
+      echo "Gate LB endpoint is empty"
     else
       ## Substitute oes-gate external IP in app-config.js
-      sed -i "s/OES_GATE_IP/$ENDPOINT_IP/g" /var/www/html/assets/config/app-config.json
+      cat /var/www/html/assets/config/app-config.json | jq ".endPointUrl = \"http://$ENDPOINT_IP:8084/\"" > /var/www/html/assets/config/app-config-temp.json
+      mv /var/www/html/assets/config/app-config-temp.json /var/www/html/assets/config/app-config.json
     fi
     ;;
   oes-gate)
@@ -100,12 +97,15 @@ case "$COMPONENT" in
 
     ## If external IP is not available
     if [ -z "$ENDPOINT_IP" ]; then
-      ## Fetch the nodePort IP and replace in gate.yml
-      ENDPOINT_IP=$(kubectl get ep kubernetes -n default -o jsonpath="{.subsets[].addresses[].ip}")
-      sed -i "s/OES_UI_LOADBALANCER_IP/$ENDPOINT_IP/g" /opt/spinnaker/config/gate.yml
+      echo "UI LB endpoint is empty"
     else
-      ## Substitute oes-ui external IP in gate.yml
-      sed -i "s/OES_UI_LOADBALANCER_IP/$ENDPOINT_IP/g" /opt/spinnaker/config/gate.yml
+      ## Substitute oes-ui external IP in gate.yml uner allowed-origin-patterns
+      EXISTING_CORS=$(cat /opt/spinnaker/config/gate.yml | yq e '.cors.allowed-origins-pattern' -)
+      export NEW_CORS=$(echo $EXISTING_CORS | sed "s/|/|$ENDPOINT_IP|/")
+      echo "New cors is "$NEW_CORS
+      yq e '.cors.allowed-origins-pattern = "${NEW_CORS}"' /opt/spinnaker/config/gate.yml | tee /opt/spinnaker/config/gate-temp.yml
+      envsubst < /opt/spinnaker/config/gate-temp.yml > /opt/spinnaker/config/gate.yml
+      rm -rf /opt/spinnaker/config/gate-temp.yml
     fi
     ;;
   sapor)
