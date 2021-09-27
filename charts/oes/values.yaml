@@ -287,7 +287,7 @@ db:
 saporgate:
   ## Image specific details
   ##
-  enabled: false
+  enabled: true
   image:
     registry: quay.io/opsmxpublic
     repository: ubi8-spin-gate
@@ -1283,9 +1283,9 @@ spinnaker:
   ## Here basic ldap auth is used by default; everything under spinCli will be pasted in ~/.spin/config
   spinCli:
     gate:
-      endpoint: http://oes-gate:8084 # Should same as the spin-gate URL
+      endpoint: http://sapor-gate:8084 # Should same as the spin-gate URL
     auth:
       enabled: true
       basic:
         username: admin          # Please update as required
-        password: opsmxadmin123  # Please update as required
+        password: saporadmin  # Please update as required

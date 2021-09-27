@@ -126,7 +126,8 @@ data:
     ls -lart /home/spinnaker/java-lib/
     if [ -d "/tmp/spinnaker/pipeline-promotion/" ]
     then
-      decrypt_key=$(kubectl get cm bootstrap -o yaml  -n ${SPINNAKER_NAMESPACE}| grep 'password:' | awk '{ print $2}')
+      #decrypt_key=$(kubectl get cm bootstrap -o yaml  -n ${SPINNAKER_NAMESPACE}| grep 'password:' | awk '{ print $2}')
+      decrypt_key=$(kubectl get secret bootstrap -o jsonpath='{.data.bootstrap\.yml}' -n ${SPINNAKER_NAMESPACE} | base64 -d | grep 'password:' | awk '{ print $2}')
       if [[ $decrypt_key != "" ]];
       then
         for filename in /tmp/spinnaker/pipeline-promotion/*; do
