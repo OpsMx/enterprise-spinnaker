@@ -2,9 +2,12 @@ apiVersion: v1
 data:
   call_overrides.sh: |
     echo $SPINNAKER_NAMESPACE
-    {{- if .Values.gitopsHalyard.enabled }}
+    {{- if and (.Values.gitopsHalyard.enabled) (not .Values.global.autoConfiguration.enabled) }}
     sh /tmp/autoconfig/config_overrideurl.sh spin-gate-overrideurl-gitops
     sh /tmp/autoconfig/config_overrideurl.sh spin-deck-overrideurl-gitops
+    {{- else if .Values.global.autoConfiguration.enabled }}
+    sh /tmp/autoconfig/config_overrideurl.sh spin-gate
+    sh /tmp/autoconfig/config_overrideurl.sh spin-deck
     {{- end }}
   config_overrideurl.sh: |
     #!/bin/bash -x
@@ -44,48 +47,13 @@ data:
         done
     }
 
-    check_for_spinnakerGate_loadBalancer()
-    {
-        ## Wait for $EXTERNAL_IP_CHECK_DELAY till K8s assins a load Balancer IP to oes-gate
-        iter=0
-        lapsedTime=0
-        while [ $iter -lt 36 ]
-        do
-          # Check if loadBalancer is directly assinged to spin-deck or spin-deck-ui service
-          ENDPOINT_IP=$(kubectl get svc spin-deck -o jsonpath="{.status.loadBalancer.ingress[].ip}")
-
-          if [ -z "$ENDPOINT_IP" ];
-          then
-            ENDPOINT_IP=$(kubectl get svc spin-deck-ui -o jsonpath="{.status.loadBalancer.ingress[].ip}")
-          fi
-
-          if [ ! -z "$ENDPOINT_IP" ];
-          then
-            echo "Found LoadBalancer IP for" $1
-            break
-          fi
-          sleep 5
-          lapsedTime=`expr $lapsedTime + 5`
-          #if [ $lapsedTime -eq $2 ];
-          if [ $lapsedTime -gt $EXTERNAL_IP_CHECK_DELAY ];
-          then
-            echo "Time Lapsed" $lapsedTime
-            echo "Timeout! Fetching nodeport IP alternatively"
-            break
-          fi
-          echo "Time Lapsed" $lapsedTime
-          iter=`expr $iter + 1`
-        done
-    }
-
     case "$COMPONENT" in
       spin-gate)
         ENDPOINT_IP=""
         PORT=8084
 
         ## Wait for $EXTERNAL_IP_CHECK_DELAY till K8s assins a load Balancer IP to oes-gate
-        #check_for_spinnakerGate_loadBalancer spin-gate-np $SPINNAKER_SETUP_DELAY
-        check_for_loadBalancer spin-gate-np
+        check_for_loadBalancer spin-gate-lb
 
         ## If external IP is not available
         if [ -z "$ENDPOINT_IP" ]; then
@@ -105,7 +73,7 @@ data:
         PORT=9000
 
         ## Wait for $EXTERNAL_IP_CHECK_DELAY till K8s assins a load Balancer IP to oes-gate
-        check_for_loadBalancer spin-deck-np
+        check_for_loadBalancer spin-deck-lb
 
         ## If external IP is not available
         if [ -z "$ENDPOINT_IP" ]; then
@@ -170,7 +138,6 @@ data:
           sed -i 's,OVERRIDE_API_URL,{{ tpl .Values.global.spinGate.host . }},g' /tmp/spinnaker/.hal/config
           {{- end }}
         ;;
-
       spin-deck-overrideurl-gitops)
         ## Configured ingress host url as override url
           echo "Substituting deck url"

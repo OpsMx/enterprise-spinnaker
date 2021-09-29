@@ -25,13 +25,13 @@ spec:
         component: gate
 {{ include "oes.standard-labels" . | indent 8 }}
     spec:
-      {{- if .Values.autoConfiguration.enabled }}
+      {{- if .Values.global.autoConfiguration.enabled }}
       initContainers:
       - env:
         - name: EXTERNAL_IP_CHECK_DELAY
-          value: "{{ .Values.autoConfiguration.initContainer.externalIpCheckDelay}}"
-        image: {{ .Values.autoConfiguration.initContainer.image}}
-        imagePullPolicy: {{ .Values.autoConfiguration.initContainer.pullPolicy}}
+          value: "{{ .Values.global.autoConfiguration.initContainer.externalIpCheckDelay}}"
+        image: {{ .Values.global.autoConfiguration.initContainer.image}}
+        imagePullPolicy: {{ .Values.global.autoConfiguration.initContainer.pullPolicy}}
         name: gate-autoconfig
         command: ["/home/config_endpoint.sh"]
         args: ["oes-gate"]
@@ -107,7 +107,7 @@ spec:
           - key: cacerts
             path: cacerts
       {{- end }}
-      {{- if .Values.autoConfiguration.enabled }}
+      {{- if .Values.global.autoConfiguration.enabled }}
       - secret:
           secretName: oes-gate-config
         name: config-temp
