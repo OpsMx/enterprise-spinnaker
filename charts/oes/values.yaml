@@ -167,7 +167,7 @@ global:
     # Set it to false if OES is being installed on restricted evnironment;
     # Autoconfiguration assumes Load Balancer is available for oes-gate, oes-ui
     # and spind-deck and configures accordingly
-    enabled: true
+    enabled: false
 
     initContainer:
       # Image for init container to automatically configure oes components
