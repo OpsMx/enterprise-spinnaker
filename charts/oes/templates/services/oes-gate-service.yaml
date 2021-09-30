@@ -17,8 +17,8 @@ spec:
   - name: "https"
     port: 443
     targetPort: 8084
-  - name: "http"
-    port: 80
+  - name: "oes-gate-service"
+    port: 8084
     protocol: TCP
     targetPort: 8084
     {{- if eq .Values.k8sServiceType "NodePort" }}
