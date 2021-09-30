@@ -1,8 +1,8 @@
 ## Quay container image registry credentials to create imagePullSecret
 ##
 imageCredentials:
-  username: opsmxguest  # Quay username
-  password: OpsMx@321 # Quay password
+  username: quayID  # Quay username
+  password: quayPassword # Quay password
   email: info@opsmx.com   # email corresponding to quay registry ID
 
 k8sServiceType: NodePort  
@@ -34,24 +34,24 @@ global:
 
   spinDeck:
           protocol: http
-          host: 34.121.170.223
-          port: 32110
+          host: IP_ADDRESS
+          port: 32110 #port range can be 32110-33110
 
   # Spinnaker Gate URL configuration; url overwhich spinnaker gate will be accessed
   spinGate:
           protocol: http
-          host: 34.121.170.223
-          port: 32111
+          host: IP_ADDRESS
+          port: 32111 #port range can be 32110-33110
   ## OES-UI url configuration
   oesUI:
     protocol: http
-    host: 34.121.170.223
-    port: 32112
+    host: IP_ADDRESS
+    port: 32112 #port range can be 32110-33110
   ## OES-Gate url configuration
   oesGate:
     protocol: http
-    host: 34.121.170.223
-    port: 32113
+    host: IP_ADDRESS
+    port: 32113 #port range can be 32110-33110
 
 ## Installation mode
 ## Available installation modes OES-AP, None
@@ -69,4 +69,4 @@ spinnaker:
   gitopsHalyard:
     enabled: false
     pipelinePromotion:
-            enabled: false
+      enabled: false
