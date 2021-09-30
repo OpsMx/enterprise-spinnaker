@@ -1,8 +1,8 @@
 ## Quay container image registry credentials to create imagePullSecret
 ##
 imageCredentials:
-  username: opsmxguest  # Quay username
-  password: OpsMx@321 # Quay password
+  username: quayID  # Quay username
+  password: quayPassword # Quay password
   email: info@opsmx.com   # email corresponding to quay registry ID
   
 ## Declare all the global variables under this
@@ -12,22 +12,29 @@ global:
     enabled: true
   # Spinnaker Deck URL configuration; url overwhich spinnaker deck will be accessed
   spinDeck:
-    host: spin.audit.opsmx.com
+    host: spin.example.ops.com
+
   # Spinnaker Gate URL configuration; url overwhich spinnaker gate will be accessed
   spinGate:
-    host: spin-gate.audit.opsmx.com
+    host: spin-gate.example.ops.com
+
   ## OES-UI url configuration
   oesUI:
-    host: oes.audit.opsmx.com
+    host: oes.example.ops.com
+
   ## OES-Gate url configuration
   oesGate:
-    host: oes-gate.audit.opsmx.com
+    host: oes-gate.example.ops.com
      
 sapor:
   config:
     encrypt:
       enabled: true
-      key: Q7udUkHPuA3VnNlOtksSgQ # ex: Q7udUkHPuA3VnNlOtksSgQ     #encryption key needed for sapor to startup from 3.9
+      # This key shall match the encryption key specified in the spinnakerConfig.yaml configuration
+      # #encryption key needed for sapor to startup from 3.9
+      key: Q7udUkHPuA3VnNlOtksSgQ 
+
+
 spinnaker:
   # Initialize gitOps style Halyard
   gitopsHalyard:
@@ -36,38 +43,40 @@ spinnaker:
       type: git # git, s3, stash(bitbucket server) use a different sample values file for s3/bitbuck-stash
       ## Configure below fields only if repo type is git/stash. Skip to s3 section if type is s3
       baseUrlHostName: github.com    # Specify it if git url is something other than github.com
-      organization: kishore438 # project name 
+      organization: <project_name> # project name 
       # Specify project name only if repo is under a project
       projectName: ""
-      repository: stanops39 # repo name for GitOps Halyard (Sample Reference: https://github.com/OpsMx/sample-gitops-repo.git).
-      dynamicAccRepository: stanops39 # Please provide the repo name of the GitOps Dynamic Accounts Directory.Can be same as Hal repo. 
+      repository: stesrep # repo name for GitOps Halyard (Sample Reference: https://github.com/OpsMx/sample-gitops-repo.git).
+      dynamicAccRepository: testrepo # Please provide the repo name of the GitOps Dynamic Accounts Directory.Can be same as Hal repo. 
       halConfigPath: / #hal config path configuration path supports relative path from the root folder must be same as  dynAccntConfigPath
       dynAccntConfigPath: / #dymanic account configuration path supports relative path from the root folder must be same as halConfigPath
-      username: kishore438  # Username to authenticate with git/stash repo
-      token: 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  # Token corresponding to above username
+      username: <git_user>  # Username to authenticate with git/stash repo
+      token: <git_toke>  # Token corresponding to above username
     secretName: opsmx-gitops-auth
     # Promote applications and pipelines from one environment to another or take backup
     pipelinePromotion:
       enabled: true
       type: git  # git, s3, stash
-      organization: kishore438   # Also called "project" in some repos
-      repository: stanops39 # bucket name in case of S3
+      organization: <project_name>   # Also called "project" in some repos
+      repository: test # bucket name in case of S3
       rootFolder: pipeline/
       baseUrl: github.com  #  "git_url"
-      username: kishore438 # git user
-      token: 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 # ex: ghp_lqNYLgwGsUO0obycpcr2qyqDf # user token
-      branch: master # branch to which changes needs to be pushed ex: testbranch
+      username: <git_user> # git user
+      token: <git_token> # ex: ghp_lqNYLgwGsUO0obycpcr2qyqDf # user token
+      branch: <branch name> # branch to which changes needs to be pushed ex: testbranch
       usermail: example@example.com
-      apiUrl: https://api.github.com/repos # ex: "https://api.github.com/repos"  # api url to create PRs
+      apiUrl: <api_url> # ex: "https://api.github.com/repos"  # api url to create PRs
       createPR: false
       autoApprovePR: false
       targetBranch: master # the branch to which pr to be raised
       approvingUser: <approver_user>  ### user who is going to approve the pr
       approverToken: <approver_token> ## approver user token
+
       #for deleting pipeline in spinnaker
       deleteOnSyncSpin: false
       #not implemented
       deleteOnSyncRepo: false
+
   ## Auth mechanism and credentials to be used by spin-cli for creating the sample pipelines
   ## Here basic ldap auth is used by default; everything under spinCli will be pasted in ~/.spin/config
   spinCli:
