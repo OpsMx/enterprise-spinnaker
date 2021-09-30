@@ -21,7 +21,7 @@ spec:
       paths:
       - backend:
           serviceName: oes-ui
-          servicePort: 443
+          servicePort: 80
         path: /
 {{- if .Values.global.ssl.enabled }}
   tls:
