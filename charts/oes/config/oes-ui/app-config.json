@@ -4,5 +4,6 @@
 {{- else }}
     "endPointUrl": "{{ .Values.global.oesGate.protocol }}://{{ .Values.global.oesGate.host }}/",
 {{- end }}
+    "policyUrl": "http://oes-sapor:8085/"
     "setApplicationInterval": {{ .Values.ui.config.setApplicationRefreshInterval }}
 }
