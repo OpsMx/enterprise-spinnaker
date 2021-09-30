@@ -15,8 +15,11 @@ metadata:
 spec:
   type: {{ .Values.k8sServiceType }}
   ports:
-  -  name: https
+   - name: "https"
      port: 443
+     targetPort: 9000
+   - name: "http"
+     port: 80
      protocol: TCP
      {{- if eq .Values.k8sServiceType "NodePort" }}
      {{- if .Values.global.spinDeck.port }}
@@ -42,8 +45,11 @@ metadata:
 spec:
   type: {{ .Values.k8sServiceType }}
   ports:
-  -  name: https
+   - name: https
      port: 443
+     targetPort: 8084
+   - name: "http"
+     port: 80
      protocol: TCP
      {{- if eq .Values.k8sServiceType "NodePort" }}
      {{- if .Values.global.spinDeck.port }}

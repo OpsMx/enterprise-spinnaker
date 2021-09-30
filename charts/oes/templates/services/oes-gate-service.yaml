@@ -16,6 +16,9 @@ spec:
   ports:
   - name: "https"
     port: 443
+    targetPort: 8084
+  - name: "http"
+    port: 80
     protocol: TCP
     targetPort: 8084
     {{- if eq .Values.k8sServiceType "NodePort" }}
