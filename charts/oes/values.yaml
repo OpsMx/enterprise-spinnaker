@@ -440,7 +440,7 @@ audit:
   image:
     registry: docker.io/opsmx11
     repository: oes-audit-service
-    tag: 7106c82-22
+    tag: 7106c82-23
     pullPolicy: IfNotPresent
 
   serviceAnnotations: {}
@@ -451,6 +451,29 @@ audit:
     prometheus.io/scrape: "true"
   resources: {}
   config: {}
+###############################################################################
+##
+## Values of OES auditclient
+##
+auditClient:
+  ## Image specific details
+  ##
+  image:
+    registry: docker.io/opsmx11
+    repository: oes-audit-client
+    tag: cff1364-6
+    pullPolicy: IfNotPresent
+
+  serviceAnnotations: {}
+
+  annotations:
+    prometheus_io_path: /prometheus
+    prometheus_io_port: "8098"
+    prometheus.io/scrape: "true"
+  resources: {}
+  config: {}
+
+ 
 ###############################################################################
 ##
 ## Values of OES auditclient

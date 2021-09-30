@@ -47,7 +47,7 @@ spec:
           tcpSocket:
             port: 8098
         volumeMounts:
-        - mountPath: /opsmx/conf/audit-local.yml
+        - mountPath: /opsmx/conf/audit-client-local.yml
           name: audit-config-volume
           subPath: audit-local.yml
         - mountPath: /opsmx/conf/bootstrap.yml

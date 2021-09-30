@@ -10,7 +10,7 @@ metadata:
   annotations:
 {{ toYaml .Values.gate.serviceAnnotations | indent 4 }}
 {{- end }}
-  name: oes-audit
+  name: oes-audit-service
 spec:
   ports:
   - name: auditservice
