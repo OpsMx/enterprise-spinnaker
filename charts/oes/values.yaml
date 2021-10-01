@@ -12,9 +12,9 @@ imagePullSecret: opsmxdev-secret
 ## Quay container image registry credentials to create imagePullSecret
 ##
 imageCredentials:
-  registry: https://quay.io/
-  username: quayID  # Quay username
-  password: quayPassword # Quay password
+  registry: https://docker.io/
+  username: opsmx11  # Quay username
+  password: Network123! # Quay password
   email: info@opsmx.com   # email corresponding to quay registry ID
 
 rbac:
@@ -83,7 +83,7 @@ global:
   # Spinnaker Deck URL configuration; url overwhich spinnaker deck will be accessed
   spinDeck:
     protocol: https
-    host: spin.example.ops.com
+    host: spin.audit.git.opsmx.net
     #port: 9000
 
     serviceAnnotations: {}
@@ -98,7 +98,7 @@ global:
   # Spinnaker Gate URL configuration; url overwhich spinnaker gate will be accessed
   spinGate:
     protocol: https
-    host: spin-gate.example.ops.com
+    host: oes-gate.audit.git.opsmx.net
     #port: 8084
 
     serviceAnnotations: {}
@@ -114,7 +114,7 @@ global:
   ## OES-UI url configuration
   oesUI:
     protocol: https
-    host: oes.example.ops.com
+    host: oes.audit.git.opsmx.net
     # Use below port when hostname above is an external IP instead of a hostname
     #port: 80
 
@@ -128,7 +128,7 @@ global:
   ## OES-Gate url configuration
   oesGate:
     protocol: https
-    host: oes-gate.example.ops.com
+    host: oes-gate.audit.git.opsmx.net
     # Use below port when hostname above is an external IP instead of a hostname
     #port: 8084
 
@@ -315,8 +315,8 @@ autopilot:
   ##
   image:
     registry: docker.io/opsmx11
-    repository: autopilot-ds
-    tag: ced13f8ce-47
+    repository: oes-autopilot
+    tag: v3.10.0-rc1
     pullPolicy: IfNotPresent
 
   annotations:
@@ -363,9 +363,9 @@ dashboard:
   ## Image specific details
   ##
   image:
-    registry: quay.io/opsmxpublic
-    repository: ubi8-oes-dashboard
-    tag: v3.9.1.2
+    registry: docker.io/opsmx11
+    repository: oes-dashboard
+    tag: 82bbc30-24
     pullPolicy: IfNotPresent
 
   annotations:
@@ -419,7 +419,7 @@ datascience:
   image:
     registry: docker.io/opsmx11
     repository: oes-datascience
-    tag: ced13f8ce-29
+    tag: v3.10.0-rc1
     pullPolicy: IfNotPresent
 
   serviceAnnotations: {}
@@ -440,7 +440,7 @@ audit:
   image:
     registry: docker.io/opsmx11
     repository: oes-audit-service
-    tag: 7106c82-23
+    tag: v3.10.0-rc1
     pullPolicy: IfNotPresent
 
   serviceAnnotations: {}
@@ -461,7 +461,7 @@ auditClient:
   image:
     registry: docker.io/opsmx11
     repository: oes-audit-client
-    tag: cff1364-6
+    tag: v3.10.0-rc1
     pullPolicy: IfNotPresent
 
   serviceAnnotations: {}
@@ -474,28 +474,6 @@ auditClient:
   config: {}
 
  
-###############################################################################
-##
-## Values of OES auditclient
-##
-auditClient:
-  ## Image specific details
-  ##
-  image:
-    registry: docker.io/opsmx11
-    repository: oes-audit-client
-    tag: cff1364-6
-    pullPolicy: IfNotPresent
-
-  serviceAnnotations: {}
-
-  annotations:
-    prometheus_io_path: /prometheus
-    prometheus_io_port: "8098"
-    prometheus.io/scrape: "true"
-  resources: {}
-  config: {}
-
  
 ###############################################################################
 ##
@@ -505,9 +483,9 @@ gate:
   ## Image specific details
   ##
   image:
-    registry: quay.io/opsmxpublic
-    repository: ubi8-gate
-    tag: v3.9.1.2
+    registry: docker.io/opsmx11
+    repository: gate
+    tag: 145815d3-26
     pullPolicy: IfNotPresent
 
   serviceAnnotations: {}
@@ -594,9 +572,9 @@ platform:
   ## Image specific details
   ##
   image:
-    registry: quay.io/opsmxpublic
-    repository: ubi8-oes-platform
-    tag: v3.9.1.3
+    registry: docker.io/opsmx11
+    repository: oes-platform
+    tag: 53c3ede-31
     pullPolicy: IfNotPresent
 
   annotations:
@@ -652,9 +630,9 @@ sapor:
   ## Image specific details
   ##
   image:
-    registry: quay.io/opsmxpublic
-    repository: ubi8-oes-sapor
-    tag: v3.9.1.2
+    registry: docker.io/opsmx11
+    repository: oes-sapor
+    tag: bdcc441-31
     pullPolicy: IfNotPresent
 
   annotations:
@@ -736,9 +714,9 @@ ui:
   ## Image specific details
   ##
   image:
-    registry: quay.io/opsmxpublic
-    repository: ubi8-oes-ui
-    tag: v3.9.1.2
+    registry: docker.io/opsmx11
+    repository: oes-ui
+    tag: c14e48b7-64
     pullPolicy: IfNotPresent
   serviceAnnotations: {}
 
@@ -755,9 +733,9 @@ visibility:
   ## Image specific details
   ##
   image:
-    registry: quay.io/opsmxpublic
-    repository: ubi8-oes-visibility
-    tag: v3.9.1.2
+    registry: docker.io/opsmx11
+    repository: oes-visibility
+    tag: 389e21e-31
     pullPolicy: IfNotPresent
 
   annotations:
@@ -1059,6 +1037,19 @@ spinnaker:
                       groupSearchFilter: member={0}
                       groupRoleAttributes: cn
                       userDnPattern: cn={0},dc=example,dc=org
+        echo-local.yml:
+            rest:
+               enabled: true
+               endpoints:
+                 -
+                   wrap: false
+                   url:  http://oes-audit-service:8097/auditservice/v1/echo/events/data
+
+                 - 
+                   wrap: false
+                   url: http://oes-sapor:8085/oes/echo   # ----> [Note: This url should be our SAPOR url]
+            microsoftteams:
+               enabled: true
     ## Define custom settings for Spinnaker services. Read more for details:
     ## https://www.spinnaker.io/reference/halyard/custom/#custom-service-settings
     ## You can use it to add annotations for pods, override the image, etc.
@@ -1245,15 +1236,15 @@ spinnaker:
       configArgs: "http.sslVerify=true"
       ## Configure below fields only if repo type is git/stash. Skip to s3 section if type is s3
       baseUrlHostName: github.com    # Specify it if git url is something other than github.com
-      organization: OpsMx
+      organization: ""
       # Specify project name only if repo is under a project
       projectName: ""
-      repository: standard-gitops-repo # repo name for GitOps Halyard (Sample Reference: https://github.com/OpsMx/sample-gitops-repo.git).
-      dynamicAccRepository: standard-gitops-repo # Please provide the repo name of the GitOps Dynamic Accounts Directory.Can be same as Hal repo. 
+      repository: oes310 # repo name for GitOps Halyard (Sample Reference: https://github.com/OpsMx/sample-gitops-repo.git).
+      dynamicAccRepository: oes310 # Please provide the repo name of the GitOps Dynamic Accounts Directory.Can be same as Hal repo. 
       halConfigPath: / # Any other value is currently not supported
       dynAccntConfigPath: dynaccount/ #relative path from repository root folder
-      username: git/stash_username  # Username to authenticate with git/stash repo
-      token: git/stash_token  # Token corresponding to above username
+      username: "" # Username to authenticate with git/stash repo
+      token: ""# Token corresponding to above username
       ## Configure below fields only if repo type is s3
       s3accesskey: AWS_ACCESS_KEY_ID
       s3secretkey: AWS_SECRET_ACCESS_KEY
@@ -1265,18 +1256,18 @@ spinnaker:
       enabled: true
       type: git  # git, s3, stash
       gitConfig: "git config --global http.sslVerify false"
-      organization: project_name  # Also called "project" in some repos
-      repository: repo_name  # bucket name in case of S3
-      rootFolder: pipeline/
+      organization: keerthibingi  # Also called "project" in some repos
+      repository: oes310  # bucket name in case of S3
+      rootFolder: pipeline-jsonfile/
       ##### ONLY In case of S3
       AWS_ACCESS_KEY_ID: access_key
       AWS_SECRET_ACCESS_KEY: secret_key
       ##### S3 config for pipelinePromotion is complete
       ##### For non-S3 repos
-      baseUrl: example.repo.com  #  "git_url"
-      username: username
-      token: token
-      branch: samplerepo
+      baseUrl: github.com  #  "git_url"
+      username: ""
+      token: ""
+      branch: master
       usermail: krish@company.com
       #password="K438"   ### Token is preferred, Password also might work, try your luck
       # Instead of username, token/password, sshkey can be provided
