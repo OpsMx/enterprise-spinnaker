@@ -1,4 +1,4 @@
-{{- if (eq .Values.installationMode "OES-AP") -}}
+{{- if or (eq .Values.installationMode "OES-AP")  (eq .Values.installationMode "EASY") -}}
 apiVersion: v1
 kind: Service
 metadata:
@@ -14,12 +14,15 @@ metadata:
 spec:
   type: {{ .Values.k8sServiceType }}
   ports:
-  - name: "oes-ui-service"
-    port: 80
-    targetPort: 8080
   - name: "https"
     port: 443
     targetPort: 8080
+  - name: "http"
+    port: 80
+    targetPort: 8080
+    {{- if eq  .Values.k8sServiceType "NodePort" }}
+    nodePort: {{ .Values.global.oesUI.port }}
+    {{- end }}
   selector:
     app: oes
     component: ui

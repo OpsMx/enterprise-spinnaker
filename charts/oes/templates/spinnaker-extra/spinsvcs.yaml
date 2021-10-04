@@ -15,11 +15,15 @@ metadata:
 spec:
   type: {{ .Values.k8sServiceType }}
   ports:
-  -  name: http
-     port: 9000
-     protocol: TCP
-  -  name: https
+   - name: "https"
      port: 443
+     targetPort: 9000
+   - name: "http"
+     port: 80
+     protocol: TCP
+     {{- if .Values.global.spinDeck.port }}
+     nodePort: {{ .Values.global.spinDeck.port }}
+     {{- end }}
      targetPort: 9000
   selector:
     cluster: spin-deck
@@ -39,11 +43,15 @@ metadata:
 spec:
   type: {{ .Values.k8sServiceType }}
   ports:
-  -  name: http
-     port: 8084
-     protocol: TCP
-  -  name: https
+   - name: https
      port: 443
+     targetPort: 8084
+   - name: "http"
+     port: 80
+     protocol: TCP
+     {{- if .Values.global.spinDeck.port }}
+     nodePort: {{ .Values.global.spinGate.port }}
+     {{- end }}
      targetPort: 8084
   selector:
     cluster: spin-gate
