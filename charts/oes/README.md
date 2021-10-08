@@ -149,8 +149,8 @@ Parameter | Description | Default
 `ui.config.setApplicationRefreshInterval` | Interval at which UI refreshes application dashboard | `16000`
 `visibility.config.configuredConnectors` | Integrations options | `JIRA,GIT,AUTOPILOT,SONARQUBE,JENKINS,AQUAWAVE`
 `visibility.config.logLevel` | Default Log Level | `ERROR`
-`autoConfiguration.enabled` | Option enables OES to be configured automatically. Load Balancer IPs will be automatically replaced in the configuration files of oes-gate, oes-ui & sapor. Set it to false if OES is being installed on restricted environment. | `true`
-`autoConfiguration.initContainer.externalIpCheckDelay` | Expected delay in assigning load balancer IPs to oes-ui & oes-gate in secs | `180`
+`global.autoConfiguration.enabled` | Option enables OES to be configured automatically. Load Balancer IPs will be automatically replaced in the configuration files of oes-gate, oes-ui & sapor. Set it to false if OES is being installed on restricted environment. | `true`
+`global.autoConfiguration.initContainer.externalIpCheckDelay` | Expected delay in assigning load balancer IPs to oes-ui & oes-gate in secs | `180`
 `opa.enabled` | Enable OPA with OES | `true`
 `installOpenLdap` | If true, installs Open LDAP server | `false`
 `openldap.adminPassword` | Password to be set for admin user of LDAP | `opsmxadmin123`

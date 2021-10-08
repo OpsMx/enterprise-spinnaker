@@ -35,40 +35,6 @@ check_for_loadBalancer()
     done
 }
 
-check_for_spinnakerGate_loadBalancer()
-{
-    ## Wait for $EXTERNAL_IP_CHECK_DELAY till K8s assins a load Balancer IP to oes-gate
-    iter=0
-    lapsedTime=0
-    while [ $iter -lt 36 ]
-    do
-      # Check if loadBalancer is directly assinged to spin-deck or spin-deck-ui service
-      ENDPOINT_IP=$(kubectl get svc spin-deck -o jsonpath="{.status.loadBalancer.ingress[].ip}")
-
-      if [ -z "$ENDPOINT_IP" ];
-      then
-        ENDPOINT_IP=$(kubectl get svc spin-deck-ui -o jsonpath="{.status.loadBalancer.ingress[].ip}")
-      fi
-
-      if [ ! -z "$ENDPOINT_IP" ];
-      then
-        echo "Found LoadBalancer IP for" $1
-        break
-      fi
-      sleep 5
-      lapsedTime=`expr $lapsedTime + 5`
-      #if [ $lapsedTime -eq $2 ];
-      if [ $lapsedTime -gt $EXTERNAL_IP_CHECK_DELAY ];
-      then
-        echo "Time Lapsed" $lapsedTime
-        echo "Timeout! Fetching nodeport IP alternatively"
-        break
-      fi
-      echo "Time Lapsed" $lapsedTime
-      iter=`expr $iter + 1`
-    done
-}
-
 case "$COMPONENT" in
   oes-ui)
     cp /config/* /var/www/html/assets/config/
@@ -80,14 +46,11 @@ case "$COMPONENT" in
 
     ## If external IP is not available
     if [ -z "$ENDPOINT_IP" ]; then
-      ## Fetch the nodePort & nodeport and replace in app-config.js
-      ENDPOINT_IP=$(kubectl get ep kubernetes -n default -o jsonpath="{.subsets[].addresses[].ip}")
-      PORT=$(kubectl get svc oes-gate -o jsonpath="{.spec.ports[].nodePort}")
-      sed -i "s/OES_GATE_IP/$ENDPOINT_IP/g" /var/www/html/assets/config/app-config.json
-      sed -i "s/8084/$PORT/g" /var/www/html/assets/config/app-config.json
+      echo "Gate LB endpoint is empty"
     else
       ## Substitute oes-gate external IP in app-config.js
-      sed -i "s/OES_GATE_IP/$ENDPOINT_IP/g" /var/www/html/assets/config/app-config.json
+      cat /var/www/html/assets/config/app-config.json | jq ".endPointUrl = \"http://$ENDPOINT_IP:8084/\"" > /var/www/html/assets/config/app-config-temp.json
+      mv /var/www/html/assets/config/app-config-temp.json /var/www/html/assets/config/app-config.json
     fi
     ;;
   oes-gate)
@@ -95,80 +58,24 @@ case "$COMPONENT" in
 
     ENDPOINT_IP=""
 
-    ## Wait for $EXTERNAL_IP_CHECK_DELAY till K8s assins a load Balancer IP to oes-gate
+    ## Wait for $EXTERNAL_IP_CHECK_DELAY till K8s assins a load Balancer IP to oes-ui
     check_for_loadBalancer oes-ui
 
     ## If external IP is not available
     if [ -z "$ENDPOINT_IP" ]; then
-      ## Fetch the nodePort IP and replace in gate.yml
-      ENDPOINT_IP=$(kubectl get ep kubernetes -n default -o jsonpath="{.subsets[].addresses[].ip}")
-      sed -i "s/OES_UI_LOADBALANCER_IP/$ENDPOINT_IP/g" /opt/spinnaker/config/gate.yml
+      echo "UI LB endpoint is empty"
     else
-      ## Substitute oes-ui external IP in gate.yml
-      sed -i "s/OES_UI_LOADBALANCER_IP/$ENDPOINT_IP/g" /opt/spinnaker/config/gate.yml
-    fi
-    ;;
-  sapor)
-    ## Unused code block in oes-init:v3; sapor is not automatically configured!!!
-    cp /config/* /opt/opsmx/
-
-    ENDPOINT_IP=""
-
-    ## Wait for $EXTERNAL_IP_CHECK_DELAY till K8s assins a load Balancer IP to oes-gate
-    check_for_spinnakerGate_loadBalancer spin-deck $SPINNAKER_SETUP_DELAY
-    PORT=9000
-
-    ## If external IP is not available
-    if [ -z "$ENDPOINT_IP" ]; then
-      ## Fetch the nodePort IP and replace in spinnaker.yaml
-      ENDPOINT_IP=$(kubectl get ep kubernetes -n default -o jsonpath="{.subsets[].addresses[].ip}")
-      PORT=$(kubectl get svc spin-gate -o jsonpath="{.spec.ports[].nodePort}")
-      sed -i "s/SPIN_GATE_LOADBALANCER_IP_PORT/$ENDPOINT_IP:$PORT/g" /opt/opsmx/application.yml
-      #sed -i "s/spin-gate:8084/$ENDPOINT_IP:$PORT/g" /opt/opsmx/spinnaker.yaml
-    else
-      ## Substitute spin-deck external IP in spinnaker.yaml
-      sed -i "s/SPIN_GATE_LOADBALANCER_IP_PORT/$ENDPOINT_IP:$PORT/g" /opt/opsmx/application.yml
-    fi
-    ;;
-
-
-  spin-gate)
-    ENDPOINT_IP=""
-
-    ## Wait for $EXTERNAL_IP_CHECK_DELAY till K8s assins a load Balancer IP to oes-gate
-    check_for_spinnakerGate_loadBalancer spin-deck $SPINNAKER_SETUP_DELAY
-    PORT=9000
-
-    ## If external IP is not available
-    if [ -z "$ENDPOINT_IP" ]; then
-      ## Fetch the nodePort IP and replace in spinnaker.yaml
-      ENDPOINT_IP=$(kubectl get ep kubernetes -n default -o jsonpath="{.subsets[].addresses[].ip}")
-      PORT=$(kubectl get svc spin-gate -o jsonpath="{.spec.ports[].nodePort}")
-      echo sed -i "s/SPIN_GATE_LOADBALANCER_IP_PORT/$ENDPOINT_IP:$PORT/g" /opt/opsmx/application.yml
-      #sed -i "s/spin-gate:8084/$ENDPOINT_IP:$PORT/g" /opt/opsmx/spinnaker.yaml
-    else
-      ## Substitute spin-deck external IP in spinnaker.yaml
-      echo sed -i "s/SPIN_GATE_LOADBALANCER_IP_PORT/$ENDPOINT_IP:$PORT/g" /opt/opsmx/application.yml
-    fi
-    ;;
-
-  spin-deck)
-
-    ENDPOINT_IP=""
-
-    ## Wait for $EXTERNAL_IP_CHECK_DELAY till K8s assins a load Balancer IP to oes-gate
-    check_for_loadBalancer spin-deck
-
-    ## If external IP is not available
-    if [ -z "$ENDPOINT_IP" ]; then
-      ## Fetch the nodePort & nodeport and replace in app-config.js
-      ENDPOINT_IP=$(kubectl get ep kubernetes -n default -o jsonpath="{.subsets[].addresses[].ip}")
-      PORT=$(kubectl get svc spin-gate -o jsonpath="{.spec.ports[].nodePort}")
-      echo sed -i "s/OES_GATE_IP/$ENDPOINT_IP/g" /var/www/html/assets/config/app-config.json
-      sed -i "s/8084/$PORT/g" /var/www/html/assets/config/app-config.json
-    else
-      ## Substitute oes-gate external IP in app-config.js
-      sed -i "s/OES_GATE_IP/$ENDPOINT_IP/g" /var/www/html/assets/config/app-config.json
+      ## Substitute oes-ui external IP in gate.yml uner allowed-origin-patterns
+      EXISTING_CORS=$(cat /opt/spinnaker/config/gate.yml | yq e '.cors.allowed-origins-pattern' -)
+      export NEW_CORS=$(echo $EXISTING_CORS | sed "s/|/|$ENDPOINT_IP|/")
+      check_for_loadBalancer spin-deck-lb
+      if [ ! -z "$ENDPOINT_IP" ]; then
+        export NEW_CORS=$(echo $NEW_CORS | sed "s/|/|$ENDPOINT_IP|/")
+      fi
+      echo "New cors is "$NEW_CORS
+      yq e '.cors.allowed-origins-pattern = "${NEW_CORS}"' /opt/spinnaker/config/gate.yml | tee /opt/spinnaker/config/gate-temp.yml
+      envsubst < /opt/spinnaker/config/gate-temp.yml > /opt/spinnaker/config/gate.yml
+      rm -rf /opt/spinnaker/config/gate-temp.yml
     fi
     ;;
 

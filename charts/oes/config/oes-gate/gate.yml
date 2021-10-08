@@ -168,9 +168,10 @@ server:
   session:
     timeoutInSeconds: {{ .Values.gate.config.server.session.timeoutInSeconds }}
   tomcat:
+    httpsServerPort: X-Forwarded-Port
+    internalProxies: .*
     protocolHeader: X-Forwarded-Proto
     remoteIpHeader: X-Forwarded-For
-    internalProxies: .*
 {{- if .Values.global.commonGate.enabled }}
 spinnaker:
   extensibility:
