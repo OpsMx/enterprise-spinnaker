@@ -1096,7 +1096,7 @@ spinnaker:
       type: git # git, s3, stash(bitbucket server) use a different sample values file for s3/bitbuck-stash
       configArgs: "http.sslVerify=true"
       ## Configure below fields only if repo type is git/stash. Skip to s3 section if type is s3
-      baseUrlHostName: github.com    # Defaults to github.com; reconfigure it if git repo is hosted anywhere else
+      baseUrlHostName: github.com    # Specify the Base FQDN of your repository without the protocol, without any directories, and without any project name here (example: github.com)
       organization: OpsMx
       # Specify project name only if repo is under a project
       projectName: ""
