@@ -59,3 +59,15 @@ rules:
         'update',
         'watch',
       ]
+  # These permissions are necessary for halyard to operate. We use this role also to deploy Spinnaker itself.
+  - apiGroups: ['batch']
+    resources: ['jobs']
+    verbs:
+      [
+        'create',
+        'delete',
+        'get',
+        'list',
+        'update',
+        'watch',
+      ]
