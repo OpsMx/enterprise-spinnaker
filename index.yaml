@@ -44,6 +44,59 @@ entries:
   oes:
   - apiVersion: v2
     appVersion: 3.9.1.2
+    created: "2021-10-08T10:06:50.803830455Z"
+    dependencies:
+    - condition: global.installOpenLdap
+      name: openldap
+      repository: ""
+      version: 1.2.3
+    - condition: installSpinnaker
+      name: spinnaker
+      repository: ""
+      version: 2.2.3
+    - condition: installRedis
+      name: redis
+      repository: ""
+      version: 10.5.3
+    - condition: enableCentralLogging
+      name: elasticsearch
+      repository: ""
+      version: 7.5.0
+    - condition: enableCentralLogging
+      name: kibana
+      repository: ""
+      version: 7.5.0
+    - condition: enableCentralLogging
+      name: fluent-bit
+      repository: ""
+      version: 2.8.2
+    - condition: spinnaker.enableCentralMonitoring
+      name: prometheus
+      repository: ""
+      version: 11.16.2
+    description: OES is a non-forked version of OSS spinnaker
+    digest: 0476201977d8dcfe04062660edbaeeada565e621e7da8bf761623189177beb5b
+    home: https://www.opsmx.com/
+    icon: https://raw.githubusercontent.com/OpsMx/enterprise-spinnaker/master/img/opsmx.png
+    keywords:
+    - OpsMx
+    - OES
+    - Autopilot
+    maintainers:
+    - email: abhinay.byrisetty@opsmx.io
+      name: abhinaybyrisetty
+    - email: vamsi.krishna@opsmx.io
+      name: vkvamsi
+    - email: nirmalya@opsmx.io
+      name: nirmalyasen
+    - email: srinivas@opsmx.io
+      name: ksrinimba
+    name: oes
+    urls:
+    - https://github.com/OpsMx/enterprise-spinnaker/releases/download/oes-3.9.7/oes-3.9.7.tgz
+    version: 3.9.7
+  - apiVersion: v2
+    appVersion: 3.9.1.2
     created: "2021-09-27T16:22:24.416247062Z"
     dependencies:
     - condition: global.installOpenLdap
@@ -2824,8 +2877,7 @@ entries:
       name: minio
       repository: ""
       version: 8.0.9
-    description: Open source, multi-cloud continuous delivery platform for releasing
-      software changes with high velocity and confidence.
+    description: Open source, multi-cloud continuous delivery platform for releasing software changes with high velocity and confidence.
     digest: edac82c6b31a6f613dfce18d8bac4aa5591ac3e9ade6f6ff53c75d758ab1f448
     home: http://spinnaker.io/
     icon: https://pbs.twimg.com/profile_images/669205226994319362/O7OjwPrh_400x400.png
@@ -2862,8 +2914,7 @@ entries:
       name: minio
       repository: ""
       version: 8.0.9
-    description: Open source, multi-cloud continuous delivery platform for releasing
-      software changes with high velocity and confidence.
+    description: Open source, multi-cloud continuous delivery platform for releasing software changes with high velocity and confidence.
     digest: 5163749ffa5339a60e6b89a6253e6014f9044102200829d4e28af98aaf1e7e99
     home: http://spinnaker.io/
     icon: https://pbs.twimg.com/profile_images/669205226994319362/O7OjwPrh_400x400.png
@@ -2900,8 +2951,7 @@ entries:
       name: minio
       repository: https://helm.min.io/
       version: 8.0.9
-    description: Open source, multi-cloud continuous delivery platform for releasing
-      software changes with high velocity and confidence.
+    description: Open source, multi-cloud continuous delivery platform for releasing software changes with high velocity and confidence.
     digest: d48694495f65fc04f97e5817bd847a0358b43eb575502308367b1eab7bf13164
     home: http://spinnaker.io/
     icon: https://pbs.twimg.com/profile_images/669205226994319362/O7OjwPrh_400x400.png
@@ -2938,8 +2988,7 @@ entries:
       name: minio
       repository: https://helm.min.io/
       version: 8.0.9
-    description: Open source, multi-cloud continuous delivery platform for releasing
-      software changes with high velocity and confidence.
+    description: Open source, multi-cloud continuous delivery platform for releasing software changes with high velocity and confidence.
     digest: 307d961140717b6d3583ee81fe6da40d0ef5912fa9539be0de7247001eb813ee
     home: http://spinnaker.io/
     icon: https://pbs.twimg.com/profile_images/669205226994319362/O7OjwPrh_400x400.png
@@ -2971,8 +3020,7 @@ entries:
       name: minio
       repository: https://kubernetes-charts.storage.googleapis.com/
       version: 5.0.9
-    description: Open source, multi-cloud continuous delivery platform for releasing
-      software changes with high velocity and confidence.
+    description: Open source, multi-cloud continuous delivery platform for releasing software changes with high velocity and confidence.
     digest: 3d75da6c05659cf784807ebd3c604b714adfbc4f5cab34307e24e2dab5ea9f00
     home: http://spinnaker.io/
     icon: https://pbs.twimg.com/profile_images/669205226994319362/O7OjwPrh_400x400.png
