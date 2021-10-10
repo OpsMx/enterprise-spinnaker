@@ -1,0 +1,38 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: {{ .Release.Name }}-create-sample-app
+spec:
+  template:
+    spec:
+      serviceAccountName: {{ .Release.Name }}-spinnaker-halyard
+      securityContext:
+        fsGroup: 1000
+        runAsUser: 1000
+      restartPolicy: OnFailure
+      volumes:
+      - name: halyard-config
+        configMap:
+          name: {{ .Release.Name }}-spinnaker-halyard-config
+      - secret:
+          secretName: {{ .Release.Name }}-spinnaker-spin-config
+        name: spin-config
+      - configMap:
+          defaultMode: 420
+          name: {{ .Release.Name }}-spinnaker-spin-pipeline-import
+        name: spin-pipeline-import
+      - name: spin-pipeline-config
+        emptyDir: {}
+      containers:
+      - command:  
+        - bash
+        - /tmp/config/spin-pipeline-import.sh
+        name: sample-pipeline-install
+        image: {{ .Values.global.customImages.registry }}/spin-sample-pipeline:1.0
+        volumeMounts:         
+        - name: spin-pipeline-config
+          mountPath: /tmp/config/git
+        - mountPath: /tmp/config
+          name: spin-pipeline-import
+        - mountPath: /tmp/config/spin
+          name: spin-config
