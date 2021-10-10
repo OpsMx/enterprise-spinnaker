@@ -1,6 +1,6 @@
 {{- define "imagePullSecret" }}
 {{- with .Values.imageCredentials }}
-{{- printf "{\"auths\":{\"%s\":{\"username\":\"%s\",\"password\":\"%s\",\"email\":\"%s\",\"auth\":\"%s\"}}}" .registry .username .password .email (printf "%s:%s" .username .password | b64enc) | b64enc }}
+{{- printf "{\"auths\":{\"%s\":{\"username\":\"%s\",\"password\":\"%s\",\"email\":\"%s\",\"auth\":\"%s\"}}}" .repoUrl .username .password .email (printf "%s:%s" .username .password | b64enc) | b64enc }}
 {{- end }}
 {{- end }}
 
@@ -35,7 +35,7 @@ chart: "{{ .Chart.Name }}-{{ .Chart.Version }}"
 Return the proper UI image name
 */}}
 {{- define "ui.image" -}}
-{{- $registryName := .Values.ui.image.registry -}}
+{{- $registryName := .Values.imageCredentials.registry -}}
 {{- $repositoryName := .Values.ui.image.repository -}}
 {{- $tag := .Values.ui.image.tag | toString -}}
 {{- printf "%s/%s:%s" $registryName $repositoryName $tag -}}
@@ -45,7 +45,7 @@ Return the proper UI image name
 Return the proper GATE image name
 */}}
 {{- define "gate.image" -}}
-{{- $registryName := .Values.gate.image.registry -}}
+{{- $registryName := .Values.imageCredentials.registry -}}
 {{- $repositoryName := .Values.gate.image.repository -}}
 {{- $tag := .Values.gate.image.tag | toString -}}
 {{- printf "%s/%s:%s" $registryName $repositoryName $tag -}}
@@ -55,7 +55,7 @@ Return the proper GATE image name
 Return the proper SAPOR GATE image name
 */}}
 {{- define "saporgate.image" -}}
-{{- $registryName := .Values.saporgate.image.registry -}}
+{{- $registryName := .Values.imageCredentials.registry -}}
 {{- $repositoryName := .Values.saporgate.image.repository -}}
 {{- $tag := .Values.saporgate.image.tag | toString -}}
 {{- printf "%s/%s:%s" $registryName $repositoryName $tag -}}
@@ -65,7 +65,7 @@ Return the proper SAPOR GATE image name
 Return the proper SAPOR image name
 */}}
 {{- define "sapor.image" -}}
-{{- $registryName := .Values.sapor.image.registry -}}
+{{- $registryName := .Values.imageCredentials.registry -}}
 {{- $repositoryName := .Values.sapor.image.repository -}}
 {{- $tag := .Values.sapor.image.tag | toString -}}
 {{- printf "%s/%s:%s" $registryName $repositoryName $tag -}}
@@ -75,7 +75,7 @@ Return the proper SAPOR image name
 Return the proper platform image name
 */}}
 {{- define "platform.image" -}}
-{{- $registryName := .Values.platform.image.registry -}}
+{{- $registryName := .Values.imageCredentials.registry -}}
 {{- $repositoryName := .Values.platform.image.repository -}}
 {{- $tag := .Values.platform.image.tag | toString -}}
 {{- printf "%s/%s:%s" $registryName $repositoryName $tag -}}
@@ -85,7 +85,7 @@ Return the proper platform image name
 Return the proper dashboard image name
 */}}
 {{- define "dashboard.image" -}}
-{{- $registryName := .Values.dashboard.image.registry -}}
+{{- $registryName := .Values.imageCredentials.registry -}}
 {{- $repositoryName := .Values.dashboard.image.repository -}}
 {{- $tag := .Values.dashboard.image.tag | toString -}}
 {{- printf "%s/%s:%s" $registryName $repositoryName $tag -}}
@@ -95,7 +95,7 @@ Return the proper dashboard image name
 Return the proper sapor-db image name
 */}}
 {{- define "db.image" -}}
-{{- $registryName := .Values.db.image.registry -}}
+{{- $registryName := .Values.imageCredentials.registry -}}
 {{- $repositoryName := .Values.db.image.repository -}}
 {{- $tag := .Values.db.image.tag | toString -}}
 {{- printf "%s/%s:%s" $registryName $repositoryName $tag -}}
@@ -105,7 +105,7 @@ Return the proper sapor-db image name
 Return the proper visibility image name
 */}}
 {{- define "visibility.image" -}}
-{{- $registryName := .Values.visibility.image.registry -}}
+{{- $registryName := .Values.imageCredentials.registry -}}
 {{- $repositoryName := .Values.visibility.image.repository -}}
 {{- $tag := .Values.visibility.image.tag | toString -}}
 {{- printf "%s/%s:%s" $registryName $repositoryName $tag -}}
@@ -116,7 +116,7 @@ Return the proper visibility image name
 Return the proper Autopilot image name
 */}}
 {{- define "autopilot.image" -}}
-{{- $registryName := .Values.autopilot.image.registry -}}
+{{- $registryName := .Values.imageCredentials.registry -}}
 {{- $repositoryName := .Values.autopilot.image.repository -}}
 {{- $tag := .Values.autopilot.image.tag | toString -}}
 {{- printf "%s/%s:%s" $registryName $repositoryName $tag -}}
