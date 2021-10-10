@@ -11,9 +11,6 @@ spec:
         runAsUser: 1000
       restartPolicy: OnFailure
       volumes:
-      - name: halyard-config
-        configMap:
-          name: {{ .Release.Name }}-spinnaker-halyard-config
       - secret:
           secretName: {{ .Release.Name }}-spinnaker-spin-config
         name: spin-config
