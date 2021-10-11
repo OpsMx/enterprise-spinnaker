@@ -1252,13 +1252,13 @@ spinnaker:
       type: git # git, s3, stash(bitbucket server) use a different sample values file for s3/bitbuck-stash
       configArgs: "http.sslVerify=true"
       ## Configure below fields only if repo type is git/stash. Skip to s3 section if type is s3
-      baseUrlHostName: github.com    # Specify it if git url is something other than github.com
-      organization: ""
+      baseUrlHostName: github.com    # Specify the Base FQDN of your repository without the protocol, without any directories, and without any project name here (example: github.com)
+      organization: OpsMx
       # Specify project name only if repo is under a project
       projectName: ""
-      repository: oes310 # repo name for GitOps Halyard (Sample Reference: https://github.com/OpsMx/sample-gitops-repo.git).
-      dynamicAccRepository: oes310 # Please provide the repo name of the GitOps Dynamic Accounts Directory.Can be same as Hal repo. 
-      halConfigPath: / # Any other value is currently not supported
+      repository: standard-gitops-repo # repo name for GitOps Halyard (Sample Reference: https://github.com/OpsMx/sample-gitops-repo.git).
+      dynamicAccRepository: standard-gitops-repo # Please provide the repo name of the GitOps Dynamic Accounts Directory. Can be same as Hal repo. 
+      halConfigPath: / #relative path from repository root folder
       dynAccntConfigPath: dynaccount/ #relative path from repository root folder
       username: "" # Username to authenticate with git/stash repo
       token: ""# Token corresponding to above username
@@ -1314,9 +1314,9 @@ spinnaker:
   ## Here basic ldap auth is used by default; everything under spinCli will be pasted in ~/.spin/config
   spinCli:
     gate:
-      endpoint: http://sapor-gate:8084 # Should same as the spin-gate URL
+      endpoint: http://sapor-gate:8084 # URL that needs to be used to talk to spinnaker gate and create sample pipelines
     auth:
       enabled: true
       basic:
-        username: admin          # Please update as required
-        password: saporadmin  # Please update as required
+        username: admin          # Use credentials corresponding to spinCli.gate.endpoint
+        password: saporadmin  # Use credentials corresponding to spinCli.gate.endpoint
