@@ -182,7 +182,7 @@ data:
     DECK_LB_IP=$(kubectl get svc spin-deck-lb -o jsonpath="{.status.loadBalancer.ingress[].ip}")
     if [ ! -z "$DECK_LB_IP" ];
     then
-      $HAL_COMMAND config security ui edit --no-validate --override-base-url http://$DECK_LB_IP:9000
+      $HAL_COMMAND config security ui edit --no-validate --override-base-url {{ .Values.global.spinDeck.protocol }}://$DECK_LB_IP:9000
     fi
     {{- else if .Values.global.spinDeck.port }}
     $HAL_COMMAND config security ui edit --no-validate --override-base-url {{ .Values.global.spinDeck.protocol }}://{{ .Values.global.spinDeck.host }}:{{ .Values.global.spinDeck.port }}
@@ -198,7 +198,7 @@ data:
     {{- end }}
     if [ ! -z "$GATE_LB_IP" ];
     then
-      $HAL_COMMAND config security api edit --no-validate --override-base-url http://$GATE_LB_IP:8084
+      $HAL_COMMAND config security api edit --no-validate --override-base-url {{ .Values.global.spinDeck.protocol }}://$GATE_LB_IP:8084
     fi
     {{- else if and (.Values.global.spinGate.port) (not .Values.global.commonGate.enabled) }}
     $HAL_COMMAND config security api edit --no-validate --override-base-url {{ .Values.global.spinGate.protocol }}://{{ .Values.global.spinGate.host }}:{{ .Values.global.spinGate.port }}
