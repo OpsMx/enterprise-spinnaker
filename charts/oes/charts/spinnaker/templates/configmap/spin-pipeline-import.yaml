@@ -21,40 +21,26 @@ data:
     ECHOSCHEDULER=$(grep spin-echo-scheduler  /tmp/inst.status | awk '{print $2}')
     FRONT=$(grep spin-front /tmp/inst.status  | awk '{print $2}')
     GATE=$(grep spin-gate /tmp/inst.status | awk '{print $2}')
-    IGOR=$(grep spin-igor /tmp/inst.status | awk '{print $2}')
+    FIAT=$(grep spin-fiat /tmp/inst.status | awk '{print $2}')
     ORCA=$(grep spin-orca /tmp/inst.status | awk '{print $2}')
+    IGOR=$(grep spin-igor /tmp/inst.status | awk '{print $2}')
     ROSCO=$(grep spin-rosco /tmp/inst.status | awk '{print $2}')
-    SAPOR=$(grep oes-sapor /tmp/inst.status | awk '{print $2}')
-    PLATFORM=$(grep oes-platform /tmp/inst.status | awk '{print $2}')
 
     wait_period=$(($wait_period+10))
-
+    {{- if .Values.global.commonGate.spinnakerRBAC }}
+    if [ "$DECK" == "true" ] && [ "$CLOUDCACHING" == "true" ] && [ "$CLOUDRO" == "true" ] && [ "$CLOUDRW" == "true" ] && [ "$CLOUDRODECK" == "true" ] && [ "$FRONT" == "true" ] && [ "$GATE" == "true" ] && [ "$IGOR" == "true" ] && [ "$ORCA" == "true" ] && [ "$ROSCO" == "true" ] && [ "$ECHOWORKER" == "true" ] && [ "$ECHOSCHEDULER" == "true" ] && [ "$FIAT" == "true" ];
+    {{- else }}
     if [ "$DECK" == "true" ] && [ "$CLOUDCACHING" == "true" ] && [ "$CLOUDRO" == "true" ] && [ "$CLOUDRW" == "true" ] && [ "$CLOUDRODECK" == "true" ] && [ "$FRONT" == "true" ] && [ "$GATE" == "true" ] && [ "$IGOR" == "true" ] && [ "$ORCA" == "true" ] && [ "$ROSCO" == "true" ] && [ "$ECHOWORKER" == "true" ] && [ "$ECHOSCHEDULER" == "true" ];
+    {{- end }}
     then
-        if [ -z "$SAPOR" ] && [ -z "$PLATFORM" ];
-        then
-             echo \"Spinnaker is Installed and ready\"
-             mkdir -p /tmp/config/git/
-             git -c {{ .Values.gitopsHalyard.repo.configArgs }} clone https://github.com/OpsMx/sample-pipelines.git /tmp/config/git/
-             cd /tmp/config/git
-             cp -p /tmp/config/spin/config .
-             sed 's/$/ --config config/' create-app.sh >create-app1.sh
-             bash -xe create-app1.sh
-             break
-        elif [ "$SAPOR" == "true" ] && [ "$PLATFORM" == "true" ]
-        then
-             echo \"Spinnaker and OES is Installed and ready\"
-             mkdir -p /tmp/config/git/
-             git -c {{ .Values.gitopsHalyard.repo.configArgs }} clone https://github.com/OpsMx/sample-pipelines.git /tmp/config/git/
-             cd /tmp/config/git
-             cp -p /tmp/config/spin/config .
-             sed 's/$/ --config config/' create-app.sh >create-app1.sh
-             bash -xe create-app1.sh
-             break
-        else
-             echo \"Waiting for Sapor and Platform Services\"
-             continue
-        fi
+        echo \"Spinnaker and OES is Installed and ready\"
+        mkdir -p /tmp/config/git/
+        git -c {{ .Values.gitopsHalyard.repo.configArgs }} clone https://github.com/OpsMx/sample-pipelines.git /tmp/config/git/
+        cd /tmp/config/git
+        cp -p /tmp/config/spin/config .
+        sed 's/$/ --config config/' create-app.sh >create-app1.sh
+        bash -xe create-app1.sh
+        break
     else
         if [ $wait_period -gt 1800 ];
         then

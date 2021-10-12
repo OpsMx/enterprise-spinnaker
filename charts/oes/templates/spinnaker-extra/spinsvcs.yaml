@@ -18,6 +18,9 @@ spec:
   -  name: http
      port: 9000
      protocol: TCP
+  -  name: http80
+     port: 80
+     targetPort: 9000
   -  name: https
      port: 443
      targetPort: 9000
@@ -42,6 +45,9 @@ spec:
   -  name: http
      port: 8084
      protocol: TCP
+  -  name: http80
+     port: 80
+     targetPort: 8084
   -  name: https
      port: 443
      targetPort: 8084

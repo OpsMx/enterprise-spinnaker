@@ -87,15 +87,6 @@ spec:
         secret:
           secretName: {{ template "spinnaker.fullname" .}}-s3
       {{- end }}
-      - secret:
-          secretName: {{ template "spinnaker.fullname" . }}-spin-config
-        name: spin-config
-      - configMap:
-          defaultMode: 420
-          name: {{ template "spinnaker.fullname" . }}-spin-pipeline-import
-        name: spin-pipeline-import
-      - name: spin-pipeline-config
-        emptyDir: {}
       {{- if .Values.halyard.pullSecrets }}
       imagePullSecrets:
         {{- range .Values.halyard.image.pullSecrets }}
@@ -150,20 +141,6 @@ spec:
             fieldRef:
               apiVersion: v1
               fieldPath: status.hostIP
-      {{- if .Values.autoInstallSampleApps }}
-      - command:
-        - bash
-        - /tmp/config/spin-pipeline-import.sh
-        name: sample-pipeline-install
-        image: {{ .Values.global.customImages.registry }}/spin-sample-pipeline:1.0
-        volumeMounts:         
-        - name: spin-pipeline-config
-          mountPath: /tmp/config/git
-        - mountPath: /tmp/config
-          name: spin-pipeline-import
-        - mountPath: /tmp/config/spin
-          name: spin-config
-      {{- end }}
            
 
 
