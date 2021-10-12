@@ -45,13 +45,13 @@ global:
     installed: true
 
   customCerts:
-    enabled: false        # Set to true of your organization requires custom TLS certs
-    secretName: oes-cacerts # Pleaes do not change this
+    enabled: false        # Set to true if your organization requires custom TLS certs
+    secretName: oes-cacerts # Please do not change this
 
   # Common gate for both spin and oes services. Change ONLY if required
   commonGate:
     enabled: true
-    spinnakerRBAC: false  # Set to true of RBAC is enabled in Spinnaker
+    spinnakerRBAC: false  # Set to true if RBAC is enabled in Spinnaker
 
   ## Set to true to expose oes-ui, oes-gate services over ingress
   createIngress: true
@@ -75,6 +75,7 @@ global:
   spinGate:
     protocol: https
     host: spin-gate.example.ops.com
+    #port: 8084
 
     serviceAnnotations: {}
     ingress:
@@ -442,7 +443,6 @@ ui:
 visibility:
   ## Image specific details
   image:
-    registry: quay.io/opsmxpublic
     repository: ubi8-oes-visibility
     tag: v3.9.1.2
     pullPolicy: IfNotPresent
@@ -506,6 +506,78 @@ redis:
 # Spinnaker instance configuration
 #####################################################
 spinnaker:
+  autoInstallSampleApps: true   # Set this to FALSE if upgrading
+  # Initialize gitOps style Halyard
+  gitopsHalyard:
+    enabled: true
+    secretName: opsmx-gitops-auth  # No need to change this
+    repo:
+      type: git # git, s3, stash(bitbucket server) use a different sample values file for s3/bitbuck-stash
+      configArgs: "http.sslVerify=false"
+      ## Configure below fields only if repo type is git/stash. Skip to s3 section if type is s3
+      baseUrlHostName: github.com    # Specify the Base FQDN of your repository without the protocol
+      organization: OpsMx
+      projectName: ""                # Specify project name only if repo is under a project
+      repository: standard-gitops-repo # repo name for GitOps Halyard (Sample Reference: https://github.com/OpsMx/sample-gitops-repo.git).
+      dynamicAccRepository: standard-gitops-repo # Please provide the repo name of the GitOps Dynamic Accounts Directory. Can be same as Hal repo. 
+      halConfigPath: / #relative path from repository root folder
+      dynAccntConfigPath: dynaccount/ #relative path from repository root folder
+      username: git/stash_username  # Username to authenticate with git/stash repo
+      token: git/stash_token  # Token corresponding to above username
+      ## Configure below fields only if repo type is s3
+      s3accesskey: AWS_ACCESS_KEY_ID
+      s3secretkey: AWS_SECRET_ACCESS_KEY
+      s3bucket: bucket name.e.g-testbucket 
+      s3region: regionofbucket
+    # Promote applications and pipelines from one environment to another or take backup
+    pipelinePromotion:  # GitHub only,  Not supportd on S3 or Stash
+      enabled: true
+      type: git  # git, s3, stash
+      gitConfig: "git config --global http.sslVerify false"
+      organization: project_name  # Also called "project" in some repos
+      repository: repo_name  # bucket name in case of S3
+      rootFolder: pipeline/
+      ##### ONLY In case of S3
+      AWS_ACCESS_KEY_ID: access_key
+      AWS_SECRET_ACCESS_KEY: secret_key
+      ##### S3 config for pipelinePromotion is complete
+      ##### For non-S3 repos
+      baseUrl: example.repo.com  #  "git_url"
+      username: username
+      token: token
+      branch: samplerepo
+      usermail: krish@company.com
+      #password="K438"   ### Token is preferred, Password also might work, try your luck
+      # Instead of username, token/password, sshkey can be provided
+      #API
+      #api_url="https://api.bitbucket.org/2.0/repositories/"   # bitbucket
+      apiUrl: "https://api.github.com/repos"                  # guthub
+      #api_url="https://api.gitlab.com/repos"                  # gitLAB
+      #api_url="https://bbq.opsmx.com/api"                      # bitbucket-server(stash)
+
+      ###############################################################################################
+      ###############################################################################################
+      #### The values below this line are typically not required to be changed for Spinnaker 
+      ###############################################################################################
+      ###############################################################################################
+      createPR: false
+      autoApprovePR: false
+      targetBranch: master # can be any branch to which PR to be raised
+      approvingUser: approver_user  ### user who is going to auto-merge
+      approverToken: token ## Token for the user to auto-merge
+
+    ## x509 authentication for Spinnaker Gate
+    gatex509:
+      enabled: false
+      host: spingate-x509.domain.com
+    # Max time(in secs) that an init container of halyard should wait
+    # to fetch External Load Balancer IP of spin-deck and spin-gate
+    spinnakerLBCheckDelay: 1 # This is only used if not using ingress
+    mTLS:
+      enabled: false # Enable mTLS for Spinnaker Services and SSL for Deck and Gate
+  ###############################################################################################
+  #### The values below this line apply mainly to non-gitOps Spinnaker, best not changed
+  ###############################################################################################
   halyard:
     spinnakerVersion: 1.26.6
     image:
@@ -754,83 +826,18 @@ spinnaker:
 
   ## Centralized Monitoring enable for Prometheus
   enableCentralMonitoring: false
-  autoInstallSampleApps: true   # Set this to FALSE if upgrading
 
-  # Initialize gitOps style Halyard
-  gitopsHalyard:
-    enabled: true
-    repo:
-      type: git # git, s3, stash(bitbucket server) use a different sample values file for s3/bitbuck-stash
-      configArgs: "http.sslVerify=true"
-      ## Configure below fields only if repo type is git/stash. Skip to s3 section if type is s3
-      baseUrlHostName: github.com    # Specify the Base FQDN of your repository without the protocol, without any directories, and without any project name here (example: github.com)
-      organization: OpsMx
-      # Specify project name only if repo is under a project
-      projectName: ""
-      repository: standard-gitops-repo # repo name for GitOps Halyard (Sample Reference: https://github.com/OpsMx/sample-gitops-repo.git).
-      dynamicAccRepository: standard-gitops-repo # Please provide the repo name of the GitOps Dynamic Accounts Directory. Can be same as Hal repo. 
-      halConfigPath: / #relative path from repository root folder
-      dynAccntConfigPath: dynaccount/ #relative path from repository root folder
-      username: git/stash_username  # Username to authenticate with git/stash repo
-      token: git/stash_token  # Token corresponding to above username
-      ## Configure below fields only if repo type is s3
-      s3accesskey: AWS_ACCESS_KEY_ID
-      s3secretkey: AWS_SECRET_ACCESS_KEY
-      s3bucket: bucket name.e.g-testbucket 
-      s3region: regionofbucket
-    secretName: opsmx-gitops-auth
-    # Promote applications and pipelines from one environment to another or take backup
-    pipelinePromotion:  # GitHub only,  Not supportd on S3 or Stash
-      enabled: true
-      type: git  # git, s3, stash
-      gitConfig: "git config --global http.sslVerify false"
-      organization: project_name  # Also called "project" in some repos
-      repository: repo_name  # bucket name in case of S3
-      rootFolder: pipeline/
-      ##### ONLY In case of S3
-      AWS_ACCESS_KEY_ID: access_key
-      AWS_SECRET_ACCESS_KEY: secret_key
-      ##### S3 config for pipelinePromotion is complete
-      ##### For non-S3 repos
-      baseUrl: example.repo.com  #  "git_url"
-      username: username
-      token: token
-      branch: samplerepo
-      usermail: krish@company.com
-      #password="K438"   ### Token is preferred, Password also might work, try your luck
-      # Instead of username, token/password, sshkey can be provided
-      #API
-      #api_url="https://api.bitbucket.org/2.0/repositories/"   # bitbucket
-      apiUrl: "https://api.github.com/repos"                  # guthub
-      #api_url="https://api.gitlab.com/repos"                  # gitLAB
-      #api_url="https://bbq.opsmx.com/api"                      # bitbucket-server(stash)
-
-      createPR: false
-      autoApprovePR: false
-      targetBranch: master # can be any branch to which PR to be raised
-      approvingUser: approver_user  ### user who is going to auto-merge
-      approverToken: token ## Token for the user to auto-merge
-
-    ## x509 authentication for Spinnaker Gate
-    gatex509:
-      enabled: false
-      host: spingate-x509.domain.com
-    # Max time(in secs) that an init container of halyard should wait
-    # to fetch External Load Balancer IP of spin-deck and spin-gate
-    spinnakerLBCheckDelay: 1 # This is only used if not using ingress
-    mTLS:
-      enabled: false # Enable mTLS for Spinnaker Services and SSL for Deck and Gate
 
   ## Auth mechanism and credentials to be used by spin-cli for creating the sample pipelines
   ## Here basic ldap auth is used by default; everything under spinCli will be pasted in ~/.spin/config
   spinCli:
     gate:
-      endpoint: http://sapor-gate:8084 # URL that needs to be used to talk to spinnaker gate and create sample pipelines
+      endpoint: http://oes-gate:8084 # URL that needs to be used to talk to spinnaker gate and create sample pipelines
     auth:
       enabled: true
       basic:
         username: admin          # Use credentials corresponding to spinCli.gate.endpoint
-        password: saporadmin  # Use credentials corresponding to spinCli.gate.endpoint
+        password: opsmxadmin123  # Use credentials corresponding to spinCli.gate.endpoint
 
 ###############################################################################################
 ###############################################################################################

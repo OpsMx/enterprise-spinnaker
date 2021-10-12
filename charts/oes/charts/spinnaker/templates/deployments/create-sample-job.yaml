@@ -1,3 +1,4 @@
+{{- if .Values.autoInstallSampleApps }}
 apiVersion: batch/v1
 kind: Job
 metadata:
@@ -33,3 +34,4 @@ spec:
           name: spin-pipeline-import
         - mountPath: /tmp/config/spin
           name: spin-config
+{{- end }}
