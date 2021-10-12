@@ -299,7 +299,7 @@ db:
   image:
     registry: quay.io/opsmxpublic
     repository: ubi8-oes-db
-    tag: v2.0.1
+    tag: v3.0.0
     pullPolicy: IfNotPresent
 
   ## Strategy to rollout statefulset pods
@@ -1098,13 +1098,13 @@ spinnaker:
       fiat.yml:
         artifactId: quay.io/opsmxpublic/ubi8-spin-fiat:1.16.0
       front50.yml:
-        artifactId: quay.io/opsmxpublic/ubi8-oes-front50:0.27.1
+        artifactId: quay.io/opsmxpublic/ubi8-oes-front50:0.27.1-opa
       igor.yml:
         artifactId: quay.io/opsmxpublic/ubi8-spin-igor:1.16.0
       kayenta.yml:
         artifactId: quay.io/opsmxpublic/ubi8-spin-kayenta:0.21.0
       orca.yml:
-        artifactId: quay.io/opsmxpublic/ubi8-oes-orca:2.20.3
+        artifactId: quay.io/opsmxpublic/ubi8-oes-orca:2.20.4
       rosco.yml:
         artifactId: quay.io/opsmxpublic/ubi8-spin-rosco:0.25.0
     ## Uncomment if you want to add extra commands to the init script
