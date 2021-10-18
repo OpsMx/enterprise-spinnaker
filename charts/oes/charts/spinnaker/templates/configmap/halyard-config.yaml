@@ -198,7 +198,7 @@ data:
     {{- end }}
     if [ ! -z "$GATE_LB_IP" ];
     then
-      $HAL_COMMAND config security api edit --no-validate --override-base-url {{ .Values.global.spinDeck.protocol }}://$GATE_LB_IP:8084
+      $HAL_COMMAND config security api edit --no-validate --override-base-url {{ .Values.global.spinGate.protocol }}://$GATE_LB_IP:8084
     fi
     {{- else if and (.Values.global.spinGate.port) (not .Values.global.commonGate.enabled) }}
     $HAL_COMMAND config security api edit --no-validate --override-base-url {{ .Values.global.spinGate.protocol }}://{{ .Values.global.spinGate.host }}:{{ .Values.global.spinGate.port }}
