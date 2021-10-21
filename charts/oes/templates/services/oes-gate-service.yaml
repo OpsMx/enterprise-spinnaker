@@ -14,15 +14,18 @@ metadata:
 spec:
   type: {{ .Values.k8sServiceType }}
   ports:
+  - name: "https"
+    port: 443
+    targetPort: 8084
   - name: "oes-gate-service"
     port: 8084
     protocol: TCP
     targetPort: 8084
+    {{- if eq .Values.k8sServiceType "NodePort" }}
+    nodePort: {{ .Values.global.oesGate.port }}
+    {{- end }}
   - name: "http"
     port: 80
-    targetPort: 8084
-  - name: "https"
-    port: 443
     targetPort: 8084
   selector:
     app: oes

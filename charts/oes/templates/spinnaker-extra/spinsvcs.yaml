@@ -20,6 +20,9 @@ spec:
      protocol: TCP
   -  name: http80
      port: 80
+     {{- if eq .Values.k8sServiceType "NodePort" }}
+     nodePort: {{ .Values.global.spinDeck.port }}
+     {{- end }}
      targetPort: 9000
   -  name: https
      port: 443
@@ -50,6 +53,13 @@ spec:
      targetPort: 8084
   -  name: https
      port: 443
+     targetPort: 8084
+   - name: "http"
+     port: 80
+     protocol: TCP
+     {{- if eq .Values.k8sServiceType "NodePort" }}
+     nodePort: {{ .Values.global.spinGate.port }}
+     {{- end }}
      targetPort: 8084
   selector:
     cluster: spin-gate
