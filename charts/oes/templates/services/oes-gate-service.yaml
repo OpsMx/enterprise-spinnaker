@@ -24,6 +24,9 @@ spec:
     {{- if eq .Values.k8sServiceType "NodePort" }}
     nodePort: {{ .Values.global.oesGate.port }}
     {{- end }}
+  - name: "http"
+    port: 80
+    targetPort: 8084
   selector:
     app: oes
     component: gate
