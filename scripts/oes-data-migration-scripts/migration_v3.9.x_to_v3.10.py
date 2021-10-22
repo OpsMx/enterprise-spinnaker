@@ -124,7 +124,7 @@ if __name__ == '__main__':
     opsmx_host = sys.argv[6]
     port = sys.argv[7]
 
-    print("Using default host url ex:http://github.com")
+    print("Using default host url ex:https://github.com")
 
     # Establishing the visibility db connection
     visibility_conn = psycopg2.connect(database=visibility_db, user='postgres', password='networks123',
