@@ -120,7 +120,7 @@ def modifyGithub(hosturl,url):
 
 if __name__ == '__main__':
     n = len(sys.argv)
-    if n != 6:
+    if n != 7:
         print('Please pass valid 7 arguments visibilitydb <visibility-db-host> <platform_db-name> <platform_hostt> <opsmx-db-name> <opsmx-db-host> <db-port>')
 
     visibility_db = 'visibilitydb'
