@@ -1,7 +1,10 @@
-1. Goto location /opsmx/workdir/datamigration in platform container
-2. You will find a file named : migration_v3.9x_to_v3.10.py
-3. Run the below command to execute the script.
+Steps to migrate from v3.9.x to v3.10
 
-	python3 <scriptfilename>  <visibility-db-name> <visibility-db-host> <platform-db-name> <platform-db-host> <opsmx-db-name> <opsmx-db-host> <db-port>
+1. Copy the file : migration_v3.9.x_to_v3.10.py to some path in platform pod.
+2. Run the below command to execute the script.
 
-    ex: python3 migration_v3.9.x_to_v3.10.py visibilitydb localhost platformdb localhost opsmx localhost 5432
+	python3  <scriptfilename>  <visibility-db-name> <visibility-db-host> <platform-db-name> <platform-db-host> <opsmx-db-name> <opsmx-db-host> <db-port>
+
+	Replace  <scriptfilename>  <visibility-db-name> <visibility-db-host> <platform-db-name> <platform-db-host> <opsmx-db-name> <opsmx-db-host> <db-port>   with valid values
+
+	Ex: 	 python3 migration_v3.9.x_to_v3.10.py visibilitydb localhost platformdb localhost opsmx localhost 5432
