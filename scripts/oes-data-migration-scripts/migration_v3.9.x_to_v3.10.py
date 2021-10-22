@@ -24,7 +24,14 @@ def perform_migration():
         opsmxdb_conn.commit()
         print("Successfully migrated")
     except Exception as e:
-       print('Exception occured during migration : ', e)
+        platform_conn.rollback()
+        visibility_conn.rollback()
+        opsmxdb_conn.rollback()
+        print('Exception occured during migration : ', e)
+    finally:
+        platform_conn.close()
+        visibility_conn.close()
+        opsmxdb_conn.close()
 
 
 def getGitUsernameBytoken(token, url):
@@ -113,7 +120,7 @@ def modifyGithub(hosturl,url):
 
 if __name__ == '__main__':
     n = len(sys.argv)
-    if n != 7:
+    if n != 6:
         print('Please pass valid 7 arguments visibilitydb <visibility-db-host> <platform_db-name> <platform_hostt> <opsmx-db-name> <opsmx-db-host> <db-port>')
 
     visibility_db = 'visibilitydb'
