@@ -1,0 +1,17 @@
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    app: oes
+    component: datascience
+  name: oes-datascience
+spec:
+  ports:
+  - name: datascience
+    port: 5005
+    protocol: TCP
+    targetPort: 5005
+  selector:
+    app: oes
+    component: datascience
+  type: ClusterIP

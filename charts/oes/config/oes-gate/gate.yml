@@ -15,6 +15,12 @@ services:
   visibility:
     baseUrl: http://oes-visibility:8096
     enabled: true
+  auditservice:
+     baseUrl: "http://oes-audit-service:8097"
+     enabled: true
+  auditclient:
+     baseUrl: "http://oes-audit-client:8098"
+     enabled: true
   oesui:
   {{- if .Values.global.oesUI.port }}
     externalUrl: {{ .Values.global.oesUI.protocol }}://{{ .Values.global.oesUI.host }}:{{ .Values.global.oesUI.port }}
@@ -193,7 +199,7 @@ spinnaker:
           version: 1.0.1
     repositories:
         opsmx-repo:
-          url: https://raw.githubusercontent.com/OpsMx/spinnakerPluginRepository/v3.9.0/plugins.json
+          url: https://raw.githubusercontent.com/OpsMx/spinnakerPluginRepository/v3.10.0-rc1/plugins.json
 {{- end }}
 
 logging:

@@ -1,0 +1,19 @@
+spring:
+  datasource:
+    url: {{ .Values.db.url }}/auditdb
+    username: {{ .Values.db.username }}
+    password: {{ .Values.db.password }}
+logging:
+  level:
+    com.opsmx.auditclientservice: INFO
+feign:
+  client:
+    config:
+      default:
+        connectTimeout: 5000
+        readTimeout: 5000
+        loggerLevel: basic
+    platformservice:
+        name: platformservice
+        url: http://oes-platform:8095
+

@@ -1,4 +1,4 @@
-{{- if and (.Values.db.enabled) (eq .Values.installationMode "OES-AP") -}}
+{{- if and (.Values.db.enabled) (or (eq .Values.installationMode "OES-AP")  (eq .Values.installationMode "EASY")) -}}
 apiVersion: apps/v1
 kind: StatefulSet
 metadata:

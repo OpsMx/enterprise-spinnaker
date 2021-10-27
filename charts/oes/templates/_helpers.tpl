@@ -52,6 +52,36 @@ Return the proper GATE image name
 {{- end -}}
 
 {{/*
+Return the proper datascience image name
+*/}}
+{{- define "datascience.image" -}}
+{{- $registryName := .Values.datascience.image.registry -}}
+{{- $repositoryName := .Values.datascience.image.repository -}}
+{{- $tag := .Values.datascience.image.tag | toString -}}
+{{- printf "%s/%s:%s" $registryName $repositoryName $tag -}}
+{{- end -}}
+
+{{/*
+Return the proper audit service image name
+*/}}
+{{- define "auditservice.image" -}}
+{{- $registryName := .Values.audit.image.registry -}}
+{{- $repositoryName := .Values.audit.image.repository -}}
+{{- $tag := .Values.audit.image.tag | toString -}}
+{{- printf "%s/%s:%s" $registryName $repositoryName $tag -}}
+{{- end -}}
+
+{{/*
+Return the proper audit client image name
+*/}}
+{{- define "auditclient.image" -}}
+{{- $registryName := .Values.auditClient.image.registry -}}
+{{- $repositoryName := .Values.auditClient.image.repository -}}
+{{- $tag := .Values.auditClient.image.tag | toString -}}
+{{- printf "%s/%s:%s" $registryName $repositoryName $tag -}}
+{{- end -}}
+
+{{/*
 Return the proper SAPOR GATE image name
 */}}
 {{- define "saporgate.image" -}}
