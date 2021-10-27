@@ -1,3 +1,13 @@
+pollers:
+  oldPipelineCleanup:
+    enabled: true                  # This enables old pipeline execution cleanup (default: false)
+    intervalMs: 3600000            # How many milliseconds between pipeline cleanup runs (default: 1hr or 3600000)
+    thresholdDays: 30              # How old a pipeline execution must be to be deleted (default: 30)
+    minimumPipelineExecutions: 5   # How many executions to keep around (default: 5)
+
+tasks:
+  daysOfExecutionHistory: 180      # How many days to keep old task executions around.
+
 job:
   preconfigured:
     kubernetes:
@@ -6,7 +16,7 @@ job:
         credentials: default
         description: Update git with pipelines in Spinnaker
         account: default
-        application: gitopsHalyard.pipelinePromotion
+        application: sampleapp
         type: pipelineSyncToGit
         waitForCompletion: true
         parameters:
@@ -25,7 +35,7 @@ job:
             kind: Job
             metadata:
               generateName: pipepromot-
-              namespace: default
+              namespace: SPINNAKER_NAMESPACE
             spec:
               backoffLimit: 0
               template:
@@ -38,6 +48,8 @@ job:
                     volumeMounts:
                     - mountPath: /home/opsmx/scripts
                       name: pipe-promot-scripts
+                    - mountPath: /home/opsmx/config
+                      name: pipe-promot-config
                     - mountPath: /home/opsmx/.spin
                       name: spin-cli-config
                     env:
@@ -47,67 +59,21 @@ job:
                         value: 'will be replaced'
                       - name: command
                         value: 'upload'
-                      - name: git_friendly_username
-                        valueFrom:
-                          configMapKeyRef:
-                            name: pipe-promot-config
-                            key: git_friendly_username
-                      - name: git_friendly_username
-                        valueFrom:
-                          configMapKeyRef:
-                            name: pipe-promot-config
-                            key: git_friendly_username
-                      - name: git_project
-                        valueFrom:
-                          configMapKeyRef:
-                            name: pipe-promot-config
-                            key: git_project
-                      - name: git_refresh_enabled
-                        valueFrom:
-                          configMapKeyRef:
-                            name: pipe-promot-config
-                            key: git_refresh_enabled
-                      - name: git_repo
-                        valueFrom:
-                          configMapKeyRef:
-                            name: pipe-promot-config
-                            key: git_repo
-                      - name: git_user_email
-                        valueFrom:
-                          configMapKeyRef:
-                            name: pipe-promot-config
-                            key: git_user_email
-                      - name: ignore_spin_errors
-                        valueFrom:
-                          configMapKeyRef:
-                            name: pipe-promot-config
-                            key: ignore_spin_errors
                       - name: git_secret_token
                         valueFrom:
                           secretKeyRef:
                             name: git-token
                             key: git_secret_token
-                      - name: debug
+                      - name: git_pr_token
                         valueFrom:
-                          configMapKeyRef:
-                            name: pipe-promot-config
-                            key: debug
-                      - name: pipelineconfig
-                        valueFrom:
-                          configMapKeyRef:
-                            name: pipe-promot-config
-                            key: pipelineconfig
-                      - name: pipelineconfigdir
-                        valueFrom:
-                          configMapKeyRef:
-                            name: pipe-promot-config
-                            key: pipelineconfigdir
-                      - name: pipelinecreateconf
-                        valueFrom:
-                          configMapKeyRef:
-                            name: pipe-promot-config
-                            key: pipelinecreateconf
+                          secretKeyRef:
+                            name: git-token
+                            key: git_pr_token
                   volumes:
+                  - configMap:
+                      defaultMode: 420
+                      name: pipe-promot-config
+                    name: pipe-promot-config
                   - configMap:
                       defaultMode: 420
                       name: pipe-promot-scripts
@@ -123,7 +89,7 @@ job:
         credentials: default
         description: Sync Spinnaker pipelines from git
         account: default
-        application: gitopsHalyard.pipelinePromotion
+        application: sampleapp
         type: pipelineSyncToSpinnaker
         waitForCompletion: true
         parameters:
@@ -142,7 +108,7 @@ job:
             kind: Job
             metadata:
               generateName: pipepromot-
-              namespace: default
+              namespace: SPINNAKER_NAMESPACE
             spec:
               backoffLimit: 0
               template:
@@ -155,6 +121,8 @@ job:
                     volumeMounts:
                     - mountPath: /home/opsmx/scripts
                       name: pipe-promot-scripts
+                    - mountPath: /home/opsmx/config
+                      name: pipe-promot-config
                     - mountPath: /home/opsmx/.spin
                       name: spin-cli-config
                     env:
@@ -164,67 +132,21 @@ job:
                         value: 'will be replaced'
                       - name: command
                         value: 'download'
-                      - name: git_friendly_username
-                        valueFrom:
-                          configMapKeyRef:
-                            name: pipe-promot-config
-                            key: git_friendly_username
-                      - name: git_friendly_username
-                        valueFrom:
-                          configMapKeyRef:
-                            name: pipe-promot-config
-                            key: git_friendly_username
-                      - name: git_project
-                        valueFrom:
-                          configMapKeyRef:
-                            name: pipe-promot-config
-                            key: git_project
-                      - name: git_refresh_enabled
-                        valueFrom:
-                          configMapKeyRef:
-                            name: pipe-promot-config
-                            key: git_refresh_enabled
-                      - name: git_repo
-                        valueFrom:
-                          configMapKeyRef:
-                            name: pipe-promot-config
-                            key: git_repo
-                      - name: git_user_email
-                        valueFrom:
-                          configMapKeyRef:
-                            name: pipe-promot-config
-                            key: git_user_email
-                      - name: ignore_spin_errors
-                        valueFrom:
-                          configMapKeyRef:
-                            name: pipe-promot-config
-                            key: ignore_spin_errors
                       - name: git_secret_token
                         valueFrom:
                           secretKeyRef:
                             name: git-token
                             key: git_secret_token
-                      - name: debug
+                      - name: git_pr_token
                         valueFrom:
-                          configMapKeyRef:
-                            name: pipe-promot-config
-                            key: debug
-                      - name: pipelineconfig
-                        valueFrom:
-                          configMapKeyRef:
-                            name: pipe-promot-config
-                            key: pipelineconfig
-                      - name: pipelineconfigdir
-                        valueFrom:
-                          configMapKeyRef:
-                            name: pipe-promot-config
-                            key: pipelineconfigdir
-                      - name: pipelinecreateconf
-                        valueFrom:
-                          configMapKeyRef:
-                            name: pipe-promot-config
-                            key: pipelinecreateconf
+                          secretKeyRef:
+                            name: git-token
+                            key: git_pr_token
                   volumes:
+                  - configMap:
+                      defaultMode: 420
+                      name: pipe-promot-config
+                    name: pipe-promot-config
                   - configMap:
                       defaultMode: 420
                       name: pipe-promot-scripts
@@ -235,443 +157,6 @@ job:
                       secretName: local-spin-cli-config
                   restartPolicy: Never
                   serviceAccountName: default
-      - label: Policy Stage
-        type: Policy Stage
-        description: Spinnaker Policy Evaluation and Decision Stage
-        cloudProvider: kubernetes
-        account: default
-        waitForCompletion: true
-        application: spin
-        parameters:
-          - defaultValue: "http://oes-sapor:8085"
-            description: Please enter the POLICY Proxy Hostname and Port
-            label: Policy Proxy
-            mapping: 'manifest.spec.template.spec.containers[0].env[0].value'
-            name: policyurl
-          - defaultValue: "/v1/data/opa/pipelines/datetimeslot"
-            description: Please enter Policy path that applies to this stage 
-            label: Policy Path
-            mapping: 'manifest.spec.template.spec.containers[0].env[1].value'
-            name: policypath
-          - defaultValue: ""
-            description: Please enter the Payload in single line 
-            label: Payload
-            mapping: 'manifest.spec.template.spec.containers[0].env[2].value'
-            name: payload
-          - defaultValue: "" 
-            description: Please enter Gate
-            label: Gate Name
-            mapping: 'manifest.spec.template.spec.containers[0].env[3].value'
-            name: gate
-          - defaultValue: ""
-            description: Please enter the Image IDs
-            label: Image IDs
-            mapping: 'manifest.spec.template.spec.containers[0].env[4].value'
-            name: imageids
-        manifest:
-          apiVersion: batch/v1
-          kind: Job
-          metadata:
-            generateName: policystage-
-            namespace: default
-          spec:
-            backoffLimit: 0
-            template:
-              spec:
-                containers:
-                  - args:
-                      -
-                    env:
-                      - name: policyurl
-                        value:
-                      - name: policypath
-                        value:
-                      - name: payload
-                        value:
-                      - name: gate
-                        value:
-                      - name: imageids
-                        value:
-                      - name: application
-                        value: "${execution.application}"
-                      - name: name
-                        value: "${execution.name}"
-                      - name: time
-                        value: "${{execution.startTime} .toString()}"
-                      - name: user
-                        value: "${execution.authentication.user}"
-                      - name: executionid
-                        value: "${execution.id}"
-                    image: 'opsmxdev/policy:v2'
-                    imagePullPolicy: IfNotPresent
-                    name: policystage
-                restartPolicy: Never
-      - label: VerificationGate
-        cloudProvider: kubernetes
-        application: spin
-        description: Stage for Verification Gate
-        propertyFile: verificationgate
-        account: default
-        type: Verification
-        waitForCompletion: true
-        parameters:
-          - defaultValue: ""
-            description: Please enter the Gate URL
-            label: Gate Url
-            mapping: 'manifest.spec.template.spec.containers[0].env[0].value'
-            name: gateurl
-          - defaultValue: "0.1" 
-            description: Please enter the Life Time in Hours like 0.5
-            label: LifeTimeHours
-            mapping: 'manifest.spec.template.spec.containers[0].env[1].value'
-            name: lifetime
-          - defaultValue: "70" 
-            description: Please enter the Minimum Canary Result
-            label: Minimum CanaryResult
-            mapping: 'manifest.spec.template.spec.containers[0].env[2].value'
-            name: minicanaryresult
-          - defaultValue: "90" 
-            description: Please enter the Canry Result Score
-            label: CanaryResult Score
-            mapping: 'manifest.spec.template.spec.containers[0].env[3].value'
-            name: canaryresultscore
-          - defaultValue: "true" 
-            description: Please Enable Log Analysis with true / false
-            label: Log Analysis
-            mapping: 'manifest.spec.template.spec.containers[0].env[4].value'
-            name: log
-          - defaultValue: "true"
-            description: Please Enable Metric Analysis with true / false
-            label: Metric Analysis
-            mapping: 'manifest.spec.template.spec.containers[0].env[5].value'
-            name: metric
-          - defaultValue: ""
-            description: Please enter Baseline Start Time in Epoch format. If it is empty will take it as current time
-            label: Baseline StartTime 
-            mapping: 'manifest.spec.template.spec.containers[0].env[6].value'
-            name: baselinestarttime
-          - defaultValue: "" 
-            description: Please enter Canry Start Time  in Epoch format. If it is empty will take it as current time
-            label: Canary StartTime
-            mapping: 'manifest.spec.template.spec.containers[0].env[7].value'
-            name: canarystarttime
-          - defaultValue: "" 
-            description: Please enter Gate Name that is created in OES
-            label: Gate Name
-            mapping: 'manifest.spec.template.spec.containers[0].env[8].value'
-            name: gate
-          - defaultValue: ""
-            description: Please enter the Image IDs
-            label: Image IDs
-            mapping: 'manifest.spec.template.spec.containers[0].env[9].value'
-            name: imageids
-        manifest:
-          apiVersion: batch/v1
-          kind: Job
-          metadata:
-            generateName: verificationgate-
-            namespace: default
-          spec:
-            backoffLimit: 0
-            template:
-              spec:
-                containers:
-                  - args:
-                      -
-                    env:
-                      - name: gateurl
-                        value:
-                      - name: lifetime
-                        value:
-                      - name: minicanaryresult
-                        value:
-                      - name: canaryresultscore
-                        value:
-                      - name: log
-                        value:
-                      - name: metric
-                        value:
-                      - name: baselinestarttime
-                        value:
-                      - name: canarystarttime
-                        value:
-                      - name: gate
-                        value:
-                      - name: imageids
-                        value:
-                      - name: application
-                        value: "${execution.application}"
-                      - name: service
-                        value: "${execution.name}"
-                      - name: time
-                        value: "${{execution.startTime} .toString()}"
-                      - name: executionid
-                        value: "${execution.id}"
-                    image: 'opsmxdev/verificationgate-stage:v2'
-                    imagePullPolicy: IfNotPresent
-                    name: verificationgate
-                restartPolicy: Never
-      - label: VisibilityApproval
-        cloudProvider: kubernetes
-        credentials: default
-        application: spin
-        description: Stage for Visibility Approval
-        propertyFile: visibilityapprove
-        account: default
-        type: Visibility Approval
-        waitForCompletion: true
-        parameters:
-          - defaultValue: "" 
-            description: Please enter the Gate URL
-            label: Gate Url
-            mapping: 'manifest.spec.template.spec.containers[0].env[0].value'
-            name: gateurl
-          - defaultValue: ""
-            description: Please enter the JIRA ID
-            label: Jira ID
-            mapping: 'manifest.spec.template.spec.containers[0].env[1].value'
-            name: jiraid
-          - defaultValue: ""
-            description: Please enter the Git Repo Name
-            label: Git Repo
-            mapping: 'manifest.spec.template.spec.containers[0].env[2].value'
-            name: gitrepo
-          - defaultValue: ""
-            description: Please enter the Git Commit Id 
-            label: Git Commit ID
-            mapping: 'manifest.spec.template.spec.containers[0].env[3].value'
-            name: gitcommitid
-          - defaultValue: ""
-            description: Please enter the Jenins Job
-            label: Jenkins Job Name
-            mapping: 'manifest.spec.template.spec.containers[0].env[4].value'
-            name: jenkinsjob
-          - defaultValue: ""
-            description: Please enter the Jenkins Build No 
-            label: Jenkins Build No 
-            mapping: 'manifest.spec.template.spec.containers[0].env[5].value'
-            name: jenkinsbuild
-          - defaultValue: ""
-            description: Please enter the Jenkins Artifact
-            label: Jenkins Artifact
-            mapping: 'manifest.spec.template.spec.containers[0].env[6].value'
-            name: jenkinsartifact
-          - defaultValue: ""
-            description: Please enter the Autopilot Canary
-            label: Autopilot Canary ID
-            mapping: 'manifest.spec.template.spec.containers[0].env[7].value'
-            name: canaryid
-          - defaultValue: ""
-            description: Please enter the Sonarqube Prject Key
-            label: Sonarqube Project Key
-            mapping: 'manifest.spec.template.spec.containers[0].env[8].value'
-            name: projectkey
-          - defaultValue: ""
-            description: Please enter the App Scan ID
-            label: AppScan ProjectID
-            mapping: 'manifest.spec.template.spec.containers[0].env[9].value'
-            name: appscanid
-          - defaultValue: ""
-            description: Please enter the Aqua Wave Image IDs
-            label: Aqua Wave Image IDs
-            mapping: 'manifest.spec.template.spec.containers[0].env[10].value'
-            name: aquawave
-          - defaultValue: ""
-            description: Please enter the Connector Name
-            label: Custom Connector Name
-            mapping: 'manifest.spec.template.spec.containers[0].env[11].value'
-            name: connector
-          - defaultValue: ""
-            description: Please enter the Header
-            label: Custom Connector Header 
-            mapping: 'manifest.spec.template.spec.containers[0].env[12].value'
-            name: header
-          - defaultValue: ""
-            description: Please enter the Connector Data as a payload
-            label: Custom Connector Data
-            mapping: 'manifest.spec.template.spec.containers[0].env[13].value'
-            name: connectordata
-          - defaultValue: ""
-            description: Please enter the Image IDs
-            label: Image IDs
-            mapping: 'manifest.spec.template.spec.containers[0].env[14].value'
-            name: imageids
-        manifest:
-          apiVersion: batch/v1
-          kind: Job
-          metadata:
-            generateName: visibilityapprove-
-            namespace: default 
-          spec:
-            backoffLimit: 0
-            template:
-              spec:
-                containers:
-                  - args:
-                      -
-                    env:
-                      - name: gateurl
-                        value:
-                      - name: jiraid
-                        value:
-                      - name: gitrepo
-                        value:
-                      - name: gitcommitid
-                        value:
-                      - name: jenkinsjob
-                        value:
-                      - name: jenkinsbuild
-                        value:
-                      - name: jenkinsartifact
-                        value:
-                      - name: canaryid
-                        value:
-                      - name: projectkey
-                        value: 
-                      - name: appscanid
-                        value:
-                      - name: aquawave
-                        value:
-                      - name: connector
-                        value:
-                      - name: header
-                        value:
-                      - name: connectordata
-                        value:
-                      - name: imageids
-                        value:
-                      - name: executionid
-                        value: "${execution.id}"
-                    image: 'opsmxdev/visibility-stage:v2'
-                    imagePullPolicy: IfNotPresent
-                    name: visibilityapprove
-                restartPolicy: Never
-      - label: TestVerification
-        cloudProvider: kubernetes
-        application: spin
-        description: Stage for TestVerification
-        propertyFile: testverification
-        account: default
-        type: Test Verification
-        waitForCompletion: true
-        parameters:
-          - defaultValue: ""
-            description: Please enter the Gate URL
-            label: Gate Url
-            mapping: 'manifest.spec.template.spec.containers[0].env[0].value'
-            name: gateurl
-          - defaultValue: "0.1" 
-            description: Please enter the Life Time in Hours like 0.5
-            label: LifeTimeHours
-            mapping: 'manifest.spec.template.spec.containers[0].env[1].value'
-            name: lifetime
-          - defaultValue: "70" 
-            description: Please enter the Minimum Canary Result
-            label: Minimum CanaryResult
-            mapping: 'manifest.spec.template.spec.containers[0].env[2].value'
-            name: minicanaryresult
-          - defaultValue: "90" 
-            description: Please enter the Canry Result Score
-            label: CanaryResult Score
-            mapping: 'manifest.spec.template.spec.containers[0].env[3].value'
-            name: canaryresultscore
-          - defaultValue: "true" 
-            description: Please Enable Log Analysis with true / false
-            label: Log Analysis
-            mapping: 'manifest.spec.template.spec.containers[0].env[4].value'
-            name: log
-          - defaultValue: ""
-            description: Please enter Baseline Start Time in Epoch format. If it is empty will take it as current time
-            label: Baseline StartTime 
-            mapping: 'manifest.spec.template.spec.containers[0].env[5].value'
-            name: baselinestarttime
-          - defaultValue: "" 
-            description: Please enter New Start Time  in Epoch format. If it is empty will take it as current time
-            label: New StartTime
-            mapping: 'manifest.spec.template.spec.containers[0].env[6].value'
-            name: canarystarttime
-          - defaultValue: "" 
-            description: Please enter Gate Name that is created in OES
-            label: Gate Name
-            mapping: 'manifest.spec.template.spec.containers[0].env[7].value'
-            name: gate
-          - defaultValue: ""
-            description: Please enter the Field name which contains Test Run Id in the Index eg., TestRunId
-            label: Test Run Key
-            mapping: 'manifest.spec.template.spec.containers[0].env[8].value'
-            name: testrunkey
-          - defaultValue: ""
-            description: Please enter Baseline Test Run Id of the Test Run to be used as baseline eg., 100
-            label: Baseline Test Run Id
-            mapping: 'manifest.spec.template.spec.containers[0].env[9].value'
-            name: baselinetestrunid
-          - defaultValue: ""
-            description: Please enter New Test Run Id Id of the current Test Run eg., 227
-            label: New Test Run Id
-            mapping: 'manifest.spec.template.spec.containers[0].env[10].value'
-            name: newtestrunid
-          - defaultValue: ""
-            description: Please enter Metadata associated with the current Test Run eg., { "Build Info" "http://opsmx.jenkins.com/123", "Code Repository" "http://opsmx.github.com", "Version" "v1.09" }
-            label: Test Run Info
-            mapping: 'manifest.spec.template.spec.containers[0].env[11].value'
-            name: testruninfo
-          - defaultValue: ""
-            description: Please enter the Image IDs
-            label: Image IDs
-            mapping: 'manifest.spec.template.spec.containers[0].env[12].value'
-            name: imageids
-        manifest:
-          apiVersion: batch/v1
-          kind: Job
-          metadata:
-            generateName: testverification-
-            namespace: default
-          spec:
-            backoffLimit: 0
-            template:
-              spec:
-                containers:
-                  - args:
-                      -
-                    env:
-                      - name: gateurl
-                        value:
-                      - name: lifetime
-                        value:
-                      - name: minicanaryresult
-                        value:
-                      - name: canaryresultscore
-                        value:
-                      - name: log
-                        value:
-                      - name: baselinestarttime
-                        value:
-                      - name: canarystarttime
-                        value:
-                      - name: gate
-                        value:
-                      - name: testrunkey
-                        value:
-                      - name: baselinetestrunid
-                        value:
-                      - name: newtestrunid
-                        value:
-                      - name: testruninfo
-                        value:
-                      - name: imageids
-                        value:
-                      - name: application
-                        value: "${execution.application}"
-                      - name: service
-                        value: "${execution.name}"
-                      - name: time
-                        value: "${{execution.startTime} .toString()}"
-                      - name: executionid
-                        value: "${execution.id}"
-                    image: 'opsmxdev/testverification:v2'
-                    imagePullPolicy: IfNotPresent
-                    name: testverification
-                restartPolicy: Never
 webhook:
   preconfigured:
   - label: "JIRA: Wait for state"
@@ -864,3 +349,27 @@ webhook:
       name: targetStageID
       description: Target Stage ID (11 is "To Do", 21 is "In Progress", 31 is "In Review", 41 is "Done")
       type: string
+spinnaker:
+  extensibility:
+    plugins-root-path: /tmp/plugins
+    plugins:
+      Opsmx.VerificationGatePlugin:
+        enabled: true
+        version: 1.0.1
+        config:
+      Opsmx.VisibilityApprovalPlugin:
+        enabled: true
+        version: 1.0.1
+        config:
+      Opsmx.TestVerificationGatePlugin:
+        enabled: true
+        version: 1.0.1
+        config:
+      Opsmx.PolicyGatePlugin:
+        enabled: true
+        version: 1.0.1
+        config:
+    repositories:
+      opsmx-repo:
+        id: opsmx-repo
+        url: https://raw.githubusercontent.com/opsmx/spinnakerPluginRepository/v3.10.0-rc1/plugins.json

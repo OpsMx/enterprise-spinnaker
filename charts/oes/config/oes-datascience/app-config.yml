@@ -1,0 +1,27 @@
+# Enable Build Analysis
+APP:
+   ENVIRONMENT: dev
+   DEBUG: True
+   # Only accept True or False
+   BIND: 0.0.0.0:5005
+   WORKERS: 1
+   PROTOCOL: http://
+   TIMEOUT: 3600
+   CELERY_ENABLED: True
+   # Only accept True or False
+
+OBJECT_STORAGE:
+      ENDPOINT: http://{{ .Release.Name }}-minio:9000
+      BUCKET_NAME: autopilot
+POSTGRES:
+      USERNAME: {{ .Values.db.username }}
+      PASSWORD: {{ .Values.db.password }}
+      HOST: oes-db
+      PORT: 5432
+      DB: autopilotqueue
+
+RABBITMQ:
+      USERNAME: guest
+      PASSWORD: guest
+      HOST: rabbitmq-service
+      PORT: 5672

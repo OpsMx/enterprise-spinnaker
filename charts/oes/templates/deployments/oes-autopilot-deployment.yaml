@@ -1,4 +1,4 @@
-{{- if (eq .Values.installationMode "OES-AP") -}}
+{{- if or (eq .Values.installationMode "OES-AP")  (eq .Values.installationMode "EASY") -}}
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -45,11 +45,11 @@ spec:
         {{- end }}
       imagePullSecrets:
         - name: {{ .Values.imagePullSecret}}
-      {{- if (eq .Values.db.enabled true) }}
       {{- if .Values.autopilot.nodeSelector }}
       nodeSelector:
 {{ toYaml .Values.autopilot.nodeSelector | indent 8 }}
       {{- end }}
+      {{- if (eq .Values.db.enabled true) }}
       initContainers:
       - name: db-check
         image: {{ .Values.global.customImages.registry }}/postgres:9.6.5

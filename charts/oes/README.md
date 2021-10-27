@@ -99,7 +99,7 @@ Parameter | Description | Default
 `imageCredentials.email` | Email associated with docker account | `info@opsmx.com`
 `rbac.create` | Enable or disable rbac | `true`
 `installSpinnaker` | If true, install Spinnaker along with OES Extensions | `true`
-`installationMode` | The installation mode. Available installation modes are **OES-AP** (for OES that includes Autopilot) and **None**(Skip OES installation) | `OES-AP`
+`installationMode` | The installation mode. Available installation modes are **OES-AP** (for OES that includes Autopilot) and **None**(Skip OES installation) and **EASY** installation on minikube or microk8s| `OES-AP`
 `global.certManager.installed` | Disable this flag if cert-manager is not installed, when set to true issuer and TLS certs for ingress are automatically created | `true`
 `global.createIngress` | If true, exposes OES ui & gate services over Ingress | `false`
 `global.spinDeck.protocol` | Change this to https if TLS is enabled for ingress endpoint | `http`
@@ -149,8 +149,8 @@ Parameter | Description | Default
 `ui.config.setApplicationRefreshInterval` | Interval at which UI refreshes application dashboard | `16000`
 `visibility.config.configuredConnectors` | Integrations options | `JIRA,GIT,AUTOPILOT,SONARQUBE,JENKINS,AQUAWAVE`
 `visibility.config.logLevel` | Default Log Level | `ERROR`
-`autoConfiguration.enabled` | Option enables OES to be configured automatically. Load Balancer IPs will be automatically replaced in the configuration files of oes-gate, oes-ui & sapor. Set it to false if OES is being installed on restricted environment. | `true`
-`autoConfiguration.initContainer.externalIpCheckDelay` | Expected delay in assigning load balancer IPs to oes-ui & oes-gate in secs | `180`
+`global.autoConfiguration.enabled` | Option enables OES to be configured automatically. Load Balancer IPs will be automatically replaced in the configuration files of oes-gate, oes-ui & sapor. Set it to false if OES is being installed on restricted environment. | `true`
+`global.autoConfiguration.initContainer.externalIpCheckDelay` | Expected delay in assigning load balancer IPs to oes-ui & oes-gate in secs | `180`
 `opa.enabled` | Enable OPA with OES | `true`
 `installOpenLdap` | If true, installs Open LDAP server | `false`
 `openldap.adminPassword` | Password to be set for admin user of LDAP | `opsmxadmin123`

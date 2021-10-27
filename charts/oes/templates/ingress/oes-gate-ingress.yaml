@@ -1,5 +1,5 @@
 {{- if .Values.global.createIngress -}}
-{{- if (eq .Values.installationMode "OES-AP") -}}
+{{- if or (eq .Values.installationMode "OES-AP")  (eq .Values.installationMode "EASY") -}}
 apiVersion: extensions/v1beta1
 kind: Ingress
 metadata:

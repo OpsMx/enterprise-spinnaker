@@ -19,6 +19,9 @@ oes:
     url: http://oes-platform:8095
   visibility:
     url: http://oes-visibility:8096
+  auditservice:
+    enabled: true
+    url: "http://oes-audit-service:8097" 
   dashboard:
     url: http://oes-dashboard:8094
 pipeline-promotion:
@@ -53,6 +56,7 @@ pipeline-promotion:
     region: {{ .Values.spinnaker.gitopsHalyard.repo.s3region }}
     bucketName: {{ .Values.spinnaker.gitopsHalyard.repo.s3bucket }} 
 spinnaker:
+  version: 1.26
   restart:
     endPoint: /webhooks/webhook/restartSpinnaker
   encrypt:

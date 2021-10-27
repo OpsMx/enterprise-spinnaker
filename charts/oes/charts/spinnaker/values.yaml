@@ -271,6 +271,12 @@ redis:
 
 # Minio access/secret keys for the in-cluster S3 usage
 # Minio is not exposed publically
+# Uncomment if you don't want to create a PVC for minio
+#  persistence:
+#    enabled: false
+
+# Minio access/secret keys for the in-cluster S3 usage
+# Minio is not exposed publically
 minio:
   enabled: true
   image:
@@ -283,9 +289,6 @@ minio:
     enabled: true
     name: "spinnaker"
   nodeSelector: {}
-# Uncomment if you don't want to create a PVC for minio
-#  persistence:
-#    enabled: false
 
 # Google Cloud Storage
 gcs:

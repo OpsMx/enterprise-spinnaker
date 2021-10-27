@@ -63,10 +63,10 @@ data:
     {{ end }}
 
     # Storage
-    {{ if .Values.minio.enabled }}
-    echo {{ .Values.minio.secretKey }} | $HAL_COMMAND config storage s3 edit \
+    {{ if .Values.global.minio.enabled }}
+    echo {{ .Values.global.minio.secretKey }} | $HAL_COMMAND config storage s3 edit \
         --endpoint http://{{ .Release.Name }}-minio:9000 \
-        --access-key-id {{ .Values.minio.accessKey }} \
+        --access-key-id {{ .Values.global.minio.accessKey }} \
         --secret-access-key --bucket {{ .Values.minio.defaultBucket.name }} \
         --path-style-access true
     $HAL_COMMAND config storage edit --type s3
@@ -178,12 +178,29 @@ data:
     # Use Deck to route to Gate
     {{- if not .Values.gitopsHalyard.enabled }}
     # Configure override urls in halyard config
-    {{- if .Values.global.spinDeck.port }}
+    {{- if .Values.global.autoConfiguration.enabled }}
+    DECK_LB_IP=$(kubectl get svc spin-deck-lb -o jsonpath="{.status.loadBalancer.ingress[].ip}")
+    if [ ! -z "$DECK_LB_IP" ];
+    then
+      $HAL_COMMAND config security ui edit --no-validate --override-base-url http://$DECK_LB_IP:9000
+    fi
+    {{- else if .Values.global.spinDeck.port }}
     $HAL_COMMAND config security ui edit --no-validate --override-base-url {{ .Values.global.spinDeck.protocol }}://{{ .Values.global.spinDeck.host }}:{{ .Values.global.spinDeck.port }}
     {{- else }}
     $HAL_COMMAND config security ui edit --no-validate --override-base-url {{ .Values.global.spinDeck.protocol }}://{{ .Values.global.spinDeck.host }}
     {{- end }}
-    {{- if and (.Values.global.spinGate.port) (not .Values.global.commonGate.enabled) }}
+
+    {{- if .Values.global.autoConfiguration.enabled }}
+    {{- if .Values.global.commonGate.enabled }}
+    GATE_LB_IP=$(kubectl get svc oes-gate -o jsonpath="{.status.loadBalancer.ingress[].ip}")
+    {{- else }}
+    GATE_LB_IP=$(kubectl get svc spin-gate-lb -o jsonpath="{.status.loadBalancer.ingress[].ip}")
+    {{- end }}
+    if [ ! -z "$GATE_LB_IP" ];
+    then
+      $HAL_COMMAND config security api edit --no-validate --override-base-url http://$GATE_LB_IP:8084
+    fi
+    {{- else if and (.Values.global.spinGate.port) (not .Values.global.commonGate.enabled) }}
     $HAL_COMMAND config security api edit --no-validate --override-base-url {{ .Values.global.spinGate.protocol }}://{{ .Values.global.spinGate.host }}:{{ .Values.global.spinGate.port }}
     {{- else if (not .Values.global.commonGate.enabled) }}
     $HAL_COMMAND config security api edit --no-validate --override-base-url {{ .Values.global.spinGate.protocol }}://{{ .Values.global.spinGate.host }}
