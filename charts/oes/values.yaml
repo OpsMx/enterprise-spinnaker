@@ -264,7 +264,6 @@ db:
 
   ## storageClass for DB persistent volume claim (PVC)
   #storageClassName: default
-  
 ###############################################################################
 ##
 ## Values of OES Autopilot
@@ -272,9 +271,8 @@ db:
 autopilot:
   ## Image specific details
   image:
-    registry: docker.io/opsmx11
-    repository: oes-autopilot
-    tag: v3.10.0-rc1
+    repository: ubi8-oes-autopilot
+    tag: v3.10.0
     pullPolicy: IfNotPresent
 
   annotations:
@@ -301,7 +299,7 @@ dashboard:
   ## Image specific details
   image:
     repository: ubi8-oes-dashboard
-    tag: v3.9.1.2
+    tag: v3.10.0
     pullPolicy: IfNotPresent
 
   annotations:
@@ -342,26 +340,6 @@ forwarder:
   serviceAnnotations: {}
 
 ###############################################################################
-## Values of OES datascience
-##
-datascience:
-  ## Image specific details
-  ##
-  image:
-    registry: docker.io/opsmx11
-    repository: oes-datascience
-    tag: v3.10.0-rc1
-    pullPolicy: IfNotPresent
-
-  serviceAnnotations: {}
-
-  annotations:
-    prometheus_io_path: /prometheus
-    prometheus_io_port: "5005"
-    prometheus.io/scrape: "true"
-  resources: {}
-  config: {}
-###############################################################################
 ##
 ## Values of OES auditservice
 ##
@@ -369,9 +347,8 @@ audit:
   ## Image specific details
   ##
   image:
-    registry: docker.io/opsmx11
-    repository: oes-audit-service
-    tag: v3.10.0-rc1
+    repository: ubi8-oes-audit-service
+    tag: v3.10.0
     pullPolicy: IfNotPresent
 
   serviceAnnotations: {}
@@ -390,9 +367,8 @@ auditClient:
   ## Image specific details
   ##
   image:
-    registry: docker.io/opsmx11
-    repository: oes-audit-client
-    tag: v3.10.0-rc1
+    repository: ubi8-oes-audit-client
+    tag: v3.10.0
     pullPolicy: IfNotPresent
 
   serviceAnnotations: {}
@@ -408,13 +384,33 @@ auditClient:
  
 ###############################################################################
 ##
+## Values of OES datascience
+##
+datascience:
+  ## Image specific details
+  ##
+  image:
+    repository: ubi8-oes-datascience
+    tag: v3.10.0
+    pullPolicy: IfNotPresent
+
+  serviceAnnotations: {}
+
+  annotations:
+    prometheus_io_path: /prometheus
+    prometheus_io_port: "5005"
+    prometheus.io/scrape: "true"
+  resources: {}
+  config: {}
+###############################################################################
+##
 ## Values of OES Gate
 ##
 gate:
   ## Image specific details
   image:
     repository: ubi8-gate
-    tag: v3.9.1.2
+    tag: v3.10.0
     pullPolicy: IfNotPresent
 
   serviceAnnotations: {}
@@ -488,7 +484,7 @@ platform:
   ## Image specific details
   image:
     repository: ubi8-oes-platform
-    tag: v3.9.1.3
+    tag: v3.10.0
     pullPolicy: IfNotPresent
 
   annotations:
@@ -523,7 +519,7 @@ sapor:
   ## Image specific details
   image:
     repository: ubi8-oes-sapor
-    tag: v3.9.1.2
+    tag: v3.10.0
     pullPolicy: IfNotPresent
 
   annotations:
@@ -583,7 +579,7 @@ ui:
   ## Image specific details
   image:
     repository: ubi8-oes-ui
-    tag: v3.9.1.2
+    tag: v3.10.0
     pullPolicy: IfNotPresent
   serviceAnnotations: {}
 
@@ -597,7 +593,7 @@ visibility:
   ## Image specific details
   image:
     repository: ubi8-oes-visibility
-    tag: v3.9.1.2
+    tag: v3.10.0
     pullPolicy: IfNotPresent
 
   annotations:
