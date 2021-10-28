@@ -7,6 +7,14 @@
 */}}
 
 {{/*
+Extract spinnaker version in the format major.minor for sapor configuration
+*/}}
+{{- define "oes.spinnakerVersion" -}}
+{{- $parts := split "." .Values.spinnaker.halyard.spinnakerVersion -}}
+{{- printf "%s.%s" $parts._0 $parts._1 -}}
+{{- end -}}
+
+{{/*
 Create a default fully qualified app name.
 We truncate at 24 chars because some Kubernetes name fields are limited to this (by the DNS naming spec).
 */}}

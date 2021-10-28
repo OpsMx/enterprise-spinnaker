@@ -56,7 +56,7 @@ pipeline-promotion:
     region: {{ .Values.spinnaker.gitopsHalyard.repo.s3region }}
     bucketName: {{ .Values.spinnaker.gitopsHalyard.repo.s3bucket }} 
 spinnaker:
-  version: 1.26
+  version: {{ template "oes.spinnakerVersion" . }}
   restart:
     endPoint: /webhooks/webhook/restartSpinnaker
   encrypt:
