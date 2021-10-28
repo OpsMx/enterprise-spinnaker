@@ -1,10 +1,3 @@
-## Quay container image registry credentials to create imagePullSecret
-##
-imageCredentials:
-  username: quayID  # Quay username
-  password: quayPassword # Quay password
-  email: info@opsmx.com   # email corresponding to quay registry ID
-  
 ## Declare all the global variables under this
 ## Global variables can be accessed across all the charts including sub-charts
 global:
