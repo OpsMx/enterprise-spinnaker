@@ -22,8 +22,10 @@ spec:
         component: db
 {{ include "oes.standard-labels" . | indent 8 }}
     spec:
+      {{- if .Values.imagePullSecret}}
       imagePullSecrets:
-        - name: {{ .Values.imagePullSecret }}
+      - name: {{ .Values.imagePullSecret}}
+      {{- end }}
       containers:
       - image: {{ template "db.image" . }}
         imagePullPolicy: {{ .Values.db.image.pullPolicy }}

@@ -3,12 +3,9 @@
 # This file contains configurations for AP as well as Spinnaker
 #####################################################
 
-## Quay container image registry credentials to create imagePullSecret
+## Info related to registry where OES images are stored
 imageCredentials:
   repoUrl: https://quay.io/
-  username: quayID  # Quay username
-  password: quayPassword # Quay password
-  email: info@opsmx.com   # email corresponding to quay registry ID
   # Update this is using a private repo such as ACR, ECR, GCR, JFrog, etc.
   registry: quay.io/opsmxpublic  
 
@@ -1021,10 +1018,10 @@ spinnaker:
 #### The values below this line are best not changed except in rare situations
 ###############################################################################################
 ###############################################################################################
-## Name of the secret for pulling image from docker registry.
-## Change it only if you want to create a secret with
-## different name before installing oes chart and use it.
-imagePullSecret: opsmxdev-secret
+## Name of the secret for pulling images from container registry.
+## Use it when the images are stored under private registry.
+## Create this secret before installing the chart
+imagePullSecret: ""
 
 ## Installation mode, available modes OES-AP, None (do not install AP (previously called OES)
 installationMode: OES-AP

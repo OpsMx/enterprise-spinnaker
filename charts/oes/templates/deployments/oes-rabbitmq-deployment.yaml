@@ -4,6 +4,7 @@ metadata:
   labels:
     app: oes
     component: rabbitmq
+{{ include "oes.standard-labels" . | indent 4 }}
   name: rabbitmq
 spec:
   replicas: 1
@@ -16,6 +17,7 @@ spec:
       labels:
         app: oes
         component: rabbitmq
+{{ include "oes.standard-labels" . | indent 8 }}
     spec:
       containers:
       - image: {{ .Values.rabbitmq.image.registry }}:{{ .Values.rabbitmq.image.repository }}
@@ -25,6 +27,10 @@ spec:
         - containerPort: {{ .Values.rabbitmq.port }}
           protocol: TCP
         resources: {}
+      {{- if .Values.imagePullSecret}}
+      imagePullSecrets:
+      - name: {{ .Values.imagePullSecret}}
+      {{- end }}
       restartPolicy: Always
       securityContext:
         fsGroup: 1000

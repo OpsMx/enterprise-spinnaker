@@ -80,8 +80,10 @@ spec:
           initialDelaySeconds: 60
           periodSeconds: 10
           failureThreshold: 10
+      {{- if .Values.imagePullSecret}}
       imagePullSecrets:
-      - name: {{ .Values.imagePullSecret }}
+      - name: {{ .Values.imagePullSecret}}
+      {{- end }}
       {{- if .Values.sapor.nodeSelector }}
       nodeSelector:
 {{ toYaml .Values.sapor.nodeSelector | indent 8 }}

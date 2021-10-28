@@ -58,8 +58,10 @@ spec:
             port: 8094
           initialDelaySeconds: 30
           periodSeconds: 60
+      {{- if .Values.imagePullSecret}}
       imagePullSecrets:
       - name: {{ .Values.imagePullSecret}}
+      {{- end }}
       {{- if .Values.dashboard.nodeSelector }}
       nodeSelector:
 {{ toYaml .Values.dashboard.nodeSelector | indent 8 }}

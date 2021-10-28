@@ -43,8 +43,10 @@ spec:
             - key: cacerts
               path: cacerts
         {{- end }}
+      {{- if .Values.imagePullSecret}}
       imagePullSecrets:
-        - name: {{ .Values.imagePullSecret}}
+      - name: {{ .Values.imagePullSecret}}
+      {{- end }}
       {{- if .Values.autopilot.nodeSelector }}
       nodeSelector:
 {{ toYaml .Values.autopilot.nodeSelector | indent 8 }}

@@ -48,8 +48,10 @@ spec:
         - mountPath: /home/ubuntu/datascience/app_config.yaml
           name: datascience-config-volume
           subPath: app-config.yml
+      {{- if .Values.imagePullSecret}}
       imagePullSecrets:
       - name: {{ .Values.imagePullSecret}}
+      {{- end }}
       {{- if .Values.datascience.nodeSelector }}
       nodeSelector:
 {{ toYaml .Values.datascience.nodeSelector | indent 8 }}

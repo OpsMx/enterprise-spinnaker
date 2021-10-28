@@ -54,8 +54,10 @@ spec:
         - mountPath: /opsmx/conf/bootstrap.yml
           name: bootstrap-config-volume
           subPath: bootstrap.yml
+      {{- if .Values.imagePullSecret}}
       imagePullSecrets:
       - name: {{ .Values.imagePullSecret}}
+      {{- end }}
       {{- if .Values.audit.nodeSelector }}
       nodeSelector:
 {{ toYaml .Values.audit.nodeSelector | indent 8 }}

@@ -37,6 +37,10 @@ spec:
           volumeMounts:
           - mountPath: /tmp/config
             name: opa-persist
+      {{- if .Values.imagePullSecret}}
+      imagePullSecrets:
+      - name: {{ .Values.imagePullSecret}}
+      {{- end }}
       {{- if .Values.opa.nodeSelector }}
       nodeSelector:
 {{ toYaml .Values.opa.nodeSelector | indent 8 }}

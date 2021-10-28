@@ -62,8 +62,10 @@ spec:
             port: 8080
           initialDelaySeconds: 15
           periodSeconds: 5
+      {{- if .Values.imagePullSecret}}
       imagePullSecrets:
       - name: {{ .Values.imagePullSecret}}
+      {{- end }}
       {{- if .Values.ui.nodeSelector }}
       nodeSelector:
 {{ toYaml .Values.ui.nodeSelector | indent 8 }}
