@@ -521,8 +521,9 @@ spinnaker:
       organization: OpsMx
       projectName: ""                # Specify project name only if repo is under a project
       repository: standard-gitops-repo # repo name for GitOps Halyard (Sample Reference: https://github.com/OpsMx/sample-gitops-repo.git).
-      dynamicAccRepository: standard-gitops-repo # Please provide the repo name of the GitOps Dynamic Accounts Directory. Can be same as Hal repo. 
+      halConfigBranch: master # Branch under which halyard config is present under above repository
       halConfigPath: / #relative path from repository root folder
+      dynamicAccRepository: standard-gitops-repo # Please provide the repo name of the GitOps Dynamic Accounts Directory. Can be same as Hal repo. 
       dynAccntConfigPath: dynaccount/ #relative path from repository root folder
       username: git/stash_username  # Username to authenticate with git/stash repo
       token: git/stash_token  # Token corresponding to above username
