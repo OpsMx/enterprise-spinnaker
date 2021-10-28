@@ -86,7 +86,7 @@ global:
   ## OES-UI url configuration
   oesUI:
     protocol: https
-    host: oes.audit.git.opsmx.net
+    host: oes.example.ops.com
     # Use below port when hostname above is an external IP instead of a hostname
     #port: 31466
 
@@ -99,7 +99,7 @@ global:
   ## OES-Gate url configuration
   oesGate:
     protocol: https
-    host: oes-gate.audit.git.opsmx.net
+    host: oes-gate.example.ops.com
     # Use below port when hostname above is an external IP instead of a hostname
     #port: 31467
     
@@ -139,7 +139,8 @@ global:
     mcImage:
       repository: quay.io/opsmxpublic/minio-mc
       tag: RELEASE.2020-11-25T23-04-07Z
-    serviceType: ClusterIP
+    service:
+      type: ClusterIP
     accessKey: spinnakeradmin
     secretKey: spinnakeradmin
     region: us-east-1
@@ -155,10 +156,14 @@ global:
     - name: "autopilot"
       policy: none
       purge: false
+    defaultBucket:
+      enabled: true
+      name: "spinnaker"
     nodeSelector: {}
     persistence:
       enabled: true
       size: 10Gi
+
   ###############################################################################
   ## This option enables OES to be configured automatically
   ## Load Balancer IPs will be automatically replaced in the
@@ -760,36 +765,36 @@ spinnaker:
         ## otherwise its harmless and will likely become default behavior in the future
         ## According to the linked github issue.
         gate-local.yml:
-                server:
-                  tomcat:
-                    httpsServerPort: X-Forwarded-Port
-                    internalProxies: .*
-                    protocolHeader: X-Forwarded-Proto
-                    remoteIpHeader: X-Forwarded-For
-                spinnaker:
-                  extensibility:
-                    plugins:
-                    deck-proxy:
-                      enabled: true
-                      plugins:
-                        Opsmx.VerificationGatePlugin:
-                          enabled: true
-                          version: 1.0.1
-                        Opsmx.TestVerificationGatePlugin:
-                          enabled: true
-                          version: 1.0.1
-                        Opsmx.PolicyGatePlugin:
-                          enabled: true
-                          version: 1.0.1
-                        Opsmx.CustomStagePlugin:
-                          enabled: true
-                          version: 1.0.1
-                        Opsmx.VisibilityApprovalPlugin:
-                          enabled: true
-                          version: 1.0.1
-                    repositories:
-                      opsmx-repo:
-                        url: https://raw.githubusercontent.com/opsmx/spinnakerPluginRepository/v3.9.0/plugins.json
+          server:
+            tomcat:
+              httpsServerPort: X-Forwarded-Port
+              internalProxies: .*
+              protocolHeader: X-Forwarded-Proto
+              remoteIpHeader: X-Forwarded-For
+          spinnaker:
+            extensibility:
+              plugins:
+              deck-proxy:
+                enabled: true
+                plugins:
+                  Opsmx.VerificationGatePlugin:
+                    enabled: true
+                    version: 1.0.1
+                  Opsmx.TestVerificationGatePlugin:
+                    enabled: true
+                    version: 1.0.1
+                  Opsmx.PolicyGatePlugin:
+                    enabled: true
+                    version: 1.0.1
+                  Opsmx.CustomStagePlugin:
+                    enabled: true
+                    version: 1.0.1
+                  Opsmx.VisibilityApprovalPlugin:
+                    enabled: true
+                    version: 1.0.1
+              repositories:
+                opsmx-repo:
+                  url: https://raw.githubusercontent.com/opsmx/spinnakerPluginRepository/v3.9.0/plugins.json
         ##If opa is installed and enabled  and spinnaker is installed,
         ##Then you can enable policy in spinnaker through front50-local yaml.
         ##If you don't want to configure make it as false or
@@ -800,30 +805,30 @@ spinnaker:
               enabled: true
               url: http://oes-sapor.{{ .Release.Namespace }}:8085
         fiat-local.yml:
-                auth:
-                  groupMembership:
-                    service: ldap
-                    ldap:
-                      url: ldap://RELEASE_NAME-openldap:389
-                      managerDn: cn=admin,dc=example,dc=org
-                      managerPassword: opsmxadmin123
-                      groupSearchBase: ou=groups,dc=example,dc=org
-                      groupSearchFilter: member={0}
-                      groupRoleAttributes: cn
-                      userDnPattern: cn={0},dc=example,dc=org
+          auth:
+            groupMembership:
+              service: ldap
+              ldap:
+                url: ldap://RELEASE_NAME-openldap:389
+                managerDn: cn=admin,dc=example,dc=org
+                managerPassword: opsmxadmin123
+                groupSearchBase: ou=groups,dc=example,dc=org
+                groupSearchFilter: member={0}
+                groupRoleAttributes: cn
+                userDnPattern: cn={0},dc=example,dc=org
         echo-local.yml:
-            rest:
-               enabled: true
-               endpoints:
-                 -
-                   wrap: false
-                   url:  http://oes-audit-service:8097/auditservice/v1/echo/events/data
+          rest:
+              enabled: true
+              endpoints:
+                -
+                  wrap: false
+                  url:  http://oes-audit-service:8097/auditservice/v1/echo/events/data
 
-                 - 
-                   wrap: false
-                   url: http://oes-sapor:8085/oes/echo   # ----> [Note: This url should be our SAPOR url]
-            microsoftteams:
-               enabled: true
+                - 
+                  wrap: false
+                  url: http://oes-sapor:8085/oes/echo   # ----> [Note: This url should be our SAPOR url]
+          microsoftteams:
+              enabled: true
     ## Define custom settings for Spinnaker services. Read more for details:
     ## https://www.spinnaker.io/reference/halyard/custom/#custom-service-settings
     ## You can use it to add annotations for pods, override the image, etc.

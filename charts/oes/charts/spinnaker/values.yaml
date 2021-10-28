@@ -275,21 +275,6 @@ redis:
 #  persistence:
 #    enabled: false
 
-# Minio access/secret keys for the in-cluster S3 usage
-# Minio is not exposed publically
-minio:
-  enabled: true
-  image:
-    tag: RELEASE.2020-01-03T19-12-21Z
-  service:
-    type: ClusterIP
-  accessKey: spinnakeradmin
-  secretKey: spinnakeradmin
-  defaultBucket:
-    enabled: true
-    name: "spinnaker"
-  nodeSelector: {}
-
 # Google Cloud Storage
 gcs:
   enabled: false
