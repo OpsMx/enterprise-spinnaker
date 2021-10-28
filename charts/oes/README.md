@@ -40,13 +40,6 @@ Install OpsMx Enterprise for Spinnaker
    $ helm repo update
    ```
 
-- Quay container registry credentials is setup as a secret in Kubernetes. Before you install OES, please send an email to creds@opsmx.com requesting access to the OES images with your Quay ID. You can proceed with installation once your Quay ID has been granted access.
-
-  To be able to fetch OES container images, do anything of the below actions
-  1. username and password shall be set in values.yaml or 
-  2. use --set imageCredentials.username=<username> --set imageCredentials.password=<password> while running helm install or
-  3. Create an imagePullSecret with your quay credentials and specify the secret name using --set imagePullSecret=<secretName>
-
 - Your Kubernetes cluster shall support persistent volumes
 
 - It is assumed that an nginx ingress controller is installed on the cluster, by default ingress resources are created for oes-ui, oes-gate, spin-deck and spin-gate services. Customize the hosts for OES using the options in the values.yaml under global.oesUI, oesGate, spinDeck, spinGate. If any other ingress controller is installed, set createIngress flag to false and configure your ingress.
@@ -94,9 +87,6 @@ Parameter | Description | Default
 --------- | ----------- | -------
 `imagePullSecret` | Name of the image pull secret to fetch oes docker images from private registry | `opsmxdev-secret`
 `imageCredentials.registry` | The registry where OES docker images are available | `https://index.docker.io/v1/`
-`imageCredentials.username` | Username of docker account to access docker registry | `dockerID`
-`imageCredentials.password` | Password of docker account | `dockerPassword`
-`imageCredentials.email` | Email associated with docker account | `info@opsmx.com`
 `rbac.create` | Enable or disable rbac | `true`
 `installSpinnaker` | If true, install Spinnaker along with OES Extensions | `true`
 `installationMode` | The installation mode. Available installation modes are **OES-AP** (for OES that includes Autopilot) and **None**(Skip OES installation) and **EASY** installation on minikube or microk8s| `OES-AP`
