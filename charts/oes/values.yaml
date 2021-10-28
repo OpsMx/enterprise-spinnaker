@@ -818,17 +818,17 @@ spinnaker:
                 userDnPattern: cn={0},dc=example,dc=org
         echo-local.yml:
           rest:
-              enabled: true
-              endpoints:
-                -
-                  wrap: false
-                  url:  http://oes-audit-service:8097/auditservice/v1/echo/events/data
+            enabled: true
+            endpoints:
+              -
+                wrap: false
+                url:  http://oes-audit-service:8097/auditservice/v1/echo/events/data
 
-                - 
-                  wrap: false
-                  url: http://oes-sapor:8085/oes/echo   # ----> [Note: This url should be our SAPOR url]
+              - 
+                wrap: false
+                url: http://oes-sapor:8085/oes/echo   # ----> [Note: This url should be our SAPOR url]
           microsoftteams:
-              enabled: true
+            enabled: true
     ## Define custom settings for Spinnaker services. Read more for details:
     ## https://www.spinnaker.io/reference/halyard/custom/#custom-service-settings
     ## You can use it to add annotations for pods, override the image, etc.
