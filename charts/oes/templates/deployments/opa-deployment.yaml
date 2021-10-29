@@ -1,4 +1,4 @@
-{{- if (eq .Values.installationMode "OES-AP") -}}
+{{- if or (eq .Values.installationMode "OES-AP")  (eq .Values.installationMode "EASY") -}}
 {{- if .Values.opa.enabled -}}
 apiVersion: apps/v1
 kind: Deployment
@@ -37,6 +37,10 @@ spec:
           volumeMounts:
           - mountPath: /tmp/config
             name: opa-persist
+      {{- if .Values.imagePullSecret}}
+      imagePullSecrets:
+      - name: {{ .Values.imagePullSecret}}
+      {{- end }}
       {{- if .Values.opa.nodeSelector }}
       nodeSelector:
 {{ toYaml .Values.opa.nodeSelector | indent 8 }}

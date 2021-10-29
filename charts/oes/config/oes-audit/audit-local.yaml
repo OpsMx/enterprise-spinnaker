@@ -1,0 +1,8 @@
+spring:
+  datasource:
+    url: {{ .Values.db.url }}/auditdb
+    username: {{ .Values.db.username }}
+    password: {{ .Values.db.password }}
+logging:
+    level:
+      com.opsmx.auditservice: INFO

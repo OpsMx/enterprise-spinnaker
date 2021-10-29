@@ -1,8 +1,18 @@
+{{/*
 {{- define "imagePullSecret" }}
 {{- with .Values.imageCredentials }}
 {{- printf "{\"auths\":{\"%s\":{\"username\":\"%s\",\"password\":\"%s\",\"email\":\"%s\",\"auth\":\"%s\"}}}" .repoUrl .username .password .email (printf "%s:%s" .username .password | b64enc) | b64enc }}
 {{- end }}
 {{- end }}
+*/}}
+
+{{/*
+Extract spinnaker version in the format major.minor for sapor configuration
+*/}}
+{{- define "oes.spinnakerVersion" -}}
+{{- $parts := split "." .Values.spinnaker.halyard.spinnakerVersion -}}
+{{- printf "%s.%s" $parts._0 $parts._1 -}}
+{{- end -}}
 
 {{/*
 Create a default fully qualified app name.
@@ -48,6 +58,36 @@ Return the proper GATE image name
 {{- $registryName := .Values.imageCredentials.registry -}}
 {{- $repositoryName := .Values.gate.image.repository -}}
 {{- $tag := .Values.gate.image.tag | toString -}}
+{{- printf "%s/%s:%s" $registryName $repositoryName $tag -}}
+{{- end -}}
+
+{{/*
+Return the proper datascience image name
+*/}}
+{{- define "datascience.image" -}}
+{{- $registryName := .Values.imageCredentials.registry -}}
+{{- $repositoryName := .Values.datascience.image.repository -}}
+{{- $tag := .Values.datascience.image.tag | toString -}}
+{{- printf "%s/%s:%s" $registryName $repositoryName $tag -}}
+{{- end -}}
+
+{{/*
+Return the proper audit service image name
+*/}}
+{{- define "auditservice.image" -}}
+{{- $registryName := .Values.imageCredentials.registry -}}
+{{- $repositoryName := .Values.audit.image.repository -}}
+{{- $tag := .Values.audit.image.tag | toString -}}
+{{- printf "%s/%s:%s" $registryName $repositoryName $tag -}}
+{{- end -}}
+
+{{/*
+Return the proper audit client image name
+*/}}
+{{- define "auditclient.image" -}}
+{{- $registryName := .Values.imageCredentials.registry -}}
+{{- $repositoryName := .Values.auditClient.image.repository -}}
+{{- $tag := .Values.auditClient.image.tag | toString -}}
 {{- printf "%s/%s:%s" $registryName $repositoryName $tag -}}
 {{- end -}}
 

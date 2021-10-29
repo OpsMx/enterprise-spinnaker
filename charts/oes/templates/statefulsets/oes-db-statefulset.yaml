@@ -1,4 +1,4 @@
-{{- if and (.Values.db.enabled) (eq .Values.installationMode "OES-AP") -}}
+{{- if and (.Values.db.enabled) (or (eq .Values.installationMode "OES-AP")  (eq .Values.installationMode "EASY")) -}}
 apiVersion: apps/v1
 kind: StatefulSet
 metadata:
@@ -22,8 +22,10 @@ spec:
         component: db
 {{ include "oes.standard-labels" . | indent 8 }}
     spec:
+      {{- if .Values.imagePullSecret}}
       imagePullSecrets:
-        - name: {{ .Values.imagePullSecret }}
+      - name: {{ .Values.imagePullSecret}}
+      {{- end }}
       containers:
       - image: {{ template "db.image" . }}
         imagePullPolicy: {{ .Values.db.image.pullPolicy }}

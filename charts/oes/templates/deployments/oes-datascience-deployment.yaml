@@ -1,0 +1,72 @@
+{{- if or (eq .Values.installationMode "OES-AP")  (eq .Values.installationMode "EASY") -}}
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: oes
+    component: datascience
+{{ include "oes.standard-labels" . | indent 4 }}
+  name: oes-datascience
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: oes
+      component: datascience
+  template:
+    metadata:
+      annotations:
+        configmap/checksum: {{ (.Files.Glob "config/oes-datascience/datascience-local.yml").AsConfig | sha256sum }}
+{{- if .Values.datascience.annotations -}}
+        {{ toYaml .Values.datascience.annotations | nindent 8 }}
+{{- end }}
+      labels:
+        app: oes
+        component: datascience
+{{ include "oes.standard-labels" . | indent 8 }}
+    spec:
+      containers:
+      - image: {{ template "datascience.image" . }}
+        imagePullPolicy: IfNotPresent
+        name: oes-datascience
+        ports:
+        - containerPort: 5005
+          name: backend
+          protocol: TCP
+        readinessProbe:
+          failureThreshold: 3
+          initialDelaySeconds: 60
+          periodSeconds: 10
+          successThreshold: 1
+          tcpSocket:
+            port: 5005
+          timeoutSeconds: 1
+        volumeMounts:
+        - mountPath: /home/ubuntu/.aws/credentials
+          name: datascience-config-volume
+          subPath: minio-credentials
+        - mountPath: /home/ubuntu/datascience/app_config.yaml
+          name: datascience-config-volume
+          subPath: app-config.yml
+      {{- if .Values.imagePullSecret}}
+      imagePullSecrets:
+      - name: {{ .Values.imagePullSecret}}
+      {{- end }}
+      {{- if .Values.datascience.nodeSelector }}
+      nodeSelector:
+{{ toYaml .Values.datascience.nodeSelector | indent 8 }}
+      {{- end }}
+      volumes:
+      {{- if .Values.global.customCerts.enabled }}
+      - name: cacerts
+        secret:
+          secretName: {{ .Values.global.customCerts.secretName }}
+          items:
+          - key: cacerts
+            path: cacerts
+      {{- end }}
+      - configMap:
+          defaultMode: 420
+          name: oes-datascience-config
+        name: datascience-config-volume
+{{- end -}}

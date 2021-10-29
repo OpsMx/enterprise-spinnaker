@@ -1,0 +1,24 @@
+{{- if or (eq .Values.installationMode "OES-AP")  (eq .Values.installationMode "EASY") -}}
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    app: oes
+    component: auditservice
+{{ include "oes.standard-labels" . | indent 4 }}
+{{- if .Values.gate.serviceAnnotations }}
+  annotations:
+{{ toYaml .Values.gate.serviceAnnotations | indent 4 }}
+{{- end }}
+  name: oes-audit-service
+spec:
+  ports:
+  - name: auditservice
+    port: 8097
+    protocol: TCP
+    targetPort: 8097
+  selector:
+    app: oes
+    component: auditservice
+  type: ClusterIP
+{{- end -}}

@@ -1,0 +1,65 @@
+k8sServiceType: NodePort  
+## Declare all the global variables under this
+## Global variables can be accessed across all the charts including sub-charts
+global:
+  # Spinnaker Deck URL configuration; url overwhich spinnaker deck will be accessed
+  ## Set this to false if cert-manager is not installed
+  ## If cert-manager is installed, an issuer will be created
+  ## by OES helm chart which generates certs for tls automatically
+  ## If cert-manager is not installed, specify secrets with
+  ## certificates under oesUI.tls.secretName & oesGate.tls.secretName
+
+  certManager:
+    installed: false
+  self-signed-certs:
+    enabled: false # At this point this is not supported
+
+  # Below flag is used to setup tls termination at ingress
+  # when this flag is set to false; spinnaker and oes endpoints
+  # will be accessible over http instead of https
+  ssl:
+    enabled: false
+
+  ## Set to true to expose oes-ui, oes-gate services over ingress
+  ##
+  createIngress: false
+
+
+  spinDeck:
+          protocol: http
+          host: IP_ADDRESS
+          port: 32110 #port range can be 32110-33110
+
+  # Spinnaker Gate URL configuration; url overwhich spinnaker gate will be accessed
+  spinGate:
+          protocol: http
+          host: IP_ADDRESS
+          port: 32111 #port range can be 32110-33110
+  ## OES-UI url configuration
+  oesUI:
+    protocol: http
+    host: IP_ADDRESS
+    port: 32112 #port range can be 32110-33110
+  ## OES-Gate url configuration
+  oesGate:
+    protocol: http
+    host: IP_ADDRESS
+    port: 32113 #port range can be 32110-33110
+
+## Installation mode
+## Available installation modes OES-AP, None
+installationMode: EASY
+
+
+sapor:
+  config:
+    encrypt:
+      enabled: true
+      key: QFGFGDjyggkfZjhgkhk # ex: Q7udUkHPuA3VnNlOtksSgQ     #encryption key needed for sapor to startup from 3.9
+
+spinnaker:
+  # Initialize gitOps style Halyard
+  gitopsHalyard:
+    enabled: false
+    pipelinePromotion:
+      enabled: false

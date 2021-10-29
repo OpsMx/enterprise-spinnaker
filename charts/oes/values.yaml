@@ -2,12 +2,10 @@
 # OpsMx AutoPilot and Integrated Spinnaker Delivery
 # This file contains configurations for AP as well as Spinnaker
 #####################################################
-## Quay container image registry credentials to create imagePullSecret
+
+## Info related to registry where OES images are stored
 imageCredentials:
   repoUrl: https://quay.io/
-  username: quayID  # Quay username
-  password: quayPassword # Quay password
-  email: info@opsmx.com   # email corresponding to quay registry ID
   # Update this is using a private repo such as ACR, ECR, GCR, JFrog, etc.
   registry: quay.io/opsmxpublic  
 
@@ -131,6 +129,94 @@ global:
   # Best left unchanged
   # Use the below flag to exclude pre-delete helm hooks to the rendered manifests
   preDeleteHelmHooks: true
+  # Minio access/secret keys for the in-cluster S3 usage
+  # Minio is not exposed publically
+  minio:
+    enabled: true
+    image:
+      repository: quay.io/opsmxpublic/minio
+      tag: RELEASE.2020-01-03T19-12-21Z
+    mcImage:
+      repository: quay.io/opsmxpublic/minio-mc
+      tag: RELEASE.2020-11-25T23-04-07Z
+    service:
+      type: ClusterIP
+    accessKey: spinnakeradmin
+    secretKey: spinnakeradmin
+    region: us-east-1
+    securityContext:
+      enabled: true
+      runAsUser: 1000
+      runAsGroup: 1000
+      fsGroup: 1000
+    buckets:
+    - name: "spinnaker"
+      policy: none
+      purge: false
+    - name: "autopilot"
+      policy: none
+      purge: false
+    defaultBucket:
+      enabled: true
+      name: "spinnaker"
+    nodeSelector: {}
+    persistence:
+      enabled: true
+      size: 10Gi
+
+  ###############################################################################
+  ## This option enables OES to be configured automatically
+  ## Load Balancer IPs will be automatically replaced in the
+  ## configuration files of oes-gate, oes-ui
+  autoConfiguration:
+    # Set it to false if OES is being installed on restricted evnironment;
+    # Autoconfiguration assumes Load Balancer is available for oes-gate, oes-ui
+    # and spind-deck and configures accordingly
+    enabled: false
+
+    initContainer:
+      # Image for init container to automatically configure oes components
+      # during startup
+      image: quay.io/opsmxpublic/oes-init:v4
+      pullPolicy: IfNotPresent
+
+      # Max time(in secs) that an init container of oes-ui should wait
+      # to fetch External Load Balancer IP of oes-gate and vice versa
+      externalIpCheckDelay: 180
+
+###############################################################################
+## Details of rabbitmq message bus image for OES
+##
+rabbitmq:
+  ## rabbitmq  endpoint that is used by oes-gate and oes-platform for caching;
+  ## Change this to custom URL if installRedis is set to false
+  ## url: rabbitmq-service
+  ## url: default port 5672
+  url: rabbitmq-service
+  port: 5672
+  image:
+    registry: docker.io/rabbitmq
+    repository: 3-management 
+
+  ###############################################################################
+  ## This option enables OES to be configured automatically
+  ## Load Balancer IPs will be automatically replaced in the
+  ## configuration files of oes-gate, oes-ui
+  autoConfiguration:
+    # Set it to false if OES is being installed on restricted evnironment;
+    # Autoconfiguration assumes Load Balancer is available for oes-gate, oes-ui
+    # and spind-deck and configures accordingly
+    enabled: false
+
+    initContainer:
+      # Image for init container to automatically configure oes components
+      # during startup
+      image: quay.io/opsmxpublic/oes-init:v4
+      pullPolicy: IfNotPresent
+
+      # Max time(in secs) that an init container of oes-ui should wait
+      # to fetch External Load Balancer IP of oes-gate and vice versa
+      externalIpCheckDelay: 180
 
   ###############################################################################
   # Only if k8sServiceType is LoadBalancer, else ignored
@@ -165,7 +251,7 @@ db:
   ## Image specific details
   image:
     repository: ubi8-oes-db
-    tag: v2.0.0
+    tag: v3.0.0
     pullPolicy: IfNotPresent
 
   ## Strategy to rollout statefulset pods
@@ -180,7 +266,6 @@ db:
 
   ## storageClass for DB persistent volume claim (PVC)
   #storageClassName: default
-  
 ###############################################################################
 ##
 ## Values of OES Autopilot
@@ -188,9 +273,8 @@ db:
 autopilot:
   ## Image specific details
   image:
-    registry: quay.io/opsmxpublic
     repository: ubi8-oes-autopilot
-    tag: v3.9.1.2
+    tag: v3.10.0
     pullPolicy: IfNotPresent
 
   annotations:
@@ -217,7 +301,7 @@ dashboard:
   ## Image specific details
   image:
     repository: ubi8-oes-dashboard
-    tag: v3.9.1.2
+    tag: v3.10.0
     pullPolicy: IfNotPresent
 
   annotations:
@@ -258,12 +342,77 @@ forwarder:
   serviceAnnotations: {}
 
 ###############################################################################
-# OES gate handles authentication and supports multiple authentication mechanisms
+##
+## Values of OES auditservice
+##
+audit:
+  ## Image specific details
+  ##
+  image:
+    repository: ubi8-oes-audit-service
+    tag: v3.10.0
+    pullPolicy: IfNotPresent
+
+  serviceAnnotations: {}
+
+  annotations:
+    prometheus_io_path: /prometheus
+    prometheus_io_port: "8097"
+    prometheus.io/scrape: "true"
+  resources: {}
+  config: {}
+###############################################################################
+##
+## Values of OES auditclient
+##
+auditClient:
+  ## Image specific details
+  ##
+  image:
+    repository: ubi8-oes-audit-client
+    tag: v3.10.0
+    pullPolicy: IfNotPresent
+
+  serviceAnnotations: {}
+
+  annotations:
+    prometheus_io_path: /prometheus
+    prometheus_io_port: "8098"
+    prometheus.io/scrape: "true"
+  resources: {}
+  config: {}
+
+ 
+ 
+###############################################################################
+##
+## Values of OES datascience
+##
+datascience:
+  ## Image specific details
+  ##
+  image:
+    repository: ubi8-oes-datascience
+    tag: v3.10.0
+    pullPolicy: IfNotPresent
+
+  serviceAnnotations: {}
+
+  annotations:
+    prometheus_io_path: /prometheus
+    prometheus_io_port: "5005"
+    prometheus.io/scrape: "true"
+  resources: {}
+  config: {}
+###############################################################################
+##
+## Values of OES Gate
+##
 gate:
   ## Image specific details
   image:
     repository: ubi8-gate
-    tag: v3.9.1.2
+    tag: v3.10.0
     pullPolicy: IfNotPresent
 
   serviceAnnotations: {}
@@ -337,7 +486,7 @@ platform:
   ## Image specific details
   image:
     repository: ubi8-oes-platform
-    tag: v3.9.1.3
+    tag: v3.10.0
     pullPolicy: IfNotPresent
 
   annotations:
@@ -372,7 +521,7 @@ sapor:
   ## Image specific details
   image:
     repository: ubi8-oes-sapor
-    tag: v3.9.1.2
+    tag: v3.10.0
     pullPolicy: IfNotPresent
 
   annotations:
@@ -388,6 +537,9 @@ sapor:
   #    cpu: 1500m
 
   config:
+    ## Use OSS if sapor needs to be connected to Open Source Spinnaker
+    ## If sapor needs to be connected to ubi8 based Spinnaker Images, use OPSMX
+    spinnakerImages: OPSMX
     spinnaker:
       ## Spinnaker configuration
       ## Necessary details needed by Sapor tointegrate with Spinnaker
@@ -422,6 +574,7 @@ sapor:
       # This key should match the encryption key specified in .hal/default/profiles/spinnakerConfig.yaml 
       # encryption key needed for sapor to startup from 3.9
       key: Q7udUkHPuA3VnNlOtksSgQ
+      salt: deadbeef
     # Set the below field to true if datasource configurations from platform, please don't change
     datasources:
       platform: true
@@ -432,7 +585,7 @@ ui:
   ## Image specific details
   image:
     repository: ubi8-oes-ui
-    tag: v3.9.1.2
+    tag: v3.10.0
     pullPolicy: IfNotPresent
   serviceAnnotations: {}
 
@@ -446,7 +599,7 @@ visibility:
   ## Image specific details
   image:
     repository: ubi8-oes-visibility
-    tag: v3.9.1.2
+    tag: v3.10.0
     pullPolicy: IfNotPresent
 
   annotations:
@@ -619,11 +772,34 @@ spinnaker:
         gate-local.yml:
           server:
             tomcat:
+              httpsServerPort: X-Forwarded-Port
+              internalProxies: .*
               protocolHeader: X-Forwarded-Proto
               remoteIpHeader: X-Forwarded-For
-              internalProxies: .*
-              httpsServerPort: X-Forwarded-Port
-
+          spinnaker:
+            extensibility:
+              plugins:
+              deck-proxy:
+                enabled: true
+                plugins:
+                  Opsmx.VerificationGatePlugin:
+                    enabled: true
+                    version: 1.0.1
+                  Opsmx.TestVerificationGatePlugin:
+                    enabled: true
+                    version: 1.0.1
+                  Opsmx.PolicyGatePlugin:
+                    enabled: true
+                    version: 1.0.1
+                  Opsmx.CustomStagePlugin:
+                    enabled: true
+                    version: 1.0.1
+                  Opsmx.VisibilityApprovalPlugin:
+                    enabled: true
+                    version: 1.0.1
+              repositories:
+                opsmx-repo:
+                  url: https://raw.githubusercontent.com/opsmx/spinnakerPluginRepository/v3.9.0/plugins.json
         ##If opa is installed and enabled  and spinnaker is installed,
         ##Then you can enable policy in spinnaker through front50-local yaml.
         ##If you don't want to configure make it as false or
@@ -633,7 +809,31 @@ spinnaker:
             opa:
               enabled: true
               url: http://oes-sapor.{{ .Release.Namespace }}:8085
+        fiat-local.yml:
+          auth:
+            groupMembership:
+              service: ldap
+              ldap:
+                url: ldap://RELEASE_NAME-openldap:389
+                managerDn: cn=admin,dc=example,dc=org
+                managerPassword: opsmxadmin123
+                groupSearchBase: ou=groups,dc=example,dc=org
+                groupSearchFilter: member={0}
+                groupRoleAttributes: cn
+                userDnPattern: cn={0},dc=example,dc=org
+        echo-local.yml:
+          rest:
+            enabled: true
+            endpoints:
+              -
+                wrap: false
+                url:  http://oes-audit-service:8097/auditservice/v1/echo/events/data
 
+              - 
+                wrap: false
+                url: http://oes-sapor:8085/oes/echo   # ----> [Note: This url should be our SAPOR url]
+          microsoftteams:
+            enabled: true
     ## Define custom settings for Spinnaker services. Read more for details:
     ## https://www.spinnaker.io/reference/halyard/custom/#custom-service-settings
     ## You can use it to add annotations for pods, override the image, etc.
@@ -647,15 +847,15 @@ spinnaker:
       deck.yml:
         artifactId: quay.io/opsmxpublic/ubi8-oes-deck:3.5.1
       clouddriver.yml:
-        artifactId: quay.io/opsmxpublic/ubi8-spin-clouddriver:8.0.4
+        artifactId: quay.io/opsmxpublic/ubi8-spin-clouddriver:8.0.4-1
       clouddriver-caching.yml:
-        artifactId: quay.io/opsmxpublic/ubi8-spin-clouddriver:8.0.4
+        artifactId: quay.io/opsmxpublic/ubi8-spin-clouddriver:8.0.4-1
       clouddriver-rw.yml:
-        artifactId: quay.io/opsmxpublic/ubi8-spin-clouddriver:8.0.4
+        artifactId: quay.io/opsmxpublic/ubi8-spin-clouddriver:8.0.4-1
       clouddriver-ro.yml:
-        artifactId: quay.io/opsmxpublic/ubi8-spin-clouddriver:8.0.4
+        artifactId: quay.io/opsmxpublic/ubi8-spin-clouddriver:8.0.4-1
       clouddriver-ro-deck.yml:
-        artifactId: quay.io/opsmxpublic/ubi8-spin-clouddriver:8.0.4
+        artifactId: quay.io/opsmxpublic/ubi8-spin-clouddriver:8.0.4-1
       echo.yml:
         artifactId: quay.io/opsmxpublic/ubi8-spin-echo:2.17.1
       echo-scheduler.yml:
@@ -665,13 +865,13 @@ spinnaker:
       fiat.yml:
         artifactId: quay.io/opsmxpublic/ubi8-spin-fiat:1.16.0
       front50.yml:
-        artifactId: quay.io/opsmxpublic/ubi8-oes-front50:0.27.1
+        artifactId: quay.io/opsmxpublic/ubi8-oes-front50:0.27.1-opa
       igor.yml:
         artifactId: quay.io/opsmxpublic/ubi8-spin-igor:1.16.0
       kayenta.yml:
         artifactId: quay.io/opsmxpublic/ubi8-spin-kayenta:0.21.0
       orca.yml:
-        artifactId: quay.io/opsmxpublic/ubi8-oes-orca:2.20.3
+        artifactId: quay.io/opsmxpublic/ubi8-oes-orca:2.20.4
       rosco.yml:
         artifactId: quay.io/opsmxpublic/ubi8-spin-rosco:0.25.0
     ## Uncomment if you want to add extra commands to the init script
@@ -759,25 +959,6 @@ spinnaker:
   # nodeSelector to provide to each of the Spinnaker components
   nodeSelector: {}
 
-  # Minio access/secret keys for the in-cluster S3 usage
-  # Minio is not exposed publically
-  minio:
-    enabled: true
-    image:
-      repository: quay.io/opsmxpublic/minio
-      tag: RELEASE.2020-01-03T19-12-21Z
-
-    mcImage:
-      repository: quay.io/opsmxpublic/minio-mc
-      tag: RELEASE.2020-11-25T23-04-07Z
-    serviceType: ClusterIP
-    accessKey: spinnakeradmin
-    secretKey: spinnakeradmin
-    bucket: "spinnaker"
-    nodeSelector: {}
-    persistence:
-      enabled: true
-      size: 10Gi
 
   # Google Cloud Storage
   gcs:
@@ -847,10 +1028,10 @@ spinnaker:
 #### The values below this line are best not changed except in rare situations
 ###############################################################################################
 ###############################################################################################
-## Name of the secret for pulling image from docker registry.
-## Change it only if you want to create a secret with
-## different name before installing oes chart and use it.
-imagePullSecret: opsmxdev-secret
+## Name of the secret for pulling images from container registry.
+## Use it when the images are stored under private registry.
+## Create this secret before installing the chart
+imagePullSecret: ""
 
 ## Installation mode, available modes OES-AP, None (do not install AP (previously called OES)
 installationMode: OES-AP

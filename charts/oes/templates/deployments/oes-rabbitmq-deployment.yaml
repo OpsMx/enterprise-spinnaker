@@ -1,0 +1,36 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: oes
+    component: rabbitmq
+{{ include "oes.standard-labels" . | indent 4 }}
+  name: rabbitmq
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: oes
+      component: rabbitmq
+  template:
+    metadata:
+      labels:
+        app: oes
+        component: rabbitmq
+{{ include "oes.standard-labels" . | indent 8 }}
+    spec:
+      containers:
+      - image: {{ .Values.rabbitmq.image.registry }}:{{ .Values.rabbitmq.image.repository }}
+        imagePullPolicy: IfNotPresent
+        name: rabbitmq
+        ports:
+        - containerPort: {{ .Values.rabbitmq.port }}
+          protocol: TCP
+        resources: {}
+      {{- if .Values.imagePullSecret}}
+      imagePullSecrets:
+      - name: {{ .Values.imagePullSecret}}
+      {{- end }}
+      restartPolicy: Always
+      securityContext:
+        fsGroup: 1000

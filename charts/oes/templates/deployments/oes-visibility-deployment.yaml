@@ -1,4 +1,4 @@
-{{- if (eq .Values.installationMode "OES-AP") -}}
+{{- if or (eq .Values.installationMode "OES-AP")  (eq .Values.installationMode "EASY") -}}
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -64,8 +64,10 @@ spec:
             port: 8096
           initialDelaySeconds: 30
           periodSeconds: 60
+      {{- if .Values.imagePullSecret}}
       imagePullSecrets:
       - name: {{ .Values.imagePullSecret}}
+      {{- end }}
       {{- if .Values.visibility.nodeSelector }}
       nodeSelector:
 {{ toYaml .Values.visibility.nodeSelector | indent 8 }}

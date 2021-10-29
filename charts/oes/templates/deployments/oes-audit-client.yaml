@@ -1,0 +1,84 @@
+{{- if or (eq .Values.installationMode "OES-AP")  (eq .Values.installationMode "EASY") -}}
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: oes-audit-client
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: oes
+      component: auditclient
+  template:
+    metadata:
+      annotations:
+        configmap/checksum: {{ (.Files.Glob "config/oes-audit/audit-client-local.yml").AsConfig | sha256sum }}
+{{- if .Values.auditClient.annotations -}}
+        {{ toYaml .Values.auditClient.annotations | nindent 8 }}
+{{- end }}
+      labels:
+        app: oes
+        component: auditclient
+{{ include "oes.standard-labels" . | indent 8 }}
+    spec:
+      containers:
+      - image: {{ template "auditclient.image" . }} 
+        imagePullPolicy: IfNotPresent
+        name: oes-audit-client
+        ports:
+        - containerPort: 8098
+          name: backend
+          protocol: TCP
+        livenessProbe:
+          failureThreshold: 3
+          httpGet:
+            path: /mgmt/health
+            port: 8098
+            scheme: HTTP
+          initialDelaySeconds: 60
+          periodSeconds: 60
+          successThreshold: 1
+          timeoutSeconds: 1
+        readinessProbe:
+          failureThreshold: 3
+          initialDelaySeconds: 60
+          periodSeconds: 10
+          successThreshold: 1
+          tcpSocket:
+            port: 8098
+        volumeMounts:
+        - mountPath: /opsmx/conf/audit-client-local.yml
+          name: audit-config-volume
+          subPath: audit-local.yml
+        - mountPath: /opsmx/conf/bootstrap.yml
+          name: bootstrap-config-volume
+          subPath: bootstrap.yml
+      {{- if .Values.imagePullSecret}}
+      imagePullSecrets:
+      - name: {{ .Values.imagePullSecret}}
+      {{- end }}
+      {{- if .Values.auditClient.nodeSelector }}
+      nodeSelector:
+{{ toYaml .Values.auditClient.nodeSelector | indent 8 }}
+      {{- end }}
+      volumes:
+      {{- if .Values.global.customCerts.enabled }}
+      - name: cacerts
+        secret:
+          secretName: {{ .Values.global.customCerts.secretName }}
+          items:
+          - key: cacerts
+            path: cacerts
+      {{- end }}
+      - configMap:
+          defaultMode: 420
+          items:
+          - key: audit-local.yml
+            path: audit-local.yml
+          name: oes-audit-client-config
+        name: audit-config-volume
+      - name: bootstrap-config-volume
+        secret:
+          defaultMode: 420
+          secretName: bootstrap
+{{- end -}}

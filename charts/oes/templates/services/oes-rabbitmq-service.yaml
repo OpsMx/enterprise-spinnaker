@@ -1,0 +1,23 @@
+{{- if or (eq .Values.installationMode "OES-AP") (eq .Values.installationMode "EASY") -}}
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    app: oes
+    component: rabbitmq
+{{ include "oes.standard-labels" . | indent 4 }}
+  name: rabbitmq-service
+spec:
+  ports:
+  - name: rabbitmq
+    port: 5672
+    protocol: TCP
+    targetPort: 5672
+  - name: rabbitmq-mgmt
+    port: 15672
+    protocol: TCP
+    targetPort: 15672
+  selector:
+    app: oes
+  type: ClusterIP
+{{- end -}}
