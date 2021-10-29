@@ -57,10 +57,12 @@ pipeline-promotion:
     bucketName: {{ .Values.spinnaker.gitopsHalyard.repo.s3bucket }} 
 spinnaker:
   version: {{ template "oes.spinnakerVersion" . }}
+  images: {{ .Values.sapor.config.spinnakerImages }}
   restart:
     endPoint: /webhooks/webhook/restartSpinnaker
   encrypt:
     key: {{ .Values.sapor.config.encrypt.key }}
+    salt: {{ .Values.sapor.config.encrypt.salt }}
 datasources:
   platform: {{ .Values.sapor.config.datasources.platform }}
   

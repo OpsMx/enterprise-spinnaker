@@ -1,3 +1,9 @@
+retrofit:
+  connectTimeout: 30000
+  readTimeout: 30000
+  callTimeout: 30000
+  writeTimeout: 30000
+  retryOnConnectionFailure: true
 services:
   opsmx:
     baseUrl: http://oes-sapor:8085

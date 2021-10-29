@@ -537,6 +537,9 @@ sapor:
   #    cpu: 1500m
 
   config:
+    ## Use OSS if sapor needs to be connected to Open Source Spinnaker
+    ## If sapor needs to be connected to ubi8 based Spinnaker Images, use OPSMX
+    spinnakerImages: OPSMX
     spinnaker:
       ## Spinnaker configuration
       ## Necessary details needed by Sapor tointegrate with Spinnaker
@@ -571,6 +574,7 @@ sapor:
       # This key should match the encryption key specified in .hal/default/profiles/spinnakerConfig.yaml 
       # encryption key needed for sapor to startup from 3.9
       key: Q7udUkHPuA3VnNlOtksSgQ
+      salt: deadbeef
     # Set the below field to true if datasource configurations from platform, please don't change
     datasources:
       platform: true
@@ -842,15 +846,15 @@ spinnaker:
       deck.yml:
         artifactId: quay.io/opsmxpublic/ubi8-oes-deck:3.5.1
       clouddriver.yml:
-        artifactId: quay.io/opsmxpublic/ubi8-spin-clouddriver:8.0.4
+        artifactId: quay.io/opsmxpublic/ubi8-spin-clouddriver:8.0.4-1
       clouddriver-caching.yml:
-        artifactId: quay.io/opsmxpublic/ubi8-spin-clouddriver:8.0.4
+        artifactId: quay.io/opsmxpublic/ubi8-spin-clouddriver:8.0.4-1
       clouddriver-rw.yml:
-        artifactId: quay.io/opsmxpublic/ubi8-spin-clouddriver:8.0.4
+        artifactId: quay.io/opsmxpublic/ubi8-spin-clouddriver:8.0.4-1
       clouddriver-ro.yml:
-        artifactId: quay.io/opsmxpublic/ubi8-spin-clouddriver:8.0.4
+        artifactId: quay.io/opsmxpublic/ubi8-spin-clouddriver:8.0.4-1
       clouddriver-ro-deck.yml:
-        artifactId: quay.io/opsmxpublic/ubi8-spin-clouddriver:8.0.4
+        artifactId: quay.io/opsmxpublic/ubi8-spin-clouddriver:8.0.4-1
       echo.yml:
         artifactId: quay.io/opsmxpublic/ubi8-spin-echo:2.17.1
       echo-scheduler.yml:
