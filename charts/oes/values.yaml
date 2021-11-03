@@ -518,13 +518,6 @@ sapor:
       ## Set it to true if authentication is enabled in Spinnaker
       authnEnabled: true  # This mandatory, un-authenicated Spinnaker is not supported
 
-      ## URL of Spinnaker Gate
-      ## FQDN of spin-gate if Spinnaker is installed in same K8s cluster, else
-      ## set the url with the external IP address of spin-gate
-      ## Note: Don't put a trailing /
-      ##
-      spinGateURL: http://spin-gate:8084
-
       ## LDAP
       #ldap:
       #  ldapEnabled: true
@@ -708,10 +701,10 @@ spinnaker:
       #password="K438"   ### Token is preferred, Password also might work, try your luck
       # Instead of username, token/password, sshkey can be provided
       #API
-      #api_url="https://api.bitbucket.org/2.0/repositories/"   # bitbucket
+      #apiUrl: "https://api.bitbucket.org/2.0/repositories/"   # bitbucket
       apiUrl: "https://api.github.com/repos"                  # guthub
-      #api_url="https://api.gitlab.com/repos"                  # gitLAB
-      #api_url="https://bbq.opsmx.com/api"                      # bitbucket-server(stash)
+      #apiUrl: "https://api.gitlab.com/repos"                  # gitLAB
+      #apiUrl: "https://bbq.opsmx.com/api"                      # bitbucket-server(stash)
 
       ###############################################################################################
       ###############################################################################################
