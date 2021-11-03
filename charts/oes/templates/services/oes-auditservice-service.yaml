@@ -6,9 +6,9 @@ metadata:
     app: oes
     component: auditservice
 {{ include "oes.standard-labels" . | indent 4 }}
-{{- if .Values.gate.serviceAnnotations }}
+{{- if .Values.audit.serviceAnnotations }}
   annotations:
-{{ toYaml .Values.gate.serviceAnnotations | indent 4 }}
+{{ toYaml .Values.audit.serviceAnnotations | indent 4 }}
 {{- end }}
   name: oes-audit-service
 spec:

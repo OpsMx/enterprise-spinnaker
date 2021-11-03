@@ -185,58 +185,7 @@ global:
       externalIpCheckDelay: 180
 
 ###############################################################################
-## Details of rabbitmq message bus image for OES
-##
-rabbitmq:
-  ## rabbitmq  endpoint that is used by oes-gate and oes-platform for caching;
-  ## Change this to custom URL if installRedis is set to false
-  ## url: rabbitmq-service
-  ## url: default port 5672
-  url: rabbitmq-service
-  port: 5672
-  image:
-    registry: docker.io/rabbitmq
-    repository: 3-management 
-
-  ###############################################################################
-  ## This option enables OES to be configured automatically
-  ## Load Balancer IPs will be automatically replaced in the
-  ## configuration files of oes-gate, oes-ui
-  autoConfiguration:
-    # Set it to false if OES is being installed on restricted evnironment;
-    # Autoconfiguration assumes Load Balancer is available for oes-gate, oes-ui
-    # and spind-deck and configures accordingly
-    enabled: false
-
-    initContainer:
-      # Image for init container to automatically configure oes components
-      # during startup
-      image: quay.io/opsmxpublic/oes-init:v4
-      pullPolicy: IfNotPresent
-
-      # Max time(in secs) that an init container of oes-ui should wait
-      # to fetch External Load Balancer IP of oes-gate and vice versa
-      externalIpCheckDelay: 180
-
-  ###############################################################################
-  # Only if k8sServiceType is LoadBalancer, else ignored
-  # Load Balancer IPs will be automatically replaced in the
-  # configuration files of oes-gate, oes-ui
-  autoConfiguration:
-    # Autoconfiguration assumes Load Balancer is available for oes-gate, oes-ui and spin-deck
-    enabled: false
-
-    initContainer:
-      # Image for init container to automatically configure oes components
-      image: quay.io/opsmxpublic/oes-init:v4
-      pullPolicy: IfNotPresent
-
-      # Max time(in secs) that an init container of oes-ui should wait
-      # to fetch External Load Balancer IP of oes-gate and vice versa
-      externalIpCheckDelay: 180
-
-###############################################################################
-# AutoPilot uses a Postgress DB for backend. A DB is automatically installed
+# AutoPilot, Sapor, Platform, Visibility and DS services use a Postgress DB for backend. A DB is automatically installed
 # Values of OES Database
 db:
   ## Set it to false if any external database is to be used
@@ -253,6 +202,8 @@ db:
     repository: ubi8-oes-db
     tag: v3.0.0
     pullPolicy: IfNotPresent
+
+  serviceAnnotations: {}
 
   ## Strategy to rollout statefulset pods
   podManagementPolicy: OrderedReady
@@ -281,6 +232,8 @@ autopilot:
     prometheus_io_path: /mgmt/prometheus
     prometheus_io_port: "8090"
     prometheus.io/scrape: "true"
+
+  serviceAnnotations: {}
   resources: {}
   #  requests:
   #    memory: 2Gi
@@ -296,6 +249,69 @@ autopilot:
       enabled: false
 
 ###############################################################################
+##
+## Values of OES auditservice
+##
+audit:
+  ## Image specific details
+  ##
+  image:
+    repository: ubi8-oes-audit-service
+    tag: v3.10.0
+    pullPolicy: IfNotPresent
+
+  serviceAnnotations: {}
+
+  annotations:
+    prometheus_io_path: /prometheus
+    prometheus_io_port: "8097"
+    prometheus.io/scrape: "true"
+  resources: {}
+  config: {}
+
+###############################################################################
+##
+## Values of OES auditclient
+##
+auditClient:
+  ## Image specific details
+  ##
+  image:
+    repository: ubi8-oes-audit-client
+    tag: v3.10.0
+    pullPolicy: IfNotPresent
+
+  serviceAnnotations: {}
+
+  annotations:
+    prometheus_io_path: /prometheus
+    prometheus_io_port: "8098"
+    prometheus.io/scrape: "true"
+  resources: {}
+  config: {}
+ 
+###############################################################################
+##
+## Values of OES datascience
+##
+datascience:
+  ## Image specific details
+  ##
+  image:
+    repository: ubi8-oes-datascience
+    tag: v3.10.0
+    pullPolicy: IfNotPresent
+
+  serviceAnnotations: {}
+
+  annotations:
+    prometheus_io_path: /prometheus
+    prometheus_io_port: "5005"
+    prometheus.io/scrape: "true"
+  resources: {}
+  config: {}
+
+###############################################################################
 ## Values of OES Dashboard
 dashboard:
   ## Image specific details
@@ -308,6 +324,8 @@ dashboard:
     prometheus_io_path: /mgmt/prometheus
     prometheus_io_port: "8094"
     prometheus.io/scrape: "true"
+  
+  serviceAnnotations: {}
   resources: {}
   #  requests:
   #    memory: 500Mi
@@ -341,69 +359,6 @@ forwarder:
     pullPolicy: IfNotPresent
   serviceAnnotations: {}
 
-###############################################################################
-##
-## Values of OES auditservice
-##
-audit:
-  ## Image specific details
-  ##
-  image:
-    repository: ubi8-oes-audit-service
-    tag: v3.10.0
-    pullPolicy: IfNotPresent
-
-  serviceAnnotations: {}
-
-  annotations:
-    prometheus_io_path: /prometheus
-    prometheus_io_port: "8097"
-    prometheus.io/scrape: "true"
-  resources: {}
-  config: {}
-###############################################################################
-##
-## Values of OES auditclient
-##
-auditClient:
-  ## Image specific details
-  ##
-  image:
-    repository: ubi8-oes-audit-client
-    tag: v3.10.0
-    pullPolicy: IfNotPresent
-
-  serviceAnnotations: {}
-
-  annotations:
-    prometheus_io_path: /prometheus
-    prometheus_io_port: "8098"
-    prometheus.io/scrape: "true"
-  resources: {}
-  config: {}
-
- 
- 
-###############################################################################
-##
-## Values of OES datascience
-##
-datascience:
-  ## Image specific details
-  ##
-  image:
-    repository: ubi8-oes-datascience
-    tag: v3.10.0
-    pullPolicy: IfNotPresent
-
-  serviceAnnotations: {}
-
-  annotations:
-    prometheus_io_path: /prometheus
-    prometheus_io_port: "5005"
-    prometheus.io/scrape: "true"
-  resources: {}
-  config: {}
 ###############################################################################
 ##
 ## Values of OES Gate
@@ -493,6 +448,7 @@ platform:
     prometheus_io_path: /mgmt/prometheus
     prometheus_io_port: "8095"
     prometheus.io/scrape: "true"
+  serviceAnnotations: {}
   resources: {}
   #  requests:
   #    memory: 500Mi
@@ -516,6 +472,21 @@ platform:
       - visibility
 
 ###############################################################################
+## Details of rabbitmq message bus image for OES
+##
+rabbitmq:
+  ## rabbitmq  endpoint that is used by oes-gate and oes-platform for caching;
+  ## Change this to custom URL if installRedis is set to false
+  ## url: rabbitmq-service
+  ## url: default port 5672
+  url: rabbitmq-service
+  port: 5672
+  image:
+    registry: docker.io/rabbitmq
+    repository: 3-management
+  serviceAnnotations: {}
+
+###############################################################################
 ## Values of OES Sapor (Security Audit Policy Onboarding & Release)
 sapor:
   ## Image specific details
@@ -528,6 +499,7 @@ sapor:
     prometheus_io_path: /mgmt/prometheus
     prometheus_io_port: "8085"
     prometheus.io/scrape: "true"
+  serviceAnnotations: {}
   resources: {}
   #  requests:
   #    memory: 100Mi
@@ -580,6 +552,34 @@ sapor:
       platform: true
 
 ###############################################################################
+## Use this SAPOR GATE Configuration to Enable Basic Authentication for OES SAPOR to communitcate 
+## with spinnaker instead of x509
+## Values of SAPOR OES Gate
+##
+saporgate:
+  ## Image specific details
+  ##
+  enabled: true
+  image:
+    repository: ubi8-oes-spin-gate
+    tag: 1.22.1
+    pullPolicy: IfNotPresent
+
+  serviceAnnotations: {}
+
+  resources: {}
+  #  requests:
+  #    memory: 500Mi
+  #    cpu: 500m
+  #  limits:
+  #    memory: 1500Mi
+  #    cpu: 1500m
+
+  config:
+    username: admin      # User name with admin permissions and belonging to admin groups defined in platform service
+    password: saporadmin # Any generic String, need not be the real password
+
+###############################################################################
 ## Values of OES UI
 ui:
   ## Image specific details
@@ -606,6 +606,8 @@ visibility:
     prometheus_io_path: /mgmt/prometheus
     prometheus_io_port: "8096"
     prometheus.io/scrape: "true"
+
+  serviceAnnotations: {}
   resources: {}
   #  requests:
   #    memory: 500Mi
@@ -1039,38 +1041,15 @@ oesAutoConfiguration: true # Attempt to configure OES with some basic integratio
 
 secretStore: db # Valid values: db, Vault: Used for storing account and integration secrets. Vault, if used, needs to be installed and configured separately
 vault:
+  enterpriseEdition: false
+  ## Namespace is mandatory when enterpriseEdition flag is set to true
+  namespace: admin/isd-platform
   address: https://server.vaultint.opsmx.net # Vault Address URL
   token: 123132 # Vault Root token
 
 # Spinnaker needs it. Please do not change it, even if you do not plan to use RBAC.
 rbac:
   create: true
-
-###############################################################################
-## Use this SAPOR GATE Configuration to Enable Basic Authentication for OES SAPOR to communitcate 
-## with spinnaker instead of x509
-## Values of SAPOR OES Gate
-##
-saporgate:
-  ## Image specific details
-  ##
-  enabled: true
-  image:
-    repository: ubi8-oes-spin-gate
-    tag: 1.22.1
-    pullPolicy: IfNotPresent
-
-  resources: {}
-  #  requests:
-  #    memory: 500Mi
-  #    cpu: 500m
-  #  limits:
-  #    memory: 1500Mi
-  #    cpu: 1500m
-
-  config:
-    username: admin      # User name with admin permissions and belonging to admin groups defined in platform service
-    password: saporadmin # Any generic String, need not be the real password
 
 #####################################################
 # AP integrates with OPA and installs an OPA server

@@ -6,6 +6,10 @@ metadata:
     app: oes
     component: datascience
 {{ include "oes.standard-labels" . | indent 4 }}
+{{- if .Values.datascience.serviceAnnotations }}
+  annotations:
+{{ toYaml .Values.datascience.serviceAnnotations | indent 4 }}
+{{- end }}
   name: oes-datascience
 spec:
   ports:

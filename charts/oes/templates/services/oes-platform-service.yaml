@@ -6,6 +6,10 @@ metadata:
     app: oes
     component: platform
 {{ include "oes.standard-labels" . | indent 4 }}
+{{- if .Values.platform.serviceAnnotations }}
+  annotations:
+{{ toYaml .Values.platform.serviceAnnotations | indent 4 }}
+{{- end }}
   name: oes-platform
 spec:
   type: ClusterIP
