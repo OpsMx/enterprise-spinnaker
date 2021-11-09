@@ -26,8 +26,10 @@ spec:
         volumeMounts:
         - mountPath: /tmp/config
           name: datasource-creation
+      {{- if .Values.imagePullSecret}}
       imagePullSecrets:
       - name: {{ .Values.imagePullSecret}}
+      {{- end }}
       restartPolicy: OnFailure
       volumes:
       - configMap:
