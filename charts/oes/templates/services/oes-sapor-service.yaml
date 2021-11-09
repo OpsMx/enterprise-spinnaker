@@ -6,6 +6,10 @@ metadata:
     app: oes
     component: sapor
 {{ include "oes.standard-labels" . | indent 4 }}
+{{- if .Values.sapor.serviceAnnotations }}
+  annotations:
+{{ toYaml .Values.sapor.serviceAnnotations | indent 4 }}
+{{- end }}
   name: oes-sapor
 spec:
   type: ClusterIP

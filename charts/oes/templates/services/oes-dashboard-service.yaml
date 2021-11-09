@@ -6,6 +6,10 @@ metadata:
     app: oes
     component: dashboard
 {{ include "oes.standard-labels" . | indent 4 }}
+{{- if .Values.dashboard.serviceAnnotations }}
+  annotations:
+{{ toYaml .Values.dashboard.serviceAnnotations | indent 4 }}
+{{- end }}
   name: oes-dashboard
 spec:
   type: ClusterIP

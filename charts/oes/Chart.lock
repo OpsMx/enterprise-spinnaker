@@ -5,6 +5,9 @@ dependencies:
 - name: spinnaker
   repository: ""
   version: 2.2.3
+- name: minio
+  repository: ""
+  version: 8.0.9
 - name: redis
   repository: ""
   version: 10.5.3
@@ -20,5 +23,5 @@ dependencies:
 - name: prometheus
   repository: ""
   version: 11.16.2
-digest: sha256:43497304e8f2538c76e2404f7d6b78a098103e8914d49bb64a57dd8526936cb4
-generated: "2021-06-09T13:57:41.809002265+05:30"
+digest: sha256:b0849afbf8b7bf327cdff032dc67b6924428388377d1305eb40fc8c0414a8147
+generated: "2021-11-03T13:54:46.026148452+05:30"

@@ -112,7 +112,7 @@ spec:
           items:
           - key: bootstrap.yml
             path: bootstrap.yml
-          secretName: bootstrap
+          secretName: sapor-bootstrap
         name: bootstrap-config-volume
       {{- if .Values.sapor.config.spinnaker.x509.enabled }}
       - name: certs-x509-volume

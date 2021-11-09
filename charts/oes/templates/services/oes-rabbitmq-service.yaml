@@ -6,6 +6,10 @@ metadata:
     app: oes
     component: rabbitmq
 {{ include "oes.standard-labels" . | indent 4 }}
+{{- if .Values.rabbitmq.serviceAnnotations }}
+  annotations:
+{{ toYaml .Values.rabbitmq.serviceAnnotations | indent 4 }}
+{{- end }}
   name: rabbitmq-service
 spec:
   ports:

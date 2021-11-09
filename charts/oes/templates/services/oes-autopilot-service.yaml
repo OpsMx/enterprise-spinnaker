@@ -6,6 +6,10 @@ metadata:
     app: oes
     component: autopilot
 {{ include "oes.standard-labels" . | indent 4 }}
+{{- if .Values.autopilot.serviceAnnotations }}
+  annotations:
+{{ toYaml .Values.autopilot.serviceAnnotations | indent 4 }}
+{{- end }}
   name: oes-autopilot
 spec:
   type: ClusterIP

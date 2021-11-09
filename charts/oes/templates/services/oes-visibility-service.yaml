@@ -6,6 +6,10 @@ metadata:
     app: oes
     component: visibility 
 {{ include "oes.standard-labels" . | indent 4 }}
+{{- if .Values.visibility.serviceAnnotations }}
+  annotations:
+{{ toYaml .Values.visibility.serviceAnnotations | indent 4 }}
+{{- end }}
   name: oes-visibility
 spec:
   type: ClusterIP

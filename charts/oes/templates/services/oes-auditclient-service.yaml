@@ -6,6 +6,10 @@ metadata:
     app: oes
     component: auditclient
 {{ include "oes.standard-labels" . | indent 4 }}
+{{- if .Values.auditClient.serviceAnnotations }}
+  annotations:
+{{ toYaml .Values.auditClient.serviceAnnotations | indent 4 }}
+{{- end }}
   name: oes-audit-client
 spec:
   ports:

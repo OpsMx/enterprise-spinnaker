@@ -6,6 +6,10 @@ metadata:
     app: oes
     component: db
 {{ include "oes.standard-labels" . | indent 4 }}
+{{- if .Values.db.serviceAnnotations }}
+  annotations:
+{{ toYaml .Values.db.serviceAnnotations | indent 4 }}
+{{- end }}
   name: oes-db
 spec:
   type: ClusterIP
