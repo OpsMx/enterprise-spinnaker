@@ -1,0 +1,123 @@
+#####################################################
+# configuration for AP for OSS Spinnaker
+#####################################################
+
+#####################################################
+# Set the installSpinnaker flag to false
+installSpinnaker: false
+
+#####################################################
+# Redis configuration
+# Set it to false if external redis is used
+installRedis: true
+
+#####################################################
+# kubernetes services can be exposed to a web-UI based 3 modes
+# ClusterIP or LoadBalancer or NodePort
+# For OES UI, OES Gate
+k8sServiceType: ClusterIP
+
+# Variables that can be accessed across all charts
+global:
+  # Common gate for both spin and oes services
+  commonGate:
+    enabled: false
+    # Set to true if RBAC is enabled in Spinnaker
+    spinnakerRBAC: false  
+
+  # Set to true to expose oes-ui, oes-gate services over ingress
+  createIngress: true
+
+  # Autopilot UI url configuration
+  oesUI:
+    host: << AUTOPILOT UI URL Example autopilot.opsmx.net >>
+
+  # Autopilot Gate url configuration
+  oesGate:
+    host: << AUTOPILOT GATE URL Example autopilot-gate.opsmx.net >>
+
+  #####################################################
+  # Set it to false if own LDAP is to be configured
+  installOpenLdap: true
+
+  # ldap configuration used in oes-gate, oes-platform and spinnaker gate for authentication and authorization
+  # Change the below settings based on your LDAP server
+  ldap:
+    enabled: true
+    url: ldaps://xxx.opsmx.net:636
+    managerDn: cn=admin,dc=example,dc=org
+    managerPassword: opsmxadmin123
+    groupSearchBase: ou=groups,dc=example,dc=org
+    groupSearchFilter: member={0}
+    groupRoleAttributes: cn
+    userDnPattern: cn={0},dc=example,dc=org
+
+#####################################################
+# Dashboard Service
+dashboard:
+  config:
+    # By default spinnakerLink is {{ .Values.global.spinDeck.protocol }}://{{ .Values.global.spinDeck.host }}
+    # If spinnaker is exposed on Load balancer instead of ingress, set this value to external IP of spinnaker UI
+    spinnakerLink: << SPINNAKER DECK URL Example spinaker.opsmx.net >>
+
+#####################################################
+# AP supports agent based deployments to remote clusters
+forwarder:
+  enabled: false
+
+#####################################################
+# OES Gate Service
+gate:
+  config:
+    #####################################################
+    # SAML AUthentication
+    # keytool -genkey -v -keystore oessaml.jks -alias saml -keyalg RSA -keysize 2048 -validity 10000
+    # oessaml.jks and oesmetadata.xml are mounted as secrets, create them as follows
+    # kubectl create secret generic oesmetadataxml --from-file=oesmetadata.xml
+    # kubectl create secret generic oessamljks --from-file=oessaml.jks
+    # kubectl create secret generic samljks-password --from-literal password=changeit 
+    saml:
+      enabled: false
+      userSource: gate  # Groups will be obtained from SAML
+      keyStore: /opt/spinnaker/saml/oessaml.jks  # The key in this secret must be oessaml.jks
+      keyStorePassword: changeit
+      keyStoreAliasName: saml
+      metadataUrl: /opt/spinnaker/saml/oesmetadata.xml # The key in this secret must be oesmetadata.xml
+      redirectProtocol: https
+      redirectHostname: oes-gate.ryzon7-gitops.opsmx.org  # OES gate host name
+      redirectBasePath: /
+      issuerId: ryzonoesgate
+      jksSecretName: oessamljks
+      metadataSecretName: oesmetadataxml
+
+    #####################################################
+    # OAUTH2 Authentication for GitHub
+    oauth2:
+      enabled: false
+      client:
+        clientId: #CLIENT_ID
+        clientSecret: #CLIENT_SECRET_ID
+        accessTokenUri: https://github.com/login/oauth/access_token
+        userAuthorizationUri: https://github.com/login/oauth/authorize
+        scope: user-email
+      resource:
+        userInfoUri: https://api.github.com/user
+      userInfoMapping:
+        email: email
+        firstName: firstname
+        lastName: name
+        username: login
+      provider: GITHUB
+
+#####################################################
+# Sapor (Security Audit Policy Onboarding & Release) Service
+sapor:
+  config:
+    spinnakerImages: OSS
+    spinnaker:
+      # true if authentication is enabled in Spinnaker
+      authnEnabled: true
+
+    # encryption key needed for sapor to startup
+    encrypt:
+      enabled: false
