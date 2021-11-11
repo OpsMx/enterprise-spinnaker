@@ -100,9 +100,9 @@ scheme=http
 {{- end }}
 connectToMinio $scheme
 # Create the bucket
-{{ if .Values.global.minio.buckets }}
+{{ if .Values.buckets }}
 # Create the buckets
-{{- range .Values.global.minio.buckets }}
+{{- range .Values.buckets }}
 createBucket {{ .name }} {{ .policy }} {{ .purge }} {{ .versioning }}
 {{- end }}
 {{- end }}

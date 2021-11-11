@@ -12,7 +12,7 @@ Render profiles for each service by merging predefined defaults with values pass
 
 {{- /* Defaults: Disable S3 versioning on Front50 if Minio storage is used */}}
 {{- /* https://www.spinnaker.io/setup/install/storage/minio/#editing-your-storage-settings */}}
-{{- if .Values.global.minio.enabled -}}
+{{- if .Values.minio.enabled -}}
 {{- $_ := set $profiles "front50-local.yml" (dict "spinnaker" (dict "s3" (dict "versioning" false))) -}}
 {{- end -}}
 

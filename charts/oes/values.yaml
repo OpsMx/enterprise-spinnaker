@@ -129,42 +129,8 @@ global:
   # Best left unchanged
   # Use the below flag to exclude pre-delete helm hooks to the rendered manifests
   preDeleteHelmHooks: true
-  # Minio access/secret keys for the in-cluster S3 usage
-  # Minio is not exposed publically
-  minio:
-    enabled: true
-    image:
-      repository: quay.io/opsmxpublic/minio
-      tag: RELEASE.2020-01-03T19-12-21Z
-    mcImage:
-      repository: quay.io/opsmxpublic/minio-mc
-      tag: RELEASE.2020-11-25T23-04-07Z
-    service:
-      type: ClusterIP
-    accessKey: spinnakeradmin
-    secretKey: spinnakeradmin
-    region: us-east-1
-    securityContext:
-      enabled: true
-      runAsUser: 1000
-      runAsGroup: 1000
-      fsGroup: 1000
-    buckets:
-    - name: "spinnaker"
-      policy: none
-      purge: false
-    - name: "autopilot"
-      policy: none
-      purge: false
-    defaultBucket:
-      enabled: true
-      name: "spinnaker"
-    nodeSelector: {}
-    persistence:
-      enabled: true
-      size: 10Gi
-
-  ###############################################################################
+  
+  # ###############################################################################
   ## This option enables OES to be configured automatically
   ## Load Balancer IPs will be automatically replaced in the
   ## configuration files of oes-gate, oes-ui
@@ -183,6 +149,44 @@ global:
       # Max time(in secs) that an init container of oes-ui should wait
       # to fetch External Load Balancer IP of oes-gate and vice versa
       externalIpCheckDelay: 180
+
+##############################################################################
+# Minio
+##############################################################################
+
+minio:
+  enabled: true
+  image:
+    repository: quay.io/opsmxpublic/minio
+    tag: RELEASE.2020-01-03T19-12-21Z
+  mcImage:
+    repository: quay.io/opsmxpublic/minio-mc
+    tag: RELEASE.2020-11-25T23-04-07Z
+  service:
+    type: ClusterIP
+  accessKey: spinnakeradmin
+  secretKey: spinnakeradmin
+  region: us-east-1
+  securityContext:
+    enabled: true
+    runAsUser: 1000
+    runAsGroup: 1000
+    fsGroup: 1000
+  buckets:
+  - name: "spinnaker"
+    policy: none
+    purge: false
+  - name: "autopilot"
+    policy: none
+    purge: false
+  defaultBucket:
+    enabled: true
+    name: "spinnaker"
+  nodeSelector: {}
+  persistence:
+    enabled: true
+    size: 10Gi
+
 
 ###############################################################################
 # AutoPilot, Sapor, Platform, Visibility and DS services use a Postgress DB for backend. A DB is automatically installed
@@ -1017,6 +1021,21 @@ spinnaker:
       basic:
         username: admin          # Use credentials corresponding to spinCli.gate.endpoint
         password: opsmxadmin123  # Use credentials corresponding to spinCli.gate.endpoint
+
+  minio:
+    accessKey: spinnakeradminsai
+    secretKey: spinnakeradminsai
+    region: us-east-12
+    buckets:
+    - name: "spinnakersai"
+      policy: nonee
+      purge: false
+    - name: "autopilotsai"
+      policy: nonee
+      purge: false
+    defaultBucket:
+      enabled: true
+      name: "spinnakersai"
 
 ###############################################################################################
 ###############################################################################################
