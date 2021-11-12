@@ -108,6 +108,16 @@ gate:
         lastName: name
         username: login
       provider: GITHUB
+      
+#####################################################
+# Platform Service
+platform:
+  config:
+    # groups defined here will have superAdmin priviledges in AP
+    adminGroups: admin
+    # Source of groups for authorization
+    # Supported sources:- ldap, file, gate. In general, use "gate" for SAML
+    userSource: ldap
 
 #####################################################
 # Sapor (Security Audit Policy Onboarding & Release) Service
