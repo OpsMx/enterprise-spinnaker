@@ -53,12 +53,13 @@ data:
     5\n        merge_pr_bitbucket\n      fi\n    else\n      create_pr_bitbucket\n
     \     if [[ $auto_merge == \"true\" ]]; then\n        approve_pr_bitbucket\n        sleep
     5\n        merge_pr_bitbucket\n      fi\n    fi\n  fi\n}\n"
-  deployer.sh: "#!/bin/bash\necho \"In deployer.sh\"\nSBASE=scripts\nsource config/repo.properties\nsource
-    $SBASE/spin.sh\nsource $SBASE/stash.sh\nsource $SBASE/s3.sh\nsource $SBASE/github.sh\nsource
-    $SBASE/bitbucket.sh\necho \"Sourcing complete\"\nsync_repo_from_spinnaker(){\n\tif
-    [[ $repo_type = \"s3\" ]];\n \tthen\n\t   upload_spin_to_s3\n\telif [[ $repo_type
-    = \"stash\" ]]; then\n\t\tsync_spin_to_stash\n  elif [[ $repo_type == \"bitbucket\"
-    ]]; then\n\t\tsync_spin_to_bitbucket\n\telif [[ $repo_type = \"git\" ]]; then\n\t\tsync_spin_to_github\n\tfi\n}\nsync_spinnaker_from_repo(){\n\tif
+  deployer.sh: "#!/bin/bash\nset -x \necho \"In deployer.sh\"\nSBASE=scripts\nsource
+    config/repo.properties\nsource $SBASE/spin.sh\nsource $SBASE/stash.sh\nsource
+    $SBASE/s3.sh\nsource $SBASE/github.sh\nsource $SBASE/bitbucket.sh\necho \"Sourcing
+    complete\"\nsync_repo_from_spinnaker(){\n\tif [[ $repo_type = \"s3\" ]];\n \tthen\n\t
+    \  upload_spin_to_s3\n\telif [[ $repo_type = \"stash\" ]]; then\n\t\tsync_spin_to_stash\n
+    \ elif [[ $repo_type == \"bitbucket\" ]]; then\n\t\tsync_spin_to_bitbucket\n\telif
+    [[ $repo_type = \"git\" ]]; then\n\t\tsync_spin_to_github\n\tfi\n}\nsync_spinnaker_from_repo(){\n\tif
     [[ $repo_type = \"s3\" ]];\n \tthen\n\t   sync_from_s3_spin\n\telif [[ $repo_type
     = \"stash\" || $repo_type = \"git\" || $repo_type = \"bitbucket\" ]]; then\n\t\tsync_git_to_spin\n\tfi\n}\n\nif
     [[ \"$command\" == \"download\" ]]; then\n\tsync_spinnaker_from_repo\nelif [[
@@ -100,16 +101,16 @@ data:
     != \"\" ]; then\n    git_clone_ssh\n  elif [ \"$git_secret_token\" != \"\" ];
     then\n    git_clone_http\n  else\n    echo \"git cloning requires either a git_aws_secret_key
     to be set or git_aws_secret_token\"\n   exit 5\n  fi\n\n  projectdir=$tempdir/$git_repo\n
-    \ cd $projectdir\n  #We are done, get update git\n  git_checkout_branch\n  get_pipelines_data\n
-    \ git_add_all $root_folder\n  git_commit_all\n  return 0\n}\nsync_git_to_spin(){\n
-    \ setup_git\n  if [ \"$git_secret_sshkey\" != \"\" ]; then\n    git_clone_ssh\n
-    \ elif [ \"$git_secret_token\" != \"\" ]; then\n    git_clone_http\n  else\n    echo
-    \"git cloning requires either a git_aws_secret_key to be set or git_aws_secret_token\"\n
-    \  exit 5\n  fi\n  projectdir=$tempdir/$git_repo\n  cd $projectdir\n  git_checkout_branch\n
-    \  if [ -z $spinnaker_applications ]\n  then\n          spin application list
-    > app.json\n\t  spinnaker_app=$(cat app.json | jq -r '[.[].name]| @csv' | sed
-    's/\",\"/,/g; s/^\"\\|\"$//g')\n          rm -rf app.json\n          syncup_spin
-    \ $spinnaker_app\n  else\n\t  syncup_spin $spinnaker_applications\n    fi\n}\n"
+    \ cd $projectdir\n  #We are done, get update git\n  git_checkout_branch\n  if
+    [ -z $spinnaker_applications ]\n  then\n          spin application list > app.json\n
+    \         spinnaker_app=$(cat app.json | jq -r '[.[].name]| @csv' | sed 's/\",\"/,/g;
+    s/^\"\\|\"$//g')\n          rm -rf app.json\n          get_pipelines_data  $spinnaker_app\n
+    \ else\n          get_pipelines_data  $spinnaker_applications\n    fi\n  git_add_all
+    $root_folder\n  git_commit_all\n  return 0\n}\nsync_git_to_spin(){\n  setup_git\n
+    \ if [ \"$git_secret_sshkey\" != \"\" ]; then\n    git_clone_ssh\n  elif [ \"$git_secret_token\"
+    != \"\" ]; then\n    git_clone_http\n  else\n    echo \"git cloning requires either
+    a git_aws_secret_key to be set or git_aws_secret_token\"\n   exit 5\n  fi\n  projectdir=$tempdir/$git_repo\n
+    \ cd $projectdir\n  git_checkout_branch\n  syncup_spin\n}\n"
   github.sh: |
     #!/bin/bash
 
