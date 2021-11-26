@@ -29,6 +29,7 @@ spec:
       {{- else}}{{/* Has no annotations */}}
       - path: /
       {{- end }}
+        pathType: ImplementationSpecific
         backend:
           service:
             name: spin-gate
