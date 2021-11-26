@@ -25,6 +25,7 @@ spec:
             port:
               number: 80
         path: /
+        pathType: ImplementationSpecific
 {{- if .Values.global.ssl.enabled }}
   tls:
   - hosts:
