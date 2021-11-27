@@ -41,6 +41,10 @@ vault:
   address: https://server.vaultint.opsmx.net # Vault Address URL
   token: 123132 # Vault Root token
 
+#oesExtraEnvVars:
+#  - name: JAVA_OPTS
+#    value: -Dhttps.proxyHost=proxy.server.local -Dhttps.proxyPort=3128 
+
 ## OES UI, OES Gate, Spinnaker Deck and Spinnaker Gate service type
 ##
 k8sServiceType: ClusterIP
@@ -293,7 +297,7 @@ autopilot:
   image:
     registry: quay.io/opsmxpublic
     repository: ubi8-oes-autopilot
-    tag: v3.9.4
+    tag: v3.9.5
     pullPolicy: IfNotPresent
 
   annotations:
@@ -342,7 +346,7 @@ dashboard:
   image:
     registry: quay.io/opsmxpublic
     repository: ubi8-oes-dashboard
-    tag: v3.9.4
+    tag: v3.9.5
     pullPolicy: IfNotPresent
 
   annotations:
@@ -396,7 +400,7 @@ gate:
   image:
     registry: quay.io/opsmxpublic
     repository: ubi8-gate
-    tag: v3.9.4
+    tag: v3.9.5
     pullPolicy: IfNotPresent
 
   serviceAnnotations: {}
@@ -485,7 +489,7 @@ platform:
   image:
     registry: quay.io/opsmxpublic
     repository: ubi8-oes-platform
-    tag: v3.9.4
+    tag: v3.9.5
     pullPolicy: IfNotPresent
 
   annotations:
@@ -543,7 +547,7 @@ sapor:
   image:
     registry: quay.io/opsmxpublic
     repository: ubi8-oes-sapor
-    tag: v3.9.4
+    tag: v3.9.5
     pullPolicy: IfNotPresent
 
   annotations:
@@ -627,7 +631,7 @@ ui:
   image:
     registry: quay.io/opsmxpublic
     repository: ubi8-oes-ui
-    tag: v3.9.4
+    tag: v3.9.5
     pullPolicy: IfNotPresent
   serviceAnnotations: {}
 
@@ -646,7 +650,7 @@ visibility:
   image:
     registry: quay.io/opsmxpublic
     repository: ubi8-oes-visibility
-    tag: v3.9.4
+    tag: v3.9.5
     pullPolicy: IfNotPresent
 
   annotations:
