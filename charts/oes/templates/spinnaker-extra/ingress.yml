@@ -1,6 +1,6 @@
 {{- if (.Values.installSpinnaker) }}
 {{- if .Values.spinnaker.gitopsHalyard.mTLS.enabled }}
-apiVersion: extensions/v1beta1
+apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
   annotations:
@@ -22,15 +22,18 @@ spec:
     http:
       paths:
       - backend:
-          serviceName: spin-deck
-          servicePort: 9000
+          service:
+            name: spin-deck
+            port:
+              number: 9000
         path: /
+        pathType: ImplementationSpecific
   tls:
   - hosts:
     - {{ .Values.spinnaker.ingress.host }}
     secretName: ui-{{ .Release.Name }}-tls
 ---
-apiVersion: extensions/v1beta1
+apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
   annotations:
@@ -52,17 +55,26 @@ spec:
     http:
       paths:
       - backend:
-          serviceName: spin-gate
-          servicePort: 8084
+          service:
+            name: spin-gate
+            port:
+              number: 8084
         path: /
+        pathType: ImplementationSpecific
       - backend:
-          serviceName: spin-gate
-          servicePort: 8084
+          service:
+            name: spin-gate
+            port:
+              number: 8084
         path: /login
+        pathType: ImplementationSpecific
       - backend:
-          serviceName: spin-gate
-          servicePort: 8084
+          service:
+            name: spin-gate
+            port:
+              number: 8084
         path: /auth/*
+        pathType: ImplementationSpecific
   tls:
   - hosts:
     - {{ .Values.spinnaker.ingressGate.host }}

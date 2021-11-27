@@ -19,7 +19,7 @@ Install OpsMx Enterprise for Spinnaker
 
 ### Prerequisites
 
-- Kubernetes cluster 1.15 or later with at least 6 cores and 20 GB memory
+- Kubernetes cluster 1.19 or later with at least 6 cores and 20 GB memory
 - Helm 3 is setup on client system
   ```console
   $ helm version
