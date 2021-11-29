@@ -631,7 +631,7 @@ ui:
   image:
     registry: quay.io/opsmxpublic
     repository: ubi8-oes-ui
-    tag: v3.9.5
+    tag: v3.9.5.0
     pullPolicy: IfNotPresent
   serviceAnnotations: {}
 
