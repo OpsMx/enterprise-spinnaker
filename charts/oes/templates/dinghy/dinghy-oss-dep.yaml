@@ -1,0 +1,62 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: albertsons-dinghy
+    component: dinghy
+  name: dinghy-oss
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: albertsons-dinghy
+      component: dinghy
+  template:
+    metadata:
+      labels:
+        app: albertsons-dinghy
+        component: dinghy
+    spec:
+      containers:
+      - image: quay.io/opsmxpublic/dinghy-oss:20210220
+        imagePullPolicy: IfNotPresent
+        livenessProbe:
+          failureThreshold: 3
+          httpGet:
+            path: /health
+            port: 8081
+            scheme: HTTP
+          initialDelaySeconds: 15
+          periodSeconds: 30
+          successThreshold: 1
+          timeoutSeconds: 1
+        name: dinghy-oss
+        ports:
+        - containerPort: 8081
+          protocol: TCP
+        readinessProbe:
+          failureThreshold: 3
+          initialDelaySeconds: 15
+          periodSeconds: 30
+          successThreshold: 1
+          tcpSocket:
+            port: 8081
+          timeoutSeconds: 1
+        resources: {}
+        terminationMessagePath: /dev/termination-log
+        terminationMessagePolicy: File
+        volumeMounts:
+        - mountPath: /opt/spinnaker/config
+          name: dinghy-config
+        - mountPath: /root/.armory/cache
+          name: dinghy-git
+      imagePullSecrets:
+      - name: opsmxdev-secret
+      volumes:
+      - configMap:
+          defaultMode: 420
+          name: dinghy-config
+        name: dinghy-config
+      - secret:
+          secretName: dinghy-git
+        name: dinghy-git
