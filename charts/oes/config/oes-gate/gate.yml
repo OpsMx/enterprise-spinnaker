@@ -123,6 +123,12 @@ services:
     enabled: true
 {{- end }}
   user: {}
+retrofit:
+  connectTimeout: 30000
+  readTimeout: 30000
+  callTimeout: 30000
+  writeTimeout: 30000
+  retryOnConnectionFailure: true
 cors:
   {{- if .Values.global.commonGate.enabled }}
   allowed-origins-pattern: ^https?://(?:localhost|{{ .Values.global.oesUI.host }}|{{ .Values.global.spinDeck.host }}|opsmx.com)(?::[1-9]\d*)?/?
