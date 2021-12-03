@@ -4,6 +4,7 @@ on:
   push:
     branches:
       - master
+      - oes3.9
     paths:
       - 'charts/oes/Chart.yaml'
       - 'charts/oes/Chart.lock'
