@@ -105,7 +105,11 @@ services:
     host: 0.0.0.0
     port: 8090
     baseUrl: http://spin-kayenta:8090
+    {{- if .Values.global.commonGate.spinnakerKayanta }}
+    enabled: true
+    {{- else }}
     enabled: false
+    {{- end }}
   orca:
     host: 0.0.0.0
     port: 8083
