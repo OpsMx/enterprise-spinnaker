@@ -12,7 +12,7 @@ For more information, visit https://www.opsmx.com
 Install OpsMx Enterprise for Spinnaker
   ```console
   $ helm repo add opsmx https://helmcharts.opsmx.com/
-  $ helm install <release-name> opsmx/oes --set imageCredentials.username=<dockerID> --set imageCredentials.password=<dockerPassword>
+  $ helm install <release-name> opsmx/oes --timeout 15m
   ```
 
 ## Spinnaker + OpsMx Enterprise for Spinnaker Extensions (OES) Setup Instructions
@@ -61,7 +61,7 @@ Install OpsMx Enterprise for Spinnaker
 
 	Helm v3.x
   ```console
-  $ helm install my-release opsmx/oes [--namespace mynamespace]
+  $ helm install my-release opsmx/oes [--namespace mynamespace] --timeout 15m
   ```
 
 The command deploys OES on the Kubernetes cluster in the default configuration. The [configuration](#configuration) section lists the parameters that can be configured during installation.
@@ -175,7 +175,7 @@ wget https://raw.githubusercontent.com/opsmx/enterprise-spinnaker/master/charts/
 
 Helm v3.x
   ```console
-  $ helm install my-release opsmx/oes -f values.yaml
+  $ helm install my-release opsmx/oes -f values.yaml --timeout 15m
   ```
 
 
