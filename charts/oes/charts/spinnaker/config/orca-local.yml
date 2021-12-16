@@ -36,6 +36,9 @@ job:
             metadata:
               generateName: pipepromot-
               namespace: SPINNAKER_NAMESPACE
+              labels:
+                 stage: opsmx-custom
+                 stagetype: pipelinepromotion
             spec:
               backoffLimit: 0
               template:
@@ -109,6 +112,9 @@ job:
             metadata:
               generateName: pipepromot-
               namespace: SPINNAKER_NAMESPACE
+              labels:
+                 stage: opsmx-custom
+                 stagetype: pipelinepromotion
             spec:
               backoffLimit: 0
               template:
