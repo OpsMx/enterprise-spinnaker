@@ -1,5 +1,5 @@
 {{- if and (.Values.global.createIngress) (not .Values.gitopsHalyard.mTLS.enabled) }}
-apiVersion: extensions/v1beta1
+apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
   annotations:
@@ -29,9 +29,12 @@ spec:
       {{- else}}{{/* Has no annotations */}}
       - path: /
       {{- end }}
+        pathType: ImplementationSpecific
         backend:
-          serviceName: spin-deck
-          servicePort: 9000
+          service:
+            name: spin-deck
+            port:
+              number: 9000
 {{- if .Values.global.ssl.enabled }}
   tls:
   - hosts:

@@ -53,23 +53,25 @@ data:
     5\n        merge_pr_bitbucket\n      fi\n    else\n      create_pr_bitbucket\n
     \     if [[ $auto_merge == \"true\" ]]; then\n        approve_pr_bitbucket\n        sleep
     5\n        merge_pr_bitbucket\n      fi\n    fi\n  fi\n}\n"
-  deployer.sh: "#!/bin/bash\necho \"In deployer.sh\"\nSBASE=scripts\nsource config/repo.properties\nsource
-    $SBASE/spin.sh\nsource $SBASE/stash.sh\nsource $SBASE/s3.sh\nsource $SBASE/github.sh\nsource
-    $SBASE/bitbucket.sh\necho \"Sourcing complete\"\nsync_repo_from_spinnaker(){\n\tif
-    [[ $repo_type = \"s3\" ]];\n \tthen\n\t   upload_spin_to_s3\n\telif [[ $repo_type
-    = \"stash\" ]]; then\n\t\tsync_spin_to_stash\n  elif [[ $repo_type == \"bitbucket\"
-    ]]; then\n\t\tsync_spin_to_bitbucket\n\telif [[ $repo_type = \"git\" ]]; then\n\t\tsync_spin_to_github\n\tfi\n}\nsync_spinnaker_from_repo(){\n\tif
+  deployer.sh: "#!/bin/bash\nset -x \necho \"In deployer.sh\"\nSBASE=scripts\nsource
+    config/repo.properties\nsource $SBASE/spin.sh\nsource $SBASE/stash.sh\nsource
+    $SBASE/s3.sh\nsource $SBASE/github.sh\nsource $SBASE/bitbucket.sh\necho \"Sourcing
+    complete\"\nsync_repo_from_spinnaker(){\n\tif [[ $repo_type = \"s3\" ]];\n \tthen\n\t
+    \  upload_spin_to_s3\n\telif [[ $repo_type = \"stash\" ]]; then\n\t\tsync_spin_to_stash\n
+    \ elif [[ $repo_type == \"bitbucket\" ]]; then\n\t\tsync_spin_to_bitbucket\n\telif
+    [[ $repo_type = \"git\" ]]; then\n\t\tsync_spin_to_github\n\tfi\n}\nsync_spinnaker_from_repo(){\n\tif
     [[ $repo_type = \"s3\" ]];\n \tthen\n\t   sync_from_s3_spin\n\telif [[ $repo_type
     = \"stash\" || $repo_type = \"git\" || $repo_type = \"bitbucket\" ]]; then\n\t\tsync_git_to_spin\n\tfi\n}\n\nif
     [[ \"$command\" == \"download\" ]]; then\n\tsync_spinnaker_from_repo\nelif [[
     \"$command\" == \"upload\" ]]; then\n        echo \"executing upload\"\n\t#statement\n\tsync_repo_from_spinnaker\nelse\n\techo
     \"ERROR: unknown command\"\n\nfi\necho \"Done executing\"\n"
-  git.sh: "#!/bin/bash\nsource scripts/spin.sh\n\ngit_repo=$repo_name\ntempdir=\"/tmp/\"\npull_requred=false\nif [[ $git_branch == \"\" ]]\nthen\ngit_branch=\"master\"\nfi\nsetup_git()
-    {\n  echo \"Setting up the Git \"\n  local name=${git_user:-spinnaker}\n  local
-    email=${git_user_email:-spinnaker@symphony.com}\n  git config --global user.email
-    \"$email\"\n  git config --global user.name \"$name\"\n  {{ .Values.spinnaker.gitopsHalyard.pipelinePromotion.gitConfig }} \n}\n  git_clone_http() {\n
-    \ echo \"cloning $git_project/$git_repo over https\"\n  if [[ $repo_type == \"git\"
-    || $repo_type == \"bitbucket\" ]]; then\n    clone_result=$(git clone https://$git_user:${git_secret_token}@${git_url}/${git_project}/${git_repo}.git
+  git.sh: "#!/bin/bash\nsource scripts/spin.sh\n\ngit_repo=$repo_name\ntempdir=\"/tmp/\"\npull_requred=false\nif
+    [[ $git_branch == \"\" ]]\nthen\n  git_branch=\"master\"\nfi\nsetup_git() {\n
+    \ echo \"Setting up the Git \"\n  local name=${git_user:-spinnaker}\n  local email=${git_user_email:-spinnaker@symphony.com}\n
+    \ git config --global user.email \"$email\"\n  git config --global user.name \"$name\"\n}\ngit_clone_http()
+    {\n  echo \"cloning $git_project/$git_repo over https\"\n  if [[ $repo_type ==
+    \"git\" || $repo_type == \"bitbucket\" ]]; then\n    clone_result=$(git clone
+    https://$git_user:${git_secret_token}@${git_url}/${git_project}/${git_repo}.git
     $tempdir/$git_repo)\n  elif [[ $repo_type == \"stash\" ]]; then\n    #statements\n
     \   if [[ $git_url_port != \"\" ]]; then\n      clone_result=$(git  clone https://$git_user:${git_secret_token}@${git_url}:$git_url_port/scm/${git_project}/$git_repo.git
     $tempdir/$git_repo)\n    else\n      clone_result=$(git  clone https://$git_user:${git_secret_token}@${git_url}/scm/${git_project}/$git_repo.git
@@ -99,13 +101,16 @@ data:
     != \"\" ]; then\n    git_clone_ssh\n  elif [ \"$git_secret_token\" != \"\" ];
     then\n    git_clone_http\n  else\n    echo \"git cloning requires either a git_aws_secret_key
     to be set or git_aws_secret_token\"\n   exit 5\n  fi\n\n  projectdir=$tempdir/$git_repo\n
-    \ cd $projectdir\n  #We are done, get update git\n  git_checkout_branch\n  get_pipelines_data\n
-    \ git_add_all $root_folder\n  git_commit_all\n  return 0\n}\nsync_git_to_spin(){\n
-    \ setup_git\n  if [ \"$git_secret_sshkey\" != \"\" ]; then\n    git_clone_ssh\n
-    \ elif [ \"$git_secret_token\" != \"\" ]; then\n    git_clone_http\n  else\n    echo
-    \"git cloning requires either a git_aws_secret_key to be set or git_aws_secret_token\"\n
-    \  exit 5\n  fi\n  projectdir=$tempdir/$git_repo\n  cd $projectdir\n  git_checkout_branch\n
-    \ syncup_spin\n}\n"
+    \ cd $projectdir\n  #We are done, get update git\n  git_checkout_branch\n  if
+    [ -z $spinnaker_applications ]\n  then\n          spin application list > app.json\n
+    \         spinnaker_app=$(cat app.json | jq -r '[.[].name]| @csv' | sed 's/\",\"/,/g;
+    s/^\"\\|\"$//g')\n          rm -rf app.json\n          get_pipelines_data  $spinnaker_app\n
+    \ else\n          get_pipelines_data  $spinnaker_applications\n    fi\n  git_add_all
+    $root_folder\n  git_commit_all\n  return 0\n}\nsync_git_to_spin(){\n  setup_git\n
+    \ if [ \"$git_secret_sshkey\" != \"\" ]; then\n    git_clone_ssh\n  elif [ \"$git_secret_token\"
+    != \"\" ]; then\n    git_clone_http\n  else\n    echo \"git cloning requires either
+    a git_aws_secret_key to be set or git_aws_secret_token\"\n   exit 5\n  fi\n  projectdir=$tempdir/$git_repo\n
+    \ cd $projectdir\n  git_checkout_branch\n  syncup_spin\n}\n"
   github.sh: |
     #!/bin/bash
 
@@ -252,7 +257,19 @@ data:
 
     upload_spin_to_s3(){
       # get the pipeline data from spinnaker and store in root_folder
-      get_pipelines_data
+      echo APP $spinnaker_applications
+      if [ -z $spinnaker_applications ]
+      then
+              spin application list > app.json
+              spinnaker_app=$(cat app.json | jq -r '[.[].name]| @csv' | sed 's/","/,/g; s/^"\|"$//g')
+              rm -rf app.json
+              get_pipelines_data $spinnaker_app
+
+     else
+              get_pipelines_data $spinnaker_applications
+     fi
+
+    #  get_pipelines_data
       #upload spinnaker pipelines data and upload to s3 folder
       aws s3 cp $tempdir/$bucket_name/$s3_folder s3://$bucket_name/$s3_folder --recursive
       if [ "$?" != 0 ]; then
@@ -411,7 +428,7 @@ data:
     \"0\" && \"$ignore_errors\" == \"true\" ]]; then\n                echo \"ERROR:
     spin pipeline save --file $pipeLine.json, continuing\"\n                continue\n
     \           fi\n           sleep 5 # Slow it down\n         done < pipelines_in_application.list\n
-    \    fi\n     cd ..\n  done\n\n}\nget_pipelines_data(){\n\t      spinnaker_app=$spinnaker_applications\n
+    \    fi\n     cd ..\n  done\n\n}\nget_pipelines_data(){\n\techo $1 \n\tlocal  spinnaker_app=$1\n
     \       IFS=',' read -r -a spinnaker_app_array <<< \"$spinnaker_app\"\n        spinnaker_pipe=$spinnaker_pipelines\n
     \       #IFS=',' read -r -a spinnaker_pipe_array <<< \"k8s-deploy\"\n        IFS=','
     read -r -a spinnaker_pipe_array <<< \"$spinnaker_pipe\"\n\n\t\t\t\tif [[ $root_folder

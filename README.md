@@ -19,7 +19,7 @@ Install OpsMx Enterprise for Spinnaker
 
 ### Prerequisites
 
-- Kubernetes cluster 1.15 or later with at least 6 cores and 20 GB memory
+- Kubernetes cluster 1.19 or later with at least 6 cores and 20 GB memory
 - Helm 3 is setup on the client system
   ```console
   $ helm version
@@ -92,17 +92,17 @@ Parameter | Description | Default
 `installationMode` | The installation mode. Available installation modes are **OES-AP** (for OES that includes Autopilot) and **None**(Skip OES installation) | `OES-AP`
 `global.certManager.installed` | Disable this flag if cert-manager is not installed, when set to true issuer and TLS certs for ingress are automatically created | `true`
 `global.createIngress` | If true, exposes OES ui & gate services over Ingress | `false`
-`global.spinDeck.protocol` | Change this to https if TLS is enabled for ingress endpoint | `http`
+`global.spinDeck.protocol` | Change this to https if TLS is enabled for ingress endpoint | `https`
 `global.spinDeck.host` | Host using which spinnaker deck needs to be accessed | `spinnaker.example.org`
 `global.spinDeck.ingress.annotations` | Annotations for deck ingress resource | ``
 `global.spinDeck.ingress.tls.secretName` | Change this value if your own certificate is put into a specific secret | `deck-authtls` 
-`global.spinGate.protocol` | Change this to https if TLS is enabled for ingress endpoint | `http`
+`global.spinGate.protocol` | Change this to https if TLS is enabled for ingress endpoint | `https`
 `global.spinGate.host` | Host using which spinnaker gate needs to be accessed | `gate.spinnaker.example.org`
 `global.spinGate.ingress.annotations` | Annotations for spinnaker gate ingress resource | ``
 `global.spinGate.ingress.tls.secretName` | Change this value if your own certificate is put into a specific secret | `gate-authtls`
-`oesUI.protocol` | Change this to https if TLS is enabled for ingress endpoint | `http`
+`oesUI.protocol` | Change this to https if TLS is enabled for ingress endpoint | `https`
 `oesUI.host` | Host using which UI needs to be accessed | `oes.domain.com`
-`oesGate.protocol` | Change this to https if TLS is enabled for ingress endpoint | `http`
+`oesGate.protocol` | Change this to https if TLS is enabled for ingress endpoint | `https`
 `oesGate.host` | Host using which Gate needs to be accessed | `oes-api.domain.com`
 `k8sServiceType` | Service Type of oes-ui, oes-gate, spin-deck-ui, spin-gate | `LoadBalancer`
 `installRedis` | If true, OES will install its own Redis for caching. This option is mutually exclusive with installSpinnaker | `false`
@@ -127,8 +127,6 @@ Parameter | Description | Default
 `platform.config.userSource` | Source of Users for authorization | `ldap`
 `platform.config.supportedFeatures` | List of featues to be supported by OES | `[deployment_verification, sapor, visibility]`
 `sapor.config.spinnaker.authnEnabled` | Set it to true if authentication is enabled in Spinnaker | `false`
-`sapor.config.spinnaker.spinGateURL` | URL of Spinnaker Gate | `http://spin-gate.oes-spin:8084`
-`sapor.config.spinnaker.spinExternalGateURL` | By default this is set to spinnaker installed in the same namespace; change this when different spinnaker needs to be configured with sapor | `{{ .Values.spinnaker.ingress.protocol }}://{{ .Values.spinnaker.ingress.host }}`
 `sapor.config.spinnaker.ldap.ldapEnabled` | Is LDAP authn enabled for spinnaker | `true`
 `sapor.config.spinnaker.ldap.ldapUsername` | Spinnaker username | `admin`
 `sapor.config.spinnaker.ldap.ldapPassword` | Spinnaker password | `opsmxadmin123`
@@ -180,36 +178,6 @@ Helm v3.x
   $ helm install my-release opsmx/oes -f values.yaml
   ```
 
-### Connecting to Spinnaker and OpsMx Enterprise Extensions
-
-#### Connecting to Spinnaker
-
-  Once the service is up and running, find the service ip address
-
-  	kubectl get svc spin-deck-np [--namespace mynamespace]
-
-  Example output would be:
-
-      NAME           TYPE           CLUSTER-IP     EXTERNAL-IP   PORT(S)          AGE
-      spin-deck-np   LoadBalancer   10.0.139.222   40.78.4.201   9000:31030/TCP   8m9s
-
-  Using the EXTERNAL-IP address, go to http://EXTERNAL-IP:9000/
-
-##### Connecting to OpsMx Enterprise for Spinnaker Extensions(OES)
-
-  Once the service is up and running, find the service ip address
-
-  	kubectl get svc oes-ui [--namespace mynamespace]
-
-  Example output would be:
-
-    NAME        TYPE              CLUSTER-IP      EXTERNAL-IP     PORT(S)         AGE
-    oes-ui      LoadBalancer      10.0.33.110     52.149.54.222   80:30860/TCP    20m
-
-  Using the EXTERNAL-IP address, go to http://EXTERNAL-IP:80/
-
-  You can login with dummysuer/dummypwd
-
 
 ##### Enabling centralized logging
   Spinnaker consists of multiple microservices and you need to connect to each microservice to see what is going on. We have enabled elasticsearch, fluentbit and kibana to provide a centralized logging solution for Spinnaker. To enable it, you need to install with the flag
@@ -226,6 +194,5 @@ Helm v3.x
       NAME               TYPE           CLUSTER-IP   EXTERNAL-IP     PORT(S)      AGE
       somename-kibana    LoadBalancer   10.0.4.246   34.66.226.138   5601:32097   9m43s
 
-  Using the EXTERNAL-IP address, go to http://EXTERNAL-IP:5601
 
   In Kibana, go to Discover -> Open -> Spinnaker Logs to see logs from Spinnaker pods.
