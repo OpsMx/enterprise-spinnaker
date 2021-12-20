@@ -272,8 +272,8 @@ saporgate:
   enabled: true
   image:
     registry: quay.io/opsmxpublic
-    repository: ubi8-spin-gate
-    tag: 1.20.0
+    repository: ubi8-oes-spin-gate
+    tag: 1.22.1
     pullPolicy: IfNotPresent
 
   resources: {}
