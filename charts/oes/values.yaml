@@ -26,6 +26,10 @@ installRedis: true
 # OES UI, OES Gate, Spinnaker Deck and Spinnaker Gate service type
 k8sServiceType: ClusterIP
 
+#extraEnvVars:
+#  - name: JAVA_OPTS
+#    value: -Dhttps.proxyHost=proxy.server.local -Dhttps.proxyPort=3128
+
 # Global variables can be accessed across all the charts including sub-charts
 global:
   # Custom Images registry where all the OSS and customized images used in the helm chart are stored
@@ -50,6 +54,7 @@ global:
   commonGate:
     enabled: true
     spinnakerRBAC: false  # Set to true if RBAC is enabled in Spinnaker
+    spinnakerKayanta: false
 
   ## Set to true to expose oes-ui, oes-gate services over ingress
   createIngress: true
