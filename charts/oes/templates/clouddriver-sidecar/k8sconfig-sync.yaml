@@ -2,11 +2,11 @@ apiVersion: v1
 data:
   k8config-sync.sh: |+
     #!/bin/bash
-    rm -rf spinnaker-poc
+    rm -rf $DYNAMIC_ACCOUNTS_REPO
     mkdir -p /opsmx
     echo " ####### Cloning the Dynamic Account Repo #################"
-    git clone  -c http.sslVerify=false https://USER:TOKEN@github.pie.apple.com/SpinCloud-GCP/spinnaker-poc.git
-    cd spinnaker-poc/
+    git clone -c http.sslVerify=false $GIT_CLONE_PARAM
+    cd $DYNAMIC_ACCOUNTS_REPO
     cat clouddriver-local.yml |grep -i opsmx|cut -f3 -d"/"  > /opsmx/config_files.txt
     for config in $(cat /opsmx/config_files.txt)
     do
