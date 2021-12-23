@@ -53,7 +53,7 @@ data:
     5\n        merge_pr_bitbucket\n      fi\n    else\n      create_pr_bitbucket\n
     \     if [[ $auto_merge == \"true\" ]]; then\n        approve_pr_bitbucket\n        sleep
     5\n        merge_pr_bitbucket\n      fi\n    fi\n  fi\n}\n"
-  deployer.sh: "#!/bin/bash\nset -x \necho \"In deployer.sh\"\nSBASE=scripts\nsource
+  deployer.sh: "#!/bin/bash\n#set -x \necho \"In deployer.sh\"\nSBASE=scripts\nsource
     config/repo.properties\nsource $SBASE/spin.sh\nsource $SBASE/stash.sh\nsource
     $SBASE/s3.sh\nsource $SBASE/github.sh\nsource $SBASE/bitbucket.sh\necho \"Sourcing
     complete\"\nsync_repo_from_spinnaker(){\n\tif [[ $repo_type = \"s3\" ]];\n \tthen\n\t
