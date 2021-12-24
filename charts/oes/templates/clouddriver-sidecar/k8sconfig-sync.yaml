@@ -1,12 +1,15 @@
 apiVersion: v1
 data:
-  k8config-sync.sh: |+
+  k8config-sync.sh: |
     #!/bin/bash
+    export GIT_CLONE_PARAM=$(cat /tmp/secret/gitcloneparam)
+    export GIT_URL=$(cat /tmp/secret/dynamicaccountsgituri)
+    DYNAMIC_ACCOUNTS_REPO="$(echo $GIT_URL | sed -r 's/.+\/([^.]+)(\.git)?/\1/')"
     rm -rf $DYNAMIC_ACCOUNTS_REPO
     mkdir -p /opsmx
     echo " ####### Cloning the Dynamic Account Repo #################"
     git clone -c http.sslVerify=false $GIT_CLONE_PARAM
-    cd $DYNAMIC_ACCOUNTS_REPO
+    cd $DYNAMIC_ACCOUNTS_REPO/
     cat clouddriver-local.yml |grep -i opsmx|cut -f3 -d"/"  > /opsmx/config_files.txt
     for config in $(cat /opsmx/config_files.txt)
     do
