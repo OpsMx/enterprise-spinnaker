@@ -39,6 +39,10 @@ spec:
         - containerPort: 8096
           protocol: TCP
         env:
+        env:
+       {{- if .Values.extraEnvVars }}
+       {{- include "tplvalues.render" (dict "value" .Values.extraEnvVars "context" $) | nindent 8 }}
+       {{- end }}
         volumeMounts:
         - mountPath: /opsmx/conf/visibility-local.yml
           name: visibility-config
