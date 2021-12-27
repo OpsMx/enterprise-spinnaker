@@ -490,7 +490,7 @@ platform:
   image:
     registry: quay.io/opsmxpublic
     repository: ubi8-oes-platform
-    tag: v3.9.5.2
+    tag: v3.9.5.3
     pullPolicy: IfNotPresent
 
   annotations:
