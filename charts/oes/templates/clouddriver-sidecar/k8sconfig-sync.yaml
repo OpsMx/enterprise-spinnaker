@@ -4,7 +4,7 @@ data:
     #!/bin/bash
     export GIT_CLONE_PARAM=$(cat /tmp/secret/gitcloneparam)
     export GIT_URL=$(cat /tmp/secret/dynamicaccountsgituri)
-    DYNAMIC_ACCOUNTS_REPO="$(echo $GIT_URL | sed -r 's/.+\/([^.]+)(\.git)?/\1/')"
+    export DYNAMIC_ACCOUNTS_REPO=$(cat /tmp/secret/dynamicAccRepository)
     rm -rf $DYNAMIC_ACCOUNTS_REPO
     mkdir -p /opsmx
     echo " ####### Cloning the Dynamic Account Repo #################"
