@@ -154,7 +154,6 @@ security:
   basic:
     enabled: true
   user: {}
-
 saml:
 {{ toYaml .Values.gate.config.saml | indent 2 }}
 {{- end }}
@@ -163,8 +162,8 @@ security:
   basic:
     enabled: true
   user: {}
-oauth2:
-{{ toYaml .Values.gate.config.oauth2 | indent 2 }}
+  oauth2:
+{{ toYaml .Values.gate.config.oauth2 | indent 4 }}
 {{- end }}
 file:
   enabled: {{ .Values.gate.config.fileBasedAuthentication.enabled }}
