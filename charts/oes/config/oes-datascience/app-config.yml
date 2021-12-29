@@ -11,7 +11,7 @@ APP:
    # Only accept True or False
 
 OBJECT_STORAGE:
-      ENDPOINT: http://{{ .Release.Name }}-minio:9000
+      ENDPOINT: http://{{ .Release.Name }}-{{ .Values.global.minio.name }}:{{ .Values.global.minio.port }}
       BUCKET_NAME: autopilot
 POSTGRES:
       USERNAME: {{ .Values.db.username }}

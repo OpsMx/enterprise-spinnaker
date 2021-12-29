@@ -65,7 +65,7 @@ data:
     # Storage
     {{ if .Values.global.minio.enabled }}
     echo {{ .Values.global.minio.secretKey }} | $HAL_COMMAND config storage s3 edit \
-        --endpoint http://{{ .Release.Name }}-minio:9000 \
+        --endpoint http://{{ .Release.Name }}-{{ .Values.global.minio.name }}:{{ .Values.global.minio.port }} \
         --access-key-id {{ .Values.global.minio.accessKey }} \
         --secret-access-key --bucket {{ .Values.global.minio.defaultBucket.name }} \
         --path-style-access true
