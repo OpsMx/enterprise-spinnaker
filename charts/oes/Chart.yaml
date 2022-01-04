@@ -1,16 +1,10 @@
 apiVersion: v2
 name: oes
-version: 3.10.1
-appVersion: 3.10.0.1
-description: OES is a non-forked version of OSS spinnaker.
+version: 3.10.2
+appVersion: 3.10.1
+description: ISD 3.10.1 with log4j security fix and additional enhancements
 icon: https://raw.githubusercontent.com/OpsMx/enterprise-spinnaker/master/img/opsmx.png
 maintainers:
-- email: abhinay.byrisetty@opsmx.io
-  name: abhinaybyrisetty
-- email: vamsi.krishna@opsmx.io
-  name: vkvamsi
-- email: nirmalya@opsmx.io
-  name: nirmalyasen
 - email: srinivas@opsmx.io
   name: ksrinimba
 keywords:
