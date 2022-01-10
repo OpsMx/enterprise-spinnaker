@@ -3,7 +3,6 @@ name: Release Charts
 on:
   push:
     branches:
-      - master
       - oes3.10
     paths:
       - 'charts/oes/Chart.yaml'
