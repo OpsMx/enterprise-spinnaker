@@ -1,4 +1,4 @@
-{{- if .Values.autoInstallSampleApps }}
+{{- if and .Values.autoInstallSampleApps .Release.IsInstall }}
 apiVersion: batch/v1
 kind: Job
 metadata:

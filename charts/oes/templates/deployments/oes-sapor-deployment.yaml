@@ -34,6 +34,10 @@ spec:
       containers:
       - image: {{ template "sapor.image" . }}
         name: oes-sapor
+        env:
+       {{- if .Values.extraEnvVars }}
+       {{- include "tplvalues.render" (dict "value" .Values.extraEnvVars "context" $) | nindent 8 }}
+       {{- end }}
         ports:
         - containerPort: 8085
           protocol: TCP
