@@ -490,7 +490,7 @@ platform:
   image:
     registry: quay.io/opsmxpublic
     repository: ubi8-oes-platform
-    tag: v3.9.5.3
+    tag: v3.9.5.4
     pullPolicy: IfNotPresent
 
   annotations:
@@ -548,7 +548,7 @@ sapor:
   image:
     registry: quay.io/opsmxpublic
     repository: ubi8-oes-sapor
-    tag: v3.9.5.2
+    tag: v3.9.5.4
     pullPolicy: IfNotPresent
 
   annotations:
@@ -632,7 +632,7 @@ ui:
   image:
     registry: quay.io/opsmxpublic
     repository: ubi8-oes-ui
-    tag: v3.9.5.2
+    tag: v3.9.5.4
     pullPolicy: IfNotPresent
   serviceAnnotations: {}
 
