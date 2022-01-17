@@ -130,7 +130,7 @@ services:
   redis:
     host: 0.0.0.0
     port: {{ .Values.redis.port }}
-    baseUrl: {{ tpl .Values.redis.url . }}:{{ .Values.redis.port }}
+    baseUrl: {{ template "spinnaker.redisBaseURL" . }}
     enabled: true
   rosco:
     host: 0.0.0.0
@@ -179,7 +179,11 @@ authn:
   mode: session
 google: {}
 redis:
-  connection: {{ tpl .Values.redis.url . }}:{{ .Values.redis.port }}
+  connection: {{ template "spinnaker.redisBaseURL" . }}
+{{- if not .Values.installRedis }}
+  configuration:
+    secure: true
+{{- end }}
 server:
   session:
     timeoutInSeconds: {{ .Values.gate.config.server.session.timeoutInSeconds }}

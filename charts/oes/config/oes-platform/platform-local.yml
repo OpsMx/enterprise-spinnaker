@@ -6,7 +6,7 @@ spring:
     password: {{ .Values.db.password }}
 ldap.managerPassword: {{ .Values.global.ldap.managerPassword }}
 redis:
-    connection: {{ tpl .Values.redis.url . }}:{{ .Values.redis.port }}
+    connection: {{ template "spinnaker.redisBaseURL" . }}
 #datasource.url: {{ .Values.db.url }}/visibilitydb
 #postgres.password: {{ .Values.db.password }}
 #postgres.username: {{ .Values.db.username }}
