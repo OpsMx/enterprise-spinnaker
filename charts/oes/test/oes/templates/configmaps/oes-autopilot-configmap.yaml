@@ -1,0 +1,42 @@
+---
+# Source: oes/templates/configmaps/oes-autopilot-configmap.yaml
+apiVersion: v1
+data:
+  autopilot.properties: |
+    # Enable Build Analysis
+    build.analysis=false
+    # DB configuration
+    secret.datasource.username=postgres
+    secret.datasource.password=networks123
+    secret.datasource.url=jdbc:postgresql://oes-db:5432/opsmx
+    secret.platform.url=http://oes-platform:8095
+    secret.ds.protocol=http://
+    secret.ds.url=localhost:5005
+    server.host.dns.name=https://oes.example.ops.com
+    gate.url=https://oes-gate.example.ops.com
+    
+    #datascience configuration
+    oes.datascience.baseUrl=http://oes-datascience:5005
+    #build.analysis=false
+    ds.async.flow=false
+    
+    #storage configuration
+    #storage.type =file_storage
+    #storage.type =object_storage
+    #storage.endpoint=http://RELEASE-NAME-minio:9000
+    #storage.accesskey = spinnakeradmin
+    #storage.secretkey = spinnakeradmin
+    #storage.region= us-east-1
+    ds.seperate.service=false
+    
+    
+    
+kind: ConfigMap
+metadata:
+  name: oes-autopilot-config
+  labels:
+    app: oes
+    component: autopilot
+    heritage: "Helm"
+    release: "RELEASE-NAME"
+    chart: "oes-3.10.3"

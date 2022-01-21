@@ -1,0 +1,57 @@
+---
+# Source: oes/templates/sapor-gate/sapor-gate-deployment.yaml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  annotations:
+  labels:
+    app: oes
+    component: sapor-gate
+    heritage: "Helm"
+    release: "RELEASE-NAME"
+    chart: "oes-3.10.3"
+  name: sapor-gate
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: oes
+      component: sapor-gate
+  template:
+    metadata:
+      labels:
+        app: oes
+        component: sapor-gate
+        heritage: "Helm"
+        release: "RELEASE-NAME"
+        chart: "oes-3.10.3"
+    spec:
+      containers:
+      - image: quay.io/opsmxpublic/ubi8-oes-spin-gate:1.22.1
+        name: sapor-gate
+        env:
+        - name: JAVA_OPTS
+          value: -XX:MaxRAMPercentage=100.0
+        - name: SPRING_PROFILES_ACTIVE
+          value: overrides,local
+        ports:
+        - containerPort: 8084
+          protocol: TCP
+        resources:
+            {}
+        volumeMounts:
+        - mountPath: /opt/spinnaker/config
+          name: sapor-gate-files
+        readinessProbe:
+          failureThreshold: 3
+          httpGet:
+            path: /health
+            port: 8084
+            scheme: HTTP
+          periodSeconds: 10
+          successThreshold: 1
+          timeoutSeconds: 1
+      volumes:
+      - name: sapor-gate-files
+        secret:
+          secretName: sapor-gate-files

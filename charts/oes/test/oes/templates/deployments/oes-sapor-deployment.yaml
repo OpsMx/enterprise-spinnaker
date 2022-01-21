@@ -1,0 +1,90 @@
+---
+# Source: oes/templates/deployments/oes-sapor-deployment.yaml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: oes
+    component: sapor
+    heritage: "Helm"
+    release: "RELEASE-NAME"
+    chart: "oes-3.10.3"
+  name: oes-sapor
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: oes
+      component: sapor
+  template:
+    metadata:
+      annotations:
+        configmap/checksum: 4e9be8a068653b6c2e6f7a0db365441114a7c85e9b7b14ab67933d258be47a78
+        prometheus.io/scrape: "true"
+        prometheus_io_path: /mgmt/prometheus
+        prometheus_io_port: "8085"
+      labels:
+        app: oes
+        component: sapor
+        heritage: "Helm"
+        release: "RELEASE-NAME"
+        chart: "oes-3.10.3"
+    spec:
+      initContainers:
+      - name: db-check
+        image: quay.io/opsmxpublic/postgres:9.6.5
+        command: ['/bin/bash', '-c', "sleep 30;echo Waiting for oes-db to be up and running; pg_isready -h oes-db -p 5432 && echo PostgreSQL DB is ready to receive connections"]
+      containers:
+      - image: quay.io/opsmxpublic/ubi8-oes-sapor:v3.10.0
+        name: oes-sapor
+        env:
+        ports:
+        - containerPort: 8085
+          protocol: TCP
+        volumeMounts:
+        - mountPath: /opt/opsmx/controller/ca.crt	
+          name: ca-certs-volume	
+          subPath: tls.crt	
+        - mountPath: /opt/opsmx/controller/cert/tls.crt	
+          name: certs-volume	
+          subPath: tls.crt	
+        - mountPath: /opt/opsmx/controller/cert/tls.key	
+          name: certs-volume	
+          subPath: tls.key
+        - name: sapor-config-volume
+          mountPath: /opt/opsmx/application.yml
+          subPath: application.yml
+        - mountPath: /opt/opsmx/bootstrap.yml
+          name: bootstrap-config-volume
+          subPath: bootstrap.yml
+        resources:
+            {}
+        readinessProbe:
+          tcpSocket:
+            port: 8085
+          initialDelaySeconds: 60
+          periodSeconds: 10
+          failureThreshold: 10
+        livenessProbe:
+          httpGet:
+            path: /mgmt/health
+            port: 8085
+          initialDelaySeconds: 60
+          periodSeconds: 10
+          failureThreshold: 10
+      volumes:
+      - secret:
+          secretName: oes-control-secret
+        name: certs-volume
+      - secret:
+          secretName: ca-secret
+        name: ca-certs-volume
+      - secret:
+          secretName: oes-sapor-config
+        name: sapor-config-volume
+      - secret:
+          items:
+          - key: bootstrap.yml
+            path: bootstrap.yml
+          secretName: sapor-bootstrap
+        name: bootstrap-config-volume

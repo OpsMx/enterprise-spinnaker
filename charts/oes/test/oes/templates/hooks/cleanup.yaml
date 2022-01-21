@@ -1,0 +1,27 @@
+---
+# Source: oes/templates/hooks/cleanup.yaml
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: "oes-cleanup"
+  labels:
+    heritage: "Helm"
+    release: "RELEASE-NAME"
+    chart: "oes-3.10.3"
+  annotations:
+    "helm.sh/hook": "pre-delete"
+    "helm.sh/hook-delete-policy": "before-hook-creation"
+spec:
+  template:
+    metadata:
+      labels:
+        heritage: "Helm"
+        release: "RELEASE-NAME"
+        chart: "oes-3.10.3"
+    spec:
+      restartPolicy: OnFailure
+      containers:
+      - name: oes-cleanup
+        image: quay.io/opsmxpublic/ubi8-spin-halyard:opsmx-1.40.0
+        command: ["/bin/bash","-c"]
+        args: ["kubectl delete issuer letsencrypt-default-spin; kubectl delete ingress oes-gate-ingress oes-ui-ingress RELEASE-NAME-spinnaker-deck; kubectl delete secret ca-secret deck-authtls demo-authtls jwt-secret oes-cacerts oes-control-secret oes-gate-authtls oes-ui-authtls"]

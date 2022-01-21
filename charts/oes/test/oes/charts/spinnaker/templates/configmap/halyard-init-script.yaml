@@ -1,0 +1,47 @@
+---
+# Source: oes/charts/spinnaker/templates/configmap/halyard-init-script.yaml
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: RELEASE-NAME-spinnaker-halyard-init-script
+  labels:
+    app: "RELEASE-NAME-spinnaker"
+    heritage: "Helm"
+    release: "RELEASE-NAME"
+    chart: "spinnaker-2.2.3"
+data:
+  init.sh: |
+    #!/bin/bash
+    set -x
+    # Override Halyard daemon's listen address
+    cp /opt/halyard/config/* /tmp/config
+    printf 'server.address: 0.0.0.0\n' > /tmp/config/halyard-local.yml
+
+    # Use Redis deployed via the dependent Helm chart
+    rm -rf /tmp/spinnaker/.hal/default/service-settings
+    mkdir -p /tmp/spinnaker/.hal/default/service-settings
+    cp /tmp/service-settings/* /tmp/spinnaker/.hal/default/service-settings/
+
+    rm -rf /tmp/spinnaker/.hal/default/profiles
+    mkdir -p /tmp/spinnaker/.hal/default/profiles
+    cp /tmp/additionalProfileConfigMaps/* /tmp/spinnaker/.hal/default/profiles/
+
+    rm -rf /tmp/spinnaker/.hal/.boms  # Enabled  # End of S3
+    # pipeline promotion configuration setup
+    #
+    ls -lart /home/spinnaker/java-lib/
+    if [ -d "/tmp/spinnaker/pipeline-promotion/" ]
+    then
+      #decrypt_key=$(kubectl get cm bootstrap -o yaml  -n ${SPINNAKER_NAMESPACE}| grep 'password:' | awk '{ print $2}')
+      decrypt_key=$(kubectl get secret bootstrap -o jsonpath='{.data.bootstrap\.yml}' -n ${SPINNAKER_NAMESPACE} | base64 -d | grep 'password:' | awk '{ print $2}')
+      if [[ $decrypt_key != "" ]];
+      then
+        for filename in /tmp/spinnaker/pipeline-promotion/*; do
+          java -cp "Decryptor.jar:/home/spinnaker/java-lib/*" Decryptor $decrypt_key "$filename"
+        done
+      mkdir /tmp/spinnaker/pipeline-decrypted/
+      mv /tmp/spinnaker/pipeline-promotion/*decrypted.yaml /tmp/spinnaker/pipeline-decrypted/
+      kubectl apply -f /tmp/spinnaker/pipeline-promotion/pipe-promot-config-cm.yaml -n ${SPINNAKER_NAMESPACE}
+      kubectl apply -f /tmp/spinnaker/pipeline-decrypted/ -n ${SPINNAKER_NAMESPACE}
+     fi
+    fi

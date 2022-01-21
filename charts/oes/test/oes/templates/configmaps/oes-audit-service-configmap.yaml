@@ -1,0 +1,23 @@
+---
+# Source: oes/templates/configmaps/oes-audit-service-configmap.yaml
+apiVersion: v1
+data:
+  audit-local.yml: |
+    spring:
+      datasource:
+        url: jdbc:postgresql://oes-db:5432/auditdb
+        username: postgres
+        password: networks123
+    logging:
+        level:
+          com.opsmx.auditservice: INFO
+    
+kind: ConfigMap
+metadata:
+  labels:
+    app: oes
+    component: auditservice
+    heritage: "Helm"
+    release: "RELEASE-NAME"
+    chart: "oes-3.10.3"
+  name: oes-audit-service-config

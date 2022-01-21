@@ -1,0 +1,78 @@
+---
+# Source: oes/templates/forwarder/oes-forwarder-deployment.yaml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: opsmx-controller-controller1
+  labels:
+    agent.opsmx.com/name: controller1
+    agent.opsmx.com/role: controller
+    heritage: "Helm"
+    release: "RELEASE-NAME"
+    chart: "oes-3.10.3"
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: opsmx-controller-controller1
+  template:
+    metadata:
+      labels:
+        app: opsmx-controller-controller1
+        agent.opsmx.com/name: controller1
+        agent.opsmx.com/role: controller
+        heritage: "Helm"
+        release: "RELEASE-NAME"
+        chart: "oes-3.10.3"
+      annotations:
+        pullversion: "16"
+    spec:
+      containers:
+      - name: opsmx-controller-controller1
+        image: quay.io/opsmxpublic/forwarder-controller:v20210722T133815
+        ports:
+          - containerPort: 9001
+            name: agent-grpc
+          - containerPort: 9002
+            name: service-api
+          - containerPort: 9003
+            name: control-api
+          - containerPort: 9004
+            name: remote-command
+          - containerPort: 9102
+            name: metrics
+        env:
+          - name: POD_NAMESPACE
+            valueFrom:
+              fieldRef:
+                fieldPath: metadata.namespace
+        volumeMounts:
+        - name: config
+          mountPath: /app/config
+          readOnly: true
+        - name: ca-secret
+          mountPath: /app/secrets/ca
+          readOnly: true
+        - name: jwt-secret
+          mountPath: /app/secrets/serviceAuth
+          readOnly: true
+        resources:
+          requests:
+            memory: "64Mi"
+            cpu: "100m"
+          limits:
+            memory: "128Mi"
+            cpu: "250m"
+      volumes:
+      - name: ca-secret
+        secret:
+          secretName: ca-secret
+      - name: jwt-secret
+        secret:
+          secretName: jwt-secret
+      - name: config
+        configMap:
+          name: opsmx-controller-controller1
+          items:
+          - key: "configFile"
+            path: "config.yaml"

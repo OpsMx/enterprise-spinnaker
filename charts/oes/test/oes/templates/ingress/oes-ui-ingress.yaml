@@ -1,0 +1,28 @@
+---
+# Source: oes/templates/ingress/oes-ui-ingress.yaml
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  annotations:
+    acme.cert-manager.io/http01-edit-in-place: "true"
+    cert-manager.io/issue-temporary-certificate: "true"
+    cert-manager.io/issuer: letsencrypt-default-spin
+    kubernetes.io/tls-acme: "true"
+    kubernetes.io/ingress.class: nginx
+  name: oes-ui-ingress
+spec:
+  rules:
+  - host: oes.example.ops.com
+    http:
+      paths:
+      - backend:
+          service:
+            name: oes-ui
+            port:
+              number: 80
+        path: /
+        pathType: ImplementationSpecific
+  tls:
+  - hosts:
+    - oes.example.ops.com
+    secretName: oes-ui-authtls

@@ -1,0 +1,34 @@
+---
+# Source: oes/charts/spinnaker/templates/ingress/deck.yaml
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  annotations:
+    cert-manager.io/issuer: letsencrypt-default-spin
+    acme.cert-manager.io/http01-edit-in-place: "true"
+    cert-manager.io/issue-temporary-certificate: "true"
+    kubernetes.io/tls-acme: "true"
+    ingress.kubernetes.io/ssl-redirect: "true"
+    kubernetes.io/ingress.class: nginx
+  name: RELEASE-NAME-spinnaker-deck
+  labels:
+    app: "RELEASE-NAME-spinnaker"
+    heritage: "Helm"
+    release: "RELEASE-NAME"
+    chart: "spinnaker-2.2.3"
+spec:
+  rules:
+  - host: "spin.example.ops.com"
+    http:
+      paths:
+      - path: /
+        pathType: ImplementationSpecific
+        backend:
+          service:
+            name: spin-deck
+            port:
+              number: 9000
+  tls:
+  - hosts:
+    - spin.example.ops.com
+    secretName: deck-authtls

@@ -1,0 +1,39 @@
+---
+# Source: oes/templates/hooks/oes-config-job.yaml
+apiVersion: batch/v1
+kind: Job
+metadata:
+  annotations:
+    "helm.sh/hook": "post-install,post-upgrade"
+    "helm.sh/hook-delete-policy": "before-hook-creation"
+    "helm.sh/hook-weight": "5"
+  labels:
+    app: oes
+    component: oes-config
+    heritage: "Helm"
+    release: "RELEASE-NAME"
+    chart: "oes-3.10.3"
+  name: oes-config
+spec:
+  template:
+    metadata:
+      labels:
+        app: oes
+        component: oes-config
+        heritage: "Helm"
+        release: "RELEASE-NAME"
+        chart: "oes-3.10.3"
+    spec:
+      containers:
+      - command: ["bash", "/tmp/config/datasource-api.sh" ]
+        name: datasource-creation-api
+        image: quay.io/opsmxpublic/oes-pre-configure:v2
+        volumeMounts:
+        - mountPath: /tmp/config
+          name: datasource-creation
+      restartPolicy: OnFailure
+      volumes:
+      - configMap:
+          defaultMode: 420
+          name: RELEASE-NAME-oes-datasource-creation
+        name: datasource-creation

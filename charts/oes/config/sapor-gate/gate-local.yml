@@ -10,8 +10,3 @@ security:
   user:
     name: {{ .Values.saporgate.config.username }}
     password: {{ .Values.saporgate.config.password }}
-{{- if not .Values.installRedis }}
-redis:
-  configuration:
-    secure: true
-{{- end }}

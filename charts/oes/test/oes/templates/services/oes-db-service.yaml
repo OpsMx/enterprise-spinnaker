@@ -1,0 +1,22 @@
+---
+# Source: oes/templates/services/oes-db-service.yaml
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    app: oes
+    component: db
+    heritage: "Helm"
+    release: "RELEASE-NAME"
+    chart: "oes-3.10.3"
+  name: oes-db
+spec:
+  type: ClusterIP
+  ports:
+  - name: db
+    protocol: TCP
+    port: 5432
+    targetPort: 5432
+  selector:
+    app: oes
+    component: db

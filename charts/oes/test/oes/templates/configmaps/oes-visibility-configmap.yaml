@@ -1,0 +1,68 @@
+---
+# Source: oes/templates/configmaps/oes-visibility-configmap.yaml
+apiVersion: v1
+data:
+  visibility-local.yml: |
+    spring:
+      datasource:
+        url: jdbc:postgresql://oes-db:5432/visibilitydb
+        username: postgres
+        password: networks123
+      visiblity:
+        connectors:
+          configured: JIRA,GIT,AUTOPILOT,SONARQUBE,JENKINS,AQUAWAVE
+      logging:
+        level:  
+          io:     
+            swagger:
+              models: 
+                parameters:
+                  AbstractSerializableParameter: ERROR
+    gate:
+      url: https://oes-gate.example.ops.com
+    
+    jira:
+      api:
+        url: /rest/api/2/search
+      navigate:
+        url: hosturl/browse/{issue_Id}
+    
+    git:
+      apiurl: /repos/{username}/{repo}/commits/{commitId}
+      userurl: /user
+      navigate.url: https://github.com/OpsMx/{repo_name}/commit/{commit_Id}
+    
+    jenkins:
+      api:
+        url: /jenkins/job/{jobname}/{buildId}/api/json
+      navigate:
+        url: hosturl/jenkins/job/{jobname}/{buildId}
+    
+    sonar:
+      navigate:
+        Url: hosturl/dashboard?id={projectKey}
+    
+    aquawave:
+      api:
+        url: https://api.aquasec.com/v2/images/{id}
+      navigate:
+        url: https://cloud.aquasec.com/vs/#/images/{id}
+    
+    autopilot:
+      api:
+        url: http://oes-autopilot:8090
+    
+    platform:
+      service:
+        url: http://oes-platform:8095
+    
+    
+kind: ConfigMap
+metadata:
+  name: oes-visibility-config
+  labels:
+    app: oes
+    component: visibility
+    heritage: "Helm"
+    release: "RELEASE-NAME"
+    chart: "oes-3.10.3"

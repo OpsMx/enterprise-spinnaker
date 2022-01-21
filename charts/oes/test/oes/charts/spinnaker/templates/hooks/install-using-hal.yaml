@@ -1,0 +1,51 @@
+---
+# Source: oes/charts/spinnaker/templates/hooks/install-using-hal.yaml
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: "RELEASE-NAME-install-using-hal"
+  labels:
+    app: "RELEASE-NAME-spinnaker"
+    heritage: "Helm"
+    release: "RELEASE-NAME"
+    chart: "spinnaker-2.2.3"
+  annotations:
+    "helm.sh/hook": "post-install,post-upgrade"
+    "helm.sh/hook-delete-policy": "before-hook-creation"
+    "helm.sh/hook-weight": "0"
+spec:
+  template:
+    metadata:
+      annotations:
+        checksum/config: e02132bb107abf3b2119be3a643b75d842fa5cce184ad713574fdd46c554e13c
+      labels:
+        app: "RELEASE-NAME-spinnaker"
+        heritage: "Helm"
+        release: "RELEASE-NAME"
+        chart: "spinnaker-2.2.3"
+    spec:
+      serviceAccountName: RELEASE-NAME-spinnaker-halyard
+      securityContext:
+        fsGroup: 1000
+        runAsUser: 1000
+      restartPolicy: OnFailure
+      volumes:
+      - name: halyard-config
+        configMap:
+          name: RELEASE-NAME-spinnaker-halyard-config
+      containers:
+      - name: halyard-install
+        image: quay.io/opsmxpublic/ubi8-spin-halyard:opsmx-1.40.0
+        volumeMounts:
+        - name: halyard-config
+          mountPath: /opt/halyard/scripts
+        command:
+        - bash
+        - -xe
+        - "/opt/halyard/scripts/install.sh"
+        env:
+        - name: NODE_IP
+          valueFrom:
+            fieldRef:
+              apiVersion: v1
+              fieldPath: status.hostIP

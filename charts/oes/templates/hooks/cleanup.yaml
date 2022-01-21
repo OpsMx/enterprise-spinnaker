@@ -25,3 +25,15 @@ spec:
         args: ["kubectl delete ingress oes-gate-ingress oes-ui-ingress {{ template "spinnaker.fullname" . }}-deck; kubectl delete secret ca-secret jwt-secret oes-cacerts oes-control-secret"]
 {{- end }}
 {{- end }}
+      {{- if .Values.global.nodeSelector }}
+      nodeSelector:
+{{ toYaml .Values.global.nodeSelector | indent 8 }}
+      {{- end }}
+      {{- if .Values.global.affinity }}
+      affinity:
+{{ toYaml .Values.global.affinity | indent 8 }}
+      {{- end }}
+      {{- if .Values.global.tolerations }}
+      tolerations:
+{{ toYaml .Values.global.tolerations | indent 8 }}
+      {{- end }}

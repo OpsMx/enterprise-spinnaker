@@ -1,0 +1,28 @@
+---
+# Source: oes/templates/ingress/oes-gate-ingress.yaml
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  annotations:
+    acme.cert-manager.io/http01-edit-in-place: "true"
+    cert-manager.io/issue-temporary-certificate: "true"
+    cert-manager.io/issuer: letsencrypt-default-spin
+    kubernetes.io/tls-acme: "true"
+    kubernetes.io/ingress.class: nginx
+  name: oes-gate-ingress
+spec:
+  rules:
+  - host: oes-gate.example.ops.com
+    http:
+      paths:
+      - backend:
+          service:
+            name: oes-gate
+            port:
+              number: 8084
+        path: /
+        pathType: ImplementationSpecific
+  tls:
+  - hosts:
+    - oes-gate.example.ops.com
+    secretName: oes-gate-authtls

@@ -1,0 +1,72 @@
+---
+# Source: oes/templates/deployments/oes-audit-service.yaml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: oes-audit-service
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: oes
+      component: auditservice
+  template:
+    metadata:
+      annotations:
+        configmap/checksum: 44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a
+        prometheus.io/scrape: "true"
+        prometheus_io_path: /prometheus
+        prometheus_io_port: "8097"
+      labels:
+        app: oes
+        component: auditservice
+        heritage: "Helm"
+        release: "RELEASE-NAME"
+        chart: "oes-3.10.3"
+    spec:
+      containers:
+      - image: quay.io/opsmxpublic/ubi8-oes-audit-service:v3.10.0
+        imagePullPolicy: IfNotPresent
+        name: oes-audit
+        ports:
+        - containerPort: 8097
+          name: backend
+          protocol: TCP
+        livenessProbe:
+          failureThreshold: 3
+          httpGet:
+            path: /mgmt/health
+            port: 8097
+            scheme: HTTP
+          initialDelaySeconds: 60
+          periodSeconds: 60
+          successThreshold: 1
+          timeoutSeconds: 1
+        readinessProbe:
+          failureThreshold: 3
+          initialDelaySeconds: 60
+          periodSeconds: 10
+          successThreshold: 1
+          tcpSocket:
+            port: 8097
+          timeoutSeconds: 1
+        volumeMounts:
+        - mountPath: /opsmx/conf/audit-service-local.yml
+          name: audit-config-volume
+          subPath: audit-local.yml
+        - mountPath: /opsmx/conf/bootstrap.yml
+          name: bootstrap-config-volume
+          subPath: bootstrap.yml
+      volumes:
+      volumes:
+      - configMap:
+          defaultMode: 420
+          items:
+          - key: audit-local.yml
+            path: audit-local.yml
+          name: oes-audit-service-config
+        name: audit-config-volume
+      - name: bootstrap-config-volume
+        secret:
+          defaultMode: 420
+          secretName: bootstrap

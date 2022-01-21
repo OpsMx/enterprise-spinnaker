@@ -49,6 +49,14 @@ spec:
           periodSeconds: 5
       securityContext:
 {{ toYaml .Values.db.securityContext | indent 8 }}
+      {{- if .Values.global.affinity }}
+      affinity:
+{{ toYaml .Values.global.affinity | indent 8 }}
+      {{- end }}
+      {{- if .Values.global.tolerations }}
+      tolerations:
+{{ toYaml .Values.global.tolerations | indent 8 }}
+      {{- end }}
   volumeClaimTemplates:
   - metadata:
       creationTimestamp: null

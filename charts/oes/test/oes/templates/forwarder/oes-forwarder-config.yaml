@@ -1,0 +1,21 @@
+---
+# Source: oes/templates/forwarder/oes-forwarder-config.yaml
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: opsmx-controller-controller1
+  labels:
+    agent.opsmx.com/name: controller1
+    agent.opsmx.com/role: controller
+    heritage: "Helm"
+    release: "RELEASE-NAME"
+    chart: "oes-3.10.3"
+data:
+  configFile: |
+    serviceHostname: opsmx-controller-controller1
+    agentHostname: controller.exampleopsmx.net
+    remoteCommandHostname: controller.exampleopsmx.net
+    controlHostname: opsmx-controller-controller1
+    #agentAdvertisePort: "443"
+    serviceAuth:
+      currentKeyName: "public.pem"
