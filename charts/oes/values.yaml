@@ -26,6 +26,10 @@ installRedis: true
 # OES UI, OES Gate, Spinnaker Deck and Spinnaker Gate service type
 k8sServiceType: ClusterIP
 
+#extraEnvVars:
+#  - name: JAVA_OPTS
+#    value: -Dhttps.proxyHost=proxy.server.local -Dhttps.proxyPort=3128
+
 # Global variables can be accessed across all the charts including sub-charts
 global:
   # Custom Images registry where all the OSS and customized images used in the helm chart are stored
@@ -50,6 +54,7 @@ global:
   commonGate:
     enabled: true
     spinnakerRBAC: false  # Set to true if RBAC is enabled in Spinnaker
+    spinnakerKayanta: false
 
   ## Set to true to expose oes-ui, oes-gate services over ingress
   createIngress: true
@@ -221,6 +226,7 @@ db:
 
   ## storageMountSize is the size with which a PVC is to be created
   storageMountSize: 8Gi
+
   ## storageClass for DB persistent volume claim (PVC)
   #storageClassName: default
 ###############################################################################
@@ -231,7 +237,7 @@ autopilot:
   ## Image specific details
   image:
     repository: ubi8-oes-autopilot
-    tag: v3.10.0
+    tag: v3.10.1
     pullPolicy: IfNotPresent
 
   annotations:
@@ -247,6 +253,7 @@ autopilot:
   #  limits:
   #    memory: 8Gi
   #    cpu: 2
+
   config:
     ## Build Analysis
     ##
@@ -262,7 +269,7 @@ audit:
   ##
   image:
     repository: ubi8-oes-audit-service
-    tag: v3.10.0
+    tag: v3.10.1
     pullPolicy: IfNotPresent
 
   serviceAnnotations: {}
@@ -273,6 +280,7 @@ audit:
     prometheus.io/scrape: "true"
   resources: {}
   config: {}
+
 ###############################################################################
 ##
 ## Values of OES auditclient
@@ -282,7 +290,7 @@ auditClient:
   ##
   image:
     repository: ubi8-oes-audit-client
-    tag: v3.10.0
+    tag: v3.10.1
     pullPolicy: IfNotPresent
 
   serviceAnnotations: {}
@@ -293,6 +301,7 @@ auditClient:
     prometheus.io/scrape: "true"
   resources: {}
   config: {}
+ 
 ###############################################################################
 ##
 ## Values of OES datascience
@@ -302,7 +311,7 @@ datascience:
   ##
   image:
     repository: ubi8-oes-datascience
-    tag: v3.10.0
+    tag: v3.10.1
     pullPolicy: IfNotPresent
 
   serviceAnnotations: {}
@@ -313,13 +322,14 @@ datascience:
     prometheus.io/scrape: "true"
   resources: {}
   config: {}
+
 ###############################################################################
 ## Values of OES Dashboard
 dashboard:
   ## Image specific details
   image:
     repository: ubi8-oes-dashboard
-    tag: v3.10.0
+    tag: v3.10.1
     pullPolicy: IfNotPresent
 
   annotations:
@@ -343,6 +353,7 @@ dashboard:
     ## By default spinnakerLink is {{ .Values.global.spinDeck.protocol }}://{{ .Values.global.spinDeck.host }}
     ## If spinnaker is exposed on Load balancer instead of ingress, set this value to external IP of spinnaker UI
     #spinnakerLink: http://spinnaker.domain.com
+
 #####################################################
 # AP supports an agent based deployments to remote clusters
 # This should NOT be set to false, and only externalName needs to be changed in most cases
@@ -359,6 +370,7 @@ forwarder:
     tag: v20210722T133815
     pullPolicy: IfNotPresent
   serviceAnnotations: {}
+
 ###############################################################################
 ##
 ## Values of OES Gate
@@ -367,7 +379,7 @@ gate:
   ## Image specific details
   image:
     repository: ubi8-gate
-    tag: v3.10.0
+    tag: v3.10.1
     pullPolicy: IfNotPresent
 
   serviceAnnotations: {}
@@ -434,13 +446,14 @@ gate:
         lastName: name
         username: login
       provider: GITHUB
+
 ###############################################################################
 ## Values of OES Platform
 platform:
   ## Image specific details
   image:
     repository: ubi8-oes-platform
-    tag: v3.10.0
+    tag: v3.10.1
     pullPolicy: IfNotPresent
 
   annotations:
@@ -491,7 +504,7 @@ sapor:
   ## Image specific details
   image:
     repository: ubi8-oes-sapor
-    tag: v3.10.0
+    tag: v3.10.1
     pullPolicy: IfNotPresent
 
   annotations:
@@ -577,20 +590,21 @@ ui:
   ## Image specific details
   image:
     repository: ubi8-oes-ui
-    tag: v3.10.0
+    tag: v3.10.1
     pullPolicy: IfNotPresent
   serviceAnnotations: {}
 
   config:
     ## Interval, in millsecs, at which UI refreshes application dashboard
     setApplicationRefreshInterval: 300000
+
 ###################################################################################
 ## Values of OES Visibility
 visibility:
   ## Image specific details
   image:
     repository: ubi8-oes-visibility
-    tag: v3.10.0
+    tag: v3.10.1
     pullPolicy: IfNotPresent
 
   annotations:
@@ -660,22 +674,22 @@ spinnaker:
   autoInstallSampleApps: true   # Set this to FALSE if upgrading
   # Initialize gitOps style Halyard
   gitopsHalyard:
-    enabled: false
+    enabled: true
     secretName: opsmx-gitops-auth  # No need to change this
     repo:
       type: git # git, s3, stash(bitbucket server) use a different sample values file for s3/bitbuck-stash
       configArgs: "http.sslVerify=false"
       ## Configure below fields only if repo type is git/stash. Skip to s3 section if type is s3
       baseUrlHostName: github.com    # Specify the Base FQDN of your repository without the protocol
-      organization: maheshopsmx
+      organization: OpsMx
       projectName: ""                # Specify project name only if repo is under a project
       repository: standard-gitops-repo # repo name for GitOps Halyard (Sample Reference: https://github.com/OpsMx/sample-gitops-repo.git).
       halConfigBranch: master # Branch under which halyard config is present under above repository
       halConfigPath: / #relative path from repository root folder
-      dynamicAccRepository: oesdemo # Please provide the repo name of the GitOps Dynamic Accounts Directory. Can be same as Hal repo. 
+      dynamicAccRepository: standard-gitops-repo # Please provide the repo name of the GitOps Dynamic Accounts Directory. Can be same as Hal repo. 
       dynAccntConfigPath: dynaccount/ #relative path from repository root folder
-      username: maheshopsmx  # Username to authenticate with git/stash repo
-      token: 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  # Token corresponding to above username
+      username: git/stash_username  # Username to authenticate with git/stash repo
+      token: git/stash_token  # Token corresponding to above username
       ## Configure below fields only if repo type is s3
       s3accesskey: AWS_ACCESS_KEY_ID
       s3secretkey: AWS_SECRET_ACCESS_KEY
@@ -683,7 +697,7 @@ spinnaker:
       s3region: regionofbucket
     # Promote applications and pipelines from one environment to another or take backup
     pipelinePromotion:  # GitHub only,  Not supportd on S3 or Stash
-      enabled: false
+      enabled: true
       type: git  # git, s3, stash
       gitConfig: "git config --global http.sslVerify false"
       organization: project_name  # Also called "project" in some repos

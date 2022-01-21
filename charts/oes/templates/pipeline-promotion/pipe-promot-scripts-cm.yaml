@@ -68,20 +68,25 @@ data:
   git.sh: "#!/bin/bash\nsource scripts/spin.sh\n\ngit_repo=$repo_name\ntempdir=\"/tmp/\"\npull_requred=false\nif
     [[ $git_branch == \"\" ]]\nthen\n  git_branch=\"master\"\nfi\nsetup_git() {\n
     \ echo \"Setting up the Git \"\n  local name=${git_user:-spinnaker}\n  local email=${git_user_email:-spinnaker@symphony.com}\n
-    \ git config --global user.email \"$email\"\n  git config --global user.name \"$name\"\n}\ngit_clone_http()
-    {\n  echo \"cloning $git_project/$git_repo over https\"\n  if [[ $repo_type ==
-    \"git\" || $repo_type == \"bitbucket\" ]]; then\n    clone_result=$(git clone
-    https://$git_user:${git_secret_token}@${git_url}/${git_project}/${git_repo}.git
-    $tempdir/$git_repo)\n  elif [[ $repo_type == \"stash\" ]]; then\n    #statements\n
-    \   if [[ $git_url_port != \"\" ]]; then\n      clone_result=$(git  clone https://$git_user:${git_secret_token}@${git_url}:$git_url_port/scm/${git_project}/$git_repo.git
-    $tempdir/$git_repo)\n    else\n      clone_result=$(git  clone https://$git_user:${git_secret_token}@${git_url}/scm/${git_project}/$git_repo.git
-    $tempdir/$git_repo)\n    fi\n  fi\n  echo $clone_result\n}\ngit_clone_ssh(){\n
-    \ echo \"cloning $git_project/$git_repo over ssh\"\n  if [[ $repo_type == \"git\"
-    || $repo_type == \"bitbucket\" ]]\n  then\n    clone_result=$(git clone git@${git_url}:${git_project}/$git_repo.git
-    $tempdir/$git_repo)\n  elif [[ $repo_type == \"stash\" && $git_url_port != \"\"
-    ]]; then\n    #statements\n    clone_result=$(git clone ssh://git@${git_url}:$git_url_port/${git_project}/$git_repo.git
-    $tempdir/$git_repo )\n  else\n\n    clone_result=$(git clone ssh://git@${git_url}:${git_project}/$git_repo.git
-    $tempdir/$git_repo $tempdir/$git_repo)\n  fi\n  echo $clone_result\n}\n\ngit_add_file()
+    \ git config --global user.email \"$email\"\n  git config --global user.name \"$name\"\n}\nvalidate_clone()
+    {\n\tif [ $? == 0 ]\n\tthen\n\t\techo \"Cloning done ${git_repo}\"\n\telse\n\t\techo
+    \"Cloning failed with repo ${git_repo}, Please check credentials and repo access....\"\n\t\texit
+    5\n\tfi\n}\ngit_clone_http() {\n  echo \"cloning $git_project/$git_repo over https\"\n
+    \ if [[ $repo_type == \"git\" || $repo_type == \"bitbucket\" ]]; then\n    clone_result=$(git
+    clone https://$git_user:${git_secret_token}@${git_url}/${git_project}/${git_repo}.git
+    $tempdir/$git_repo 2> /dev/null)\n    validate_clone\n  elif [[ $repo_type ==
+    \"stash\" ]]; then\n    #statements\n    if [[ $git_url_port != \"\" ]]; then\n
+    \     clone_result=$(git  clone https://$git_user:${git_secret_token}@${git_url}:$git_url_port/scm/${git_project}/$git_repo.git
+    $tempdir/$git_repo 2> /dev/null)\n      validate_clone\n    else\n      clone_result=$(git
+    \ clone https://$git_user:${git_secret_token}@${git_url}/scm/${git_project}/$git_repo.git
+    $tempdir/$git_repo 2> /dev/null)\n      validate_clone\n    fi\n  fi\n  #echo
+    $clone_result\n}\ngit_clone_ssh(){\n  echo \"cloning $git_project/$git_repo over
+    ssh\"\n  if [[ $repo_type == \"git\" || $repo_type == \"bitbucket\" ]]\n  then\n
+    \   clone_result=$(git clone git@${git_url}:${git_project}/$git_repo.git $tempdir/$git_repo
+    2> /dev/null)\n  elif [[ $repo_type == \"stash\" && $git_url_port != \"\" ]];
+    then\n    #statements\n    clone_result=$(git clone ssh://git@${git_url}:$git_url_port/${git_project}/$git_repo.git
+    $tempdir/$git_repo 2> /dev/null)\n  else\n\n    clone_result=$(git clone ssh://git@${git_url}:${git_project}/$git_repo.git
+    $tempdir/$git_repo $tempdir/$git_repo 2> /dev/null)\n  fi\n  #echo $clone_result\n}\n\ngit_add_file()
     {\n  local file=$1\n  git add $file\n}\n\ngit_add_all() {\n  git add $1\n}\ngit_tag_all()
     {\n  git tag -a Backup-$TAGSTAMP -m \"$msg\"\n  git push --tags\n}\n\ngit_delete_file()
     {\n  local file=$1\n  git rm $file\n}\n\ngit_checkout_branch(){\n  all_branches=$(git
