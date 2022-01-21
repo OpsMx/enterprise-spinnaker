@@ -67,7 +67,7 @@ global:
   # Spinnaker Deck URL configuration; url overwhich spinnaker deck will be accessed
   spinDeck:
     protocol: https
-    host: spin.example.ops.com 
+    host: spin.example.ops.com
     #port: 31464
 
     serviceAnnotations: {}
