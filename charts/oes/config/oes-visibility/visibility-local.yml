@@ -4,6 +4,7 @@ spring:
     url: {{ .Values.db.url }}/visibilitydb
     username: {{ .Values.db.username }}
     password: {{ .Values.db.password }}
+    #sslmode: require
 {{- end }}
   visiblity:
     connectors:
@@ -56,4 +57,3 @@ autopilot:
 platform:
   service:
     url: http://oes-platform:8095
-
