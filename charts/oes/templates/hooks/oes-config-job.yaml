@@ -31,6 +31,18 @@ spec:
       - name: {{ .Values.imagePullSecret}}
       {{- end }}
       restartPolicy: OnFailure
+      {{- if .Values.global.nodeSelector }}
+      nodeSelector:
+{{ toYaml .Values.global.nodeSelector | indent 8 }}
+      {{- end }}
+      {{- if .Values.global.affinity }}
+      affinity:
+{{ toYaml .Values.global.affinity | indent 8 }}
+      {{- end }}
+      {{- if .Values.global.tolerations }}
+      tolerations:
+{{ toYaml .Values.global.tolerations | indent 8 }}
+      {{- end }}
       volumes:
       - configMap:
           defaultMode: 420

@@ -63,4 +63,3 @@ logging:
     com.opsmx.platformservice: INFO
     org.springframework.security: INFO
     org.springframework.web: INFO
-

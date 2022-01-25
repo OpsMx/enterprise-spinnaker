@@ -57,4 +57,3 @@ autopilot:
 platform:
   service:
     url: http://oes-platform:8095
-

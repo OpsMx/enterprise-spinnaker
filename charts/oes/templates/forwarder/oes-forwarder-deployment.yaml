@@ -58,6 +58,14 @@ spec:
           limits:
             memory: "128Mi"
             cpu: "250m"
+      {{- if .Values.global.affinity }}
+      affinity:
+{{ toYaml .Values.global.affinity | indent 8 }}
+      {{- end }}
+      {{- if .Values.global.tolerations }}
+      tolerations:
+{{ toYaml .Values.global.tolerations | indent 8 }}
+      {{- end }}
       volumes:
       - name: ca-secret
         secret:

@@ -59,6 +59,11 @@ global:
   ## Set to true to expose oes-ui, oes-gate services over ingress
   createIngress: true
 
+  ## Node Selection rules for all the OES components (db, Autopilot, Sapor, Dashboard, Visibility, Audit, Datascience, Platform, Ui, Forwarder, Gate...) 
+  nodeSelector: {}
+  affinity: {}
+  tolerations: []
+  
   # Spinnaker Deck URL configuration; url overwhich spinnaker deck will be accessed
   spinDeck:
     protocol: https
@@ -165,6 +170,8 @@ global:
       enabled: true
       name: "spinnaker"
     nodeSelector: {}
+    affinity: {}
+    tolerations: []
     persistence:
       enabled: true
       size: 10Gi
@@ -642,6 +649,9 @@ redis:
     port: 6379
     # password: ""
   nodeSelector: {}
+  master:
+    affinity: {}
+    tolerations: []
 
   ## Redis config file
   ## ref: https://redis.io/topics/config
@@ -958,8 +968,8 @@ spinnaker:
   # Ref: https://kubernetes.io/docs/user-guide/node-selection/
   # nodeSelector to provide to each of the Spinnaker components
   nodeSelector: {}
-
-
+  affinity: {}
+  tolerations: []
   # Google Cloud Storage
   gcs:
     enabled: false
@@ -1067,6 +1077,9 @@ openldap:
   adminPassword: opsmxadmin123
   configPassword: opsmxconfig123
   omitClusterIP: true
+  affinity: {}
+  tolerations: []
+
   persistence:
     enabled: false
   env:
@@ -1206,4 +1219,3 @@ kibana:
             sleep 60;
             curl https://raw.githubusercontent.com/OpsMx/enterprise-spinnaker/master/scripts/kibana/kibana_objects.ndjson > /tmp/kibana_objects.ndjson;
             curl -X POST "localhost:5601/api/saved_objects/_import?overwrite=true" -H "kbn-xsrf: true" --form file=@/tmp/kibana_objects.ndjson 2>&1 1> /tmp/postStart.out;
-
