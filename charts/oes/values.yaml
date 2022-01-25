@@ -388,7 +388,7 @@ forwarder:
   externalName: controller.exampleopsmx.net
   image:
     repository: quay.io/opsmxpublic/forwarder-controller
-    tag: v20210722T133815
+    tag: v20211127T114740
     pullPolicy: IfNotPresent
   serviceAnnotations: {}
 ###############################################################################
