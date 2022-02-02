@@ -27,8 +27,8 @@ spec:
     spec:
       volumes:
         - name: autopilot-config-volume
-          configMap:
-            name: oes-autopilot-config
+          secret:
+            secretName: oes-autopilot-config
         - secret:
             items:
             - key: bootstrap.yml

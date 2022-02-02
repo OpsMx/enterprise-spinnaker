@@ -2,14 +2,14 @@
 spring:
   datasource:
     url: {{ .Values.db.url }}/platformdb
-    username: {{ .Values.db.username }}
-    password: {{ .Values.db.password }}
-ldap.managerPassword: {{ .Values.global.ldap.managerPassword }}
+    username: '{{ .Values.db.username }}'
+    password: '{{ .Values.db.password }}'
+ldap.managerPassword: '{{ .Values.global.ldap.managerPassword }}'
 redis:
     connection: {{ template "spinnaker.redisBaseURL" . }}
 #datasource.url: {{ .Values.db.url }}/visibilitydb
-#postgres.password: {{ .Values.db.password }}
-#postgres.username: {{ .Values.db.username }}
+#postgres.password: '{{ .Values.db.password }}'
+#postgres.username: '{{ .Values.db.username }}'
 {{- end }}
 
 datasource:

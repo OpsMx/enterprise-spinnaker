@@ -80,12 +80,11 @@ spec:
             path: cacerts
       {{- end }}
       volumes:
-      - configMap:
-          defaultMode: 420
+      - secret:
           items:
           - key: audit-local.yml
             path: audit-local.yml
-          name: oes-audit-service-config
+          secretName: oes-audit-service-config
         name: audit-config-volume
       - name: bootstrap-config-volume
         secret:

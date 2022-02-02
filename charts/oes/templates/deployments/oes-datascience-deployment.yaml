@@ -73,8 +73,7 @@ spec:
           - key: cacerts
             path: cacerts
       {{- end }}
-      - configMap:
-          defaultMode: 420
-          name: oes-datascience-config
+      - secret:
+          secretName: oes-datascience-config
         name: datascience-config-volume
 {{- end -}}

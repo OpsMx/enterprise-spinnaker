@@ -2,8 +2,8 @@ spring:
   datasource:
 {{- if (eq .Values.secretStore "db") }}
     url: {{ .Values.db.url }}/oesdb
-    username: {{ .Values.db.username }}
-    password: {{ .Values.db.password }}
+    username: '{{ .Values.db.username }}'
+    password: '{{ .Values.db.password }}'
 {{- end }}
 
 secretManagement:

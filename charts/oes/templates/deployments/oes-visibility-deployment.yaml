@@ -94,8 +94,8 @@ spec:
             path: cacerts
       {{- end }}
       - name: visibility-config
-        configMap:
-          name: oes-visibility-config
+        secret:
+          secretName: oes-visibility-config
       - secret:
           items:
           - key: bootstrap.yml
