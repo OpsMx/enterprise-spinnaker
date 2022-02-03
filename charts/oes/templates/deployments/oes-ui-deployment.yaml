@@ -47,7 +47,8 @@ spec:
           protocol: TCP
         volumeMounts:
         - name: config-dir
-          mountPath: /var/www/html/assets/config
+          mountPath: /var/www/html/assets/config/app-config.json
+          subPath: app-config.json
         - mountPath: /etc/nginx/nginx.conf
           name: nginx-config
           subPath: nginx.conf
