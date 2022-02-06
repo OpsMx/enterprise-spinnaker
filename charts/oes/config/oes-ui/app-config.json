@@ -4,5 +4,6 @@
 {{- else }}
     "endPointUrl": "{{ .Values.global.oesGate.protocol }}://{{ .Values.global.oesGate.host }}/",
 {{- end }}
-    "setApplicationInterval": {{ .Values.ui.config.setApplicationRefreshInterval }}
+    "setApplicationInterval": {{ .Values.ui.config.setApplicationRefreshInterval }},
+    "triggerPipeline": false
 }
