@@ -49,6 +49,9 @@ spec:
         - name: config-dir
           mountPath: /var/www/html/assets/config/app-config.json
           subPath: app-config.json
+        - name: config-dir
+          mountPath: /var/www/html/assets/config/help-text.json
+          subPath: help-text.json
         - mountPath: /etc/nginx/nginx.conf
           name: nginx-config
           subPath: nginx.conf

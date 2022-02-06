@@ -237,7 +237,7 @@ autopilot:
   ## Image specific details
   image:
     repository: ubi8-oes-autopilot
-    tag: v3.10.1
+    tag: v3.11.0
     pullPolicy: IfNotPresent
 
   annotations:
@@ -269,7 +269,7 @@ audit:
   ##
   image:
     repository: ubi8-oes-audit-service
-    tag: v3.10.1
+    tag: v3.11.0
     pullPolicy: IfNotPresent
 
   serviceAnnotations: {}
@@ -290,7 +290,7 @@ auditClient:
   ##
   image:
     repository: ubi8-oes-audit-client
-    tag: v3.10.1
+    tag: v3.11.0
     pullPolicy: IfNotPresent
 
   serviceAnnotations: {}
@@ -311,7 +311,7 @@ datascience:
   ##
   image:
     repository: ubi8-oes-datascience
-    tag: v3.10.1
+    tag: v3.11.0
     pullPolicy: IfNotPresent
 
   serviceAnnotations: {}
@@ -329,7 +329,7 @@ dashboard:
   ## Image specific details
   image:
     repository: ubi8-oes-dashboard
-    tag: v3.10.1
+    tag: v3.11.0
     pullPolicy: IfNotPresent
 
   annotations:
@@ -379,7 +379,7 @@ gate:
   ## Image specific details
   image:
     repository: ubi8-gate
-    tag: v3.10.1
+    tag: v3.11.0
     pullPolicy: IfNotPresent
 
   serviceAnnotations: {}
@@ -453,7 +453,7 @@ platform:
   ## Image specific details
   image:
     repository: ubi8-oes-platform
-    tag: v3.10.1
+    tag: v3.11.0
     pullPolicy: IfNotPresent
 
   annotations:
@@ -493,8 +493,10 @@ rabbitmq:
   ## url: default port 5672
   url: rabbitmq-service
   port: 5672
+  username: rabbitmq
+  password: Networks123
   image:
-    registry: docker.io/rabbitmq
+    registry: quay.io/opsmxpublic/rabbitmq
     repository: 3-management
   serviceAnnotations: {}
 
@@ -504,7 +506,7 @@ sapor:
   ## Image specific details
   image:
     repository: ubi8-oes-sapor
-    tag: v3.10.1
+    tag: v3.11.0
     pullPolicy: IfNotPresent
 
   annotations:
@@ -590,7 +592,7 @@ ui:
   ## Image specific details
   image:
     repository: ubi8-oes-ui
-    tag: v3.10.1
+    tag: v3.11.0
     pullPolicy: IfNotPresent
   serviceAnnotations: {}
 
@@ -604,7 +606,7 @@ visibility:
   ## Image specific details
   image:
     repository: ubi8-oes-visibility
-    tag: v3.10.1
+    tag: v3.11.0
     pullPolicy: IfNotPresent
 
   annotations:
@@ -825,6 +827,7 @@ spinnaker:
               service: ldap
               ldap:
                 url: ldap://RELEASE_NAME-openldap:389
+
                 managerDn: cn=admin,dc=example,dc=org
                 managerPassword: opsmxadmin123
                 groupSearchBase: ou=groups,dc=example,dc=org
@@ -1219,3 +1222,4 @@ kibana:
             sleep 60;
             curl https://raw.githubusercontent.com/OpsMx/enterprise-spinnaker/master/scripts/kibana/kibana_objects.ndjson > /tmp/kibana_objects.ndjson;
             curl -X POST "localhost:5601/api/saved_objects/_import?overwrite=true" -H "kbn-xsrf: true" --form file=@/tmp/kibana_objects.ndjson 2>&1 1> /tmp/postStart.out;
+
