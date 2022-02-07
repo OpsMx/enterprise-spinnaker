@@ -1,3 +1,7 @@
+policy:
+  opa:
+    enabled: true
+    url: http://oes-sapor:8085
 pollers:
   oldPipelineCleanup:
     enabled: true                  # This enables old pipeline execution cleanup (default: false)
@@ -372,6 +376,10 @@ spinnaker:
         version: 1.0.1
         config:
       Opsmx.PolicyGatePlugin:
+        enabled: true
+        version: 1.0.1
+        config:
+      Opsmx.RbacPlugin:
         enabled: true
         version: 1.0.1
         config:
