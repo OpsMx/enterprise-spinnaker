@@ -439,22 +439,22 @@ data:
     \"0\" && \"$ignore_errors\" == \"true\" ]]; then\n                echo \"ERROR:
     spin pipeline save --file $pipeLine.json, continuing\"\n                continue\n
     \           fi\n           sleep 5 # Slow it down\n         done < pipelines_in_application.list\n
-    \    fi\n     cd ..\n  done\n\n}\nget_pipelines_data(){\n\t      #spinnaker_app=$spinnaker_applications\n\t
-    \     echo $1 \t\n\tlocal  spinnaker_app=$1\n        IFS=',' read -r -a spinnaker_app_array
-    <<< \"$spinnaker_app\"\n        spinnaker_pipe=$spinnaker_pipelines\n        #IFS=','
-    read -r -a spinnaker_pipe_array <<< \"k8s-deploy\"\n        IFS=',' read -r -a
-    spinnaker_pipe_array <<< \"$spinnaker_pipe\"\n\n\t\t\t\tif [[ $root_folder ==
-    \"\" ]]; then\n\t\t\t\t\troot_folder=\".\"\n\t\t\t\tfi\n        for (( m=0; m<${#spinnaker_app_array[@]};
-    m++ )); do\n     sourceApp=${spinnaker_app_array[$m]}\n     echo -e \"Processing
-    application $sourceApp\\n\"\n\n\t\t echo \"get pipelines data $root_folder\"\n
-    \    mkdir -p $tempdir/$git_repo/${root_folder}/$sourceApp ; cd $tempdir/$git_repo/${root_folder}/$sourceApp
-    \             # Get into the correct directory\n\n     get_app_pipelines $sourceApp\n
-    \    spin application get $sourceApp  > $sourceApp.json\n     if [ \"$?\" != \"0\"
-    ]; then\n         echo \"ERROR: spin application get $sourceApp\"\n         return
-    1\n     fi\n     if [[ ${#spinnaker_pipe_array[@]} > 0 ]]; then\n         for
-    (( p=0; p<${#spinnaker_pipe_array[@]}; p++ )); do\n            pipeLine=${spinnaker_pipe_array[$p]}\n
-    \           echo -e \"    Processing pipeline $pipeLine\\n\"\n            # Check
-    if pipeline exists\n            existingPipe=`grep \\^${pipeLine}\\$ pipelines_in_application.list`\n
+    \    fi\n     cd ..\n  done\n\n}\nget_pipelines_data(){\n\techo $1 \t\n\tlocal
+    \ spinnaker_app=$1\n        IFS=',' read -r -a spinnaker_app_array <<< \"$spinnaker_app\"\n
+    \       spinnaker_pipe=$spinnaker_pipelines\n        #IFS=',' read -r -a spinnaker_pipe_array
+    <<< \"k8s-deploy\"\n        IFS=',' read -r -a spinnaker_pipe_array <<< \"$spinnaker_pipe\"\n\n\t\t\t\tif
+    [[ $root_folder == \"\" ]]; then\n\t\t\t\t\troot_folder=\".\"\n\t\t\t\tfi\n        for
+    (( m=0; m<${#spinnaker_app_array[@]}; m++ )); do\n     sourceApp=${spinnaker_app_array[$m]}\n
+    \    echo -e \"Processing application $sourceApp\\n\"\n\n\t\t echo \"get pipelines
+    data $root_folder\"\n     mkdir -p $tempdir/$git_repo/${root_folder}/$sourceApp
+    ; cd $tempdir/$git_repo/${root_folder}/$sourceApp              # Get into the
+    correct directory\n\n     get_app_pipelines $sourceApp\n     spin application
+    get $sourceApp  > $sourceApp.json\n     if [ \"$?\" != \"0\" ]; then\n         echo
+    \"ERROR: spin application get $sourceApp\"\n         return 1\n     fi\n     if
+    [[ ${#spinnaker_pipe_array[@]} > 0 ]]; then\n         for (( p=0; p<${#spinnaker_pipe_array[@]};
+    p++ )); do\n            pipeLine=${spinnaker_pipe_array[$p]}\n            echo
+    -e \"    Processing pipeline $pipeLine\\n\"\n            # Check if pipeline exists\n
+    \           existingPipe=`grep \\^${pipeLine}\\$ pipelines_in_application.list`\n
     \           if [[ \"$existingPipe\" == \"${pipeLine}\" ]]; then\n               spin
     pipeline get --application $sourceApp  --name \"$pipeLine\" > \"$pipeLine.json\"\n\n
     \              if [ \"$?\" != \"0\" ]; then\n                   echo \"ERROR:
