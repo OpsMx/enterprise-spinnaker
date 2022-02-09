@@ -53,8 +53,12 @@ data:
     5\n        merge_pr_bitbucket\n      fi\n    else\n      create_pr_bitbucket\n
     \     if [[ $auto_merge == \"true\" ]]; then\n        approve_pr_bitbucket\n        sleep
     5\n        merge_pr_bitbucket\n      fi\n    fi\n  fi\n}\n"
-  deployer.sh: "#!/bin/bash\n#set -x \necho \"In deployer.sh\"\nSBASE=scripts\nsource
-    config/repo.properties\nsource $SBASE/spin.sh\nsource $SBASE/stash.sh\nsource
+  deployer.sh: "#!/bin/bash\necho \"In deployer.sh\"\nSBASE=scripts\nsource config/repo.properties\nBRANCH_NAME_UI=$(echo
+    $branch_ui | sed 's/[][]//g')\necho $BRANCH_NAME_UI\nif [ -z \"$BRANCH_NAME_UI\"
+    ]\n        then\n           echo \"Not Provided the Branch in the spinnaker UI....Continuing
+    with the default branch sprcified in configmap\"\n           echo $git_branch\n
+    else\n      echo \"Provided the User defined Branch in spinnaker UI\"\n      git_branch=$BRANCH_NAME_UI\n
+    \     echo $git_branch\nfi\nsource $SBASE/spin.sh\nsource $SBASE/stash.sh\nsource
     $SBASE/s3.sh\nsource $SBASE/github.sh\nsource $SBASE/bitbucket.sh\necho \"Sourcing
     complete\"\nsync_repo_from_spinnaker(){\n\tif [[ $repo_type = \"s3\" ]];\n \tthen\n\t
     \  upload_spin_to_s3\n\telif [[ $repo_type = \"stash\" ]]; then\n\t\tsync_spin_to_stash\n
@@ -80,10 +84,12 @@ data:
     $tempdir/$git_repo 2> /dev/null)\n      validate_clone\n    else\n      clone_result=$(git
     \ clone https://$git_user:${git_secret_token}@${git_url}/scm/${git_project}/$git_repo.git
     $tempdir/$git_repo 2> /dev/null)\n      validate_clone\n    fi\n  fi\n  #echo
-    $clone_result\n}\ngit_clone_ssh(){\n  echo \"cloning $git_project/$git_repo over
-    ssh\"\n  if [[ $repo_type == \"git\" || $repo_type == \"bitbucket\" ]]\n  then\n
-    \   clone_result=$(git clone git@${git_url}:${git_project}/$git_repo.git $tempdir/$git_repo
-    2> /dev/null)\n  elif [[ $repo_type == \"stash\" && $git_url_port != \"\" ]];
+    $clone_result\n}\nload_ssh(){\n\tmkdir /home/opsmx/.ssh\n\tcp /etc/git-secret/git_secret_sshkey
+    ~/.ssh/id_rsa\n\tchmod 400 ~/.ssh/id_rsa\n\tssh-keyscan github.com >> ~/.ssh/known_hosts\n}\ngit_clone_ssh(){\n
+    \ echo \"cloning $git_project/$git_repo over ssh\"\n  if [[ $repo_type == \"git\"
+    || $repo_type == \"bitbucket\" ]]\n  then\n\t  load_ssh\n\t  clone_result=$(git
+    clone git@${git_url}:${git_project}/$git_repo.git $tempdir/$git_repo 2> /dev/null)\n\t
+    \ validate_clone\n  elif [[ $repo_type == \"stash\" && $git_url_port != \"\" ]];
     then\n    #statements\n    clone_result=$(git clone ssh://git@${git_url}:$git_url_port/${git_project}/$git_repo.git
     $tempdir/$git_repo 2> /dev/null)\n  else\n\n    clone_result=$(git clone ssh://git@${git_url}:${git_project}/$git_repo.git
     $tempdir/$git_repo $tempdir/$git_repo 2> /dev/null)\n  fi\n  #echo $clone_result\n}\n\ngit_add_file()
@@ -433,12 +439,12 @@ data:
     \"0\" && \"$ignore_errors\" == \"true\" ]]; then\n                echo \"ERROR:
     spin pipeline save --file $pipeLine.json, continuing\"\n                continue\n
     \           fi\n           sleep 5 # Slow it down\n         done < pipelines_in_application.list\n
-    \    fi\n     cd ..\n  done\n\n}\nget_pipelines_data(){\n\techo $1 \n\tlocal  spinnaker_app=$1\n
-    \       IFS=',' read -r -a spinnaker_app_array <<< \"$spinnaker_app\"\n        spinnaker_pipe=$spinnaker_pipelines\n
-    \       #IFS=',' read -r -a spinnaker_pipe_array <<< \"k8s-deploy\"\n        IFS=','
-    read -r -a spinnaker_pipe_array <<< \"$spinnaker_pipe\"\n\n\t\t\t\tif [[ $root_folder
-    == \"\" ]]; then\n\t\t\t\t\troot_folder=\".\"\n\t\t\t\tfi\n        for (( m=0;
-    m<${#spinnaker_app_array[@]}; m++ )); do\n     sourceApp=${spinnaker_app_array[$m]}\n
+    \    fi\n     cd ..\n  done\n\n}\nget_pipelines_data(){\n\techo $1 \t\n\tlocal
+    \ spinnaker_app=$1\n        IFS=',' read -r -a spinnaker_app_array <<< \"$spinnaker_app\"\n
+    \       spinnaker_pipe=$spinnaker_pipelines\n        #IFS=',' read -r -a spinnaker_pipe_array
+    <<< \"k8s-deploy\"\n        IFS=',' read -r -a spinnaker_pipe_array <<< \"$spinnaker_pipe\"\n\n\t\t\t\tif
+    [[ $root_folder == \"\" ]]; then\n\t\t\t\t\troot_folder=\".\"\n\t\t\t\tfi\n        for
+    (( m=0; m<${#spinnaker_app_array[@]}; m++ )); do\n     sourceApp=${spinnaker_app_array[$m]}\n
     \    echo -e \"Processing application $sourceApp\\n\"\n\n\t\t echo \"get pipelines
     data $root_folder\"\n     mkdir -p $tempdir/$git_repo/${root_folder}/$sourceApp
     ; cd $tempdir/$git_repo/${root_folder}/$sourceApp              # Get into the
