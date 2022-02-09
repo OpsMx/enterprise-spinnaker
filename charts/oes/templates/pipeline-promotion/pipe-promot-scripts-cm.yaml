@@ -71,7 +71,7 @@ data:
     \"ERROR: unknown command\"\n\nfi\necho \"Done executing\"\n"
   git.sh: "#!/bin/bash\nsource scripts/spin.sh\n\ngit_repo=$repo_name\ntempdir=\"/tmp/\"\npull_requred=false\nif
     [[ $git_branch == \"\" ]]\nthen\n  git_branch=\"master\"\nfi\nsetup_git() {\n
-    \ echo \"Setting up the Git \"\n  local name=${git_user:-spinnaker}\n  local email=${git_user_email:-spinnaker@symphony.com}\n
+    \ echo \"Setting up the Git \"\n  local name=${git_user:-spinnaker}\n  local email=${git_user_email:-phani@opsmx.io}\n
     \ git config --global user.email \"$email\"\n  git config --global user.name \"$name\"\n}\nvalidate_clone()
     {\n\tif [ $? == 0 ]\n\tthen\n\t\techo \"Cloning done ${git_repo}\"\n\telse\n\t\techo
     \"Cloning failed with repo ${git_repo}, Please check credentials and repo access....\"\n\t\texit
