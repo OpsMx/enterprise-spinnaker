@@ -1,11 +1,7 @@
-Steps to migrate from v3.9.x to v3.10
+1. Goto location /opsmx/workdir/datamigration in platform container
+2. You will find a file named : migration_v3.9x_to_v3.10.py
+3. Run the below command to execute the script.
 
-1. Copy the file : migration_v3.9.x_to_v3.10.py to some path in platform pod.
-2. Run the below command to execute the script.
+	python3 <scriptfilename>  <visibility-db-name> <visibility-db-host> <platform-db-name> <platform-db-host> <opsmx-db-name> <opsmx-db-host> <db-port> <oes-db-name> <oes-db-host> <audit_db-name> <audit_db_host> <db-port> <url>(Spinnaker gate URL) <session_id>(configured spinnaker active session Id)
 
-	python3 <scriptfilename>  <visibility-db-name> <visibility-db-host> <platform-db-name> <platform-db-host> <opsmx-db-name> <opsmx-db-host> <db-port> <oes-db-name> <oes-db-host> <audit_db-name> <audit_db_host> <db-port> <session_id>(configured spinnaker active session Id)
-
-	Replace  <scriptfilename>  <visibility-db-name> <visibility-db-host> <platform-db-name> <platform-db-host> <opsmx-db-name> <opsmx-db-host> <db-port> <oes-db-name> <oes-db-host> <audit_db-name> <audit_db_host> <db-port> <session_id>   with valid values
-
-	Ex: 	 python3 migration_v3.9.x_to_v3.10.py visibilitydb oes-db platformdb oes-db opsmx oes-db oesdb oes-db auditdb oes-db 5432 SESSION=OTY0ZDYwMmMtOTBkNC00ZTdmLWE2ODgtMDlmMGQ4NmVhZDBk
-
+    ex: python3 migration_v3.9.x_to_v3.10.py visibilitydb oes-db platformdb oes-db opsmx oes-db oesdb oes-db auditdb oes-db 5432  https://gitops-test-spin-gate.dev.opsmx.net SESSION=OTY0ZDYwMmMtOTBkNC00ZTdmLWE2ODgtMDlmMGQ4NmVhZDBk
