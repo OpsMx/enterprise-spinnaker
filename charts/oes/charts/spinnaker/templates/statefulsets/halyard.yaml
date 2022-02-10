@@ -37,14 +37,10 @@ spec:
       tolerations:
 {{ toYaml .Values.tolerations | indent 8 }}
     {{- end }}
-    {{- if .Values.affinity }}
-      affinity:
-{{ toYaml .Values.affinity | indent 8 }}
-    {{- end }}
       initContainers:
       {{- if .Values.gitopsHalyard.repo.sshkeysecret }}
       - image: k8s.gcr.io/git-sync:v3.1.6
-        name: git-sync-ssh
+        name: git-sync-sidecar
         args:
           - "-repo=git@{{ .Values.gitopsHalyard.repo.baseUrlHostName }}:{{ .Values.gitopsHalyard.repo.organization }}/{{ .Values.gitopsHalyard.repo.repository }}"
           - "-branch={{ .Values.gitopsHalyard.repo.halConfigBranch }}"
@@ -142,6 +138,11 @@ spec:
               key: s3region
         {{- end }}
         volumeMounts:
+        {{- if .Values.gitopsHalyard.repo.sshkeysecret }}
+        - mountPath: /etc/git-secret
+          name: ssh-secret
+          readOnly: true
+        {{- end }}
         - name: halyard-config
           mountPath: /tmp/config
         - name: service-settings
@@ -320,6 +321,12 @@ spec:
           items:
           - key: cacerts
             path: cacerts
+      {{- end }}
+      {{- if .Values.gitopsHalyard.repo.sshkeysecret }}
+      - name: ssh-secret
+        secret:
+          secretName: {{ .Values.gitopsHalyard.repo.sshsecretName }}
+          defaultMode: 0400
       {{- end }}
       {{- if .Values.halyard.image.pullSecrets }}
       imagePullSecrets:
