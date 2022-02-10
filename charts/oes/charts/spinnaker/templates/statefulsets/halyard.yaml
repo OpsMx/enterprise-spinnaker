@@ -42,6 +42,36 @@ spec:
 {{ toYaml .Values.affinity | indent 8 }}
     {{- end }}
       initContainers:
+      {{- if .Values.gitopsHalyard.repo.sshkeysecret }}
+      - image: k8s.gcr.io/git-sync:v3.1.6
+        name: git-sync-sidecar
+        args:
+          - "-repo=git@{{ .Values.gitopsHalyard.repo.baseUrlHostName }}:{{ .Values.gitopsHalyard.repo.organization }}/{{ .Values.gitopsHalyard.repo.repository }}"
+          - "-branch={{ .Values.gitopsHalyard.repo.halConfigBranch }}"
+          - "-depth=1"
+          - "-max-sync-failures=-1"
+          - "-root=/tmp/spinnaker/"
+          - "-dest=test"
+          - "-wait=60"
+          - "-ssh=true"
+          - "-one-time=true"
+        volumeMounts:
+        - name: ssh-secret
+          mountPath: /etc/git-secret
+          readOnly: true
+        - mountPath: /tmp/config
+          name: halyard-config
+        - mountPath: /tmp/service-settings
+          name: service-settings
+        - mountPath: /tmp/spinnaker
+          name: halyard-home
+        - mountPath: /tmp/additionalProfileConfigMaps
+          name: additional-profile-config-maps
+        - mountPath: /tmp/initscript
+          name: halyard-initscript
+        securityContext:
+          runAsUser: 65533 # git-sync-user
+      {{- end }}
       - name: "create-halyard-local"
       {{- if .Values.gitopsHalyard.enabled }}
         image: {{ .Values.global.customImages.registry }}/awsgit:v2
