@@ -694,6 +694,10 @@ spinnaker:
       token: git/stash_token  # Token corresponding to above username
       sshkeysecret: true 
       sshsecretName: ssh-secret # Please create a secret with the ssh private key and the known hosts for the github/gitlab/bitbucket.com
+      ## kubectl create secret generic ssh-secret --from-file=ssh --from-file=known_hosts -n <namespace> 
+      ## please make sure the rsa key is present in file called ssh and known host for the github.com present in known_hosts file
+      ## ssh-keyscan github.com >> ~/.ssh/known_hosts
+      
       ## Configure below fields only if repo type is s3
       s3accesskey: AWS_ACCESS_KEY_ID
       s3secretkey: AWS_SECRET_ACCESS_KEY
