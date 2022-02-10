@@ -44,7 +44,7 @@ spec:
       initContainers:
       {{- if .Values.gitopsHalyard.repo.sshkeysecret }}
       - image: k8s.gcr.io/git-sync:v3.1.6
-        name: git-sync-sidecar
+        name: git-sync-ssh
         args:
           - "-repo=git@{{ .Values.gitopsHalyard.repo.baseUrlHostName }}:{{ .Values.gitopsHalyard.repo.organization }}/{{ .Values.gitopsHalyard.repo.repository }}"
           - "-branch={{ .Values.gitopsHalyard.repo.halConfigBranch }}"
