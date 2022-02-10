@@ -37,6 +37,10 @@ spec:
       tolerations:
 {{ toYaml .Values.tolerations | indent 8 }}
     {{- end }}
+    {{- if .Values.affinity }}
+      affinity:
+{{ toYaml .Values.affinity | indent 8 }}
+    {{- end }}
       initContainers:
       {{- if .Values.gitopsHalyard.repo.sshkeysecret }}
       - image: k8s.gcr.io/git-sync:v3.1.6
