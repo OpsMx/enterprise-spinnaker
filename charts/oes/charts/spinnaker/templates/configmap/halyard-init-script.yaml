@@ -50,23 +50,33 @@ data:
     {{- if or (eq .Values.gitopsHalyard.repo.type "git") (eq .Values.gitopsHalyard.repo.type "stash") }}
     #!/bin/bash -x
     rm -rf /tmp/spinnaker/.hal
+    {{- if not .Values.gitopsHalyard.repo.sshkeysecret }}
+    GIT_USER=`echo $GIT_USER | sed 's/ *$//g'`
+    GIT_TOKEN=`echo $GIT_TOKEN | sed 's/ *$//g'`
     git -c {{ .Values.gitopsHalyard.repo.configArgs }} clone $GIT_CLONE_PARAM -b {{ .Values.gitopsHalyard.repo.halConfigBranch}} /tmp/spinnaker/test
+    {{- end }}
     cp -pr /tmp/spinnaker/test/{{ .Values.gitopsHalyard.repo.halConfigPath }} /tmp/spinnaker/.hal
     if [ -d "/tmp/spinnaker/test/pipeline-promotion/" ]
     then
        cp -pr /tmp/spinnaker/test/pipeline-promotion /tmp/spinnaker/pipeline-promotion
     fi
     rm -rf /tmp/spinnaker/test
-    GIT_USER=`echo $GIT_USER | sed 's/ *$//g'`
-    GIT_TOKEN=`echo $GIT_TOKEN | sed 's/ *$//g'`
     DYNAMIC_ACCOUNTS_REPO=`echo $DYNAMIC_ACCOUNTS_REPO | sed 's/ *$//g'`
     sed -i  s/SPINNAKER_NAMESPACE/${SPINNAKER_NAMESPACE}/ /tmp/spinnaker/.hal/config
     sed -i  s/RELEASE_NAME/{{ .Release.Name }}/g /tmp/spinnaker/.hal/config
     {{- if .Values.gitopsHalyard.environment }}
     sed -i  s/ENVIRONMENT/{{ .Values.gitopsHalyard.environment }}/g /tmp/spinnaker/.hal/config
     {{- end }}
+    {{- if .Values.gitopsHalyard.repo.sshkeysecret }}
+    mv /tmp/spinnaker/.hal/default/profiles/spinnakerconfig.yml.ssh /tmp/spinnaker/.hal/default/profiles/spinnakerconfig.yml
+    cat /etc/git-secret/ssh | sed 's/^/                       /' > /tmp/spinnaker/_temp
+    cd /tmp/spinnaker/
+    sed -i.bak '/|/r _temp' /tmp/spinnaker/.hal/default/profiles/spinnakerconfig.yml
+    DYNAMIC_ACCOUNTS_REPO=git@{{ .Values.gitopsHalyard.repo.baseUrlHostName }}:{{ .Values.gitopsHalyard.repo.organization }}/{{ .Values.gitopsHalyard.repo.dynamicAccRepository }}.git
+    {{- else }}
     sed -i  s/GIT_USER/${GIT_USER}/g /tmp/spinnaker/.hal/default/profiles/spinnakerconfig.yml
     sed -i  s/GIT_TOKEN/${GIT_TOKEN}/g /tmp/spinnaker/.hal/default/profiles/spinnakerconfig.yml
+    {{- end }}
     sed -i  's|DYNAMIC_ACCOUNTS_REPO|'"${DYNAMIC_ACCOUNTS_REPO}"'|' /tmp/spinnaker/.hal/default/profiles/spinnakerconfig.yml
     sed -i  s%DYN_ACCNT_CONFG_PATH%{{ .Values.gitopsHalyard.repo.dynAccntConfigPath }}%g /tmp/spinnaker/.hal/default/profiles/spinnakerconfig.yml
     sed -i  s/RELEASE_NAME/{{ .Release.Name }}/g /tmp/spinnaker/.hal/default/service-settings/redis.yml
