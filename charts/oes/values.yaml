@@ -717,6 +717,8 @@ spinnaker:
       baseUrl: example.repo.com  #  "git_url"
       username: username
       token: token
+      ##SSH key based comminication, sshkey is passed in the secret after helm installation edit secret "git-token" and pass BASE64 encoded id_rsa to git_secret_sshkey
+      ##make sure make empty value for "git_secret_token" in the secret if using SSH
       branch: samplerepo
       usermail: krish@company.com
       #password="K438"   ### Token is preferred, Password also might work, try your luck
