@@ -1034,7 +1034,7 @@ spinnaker:
   ## Here basic ldap auth is used by default; everything under spinCli will be pasted in ~/.spin/config
   spinCli:
     gate:
-      endpoint: http://spin-gate:8084 # URL that needs to be used to talk to spinnaker gate and create sample pipelines
+      endpoint: http://sapor-gate:8084 # URL that needs to be used to talk to spinnaker gate and create sample pipelines
     auth:
       enabled: true
       basic:
