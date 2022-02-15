@@ -410,9 +410,9 @@ gate:
     #####################################################
     # keytool -genkey -v -keystore oessaml.jks -alias saml -keyalg RSA -keysize 2048 -validity 10000
     # oessaml.jks and oesmetadata.xml are mounted as secrets, create them as follows
-    # kubectl create secret generic oesmetadataxml --from-file=oesmetadata.xml
-    # kubectl create secret generic oessamljks --from-file=oessaml.jks
-    # kubectl create secret generic samljks-password --from-literal password=changeit 
+    # kubectl create secret generic oesmetadataxml --from-file=oesmetadata.xml -n <NAMESPCAE>
+    # kubectl create secret generic oessamljks --from-file=oessaml.jks -n <NAMESPCAE>
+    # kubectl create secret generic samljks-password --from-literal password=changeit -n <NAMESPCAE>
     saml:
       enabled: false
       userSource: gate  # Groups will be obtained from SAML
@@ -719,6 +719,8 @@ spinnaker:
       baseUrl: example.repo.com  #  "git_url"
       username: username
       token: token
+      ##SSH key based comminication, sshkey is passed in the secret after helm installation edit secret "git-token" and pass BASE64 encoded id_rsa to git_secret_sshkey
+      ##make sure make empty value for "git_secret_token" in the secret if using SSH
       branch: samplerepo
       usermail: krish@company.com
       #password="K438"   ### Token is preferred, Password also might work, try your luck
