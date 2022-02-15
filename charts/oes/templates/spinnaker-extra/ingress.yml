@@ -31,7 +31,7 @@ spec:
   tls:
   - hosts:
     - {{ .Values.spinnaker.ingress.host }}
-    secretName: ui-{{ .Release.Name }}-tls
+    secretName: spinnaker-deck-ingress
 ---
 apiVersion: networking.k8s.io/v1
 kind: Ingress
@@ -78,6 +78,6 @@ spec:
   tls:
   - hosts:
     - {{ .Values.spinnaker.ingressGate.host }}
-    secretName: api-{{ .Release.Name }}-tls
+    secretName: spinnaker-gate-ingress
 {{- end }}
 {{- end }}
