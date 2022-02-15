@@ -690,6 +690,12 @@ spinnaker:
       dynAccntConfigPath: dynaccount/ #relative path from repository root folder
       username: git/stash_username  # Username to authenticate with git/stash repo
       token: git/stash_token  # Token corresponding to above username
+      sshkeysecret: true 
+      sshsecretName: ssh-secret # Please create a secret with the ssh private key and the known hosts for the github/gitlab/bitbucket.com
+      ## kubectl create secret generic ssh-secret --from-file=ssh --from-file=known_hosts -n <namespace> 
+      ## please make sure the rsa key is present in file called ssh and known host for the github.com present in known_hosts file
+      ## ssh-keyscan github.com >> ~/.ssh/known_hosts
+
       ## Configure below fields only if repo type is s3
       s3accesskey: AWS_ACCESS_KEY_ID
       s3secretkey: AWS_SECRET_ACCESS_KEY
@@ -711,6 +717,8 @@ spinnaker:
       baseUrl: example.repo.com  #  "git_url"
       username: username
       token: token
+      ##SSH key based comminication, sshkey is passed in the secret after helm installation edit secret "git-token" and pass BASE64 encoded id_rsa to git_secret_sshkey
+      ##make sure make empty value for "git_secret_token" in the secret if using SSH
       branch: samplerepo
       usermail: krish@company.com
       #password="K438"   ### Token is preferred, Password also might work, try your luck
