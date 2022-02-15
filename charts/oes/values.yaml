@@ -117,7 +117,7 @@ global:
       annotations:
         kubernetes.io/ingress.class: nginx
       tls:
-        secretName: oes-ui-ingress
+        secretName: oes-gate-ingress
 
   ###############################################################################
   # A trial LDAP is installed by default, with users: admin, user1,2,3 with user1password, user2pa...
