@@ -44,7 +44,7 @@ spec:
       initContainers:
       - name: "create-halyard-local"
       {{- if .Values.gitopsHalyard.enabled }}
-        image: {{ .Values.global.customImages.registry }}/awsgit:v2
+        image: {{ .Values.global.customImages.registry }}/awsgit:v2-openssh
       {{- else }}
         image: {{ .Values.halyard.image.repository }}:{{ .Values.halyard.image.tag }}
       {{- end }}
