@@ -21,7 +21,7 @@ POSTGRES:
       DB: autopilotqueue
 
 RABBITMQ:
-      USERNAME: 'guest'
-      PASSWORD: 'guest'
+      USERNAME: 'rabbitmq'
+      PASSWORD: 'Networks123'
       HOST: rabbitmq-service
       PORT: 5672

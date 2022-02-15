@@ -175,6 +175,14 @@ data:
     $HAL_COMMAND config security authn ldap disable
     {{- end }}
 
+    # Enable Authorization 
+    {{- if .Values.global.commonGate.spinnakerRBAC }}
+    $HAL_COMMAND config security authz enable
+    {{- else }}
+    $HAL_COMMAND config security authz disable
+    {{- end }}
+
+
     # Use Deck to route to Gate
     {{- if not .Values.gitopsHalyard.enabled }}
     # Configure override urls in halyard config

@@ -104,7 +104,7 @@ global:
       annotations:
         kubernetes.io/ingress.class: nginx
       tls:
-        secretName: oes-ui-authtls
+        secretName: oes-ui-ingress
 
   ## OES-Gate url configuration
   oesGate:
@@ -117,7 +117,7 @@ global:
       annotations:
         kubernetes.io/ingress.class: nginx
       tls:
-        secretName: oes-gate-authtls
+        secretName: oes-gate-ingress
 
   ###############################################################################
   # A trial LDAP is installed by default, with users: admin, user1,2,3 with user1password, user2pa...
@@ -237,7 +237,7 @@ autopilot:
   ## Image specific details
   image:
     repository: ubi8-oes-autopilot
-    tag: v3.10.1
+    tag: v3.10.2
     pullPolicy: IfNotPresent
 
   annotations:
@@ -269,7 +269,7 @@ audit:
   ##
   image:
     repository: ubi8-oes-audit-service
-    tag: v3.10.1
+    tag: v3.10.2
     pullPolicy: IfNotPresent
 
   serviceAnnotations: {}
@@ -290,7 +290,7 @@ auditClient:
   ##
   image:
     repository: ubi8-oes-audit-client
-    tag: v3.10.1
+    tag: v3.10.2
     pullPolicy: IfNotPresent
 
   serviceAnnotations: {}
@@ -311,7 +311,7 @@ datascience:
   ##
   image:
     repository: ubi8-oes-datascience
-    tag: v3.10.1
+    tag: v3.10.2
     pullPolicy: IfNotPresent
 
   serviceAnnotations: {}
@@ -329,7 +329,7 @@ dashboard:
   ## Image specific details
   image:
     repository: ubi8-oes-dashboard
-    tag: v3.10.1
+    tag: v3.10.2
     pullPolicy: IfNotPresent
 
   annotations:
@@ -379,7 +379,7 @@ gate:
   ## Image specific details
   image:
     repository: ubi8-gate
-    tag: v3.10.1
+    tag: v3.10.2
     pullPolicy: IfNotPresent
 
   serviceAnnotations: {}
@@ -410,9 +410,9 @@ gate:
     #####################################################
     # keytool -genkey -v -keystore oessaml.jks -alias saml -keyalg RSA -keysize 2048 -validity 10000
     # oessaml.jks and oesmetadata.xml are mounted as secrets, create them as follows
-    # kubectl create secret generic oesmetadataxml --from-file=oesmetadata.xml
-    # kubectl create secret generic oessamljks --from-file=oessaml.jks
-    # kubectl create secret generic samljks-password --from-literal password=changeit 
+    # kubectl create secret generic oesmetadataxml --from-file=oesmetadata.xml -n <namespace>
+    # kubectl create secret generic oessamljks --from-file=oessaml.jks -n <namespace>
+    # kubectl create secret generic samljks-password --from-literal password=changeit -n <namespace>
     saml:
       enabled: false
       userSource: gate  # Groups will be obtained from SAML
@@ -453,7 +453,7 @@ platform:
   ## Image specific details
   image:
     repository: ubi8-oes-platform
-    tag: v3.10.1
+    tag: v3.10.2
     pullPolicy: IfNotPresent
 
   annotations:
@@ -494,7 +494,7 @@ rabbitmq:
   url: rabbitmq-service
   port: 5672
   image:
-    registry: docker.io/rabbitmq
+    registry: quay.io/opsmxpublic/rabbitmq
     repository: 3-management
   serviceAnnotations: {}
 
@@ -504,7 +504,7 @@ sapor:
   ## Image specific details
   image:
     repository: ubi8-oes-sapor
-    tag: v3.10.1
+    tag: v3.10.2
     pullPolicy: IfNotPresent
 
   annotations:
@@ -590,7 +590,7 @@ ui:
   ## Image specific details
   image:
     repository: ubi8-oes-ui
-    tag: v3.10.1
+    tag: v3.10.2
     pullPolicy: IfNotPresent
   serviceAnnotations: {}
 
@@ -604,7 +604,7 @@ visibility:
   ## Image specific details
   image:
     repository: ubi8-oes-visibility
-    tag: v3.10.1
+    tag: v3.10.2
     pullPolicy: IfNotPresent
 
   annotations:
@@ -1034,12 +1034,12 @@ spinnaker:
   ## Here basic ldap auth is used by default; everything under spinCli will be pasted in ~/.spin/config
   spinCli:
     gate:
-      endpoint: http://oes-gate:8084 # URL that needs to be used to talk to spinnaker gate and create sample pipelines
+      endpoint: http://spin-gate:8084 # URL that needs to be used to talk to spinnaker gate and create sample pipelines
     auth:
       enabled: true
       basic:
-        username: admin          # Use credentials corresponding to spinCli.gate.endpoint
-        password: opsmxadmin123  # Use credentials corresponding to spinCli.gate.endpoint
+        username: admin          # Use credentials corresponding to saporgate.config.username
+        password: saporadmin     # Use credentials corresponding to saporgate.config.password
 
 ###############################################################################################
 ###############################################################################################
