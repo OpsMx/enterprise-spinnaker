@@ -1,8 +1,8 @@
 apiVersion: v2
 name: oes
-version: 3.10.5
-appVersion: 3.10.1
-description: ISD 3.10.1 supporting externalRedis and Node Selection rules.
+version: 3.10.6
+appVersion: 3.10.2
+description: Config changes in ISD components for 3.10.2 and minor Helm fixes
 icon: https://raw.githubusercontent.com/OpsMx/enterprise-spinnaker/master/img/opsmx.png
 maintainers:
 - email: srinivas@opsmx.io
