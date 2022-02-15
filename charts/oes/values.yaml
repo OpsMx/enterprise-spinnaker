@@ -104,7 +104,7 @@ global:
       annotations:
         kubernetes.io/ingress.class: nginx
       tls:
-        secretName: oes-ui-authtls
+        secretName: oes-ui-ingress
 
   ## OES-Gate url configuration
   oesGate:
@@ -117,7 +117,7 @@ global:
       annotations:
         kubernetes.io/ingress.class: nginx
       tls:
-        secretName: oes-gate-authtls
+        secretName: oes-ui-ingress
 
   ###############################################################################
   # A trial LDAP is installed by default, with users: admin, user1,2,3 with user1password, user2pa...
@@ -1026,12 +1026,12 @@ spinnaker:
   ## Here basic ldap auth is used by default; everything under spinCli will be pasted in ~/.spin/config
   spinCli:
     gate:
-      endpoint: http://oes-gate:8084 # URL that needs to be used to talk to spinnaker gate and create sample pipelines
+      endpoint: http://spin-gate:8084 # URL that needs to be used to talk to spinnaker gate and create sample pipelines
     auth:
       enabled: true
       basic:
-        username: admin          # Use credentials corresponding to spinCli.gate.endpoint
-        password: opsmxadmin123  # Use credentials corresponding to spinCli.gate.endpoint
+        username: admin          # Use credentials corresponding to saporgate.config.username
+        password: saporadmin     # Use credentials corresponding to saporgate.config.password
 
 ###############################################################################################
 ###############################################################################################
