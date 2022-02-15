@@ -410,9 +410,9 @@ gate:
     #####################################################
     # keytool -genkey -v -keystore oessaml.jks -alias saml -keyalg RSA -keysize 2048 -validity 10000
     # oessaml.jks and oesmetadata.xml are mounted as secrets, create them as follows
-    # kubectl create secret generic oesmetadataxml --from-file=oesmetadata.xml -n <NAMESPCAE>
-    # kubectl create secret generic oessamljks --from-file=oessaml.jks -n <NAMESPCAE>
-    # kubectl create secret generic samljks-password --from-literal password=changeit -n <NAMESPCAE>
+    # kubectl create secret generic oesmetadataxml --from-file=oesmetadata.xml -n <NAMESPACE>
+    # kubectl create secret generic oessamljks --from-file=oessaml.jks -n NAMESPACE>
+    # kubectl create secret generic samljks-password --from-literal password=changeit -n <NAMESPACE>
     saml:
       enabled: false
       userSource: gate  # Groups will be obtained from SAML
