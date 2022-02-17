@@ -20,7 +20,7 @@ spec:
         image: {{ .Values.spinnaker.halyard.image.repository }}:{{ .Values.spinnaker.halyard.image.tag }}
         command: ["/bin/bash","-c"]
 {{- if .Values.global.certManager.installed }}
-        args: ["kubectl delete issuer --ignore-not-found letsencrypt-{{ .Release.Namespace }}-spin; kubectl delete ingress --ignore-not-found oes-gate-ingress oes-ui-ingress {{ template "spinnaker.fullname" . }}-deck; kubectl delete secret --ignore-not-found ca-secret deck-authtls demo-authtls jwt-secret oes-cacerts oes-control-secret oes-gate-authtls oes-ui-authtls"]
+        args: ["kubectl delete issuer --ignore-not-found letsencrypt-{{ .Release.Namespace }}-spin; kubectl delete ingress --ignore-not-found oes-gate-ingress oes-ui-ingress {{ template "spinnaker.fullname" . }}-deck; kubectl delete secret --ignore-not-found ca-secret spin-deck-ingress demo-authtls jwt-secret oes-cacerts oes-control-secret oes-gate-ingress oes-ui-ingress"]
 {{- else }}
         args: ["kubectl delete ingress --ignore-not-found  oes-gate-ingress oes-ui-ingress {{ template "spinnaker.fullname" . }}-deck; kubectl delete secret --ignore-not-found ca-secret jwt-secret oes-cacerts oes-control-secret"]
 {{- end }}
