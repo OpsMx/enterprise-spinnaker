@@ -77,7 +77,7 @@ global:
         ingress.kubernetes.io/ssl-redirect: "true"
         kubernetes.io/ingress.class: nginx
       tls:
-        secretName: deck-authtls
+        secretName: spin-deck-ingress
 
   # Spinnaker Gate URL configuration; url overwhich spinnaker gate will be accessed
   spinGate:
@@ -91,7 +91,7 @@ global:
         ingress.kubernetes.io/ssl-redirect: "true"
         kubernetes.io/ingress.class: nginx
       tls:
-        secretName: gate-authtls
+        secretName: spin-gate-ingress
 
   ## OES-UI url configuration
   oesUI:
@@ -104,7 +104,7 @@ global:
       annotations:
         kubernetes.io/ingress.class: nginx
       tls:
-        secretName: oes-ui-authtls
+        secretName: oes-ui-ingress
 
   ## OES-Gate url configuration
   oesGate:
@@ -117,7 +117,7 @@ global:
       annotations:
         kubernetes.io/ingress.class: nginx
       tls:
-        secretName: oes-gate-authtls
+        secretName: oes-gate-ingress
 
   ###############################################################################
   # A trial LDAP is installed by default, with users: admin, user1,2,3 with user1password, user2pa...
@@ -410,9 +410,9 @@ gate:
     #####################################################
     # keytool -genkey -v -keystore oessaml.jks -alias saml -keyalg RSA -keysize 2048 -validity 10000
     # oessaml.jks and oesmetadata.xml are mounted as secrets, create them as follows
-    # kubectl create secret generic oesmetadataxml --from-file=oesmetadata.xml
-    # kubectl create secret generic oessamljks --from-file=oessaml.jks
-    # kubectl create secret generic samljks-password --from-literal password=changeit 
+    # kubectl create secret generic oesmetadataxml --from-file=oesmetadata.xml -n <NAMESPACE>
+    # kubectl create secret generic oessamljks --from-file=oessaml.jks -n NAMESPACE>
+    # kubectl create secret generic samljks-password --from-literal password=changeit -n <NAMESPACE>
     saml:
       enabled: false
       userSource: gate  # Groups will be obtained from SAML
@@ -692,7 +692,7 @@ spinnaker:
       dynAccntConfigPath: dynaccount/ #relative path from repository root folder
       username: git/stash_username  # Username to authenticate with git/stash repo
       token: git/stash_token  # Token corresponding to above username
-      sshkeysecret: true 
+      sshkeysecret: false
       sshsecretName: ssh-secret # Please create a secret with the ssh private key and the known hosts for the github/gitlab/bitbucket.com
       ## kubectl create secret generic ssh-secret --from-file=ssh --from-file=known_hosts -n <namespace> 
       ## please make sure the rsa key is present in file called ssh and known host for the github.com present in known_hosts file
@@ -719,6 +719,8 @@ spinnaker:
       baseUrl: example.repo.com  #  "git_url"
       username: username
       token: token
+      ##SSH key based comminication, sshkey is passed in the secret after helm installation edit secret "git-token" and pass BASE64 encoded id_rsa to git_secret_sshkey
+      ##make sure make empty value for "git_secret_token" in the secret if using SSH
       branch: samplerepo
       usermail: krish@company.com
       #password="K438"   ### Token is preferred, Password also might work, try your luck
@@ -1035,12 +1037,12 @@ spinnaker:
   ## Here basic ldap auth is used by default; everything under spinCli will be pasted in ~/.spin/config
   spinCli:
     gate:
-      endpoint: http://oes-gate:8084 # URL that needs to be used to talk to spinnaker gate and create sample pipelines
+      endpoint: http://sapor-gate:8084 # URL that needs to be used to talk to spinnaker gate and create sample pipelines
     auth:
       enabled: true
       basic:
-        username: admin          # Use credentials corresponding to spinCli.gate.endpoint
-        password: opsmxadmin123  # Use credentials corresponding to spinCli.gate.endpoint
+        username: admin          # Use credentials corresponding to saporgate.config.username
+        password: saporadmin  # Use credentials corresponding to saporgate.config.password
 
 ###############################################################################################
 ###############################################################################################
