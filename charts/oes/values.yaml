@@ -77,7 +77,7 @@ global:
         ingress.kubernetes.io/ssl-redirect: "true"
         kubernetes.io/ingress.class: nginx
       tls:
-        secretName: deck-authtls
+        secretName: spin-deck-ingress
 
   # Spinnaker Gate URL configuration; url overwhich spinnaker gate will be accessed
   spinGate:
@@ -91,7 +91,7 @@ global:
         ingress.kubernetes.io/ssl-redirect: "true"
         kubernetes.io/ingress.class: nginx
       tls:
-        secretName: gate-authtls
+        secretName: spin-gate-ingress
 
   ## OES-UI url configuration
   oesUI:
