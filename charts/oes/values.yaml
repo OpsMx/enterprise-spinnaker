@@ -77,7 +77,7 @@ global:
         ingress.kubernetes.io/ssl-redirect: "true"
         kubernetes.io/ingress.class: nginx
       tls:
-        secretName: deck-authtls
+        secretName: spin-deck-ingress
 
   # Spinnaker Gate URL configuration; url overwhich spinnaker gate will be accessed
   spinGate:
@@ -91,7 +91,7 @@ global:
         ingress.kubernetes.io/ssl-redirect: "true"
         kubernetes.io/ingress.class: nginx
       tls:
-        secretName: gate-authtls
+        secretName: spin-gate-ingress
 
   ## OES-UI url configuration
   oesUI:
@@ -692,7 +692,7 @@ spinnaker:
       dynAccntConfigPath: dynaccount/ #relative path from repository root folder
       username: git/stash_username  # Username to authenticate with git/stash repo
       token: git/stash_token  # Token corresponding to above username
-      sshkeysecret: true 
+      sshkeysecret: false
       sshsecretName: ssh-secret # Please create a secret with the ssh private key and the known hosts for the github/gitlab/bitbucket.com
       ## kubectl create secret generic ssh-secret --from-file=ssh --from-file=known_hosts -n <namespace> 
       ## please make sure the rsa key is present in file called ssh and known host for the github.com present in known_hosts file
