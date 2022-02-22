@@ -53,7 +53,17 @@ data:
     {{- if not .Values.gitopsHalyard.repo.sshkeysecret }}
     GIT_USER=`echo $GIT_USER | sed 's/ *$//g'`
     GIT_TOKEN=`echo $GIT_TOKEN | sed 's/ *$//g'`
-    git -c {{ .Values.gitopsHalyard.repo.configArgs }} clone $GIT_CLONE_PARAM -b {{ .Values.gitopsHalyard.repo.halConfigBranch}} /tmp/spinnaker/test
+    git -c {{ .Values.gitopsHalyard.repo.configArgs }} clone $GIT_CLONE_PARAM -b {{ .Values.gitopsHalyard.repo.halConfigBranch}} /tmp/spinnaker/test 2>/tmp/tmp.log
+    if [[ $? != 0 ]]; then
+       echo "ERROR: Failed while trying to execute:"
+       echo "git -c http.sslVerify=false clone $GIT_CLONE_PARAM -b master /tmp/spinnaker/test" | sed s/$GIT_TOKEN/\<TOKEN_REDACTED\>/g
+       sed s/$GIT_TOKEN/\<TOKEN_REDACTED\>/g /tmp/tmp.log
+       echo "####"
+       echo "Correct baseUrlHostName, organization, username, token and repository in values.yaml and re-execute 'helm upgrade --install ....' command"
+       echo "   It is possible that you need to use repoType as stash instead of git. Please check the documentation."
+       echo "To expedite the restart, wait for 60 seconds and delete the spinnaker-halyard-0 pod from another window"
+       exit 4
+    fi
     {{- end }}
     cp -pr /tmp/spinnaker/test/{{ .Values.gitopsHalyard.repo.halConfigPath }} /tmp/spinnaker/.hal
     if [ -d "/tmp/spinnaker/test/pipeline-promotion/" ]
