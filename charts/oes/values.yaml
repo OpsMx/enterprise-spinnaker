@@ -196,6 +196,11 @@ global:
       # to fetch External Load Balancer IP of oes-gate and vice versa
       externalIpCheckDelay: 180
 
+#####################################################
+# Centralized Monitoring
+####################################################
+  enableCentralMonitoring: false
+
 ###############################################################################
 # AutoPilot, Sapor, Platform, Visibility and DS services use a Postgress DB for backend. A DB is automatically installed
 # Values of OES Database
@@ -687,7 +692,7 @@ spinnaker:
       halConfigBranch: master # Branch under which halyard config is present under above repository
       halConfigPath: / #relative path from repository root folder
       dynamicAccRepository: standard-gitops-repo # Please provide the repo name of the GitOps Dynamic Accounts Directory. Can be same as Hal repo. 
-      dynAccntConfigPath: dynaccount/ #relative path from repository root folder
+      dynAccntConfigPath: / #relative path from repository root folder
       username: git/stash_username  # Username to authenticate with git/stash repo
       token: git/stash_token  # Token corresponding to above username
       sshkeysecret: false
@@ -1025,10 +1030,6 @@ spinnaker:
 
   ## Option to enable HA in Spinnaker; Enabled by default
   enableHA: true
-
-  ## Centralized Monitoring enable for Prometheus
-  enableCentralMonitoring: false
-
 
   ## Auth mechanism and credentials to be used by spin-cli for creating the sample pipelines
   ## Here basic ldap auth is used by default; everything under spinCli will be pasted in ~/.spin/config

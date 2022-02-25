@@ -36,4 +36,4 @@ dependencies:
     condition: enableCentralLogging
   - name: prometheus
     version: 11.16.2
-    condition: spinnaker.enableCentralMonitoring
+    condition: global.enableCentralMonitoring
