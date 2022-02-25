@@ -14,7 +14,7 @@ spec:
   template:
     metadata:
       annotations:
-        checksum/config: {{ include (print $.Template.BasePath "/configmap/halyard-init-script.yaml") . | sha256sum }}
+        checksum/configmap: {{ include (print $.Template.BasePath "/configmap/halyard-init-script.yaml") . | sha256sum }}
       {{- if .Values.halyard.annotations }}
 {{ toYaml .Values.halyard.annotations | indent 8 }}
       {{- end }}
@@ -44,7 +44,7 @@ spec:
       initContainers:
       {{- if .Values.gitopsHalyard.repo.sshkeysecret }}
       - image: k8s.gcr.io/git-sync:v3.1.6
-        name: git-sync-sidecar
+        name: git-sync
         args:
           - "-repo=git@{{ .Values.gitopsHalyard.repo.baseUrlHostName }}:{{ .Values.gitopsHalyard.repo.organization }}/{{ .Values.gitopsHalyard.repo.repository }}"
           - "-branch={{ .Values.gitopsHalyard.repo.halConfigBranch }}"
@@ -74,7 +74,7 @@ spec:
       {{- end }}
       - name: "create-halyard-local"
       {{- if .Values.gitopsHalyard.enabled }}
-        image: {{ .Values.global.customImages.registry }}/awsgit:v2
+        image: {{ .Values.global.customImages.registry }}/awsgit:v2-openssh
       {{- else }}
         image: {{ .Values.halyard.image.repository }}:{{ .Values.halyard.image.tag }}
       {{- end }}
