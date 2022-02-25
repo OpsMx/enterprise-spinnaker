@@ -1,8 +1,8 @@
 apiVersion: v2
 name: oes
-version: 3.10.9
-appVersion: 3.10.2
-description: Config changes in ISD components for 3.10.2 and Helm fixes
+version: 3.11.0
+appVersion: 3.11.1
+description: Config changes in ISD components for 3.11.1 and Helm fixes
 icon: https://raw.githubusercontent.com/OpsMx/enterprise-spinnaker/master/img/opsmx.png
 maintainers:
 - email: srinivas@opsmx.io
