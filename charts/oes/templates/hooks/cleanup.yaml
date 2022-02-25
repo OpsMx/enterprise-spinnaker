@@ -24,7 +24,6 @@ spec:
 {{- else }}
         args: ["kubectl delete ingress --ignore-not-found oes-gate-ingress oes-ui-ingress {{ template "spinnaker.fullname" . }}-deck; kubectl delete secret --ignore-not-found ca-secret jwt-secret oes-cacerts oes-control-secret"]
 {{- end }}
-{{- end }}
       {{- if .Values.global.nodeSelector }}
       nodeSelector:
 {{ toYaml .Values.global.nodeSelector | indent 8 }}
@@ -37,3 +36,5 @@ spec:
       tolerations:
 {{ toYaml .Values.global.tolerations | indent 8 }}
       {{- end }}
+{{- end }}
+
