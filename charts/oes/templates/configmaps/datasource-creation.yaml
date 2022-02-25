@@ -49,7 +49,7 @@ data:
             USERNAME={{ .Values.spinnaker.spinCli.auth.basic.username }}
             PASSWORD={{ .Values.spinnaker.spinCli.auth.basic.password }}
             TOKEN=$(echo -n "$USERNAME":"$PASSWORD" | base64)
-            response=$(curl -s http://oes-sapor:8085/oes/accountsConfig/v3/spinnaker)
+            response=$(curl -s {{ .Values.global.oesGate.protocol }}://{{ .Values.global.oesGate.host }}/oes/accountsConfig/v1/spinnaker -u $USERNAME:$PASSWORD)
             name=$(echo $response | jq '.[].name')
             if [ -z "$name" ];
             then
@@ -57,9 +57,8 @@ data:
               then
               response=$(curl --header "Content-Type: application/json"  --header "x-spinnaker-user: admin" --request POST http://oes-platform:8095/platformservice/v2/datasources --data '{"datasourceType": "GITHUB", "name": "gitops", "spinEnabled": "false", "configurationFields": {"token": "{{ .Values.spinnaker.gitopsHalyard.repo.token }}", "username": "{{ .Values.spinnaker.gitopsHalyard.repo.username }}", "hostUrl": "https://github.com/{{ .Values.spinnaker.gitopsHalyard.repo.organization }}/{{ .Values.spinnaker.gitopsHalyard.repo.repository }}.git", "url": "https://api.github.com/" } }')
               id=$(echo $response | jq '.id')
-              curl --header "Content-Type: application/json"  --header "x-spinnaker-user: admin" --request POST http://oes-sapor:8085/oes/accountsConfig/v4/spinnaker --data '{"name":"preview-saas","url":"{{ .Values.spinnaker.spinCli.gate.endpoint }}","authenticationType":"LDAP","externalAccountFlag":true,"pipelinePromotionFlag":false,"syncAccountFlag":false,"externalAccountConfiguration":{"accountId": "'"${id}"'","accountName":"gitops","provider":"GITHUB","config":{"bucketName":"","region":"","endPoint":"https://github.com/{{ .Values.spinnaker.gitopsHalyard.repo.organization }}/{{ .Values.spinnaker.gitopsHalyard.repo.repository }}.git","sourcePath":""}},"pipelinePromotionConfiguration":null,"password":"'"${PASSWORD}"'","userName":"'"${USERNAME}"'"}'
-              #curl --header "Content-Type: application/json"  --header "x-spinnaker-user: admin" --request POST http://oes-sapor:8085/oes/accountsConfig/v3/spinnaker --data '{"name": "preview-saas", "url": "{{ .Values.global.oesGate.protocol }}://{{ .Values.global.oesGate.host }}", "authenticationType": "LDAP", "token": "'"${TOKEN}"'", "externalAccountFlag": "true","pipelinePromotionFlag": "false","syncAccountFlag": "false", "externalAccountConfiguration": {"accountId": "'"${id}"'","accountName": "gitops", "provider": "GITHUB", "config": {"bucketName": "", "region": "","endPoint": "https://github.com/{{ .Values.spinnaker.gitopsHalyard.repo.organization }}/{{ .Values.spinnaker.gitopsHalyard.repo.repository }}.git", "sourcePath": "" }}}'
-                  break
+              curl --header "Content-Type: application/json"  --header "x-spinnaker-user: admin" --request POST http://oes-sapor:8085/oes/accountsConfig/v3/spinnaker --data '{"name": "preview-saas", "url": "{{ .Values.global.oesGate.protocol }}://{{ .Values.global.oesGate.host }}", "authenticationType": "LDAP", "token": "'"${TOKEN}"'", "externalAccountFlag": "true","pipelinePromotionFlag": "false","syncAccountFlag": "false", "externalAccountConfiguration": {"accountId": "'"${id}"'","accountName": "gitops", "provider": "GITHUB", "config": {"bucketName": "", "region": "","endPoint": "https://github.com/{{ .Values.spinnaker.gitopsHalyard.repo.organization }}/{{ .Values.spinnaker.gitopsHalyard.repo.repository }}.git", "sourcePath": "" }}}'
+                break
               fi
               if [[ "$STORAGE_TYPE"  ==  "stash" ]];
               then
