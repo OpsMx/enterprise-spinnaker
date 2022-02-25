@@ -1,8 +1,8 @@
 retrofit:
-  connectTimeout: 30000
-  readTimeout: 30000
-  callTimeout: 30000
-  writeTimeout: 30000
+  connectTimeout: 60000
+  readTimeout: 60000
+  callTimeout: 60000
+  writeTimeout: 60000
   retryOnConnectionFailure: true
 services:
   opsmx:

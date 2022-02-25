@@ -9,6 +9,8 @@ oes.sapor.url: http://oes-sapor:8085
 visibilityservice.url: http://oes-visibility:8096
 auditclientservice:
   url: "http://oes-audit-client:8098"
+gateservice:
+  url: "http://oes-gate:8084"
 app:
   sync:
     enabled: {{ .Values.dashboard.config.app.sync.enabled }}
