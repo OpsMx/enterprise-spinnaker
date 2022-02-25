@@ -2,6 +2,10 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
+  labels:
+    app: oes
+    component: auditclient
+{{ include "oes.standard-labels" . | indent 4 }}
   name: oes-audit-client
 spec:
   replicas: 1

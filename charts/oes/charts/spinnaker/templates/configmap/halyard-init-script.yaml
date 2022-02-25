@@ -53,12 +53,22 @@ data:
     {{- if not .Values.gitopsHalyard.repo.sshkeysecret }}
     GIT_USER=`echo $GIT_USER | sed 's/ *$//g'`
     GIT_TOKEN=`echo $GIT_TOKEN | sed 's/ *$//g'`
-    git -c {{ .Values.gitopsHalyard.repo.configArgs }} clone $GIT_CLONE_PARAM -b {{ .Values.gitopsHalyard.repo.halConfigBranch}} /tmp/spinnaker/test
+    git -c {{ .Values.gitopsHalyard.repo.configArgs }} clone $GIT_CLONE_PARAM -b {{ .Values.gitopsHalyard.repo.halConfigBranch}} /tmp/spinnaker/test 2>/tmp/tmp.log
+    if [[ $? != 0 ]]; then
+       echo "ERROR: Failed while trying to execute:"
+       echo "git -c http.sslVerify=false clone $GIT_CLONE_PARAM -b {{ .Values.gitopsHalyard.repo.halConfigBranch}} /tmp/spinnaker/test" | sed s/$GIT_TOKEN/\<TOKEN_REDACTED\>/g
+       sed s/$GIT_TOKEN/\<TOKEN_REDACTED\>/g /tmp/tmp.log
+       echo "####"
+       echo "Correct baseUrlHostName, organization, username, token and repository in values.yaml and re-execute 'helm upgrade --install ....' command"
+       echo "   It is possible that you need to use repoType as stash instead of git. Please check the documentation."
+       echo "To expedite the restart, wait for 60 seconds and delete the spinnaker-halyard-0 pod from another window"
+       exit 4
+    fi
     {{- end }}
-    cp -pr /tmp/spinnaker/test/{{ .Values.gitopsHalyard.repo.halConfigPath }} /tmp/spinnaker/.hal
+    cp -r /tmp/spinnaker/test/{{ .Values.gitopsHalyard.repo.halConfigPath }} /tmp/spinnaker/.hal
     if [ -d "/tmp/spinnaker/test/pipeline-promotion/" ]
     then
-       cp -pr /tmp/spinnaker/test/pipeline-promotion /tmp/spinnaker/pipeline-promotion
+       cp -r /tmp/spinnaker/test/pipeline-promotion /tmp/spinnaker/pipeline-promotion
     fi
     rm -rf /tmp/spinnaker/test
     DYNAMIC_ACCOUNTS_REPO=`echo $DYNAMIC_ACCOUNTS_REPO | sed 's/ *$//g'`
@@ -80,6 +90,17 @@ data:
     sed -i  's|DYNAMIC_ACCOUNTS_REPO|'"${DYNAMIC_ACCOUNTS_REPO}"'|' /tmp/spinnaker/.hal/default/profiles/spinnakerconfig.yml
     sed -i  s%DYN_ACCNT_CONFG_PATH%{{ .Values.gitopsHalyard.repo.dynAccntConfigPath }}%g /tmp/spinnaker/.hal/default/profiles/spinnakerconfig.yml
     sed -i  s/RELEASE_NAME/{{ .Release.Name }}/g /tmp/spinnaker/.hal/default/service-settings/redis.yml
+    {{- if not .Values.global.ldap.enabled }}
+    yq e '.deploymentConfigurations.[].security.authn.ldap.enabled = "false"' /tmp/spinnaker/.hal/config > /tmp/spinnaker/.hal/config1
+    mv /tmp/spinnaker/.hal/config1 /tmp/spinnaker/.hal/config
+    {{- end }}
+    {{- if .Values.global.commonGate.spinnakerRBAC }}
+    yq e '.deploymentConfigurations.[].security.authz.enabled = "true"' /tmp/spinnaker/.hal/config > /tmp/spinnaker/.hal/config1
+    mv /tmp/spinnaker/.hal/config1 /tmp/spinnaker/.hal/config
+    {{- else }}
+    yq e '.deploymentConfigurations.[].security.authz.enabled = "false"' /tmp/spinnaker/.hal/config > /tmp/spinnaker/.hal/config1
+    mv /tmp/spinnaker/.hal/config1 /tmp/spinnaker/.hal/config
+    {{- end }}
     if [ -f /tmp/spinnaker/.hal/default/profiles/fiat-local.yml ]; then
     sed -i  s/RELEASE_NAME/{{ .Release.Name }}/g /tmp/spinnaker/.hal/default/profiles/fiat-local.yml
     fi

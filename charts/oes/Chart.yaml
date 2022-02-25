@@ -1,8 +1,8 @@
 apiVersion: v2
 name: oes
-version: 3.10.4
-appVersion: 3.10.1
-description: ISD 3.10.1 with log4j security fix and additional enhancements
+version: 3.11.1
+appVersion: 3.11.1
+description: Config changes in ISD components for 3.11.1 and Helm fixes
 icon: https://raw.githubusercontent.com/OpsMx/enterprise-spinnaker/master/img/opsmx.png
 maintainers:
 - email: srinivas@opsmx.io
@@ -36,4 +36,4 @@ dependencies:
     condition: enableCentralLogging
   - name: prometheus
     version: 11.16.2
-    condition: spinnaker.enableCentralMonitoring
+    condition: global.enableCentralMonitoring
