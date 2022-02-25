@@ -23,5 +23,5 @@ dependencies:
 - name: prometheus
   repository: ""
   version: 11.16.2
-digest: sha256:b0849afbf8b7bf327cdff032dc67b6924428388377d1305eb40fc8c0414a8147
-generated: "2021-11-03T13:54:46.026148452+05:30"
+digest: sha256:c7c5aa2cbb821e80a05a45273ff067677d947d89bee35b3378333c1d558607d4
+generated: "2022-02-25T13:49:42.421126001+05:30"
