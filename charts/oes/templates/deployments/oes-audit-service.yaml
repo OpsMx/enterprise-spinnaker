@@ -5,6 +5,7 @@ metadata:
   labels:
     app: oes
     component: auditservice
+{{ include "oes.standard-labels" . | indent 4 }}
   name: oes-audit-service
 spec:
   replicas: 1
