@@ -15,7 +15,7 @@ spec:
   template:
     metadata:
       annotations:
-        checksum/config: {{ (.Files.Glob "templates/configmaps/datasource-creation.yaml").AsConfig | sha256sum }}
+        checksum/configmap: {{ (.Files.Glob "templates/configmaps/datasource-creation.yaml").AsConfig | sha256sum }}
       labels:
         app: oes
         component: oes-config
