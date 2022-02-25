@@ -17,6 +17,8 @@ spec:
       component: sapor-gate
   template:
     metadata:
+      annotations:
+        checksum/secret: {{ (.Files.Glob "config/sapor-gate/gate.yml").AsConfig | sha256sum }}
       labels:
         app: oes
         component: sapor-gate

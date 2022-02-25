@@ -61,8 +61,7 @@ spinnaker:
   restart:
     endPoint: /webhooks/webhook/restartSpinnaker
   encrypt:
-    key: {{ .Values.sapor.config.encrypt.key }}
-    salt: {{ .Values.sapor.config.encrypt.salt }}
+    enabled: {{ .Values.sapor.config.encrypt.enabled }}
 datasources:
   platform: {{ .Values.sapor.config.datasources.platform }}
   

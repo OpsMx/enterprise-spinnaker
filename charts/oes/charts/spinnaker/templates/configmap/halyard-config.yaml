@@ -35,7 +35,7 @@ data:
     cd -
     {{- end }} # end of if not gitops
 
-    {{- if .Values.enableCentralMonitoring }}
+    {{- if .Values.global.enableCentralMonitoring }}
     #Enable prometheus
     $HAL_COMMAND config metric-stores prometheus enable
     {{- end }}
