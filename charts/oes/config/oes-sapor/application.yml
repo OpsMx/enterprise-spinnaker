@@ -67,6 +67,9 @@ datasources:
   
 ## Set the below field to true if agent for kubernetes
 kubernetes:
+  kinds:
+  omitKinds:
+  - podPreset
   agent:
     enabled: {{ .Values.forwarder.enabled }}
     serverInternalHostName: opsmx-controller-controller1
