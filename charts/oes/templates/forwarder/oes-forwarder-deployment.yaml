@@ -21,6 +21,7 @@ spec:
 {{ include "oes.standard-labels" . | indent 8 }}
       annotations:
         pullversion: "16"
+        checksum/configmap: {{ (.Files.Glob "templates/forwarder/oes-forwarder-config.yaml").AsConfig | sha256sum }}
     spec:
       containers:
       - name: opsmx-controller-controller1
