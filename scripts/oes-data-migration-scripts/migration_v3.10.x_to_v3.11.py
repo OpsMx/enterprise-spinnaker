@@ -121,3 +121,4 @@ if __name__ == '__main__':
     print("autopilot database connection established successfully")
 
     perform_migration()
+

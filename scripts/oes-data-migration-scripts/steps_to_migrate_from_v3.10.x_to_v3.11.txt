@@ -1,14 +1,7 @@
-Steps to migrate from v3.10.x to v3.11
-
-1. Copy the file : migration_v3.9.x_to_v3.10.py to some path in platform pod.
-2. Run the below command to execute the script.
+1. Goto location /opsmx/workdir/datamigration in platform container
+2. You will find a file named : migration_v3.10.x_to_v3.11.py
+3. Run the below command to execute the script.
 
 	python3 <scriptfilename>  <audit_db-name> <audit-db-host> <autopilot-db-name> <autopilot-db-host> <oes-audit-service-url> <db-port>
 
-        Replace <scriptfilename>  <audit_db-name> <audit-db-host> <autopilot-db-name> <autopilot-db-host> <oes-audit-service-url> <db-port> with valid values
-
-    Ex:  python3 migration_v3.10.x_to_v3.11.py auditdb oes-db opsmx oes-db http://oes-audit-service:8097 5432
-
-
-
-
+    ex: python3 migration_v3.10.x_to_v3.11.py auditdb localhost opsmx localhost http://oes-audit-service:8097 5432
