@@ -10,6 +10,8 @@ def perform_migration():
         print('Migrating from v3.10.x to v3.11')
         print("Alter autopilot db table entropy")
         updatescript()
+        print("Alter autopilot db table casservicemetricdetails")
+        updatescriptformetricdetails()
         print("Migrating audit details from v3.10.x to v3.11...")
         addingDataToPipelineExecutionAuditEvents()
         getexecutionIdWithTime()
@@ -35,7 +37,15 @@ def updatescript():
         print("Exception occured while  updating script : ", e)
         raise e
 
-
+def updatescriptformetricdetails():
+    try:
+        cur = autopilot_conn.cursor()
+        cur.execute(" ALTER TABLE casservicemetricdetails ALTER metric_name TYPE varchar(1000) ")
+        print("Successfully altered casservicemetricdetails table in autopilot db")
+    except Exception as e:
+        print("Exception occured while  updating script : ", e)
+        raise e
+        
 def addingDataToPipelineExecutionAuditEvents():
     try:
         count = 0;
