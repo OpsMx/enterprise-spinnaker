@@ -44,6 +44,57 @@ entries:
   oes:
   - apiVersion: v2
     appVersion: 3.11.1
+    created: "2022-03-03T16:10:47.304640752Z"
+    dependencies:
+    - condition: global.installOpenLdap
+      name: openldap
+      repository: ""
+      version: 1.2.3
+    - condition: installSpinnaker
+      name: spinnaker
+      repository: ""
+      version: 2.2.3
+    - condition: global.minio.enabled
+      name: minio
+      repository: ""
+      version: 8.0.9
+    - condition: installRedis
+      name: redis
+      repository: ""
+      version: 10.5.3
+    - condition: enableCentralLogging
+      name: elasticsearch
+      repository: ""
+      version: 7.5.0
+    - condition: enableCentralLogging
+      name: kibana
+      repository: ""
+      version: 7.5.0
+    - condition: enableCentralLogging
+      name: fluent-bit
+      repository: ""
+      version: 2.8.2
+    - condition: global.enableCentralMonitoring
+      name: prometheus
+      repository: ""
+      version: 11.16.2
+    description: Config changes in ISD components for 3.11.1 and Helm fixes
+    digest: 585daedceca4a2ec3fa6e34b3ec7e2126b603a6488d27ca9ef6865d331494a5e
+    home: https://www.opsmx.com/
+    icon: https://raw.githubusercontent.com/OpsMx/enterprise-spinnaker/master/img/opsmx.png
+    keywords:
+    - OpsMx
+    - OES
+    - Autopilot
+    maintainers:
+    - email: srinivas@opsmx.io
+      name: ksrinimba
+    name: oes
+    urls:
+    - https://github.com/OpsMx/enterprise-spinnaker/releases/download/oes-3.11.2/oes-3.11.2.tgz
+    version: 3.11.2
+  - apiVersion: v2
+    appVersion: 3.11.1
     created: "2022-03-03T15:11:50.644617006Z"
     dependencies:
     - condition: global.installOpenLdap
