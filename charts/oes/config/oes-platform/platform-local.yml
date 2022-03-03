@@ -15,7 +15,7 @@ redis:
 datasource:
   secretManagement:
     source: {{ .Values.secretStore }}
-rbacEnabled: {{ .Values.rbac.create }}
+rbacEnabled: {{ .Values.global.commonGate.spinnakerRBAC }}
 supportedFeatures:
 {{ toYaml .Values.platform.config.supportedFeatures | indent 2 }}
 userGroup:
