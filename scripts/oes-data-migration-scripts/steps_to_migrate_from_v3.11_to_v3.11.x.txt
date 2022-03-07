@@ -1,0 +1,7 @@
+1. Goto location /opsmx/workdir/datamigration in platform container
+2. You will find a file named : migration_v3.11_to_v3.11.x.py
+3. Run the below command to execute the script.
+
+	python3 <scriptfilename> <autopilot-db-name> <autopilot-db-host> <db-port>
+
+    ex: python3 migration_v3.11_to_v3.11.x.py opsmx oes-db 5432
