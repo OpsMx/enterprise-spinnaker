@@ -10,6 +10,7 @@ def perform_migration():
         print('Migrating from v3.11 to v3.11.x')
         print("Alter autopilot db table casservicemetricdetails")
         alter_metric_details_table()
+        autopilot_conn.commit()
         print("Successfully migrated")
     except Exception as e:
         autopilot_conn.rollback()
