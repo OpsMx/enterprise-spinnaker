@@ -1,0 +1,8 @@
+1. Goto location /opsmx/workdir/datamigration in platform container
+2. You will find a file named : migration_v3.11.x_to_v3.12.py
+3. Run the below command to execute the script.
+
+        python3 <scriptfilename> <platform_db-name> <platform_host> <oes-db-name> <oes-db-host> <db-port>
+
+    ex: python3 migration_v3.11_to_v3.12.py platformdb oes-db oesdb oes-db 5432
+
