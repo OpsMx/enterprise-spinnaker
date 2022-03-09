@@ -37,7 +37,7 @@ def perform_migration():
                 platform_conn.commit()
             if step == 14:
             	updateautopilotconstraints()
-        	    autopilot_conn.commit()
+        	autopilot_conn.commit()
         
         print("Successfully migrated to v3.12")
     except Exception as e:
