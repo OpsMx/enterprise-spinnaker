@@ -8,7 +8,7 @@
       "BODY": "<div><p>The Agent allows Spinnaker installations to reach through firewalls in a secure manner,allowing access to private Kubernetes clusters as well as reach internal services such as Jenkins and Artifactory. The agent is typically used with OpsMx's SaaS Spinnaker offering, where OpsMx hosts the Spinnaker installation, but services used by Spinnaker are within a secure area owned by the customer.One of the core advantages of using an agent is that the credentials do not need to be provided to anyone i.e.credentials remain with - in the cluster where deployment is done. </p><p> The Agent is a two part system: a <b> Controller </b> runs near Spinnaker, and the <b>Agent</b> runs in the target secure cluster.The Agent is configured to communicate with specific services(Kubernetes, Jenkins etc) within a customer 's security domain, while the Controller is in Spinnaker's domain. </p> <p> The Agent is deployed with a manifest provided by OpsMx.This manifest has per - installation credentials to authenticate to the controller,controller address etc.Services are configured in the Agent by the customer.URL endpoints.Spinnaker account names and credentials are specified to the agent configuration using a service configuration.The credentials never leave the agent. </p><p> <b> New Agent </b> button is enabled when Spinnaker is configured in <b>Setup->Spinnaker</b>. Click on <b> New Agent </b> to create the Agent for your environment.</p></div>"
    },
    "AGENT_CREATION": {
-      "HEADER": "Create Agent",
+      "HEADER": "Agent",
       "BODY": "<p>Adding an agent involves the following steps:</p><ul class='helpTextUI'><li>Enter the details (Agent Name, Cluster Name and Description) and click save</li> <li>Click <b>Download Manifest</b> which appears after save</li> <li>In the remote Kubernetes cluster, create service configmap in the default namespace. <span>Examples are available <a href='https://github.com/OpsMx/standard-gitops-repo/tree/master/SAMPLES/agent-config' target='_blank'>here</a></span> </li> <li>Apply the downloaded manifest in the default namespace using <code>kubectl apply -f &lt;downloaded file&gt; </code> <span>Note that the agent should be able to reach the LB configured with agent-grpc service</span> </li> <li>Check the Setup->Agent screen for the agent connection status</li>  </ul>",
       "AGENT_NAME": {
          "TOOLTIP": "Name of the agent with which it will referred to",
@@ -20,7 +20,8 @@
             "agentNameExist": "Agent Name already exists"
          }
       },
-      "CLUSTER_NAME": {
+    "BODY": "<p>The Agent allows Spinnaker installations to reach through firewalls in a secure manner,allowing access to private Kubernetes clusters as well as reach internal services such as Jenkins and Artifactory.</p> <p>Adding an agent involves the following steps:</p><ul class='helpTextUI'><li>Enter the details (Agent Name, Cluster Name and Description) and click save</li> <li>Click <b>Download Manifest</b> which appears after save</li> <li>In the remote Kubernetes cluster, create service configmap in the default namespace. <span>Examples are available <a href='https://github.com/OpsMx/standard-gitops-repo/tree/master/SAMPLES/agent-config' target='_blank'>here</a></span> </li> <li>Apply the downloaded manifest in the default namespace using <code>kubectl apply -f &lt;downloaded file&gt; </code> <span>Note that the agent should be able to reach the LB configured with agent-grpc service</span> </li> <li>Check the Setup->Agent screen for the agent connection status</li>  </ul>",
+    "CLUSTER_NAME": {
          "TOOLTIP": "Name of the remote cluster on which agent will be installed on",
          "VALIDATION_MESSAGE": {
             "required": "Cluster Name cannot be empty",
@@ -45,7 +46,7 @@
       "BODY": "<div><p>Providers are integrations to Cloud platforms you deploy your applications to.</p> <p>In this section, you’ll register credentials for your Cloud platforms. Those credentials are known as Accounts. Autopilot allows you to  create & manage Accounts for different Spinnaker Cloud Providers such as AWS, GCP, Kubernetes, etc.</p><p>When Spinnaker is configured for <b>Direct Sync</b>, <b>New Accounts</b> button will not be visible.</p><p><b>New Accounts</b> button will be enabled when Spinnaker is configured to use External Accounts in <b>Setup->Spinnaker</b>. Click on <b>New Accounts</b> button to create an account for your cloud provider.  You can create multiple accounts for the same provider.</p><p>Click on <b>Sync Spinnaker Accounts</b> button to sync Cloud Provider accounts with Spinnaker. </p></div>"
    },
    "CLOUDPROVIDER_CREATION": {
-      "HEADER": "Create Cloud Provider",
+      "HEADER": "Cloud Provider",
       "BODY": "<p>In this page, you can  create & manage Accounts for different Spinnaker Cloud Providers.</p>",
       "AGENT_NAME": {
          "TOOLTIP": "",
@@ -215,7 +216,7 @@
       "BODY": "<div><p>The Spinnaker Setup tab allows you to setup a Spinnaker instance with which you can connect Autopilot and sync all the applications from Spinnaker. </p><p>GitOps style Spinnaker is suported where in all configuration is maintained in a repository such as git.  These optional sections help configure gitOps style Spinnaker:</p> <p><b>Source Control for Accounts:</b>  In this section, you can specify the repository for External configuration in Spinnaker</p> <p><b>Source Control for Pipeline:</b>In this section, you can specify the repository for pipeline gitOps in Spinnaker that allows you to save and restore pipelines from a git repository.</p> <p>Click on the <b>Add Spinnaker</b> button to add Spinnaker instance</p></div>"
    },
    "SPINNAKER_SETUP": {
-      "HEADER": "Create Spinnaker",
+      "HEADER": "Spinnaker",
       "BODY": "<p>In this page you can add / update your Spinnaker instance.</p> <p><strong>Fields:</strong></p> <ul class='helpTextUI'> <li><strong>Spinnaker Name</strong>: User defined name for Spinnaker instance.<br> <span> Example: opsmx-spinnaker</span></li> <li><strong>Spinnaker Gate URL</strong>: Gate URL of the Spinnaker instance.<br> <span>Example: https://spinnaker-gate.xyz.com or http://oes-gate:8084</span></li> <li><strong>Authentication Type:</strong>: Can be LDAP or X509</li> <li><strong>Token: </strong>This is used when Authentication Type is LDAP; username & password to LDAP server separated by ':' in base64 format; Output of 'echo -ne 'username:password' | base64 -w0'</li>  <li><strong>Password: </strong>This is used when Authentication Type is LDAP; Password for P12 File</li> <li><strong>P12 File:</strong> This is used when Authentication Type is X509; P12 File needed for X509/AD Authentication</li> <li><strong>Source Control for Accounts: </strong>In this section, you can specify the repository for External configuration in Spinnaker</li> <li><strong>Source Control for Pipeline: </strong>In this section, you can specify the repository for pipeline gitOps in Spinnaker that allows you to save and restore pipelines from a git repository</li> </ul>",
       "SPINNAKER_NAME": {
          "TOOLTIP": "Name of the Spinnaker instance",
@@ -349,7 +350,12 @@
    },
    "INTEGRATOR_LISTING": {
       "HEADER": "No Integrator found!",
-      "BODY": "<div><p>Autopilot offers integration with many CI/CD Tools. Integrations are grouped under the following categories - Artifact, CI, Governance, Monitoring Tools, Notifications, Policy and SAST/DAST.</p> <p> Integrations are used to </p> <ul> <li> pull logs & metrics for Continuous Verification </li> <li> pull meta data from CI/CD Tools for Informed Approvals </li> <li> enforce organizational policies at the time of creating or executing a  pipeline. </li> <li> configure integrations in Spinnaker for Artifacts, Notifications. etc </li> </ul> <p>Click on the <b>New Integration</b> button to add accounts for your CI/CD tools</p> </div>"
+      "BODY": "<div><p>Autopilot offers integration with many CI/CD Tools. Integrations are grouped under the following categories - Artifact, CI, Governance, Monitoring Tools, Notifications, Policy and SAST/DAST.</p> <p> Integrations are used to </p> <ul> <li> pull logs & metrics for Continuous Verification </li> <li> pull meta data from CI/CD Tools for Informed Approvals </li> <li> enforce organizational policies at the time of creating or executing a  pipeline. </li> <li> configure integrations in Spinnaker for Artifacts, Notifications. etc </li> </ul> <p>Click on the <b>New Integration</b> button to add accounts for your CI/CD tools</p> </div>",
+
+     "SYNC_SPINNAKER_ACCOUNTS" : {
+        "TOOLTIP": "Push Integration changes to Spinnaker",
+        "VALIDATION_MESSAGE": ""
+     }
    },
    "PIPELINE_EXECUTION_AUDIT_LISTING": {
       "HEADER": "Pipeline executions not found!",
@@ -373,7 +379,8 @@
    },
    "POLICY_CREATION": {
       "BODY": "<p>In this page, you can  define & manage policies.</p><p><strong>Fields</strong>:</p><ul class='helpTextUl'><li> <strong>Name:</strong> User defined name for the policy</li><li><strong>Policy Type:</strong> Static or Runtime Policy</li><li> <strong>Policy Engine:</strong> Policy Engine to be used; currently, only OPA is supported</li> <li><strong>Policy Engine Account:</strong> Policy Engine Account for the Credentials </li>        <li><strong>Policy File:</strong> File containing the Policy You can upload the file by clicking on <strong>Choose File</strong> button. This is optional. If not present, you can enter the policy directly in the <strong>Policy Details</strong> field</li><li> <strong>Policy Details:</strong> Policy definition</li>                                 <li><strong>Policy Permissions:</strong> Enable/disable access to the policy in Autopilot to specific usergroup</li></ul>",
-      "NAME": {
+       "HEADER": "Policy",
+       "NAME": {
          "TOOLTIP": "Policy Name",
          "VALIDATION_MESSAGE": {
             "required": "Name cannot be empty",
@@ -400,7 +407,7 @@
          }
       },
       "POLICY_TYPE": {
-         "TOOLTIP": "Supported Policy Types",
+         "TOOLTIP": "A static policy lets users validate conditions before the start of execution, whereas a Runtime policy enables users for automated decision making during execution.",
          "VALIDATION_MESSAGE": {
             "required": "Please select Policy Engine Type"
          }
@@ -422,7 +429,7 @@
             "VALIDATION_MESSAGE": {}
          },
          "PERCEIVED_RISK": {
-            "TOOLTIP": "Perceived Risk",
+            "TOOLTIP": "The overall risk associated with the changes in this verification run",
             "VALIDATION_MESSAGE": {}
          }
       },
@@ -607,6 +614,10 @@
          "TOOLTIP": "",
          "VALIDATION_MESSAGE": ""
       },
+     "APPROVAL_BTN_TITLE": {
+        "TOOLTIP":  "Insufficient Permission to execute",
+        "VALIDATION_MESSAGE": ""
+     },
       "GATE_NAME": {
          "TOOLTIP": "",
          "VALIDATION_MESSAGE": ""
@@ -658,9 +669,20 @@
          "VALIDATION_MESSAGE": ""
       }
    },
+  "APPLICATION_DASHBOARD": {
+     "VERIFICATION_FAILURES":{
+        "TOOLTIP":  "Total number of Verification Failures including Test Verification Failures",
+        "VALIDATION_MESSAGE": "" 
+     }
+  },
    "APPLICATION_LISTING": {
       "HEADER": "No Applications found!",
-      "BODY": "<p> You will be able to view the applications you have created or imported from a CD Tool such as Spinnaker in this page. There could be just one or multiple services in an application. Each service can have multiple pipelines and each pipeline can have multiple stages needed in order to successfully deploy the application. </p> <p>You can create native Autopilot applications or import the applications created in Spinnaker.</p> <p><strong>Spinnaker Application</strong>: To import applications from Spinnaker, click on the <strong>Sync Spinnaker Applications</strong> button; before doing this, ensure that the Spinnaker is already connected under <strong><a  routerLink='/setup/spinnaker'>Setup -> Spinnaker</a></strong></p> <p><strong>Autopilot Application</strong>: To create a native Autopilot Application, click on the <strong>New Application</strong> button</p>"
+      "BODY": "<p> You will be able to view the applications you have created or imported from a CD Tool such as Spinnaker in this page. There could be just one or multiple services in an application. Each service can have multiple pipelines and each pipeline can have multiple stages needed in order to successfully deploy the application. </p> <p>You can create native Autopilot applications or import the applications created in Spinnaker.</p> <p><strong>Spinnaker Application</strong>: To import applications from Spinnaker, click on the <strong>Sync Spinnaker Applications</strong> button; before doing this, ensure that the Spinnaker is already connected under <strong><a  routerLink='/setup/spinnaker'>Setup -> Spinnaker</a></strong></p> <p><strong>Autopilot Application</strong>: To create a native Autopilot Application, click on the <strong>New Application</strong> button</p>" ,
+    "PLACEHOLDER": "You don't have access to this Page. Please contact your Administrator",
+    "SYNC_SPINNAKER":{
+        "TOOLTIP":  "To be able to work on applications created in Spinnaker, you need to import them here",
+        "VALIDATION_MESSAGE": ""
+     }
    },
    "START_DEPLOYMENT": {
       "APPLICATION_NAME": {
@@ -739,7 +761,15 @@
       "DELETE_PIPELINE_ICON": {
          "TOOLTIP": "Delete Pipeline from Service",
          "VALIDATION_MESSAGE": ""
-      }
+      },
+     "DELETE_PERMISSION": {
+        "TOOLTIP": "Insufficient Permission to Delete this Service",
+        "VALIDATION_MESSAGE": ""
+     },
+    "DELETE_SERVICE": {
+        "TOOLTIP": "Service can be deleted on deleting pipelines",
+        "VALIDATION_MESSAGE": ""
+    }
    },
    "GROUP_PERMISSION": {
       "APP_PERMISSIONS": {
@@ -754,6 +784,10 @@
          "TOOLTIP": "Authorization definition for this Integration",
          "VALIDATION_MESSAGE": ""
       },
+      "CLOUD_PROVIDER_PERMISSIONS": {
+        "TOOLTIP": "Authorization definition for this Cloud Provider",
+        "VALIDATION_MESSAGE": ""
+     },
       "AGENT_PERMISSIONS": {
          "TOOLTIP": "Authorization definition for this Agent",
          "VALIDATION_MESSAGE": ""
@@ -871,7 +905,7 @@
          "VALIDATION_MESSAGE": ""
       },
       "AUTOMATED_APPROVAL": {
-         "TOOLTIP": "Automated Approval",
+         "TOOLTIP": "Use predefined conditions to Approve or Reject a request. You can configure conditions using Policies.",
          "VALIDATION_MESSAGE": {
             "required": "Please select Approval Condition"
          }
@@ -883,7 +917,7 @@
          }
       },
       "APPROVAL_GROUP_MSG": {
-         "TOOLTIP": "Selected groups should have atleast read access to the application",
+         "TOOLTIP": "Selected groups should have atleast view access to the application",
          "VALIDATION_MESSAGE": ""
       },
       "GATE_SECURITY_SOURCE_URL": {
@@ -906,7 +940,7 @@
          }
       },
       "LOG_TEMPLATE": {
-         "TOOLTIP": "",
+         "TOOLTIP": "A collection of all the information needed to run the log analysis",
          "VALIDATION_MESSAGE": ""
       },
       "CREATE_GATE_CONFIG_TEMPLATE": {
@@ -926,13 +960,17 @@
          "VALIDATION_MESSAGE": ""
       },
       "METRIC_TEMPLATE": {
-         "TOOLTIP": "",
+         "TOOLTIP": "Information needed to run the metric analysis",
          "VALIDATION_MESSAGE": ""
       },
       "POLICY": {
          "TOOLTIP": "",
          "VALIDATION_MESSAGE": ""
-      }
+      },
+     "DELETE_PERMISSION":{
+        "TOOLTIP": "Insufficient Permission to Delete this Gate",
+        "VALIDATION_MESSAGE": ""
+     }
    },
    "LOGGED_INUSER_DETAILS": {
       "HEADER": "No Users found",
@@ -1721,6 +1759,39 @@
             }
          }
       },
+    "VMWARETANZU":{
+      "HEADER": "VMWare Tanzu Observability",
+      "BODY":"",
+      "ACCOUNTNAME":{
+        "TOOLTIP":"User defined name for the VMWare Tanzu Observability account",
+        "VALIDATION_MESSAGE":{
+      "noSpecialCharacters": "Account Name cannot contain special characters other than -",
+      "cannotContainSpace":"Account Name cannot contain space",
+      "required":"Account Name cannot be empty",
+      "startingFromNumber": "Account Name cannot start with numbers"
+    }
+      },
+       "END_POINT":{
+        "TOOLTIP":"VMWare Tanzu Observability URL",
+        "VALIDATION_MESSAGE":{
+          "required":"Url cannot be empty",
+          "invalidUrl": "URL is invalid"
+        }
+      },
+      "EMAIL":{
+        "TOOLTIP":"VMWare Tanzu Observability Email Id",
+        "VALIDATION_MESSAGE":{
+          "email":"Email Id is invalid",
+          "required":"Email Id cannot be empty"
+        }
+      },
+      "API_TOKEN":{
+        "TOOLTIP":"VMWare Tanzu Observability Personal Access Token",
+        "VALIDATION_MESSAGE":{
+          "required":"Api Token cannot be empty"
+        }
+      }
+    },
       "MSTEAMS": {
          "HEADER": "Microsoft Teams",
          "BODY": ""
@@ -2017,11 +2088,15 @@
          },
          "DATA_SOURCE": {
             "TOOLTIP": "Data source for Risk Analysis",
-            "VALIDATION_MESSAGE": {}
+            "VALIDATION_MESSAGE": {
+              "required":"Data source cannot be empty"
+           }
          },
          "ACCOUNT": {
             "TOOLTIP": "Account",
-            "VALIDATION_MESSAGE": {}
+            "VALIDATION_MESSAGE": {
+              "required":"Account cannot be empty"
+           }
          },
          "FILTER_KEY": {
             "TOOLTIP": "Filter Key",
@@ -2127,12 +2202,13 @@
       }
    },
    "ACCESS_MANAGEMENT": {
-      "MANAGE_ADMIN_GROUPS": {
-         "TOOLTIP": "Manage user groups that would get admin rights"
-      },
+      "ADMINISTRATOR": {
+         "INFO":"Super Administrator Groups will not appear in the dropdown since their Access Permissions cannot be modified.<br> Administrators will have full Access to all Resources.",
+         "TOOLTIP": "Groups with Administration Permissions"
+       },
       "USER_ROLE_LISTING": {
          "HEADER": "ROLE MANAGEMENT",
-         "BODY": "User Role with Groups and permissions"
+         "BODY": "Users should be assigned user roles only if they need global access to one or more resources."
       },
       "USER_ROLE_CREATION": {
          "ROLENAME": {
@@ -2152,7 +2228,30 @@
                "required": "Atleast one feature has to be enabled with permissions"
             }
          }
-      }
+      },
+      "FEATURE_VISIBILTY_LISTING":{
+         "HEADER": "FEATURE FLAG MANAGEMENT",
+         "BODY":"'Feature Visibilty' is for special cases where one or more User Groups need to have exclusive permission for certain feature. Say, 'Compliance Team' only should have access to Policies. So, when a feature flag is enabled for a User Group, this feature is automatically denied for all other users. Normally, most User Groups will not have any feature flag enabled."
+       },
+      "FEATURE_VISIBILTY_CREATION": {
+           "ROLENAME":{
+             "TOOLTIP": "",
+             "VALIDATION_MESSAGE": {
+               "required":"Role Name cannot be empty"
+              }
+           },
+          "USER_GROUPS":{
+            "TOOLTIP": "",
+            "VALIDATION_MESSAGE": {
+            "required":"Groups cannot be empty"
+               }
+           },
+          "PERMISSIONS":{
+            "VALIDATION_MESSAGE":{
+             "required":"Atleast one feature has to be enabled"
+              }
+           }
+        } 
    },
    "LOG_TEMPLATE": {
       "STRING_PATTERN": {
@@ -2161,6 +2260,12 @@
             "required": "String Pattern cannot be empty"
          }
       },
+      "LOG_TOPICS":{
+        "TOOLTIP" :"Strings that appear in logs with their characterization"
+        },
+        "LOG_TAGS":{
+           "TOOLTIP" :"Create custom tags based on business logic."
+        },
       "CHARACTERIZATION_TOPIC": {
          "TOOLTIP": "Characterization Topic",
          "VALIDATION_MESSAGE": {
@@ -2172,11 +2277,11 @@
          "VALIDATION_MESSAGE": {}
       },
       "ENABLE_CLUSTER_TAG": {
-         "TOOLTIP": "enable custer Tags",
+         "TOOLTIP": "Create custom tags based on business logic.",
          "VALIDATION_MESSAGE": {}
       },
       "CLUSTER_TAG_STRING": {
-         "TOOLTIP": "Cluster Tag String",
+         "TOOLTIP": "The string pattern that appears in logs",
          "VALIDATION_MESSAGE": {
             "required": "Cluster Tag String cannot be empty"
          }

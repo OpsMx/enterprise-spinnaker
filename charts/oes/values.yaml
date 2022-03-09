@@ -7,7 +7,7 @@
 imageCredentials:
   repoUrl: https://quay.io/
   # Update this is using a private repo such as ACR, ECR, GCR, JFrog, etc.
-  registry: quay.io/opsmxpublic  
+  registry: quay.io/opsmxpublic 
 
 ####################################################
 ## Option to skip installation of OpsMx Spinnaker
@@ -53,7 +53,7 @@ global:
   # Common gate for both spin and oes services. Change ONLY if required
   commonGate:
     enabled: true
-    spinnakerRBAC: false  # Set to true if RBAC is enabled in Spinnaker
+    spinnakerRBAC: true  # Set to true if RBAC is enabled in Spinnaker
     spinnakerKayanta: false
 
   ## Set to true to expose oes-ui, oes-gate services over ingress
@@ -63,6 +63,7 @@ global:
   nodeSelector: {}
   affinity: {}
   tolerations: []
+  
   
   # Spinnaker Deck URL configuration; url overwhich spinnaker deck will be accessed
   spinDeck:
@@ -242,7 +243,7 @@ autopilot:
   ## Image specific details
   image:
     repository: ubi8-oes-autopilot
-    tag: v3.11.1
+    tag: v3.12.0
     pullPolicy: IfNotPresent
 
   annotations:
@@ -274,7 +275,7 @@ audit:
   ##
   image:
     repository: ubi8-oes-audit-service
-    tag: v3.11.1
+    tag: v3.12.0
     pullPolicy: IfNotPresent
 
   serviceAnnotations: {}
@@ -295,7 +296,7 @@ auditClient:
   ##
   image:
     repository: ubi8-oes-audit-client
-    tag: v3.11.1
+    tag: v3.12.0
     pullPolicy: IfNotPresent
 
   serviceAnnotations: {}
@@ -316,7 +317,7 @@ datascience:
   ##
   image:
     repository: ubi8-oes-datascience
-    tag: v3.11.1
+    tag: v3.12.0
     pullPolicy: IfNotPresent
 
   serviceAnnotations: {}
@@ -334,7 +335,7 @@ dashboard:
   ## Image specific details
   image:
     repository: ubi8-oes-dashboard
-    tag: v3.11.1
+    tag: v3.12.0
     pullPolicy: IfNotPresent
 
   annotations:
@@ -384,7 +385,7 @@ gate:
   ## Image specific details
   image:
     repository: ubi8-gate
-    tag: v3.11.1
+    tag: v3.12.0
     pullPolicy: IfNotPresent
 
   serviceAnnotations: {}
@@ -409,6 +410,8 @@ gate:
     server:
       session:
         timeoutInSeconds: 7200
+    agentAPI: false
+    webhooks: false
 
     #####################################################
     # SAML AUthentication
@@ -458,7 +461,7 @@ platform:
   ## Image specific details
   image:
     repository: ubi8-oes-platform
-    tag: v3.11.1
+    tag: v3.12.0
     pullPolicy: IfNotPresent
 
   annotations:
@@ -511,7 +514,7 @@ sapor:
   ## Image specific details
   image:
     repository: ubi8-oes-sapor
-    tag: v3.11.1
+    tag: v3.12.0
     pullPolicy: IfNotPresent
 
   annotations:
@@ -597,7 +600,7 @@ ui:
   ## Image specific details
   image:
     repository: ubi8-oes-ui
-    tag: v3.11.1
+    tag: v3.12.0
     pullPolicy: IfNotPresent
   serviceAnnotations: {}
 
@@ -611,7 +614,7 @@ visibility:
   ## Image specific details
   image:
     repository: ubi8-oes-visibility
-    tag: v3.11.1
+    tag: v3.12.0
     pullPolicy: IfNotPresent
 
   annotations:
@@ -1052,7 +1055,7 @@ spinnaker:
 ## Name of the secret for pulling images from container registry.
 ## Use it when the images are stored under private registry.
 ## Create this secret before installing the chart
-imagePullSecret: ""
+imagePullSecret: "opsmx11-secret"
 
 ## Installation mode, available modes OES-AP, None (do not install AP (previously called OES)
 installationMode: OES-AP

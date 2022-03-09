@@ -2,7 +2,8 @@ opsmx:
   dashboard:
     installation:
       mode: {{ .Values.installationMode }}
-
+standardErrorCodes:
+  filePath: /opsmx/conf/standard-error-code.csv
 platformservice.url: http://oes-platform:8095
 autopilot.url: http://oes-autopilot:8090
 oes.sapor.url: http://oes-sapor:8085

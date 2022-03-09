@@ -198,7 +198,11 @@ gate:
     mode: common    #Allowed values are --> oes,common
     {{- else }}
     mode: oes
-    {{- end }} 
+    {{- end }}
+rbac:
+  feature:
+    application:
+      enabled: {{ .Values.global.commonGate.spinnakerRBAC }}
 {{- if .Values.global.commonGate.enabled }}
 spinnaker:
   extensibility:
@@ -224,6 +228,10 @@ spinnaker:
           #url: https://raw.githubusercontent.com/OpsMx/spinnakerPluginRepository/v3.10.0/plugins.json
 {{- end }}
 
+allowUnauthenticatedAccess:
+  agentAPI: {{ .Values.gate.config.agentAPI }}
+  webhooks: {{ .Values.gate.config.webhooks }}
+
 logging:
   level:
     com.netflix.spinnaker.gate.security: INFO
@@ -232,4 +240,5 @@ logging:
     #com.netflix.spinnaker.gate.security: DEBUG
     #org.springframework.security: DEBUG
     #org.springframework.web: DEBUG
+
 

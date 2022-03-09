@@ -62,3 +62,6 @@ datasource:
   secretManagement:
     source: {{ .Values.secretStore }}
 
+standardErrorCodes:
+  filePath: /opsmx/conf/standard-error-code.csv
+

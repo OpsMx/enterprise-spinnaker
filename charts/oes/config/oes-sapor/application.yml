@@ -6,6 +6,9 @@ spring:
     password: '{{ .Values.db.password }}'
 {{- end }}
 
+standardErrorCodes:
+  filePath: /opsmx/conf/standard-error-code.csv
+
 secretManagement:
   source:
     config: {{ .Values.secretStore }}
@@ -62,6 +65,9 @@ spinnaker:
     endPoint: /webhooks/webhook/restartSpinnaker
   encrypt:
     enabled: {{ .Values.sapor.config.encrypt.enabled }}
+  sync:
+    permission:
+      enabled: true
 datasources:
   platform: {{ .Values.sapor.config.datasources.platform }}
   
