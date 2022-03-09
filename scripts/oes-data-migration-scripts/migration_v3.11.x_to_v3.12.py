@@ -6,7 +6,7 @@ from tqdm import tqdm
 
 def perform_migration():
     try:
-        for step in tqdm(range(14), desc="Migrating from v3.11 to v3.12..."):
+        for step in tqdm(range(15), desc="Migrating from v3.11 to v3.12..."):
             if step == 0:
                 drop_table_user_group_permission_3_11()
             if step == 1:
@@ -35,10 +35,9 @@ def perform_migration():
                 migrate_user_group_permission(user_group_permissions)
             if step == 13:
                 platform_conn.commit()
-        
-        print("Alter autopilot db table servicegate and serviceriskanalysis in opsmx db")
-        updateautopilotconstraints()
-        autopilot_conn.commit()
+            if step == 14:
+            	updateautopilotconstraints()
+        	    autopilot_conn.commit()
         
         print("Successfully migrated to v3.12")
     except Exception as e:
@@ -54,9 +53,9 @@ def perform_migration():
 def updateautopilotconstraints():
     try:
         cur = autopilot_conn.cursor()
-        cur.execute(" ALTER TABLE serviceriskanalysis  DROP CONSTRAINT fkmef9blhpcxhcj431kcu52nm1e ")
+        cur.execute(" ALTER TABLE serviceriskanalysis  DROP CONSTRAINT IF EXISTS fkmef9blhpcxhcj431kcu52nm1e ")
         print("Successfully dropped constraint serviceriskanalysis table in autopilot db")
-        cur.execute(" ALTER TABLE servicegate  DROP CONSTRAINT uk_lk3buh56ebai2gycw560j2oxm ")
+        cur.execute(" ALTER TABLE servicegate  DROP CONSTRAINT IF EXISTS uk_lk3buh56ebai2gycw560j2oxm ")
         print("Successfully dropped constraint servicegate table in autopilot db")
     except Exception as e:
         print("Exception occured while  updating script : ", e)
