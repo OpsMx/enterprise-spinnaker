@@ -53,7 +53,7 @@ global:
   # Common gate for both spin and oes services. Change ONLY if required
   commonGate:
     enabled: true
-    spinnakerRBAC: true  # Set to true if RBAC is enabled in Spinnaker
+    spinnakerRBAC: false  # Set to true if RBAC is enabled in Spinnaker
     spinnakerKayanta: false
 
   ## Set to true to expose oes-ui, oes-gate services over ingress
@@ -565,6 +565,9 @@ sapor:
     # Set the below field to true if datasource configurations from platform, please don't change
     datasources:
       platform: true
+    sync:
+      permission:
+        enabled: true
 
 ###############################################################################
 ## Use this SAPOR GATE Configuration to Enable Basic Authentication for OES SAPOR to communitcate 

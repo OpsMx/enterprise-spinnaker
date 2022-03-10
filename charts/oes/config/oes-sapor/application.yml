@@ -27,6 +27,11 @@ oes:
     url: "http://oes-audit-service:8097" 
   dashboard:
     url: http://oes-dashboard:8094
+  {{- if .Values.global.commonGate.enabled }}
+  commongateurl: https://{{ .Values.global.oesGate.host }}
+  {{- else }}
+  commongateurl:
+  {{- end }}
 pipeline-promotion:
   github:
     {{ if eq .Values.spinnaker.gitopsHalyard.repo.type "git" }}
@@ -59,15 +64,14 @@ pipeline-promotion:
     region: {{ .Values.spinnaker.gitopsHalyard.repo.s3region }}
     bucketName: {{ .Values.spinnaker.gitopsHalyard.repo.s3bucket }} 
 spinnaker:
-  version: {{ template "oes.spinnakerVersion" . }}
-  images: {{ .Values.sapor.config.spinnakerImages }}
   restart:
     endPoint: /webhooks/webhook/restartSpinnaker
   encrypt:
     enabled: {{ .Values.sapor.config.encrypt.enabled }}
   sync:
     permission:
-      enabled: true
+      enabled: {{ .Values.sapor.config.sync.permission.enabled }}
+
 datasources:
   platform: {{ .Values.sapor.config.datasources.platform }}
   
