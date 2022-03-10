@@ -46,8 +46,7 @@ data:
     {{- end }}
     {{- end }}
 
-    {{- if .Values.gitopsHalyard.enabled }}
-    {{- if .Values.global.gitea.enabled }}
+    {{- if and (.Values.gitopsHalyard.enabled) (.Values.global.gitea.enabled) }}
 
     gitea_user=`echo $GITEA_USER | sed 's/ *$//g'`
     gitea_pass=`echo $GITEA_PASS | sed 's/ *$//g'`
@@ -77,7 +76,7 @@ data:
         fi
     {{- end }}
 
-
+    {{- if .Values.gitopsHalyard.enabled }}
     {{- if or (eq .Values.gitopsHalyard.repo.type "git") (eq .Values.gitopsHalyard.repo.type "stash") }}
     #!/bin/bash -x
     rm -rf /tmp/spinnaker/.hal
