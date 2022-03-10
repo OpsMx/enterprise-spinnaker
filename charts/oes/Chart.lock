@@ -23,5 +23,8 @@ dependencies:
 - name: prometheus
   repository: ""
   version: 11.16.2
-digest: sha256:c7c5aa2cbb821e80a05a45273ff067677d947d89bee35b3378333c1d558607d4
-generated: "2022-02-25T13:49:42.421126001+05:30"
+- name: gitea
+  repository: https://dl.gitea.io/charts/
+  version: 5.0.1
+digest: sha256:3866fdcf75b9aa9352f6b36a6447a152e7cf52b7cc8d182dede4d8f8c9bec5be
+generated: "2022-03-10T20:00:51.724958953+05:30"

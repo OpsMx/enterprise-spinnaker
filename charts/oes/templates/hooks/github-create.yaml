@@ -1,0 +1,40 @@
+{{- if and (not .Values.global.gitea.enabled) .Release.IsInstall -}}
+apiVersion: batch/v1
+kind: Job
+metadata:
+  annotations:
+    "helm.sh/hook": "pre-install"
+    "helm.sh/hook-delete-policy": "before-hook-creation"
+    "helm.sh/hook-weight": "1"
+  labels:
+    app: oes
+    component: github-config
+{{ include "oes.standard-labels" . | indent 4 }}
+  name: github-config
+spec:
+  template:
+    metadata:
+      labels:
+        app: oes
+        component: github-config
+{{ include "oes.standard-labels" . | indent 8 }}
+    spec:
+      containers:
+      - command: ["sh", "/tmp/config/github-create.sh" ]
+        name: github-creation-api
+        image: {{ .Values.global.customImages.registry }}/awsgit:v2-openssh
+        volumeMounts:
+        - mountPath: /tmp/config
+          name: github-creation
+      {{- if .Values.imagePullSecret}}
+      imagePullSecrets:
+      - name: {{ .Values.imagePullSecret}}
+      {{- end }}
+      restartPolicy: OnFailure
+      volumes:
+      - configMap:
+          defaultMode: 420
+          name: {{ template "oes.fullname" . }}-github-creation
+        name: github-creation
+{{- end }}
+

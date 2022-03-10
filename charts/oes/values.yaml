@@ -63,8 +63,15 @@ global:
   nodeSelector: {}
   affinity: {}
   tolerations: []
-  
-  
+
+  gitea:
+    enabled: true
+    admin:
+      existingSecret: gitea-secret
+      username: lakki
+      password: susmi
+      email: "opsmx@local.domain"
+
   # Spinnaker Deck URL configuration; url overwhich spinnaker deck will be accessed
   spinDeck:
     protocol: https
@@ -686,6 +693,13 @@ redis:
 spinnaker:
   autoInstallSampleApps: true   # Set this to FALSE if upgrading
   # Initialize gitOps style Halyard
+  gitea:
+    enabled: true
+    admin:
+      existingSecret: gitea-secret
+      username: lakki
+      password: susmi
+      email: "opsmx@local.domain"
   gitopsHalyard:
     enabled: true
     secretName: opsmx-gitops-auth  # No need to change this

@@ -86,12 +86,27 @@ spec:
         {{- end }}
         - /tmp/initscript/init.sh
         {{- if (.Values.gitopsHalyard.enabled) }}
-        {{- if or (eq .Values.gitopsHalyard.repo.type "git") (eq .Values.gitopsHalyard.repo.type "stash") }}
         env:
         - name: SPINNAKER_NAMESPACE
           valueFrom:
             fieldRef:
               fieldPath: metadata.namespace
+        {{- if (.Values.global.gitea.enabled) }}
+        env:
+        - name: GITEA_USER
+          valueFrom:
+            secretKeyRef:
+              name: {{ .Values.global.gitea.admin.existingSecret }}
+              key: username
+        - name: GITEA_PASS
+          valueFrom:
+            secretKeyRef:
+              name: {{ .Values.global.gitea.admin.existingSecret }}
+              key: password
+        {{- end }}
+        {{- if or (eq .Values.gitopsHalyard.repo.type "git") (eq .Values.gitopsHalyard.repo.type "stash") }}
+        {{- if not (.Values.global.gitea.enabled) }}
+        env:
         - name: GIT_CLONE_PARAM
           valueFrom:
             secretKeyRef:
@@ -114,12 +129,9 @@ spec:
               key: dynamicaccountsgituri
         {{- end }}
         {{- end }}
+        {{- end }}
         {{- if and (.Values.gitopsHalyard.enabled) (eq .Values.gitopsHalyard.repo.type "s3") }}
         env:
-        - name: SPINNAKER_NAMESPACE
-          valueFrom:
-            fieldRef:
-              fieldPath: metadata.namespace
         - name: S3_ACCESSKEY
           valueFrom:
             secretKeyRef:
