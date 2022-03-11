@@ -75,7 +75,7 @@ global:
   # Spinnaker Deck URL configuration; url overwhich spinnaker deck will be accessed
   spinDeck:
     protocol: https
-    host: spin.example.ops.com
+    host: susmi-spin.play.opsmx.org
     #port: 31464
 
     serviceAnnotations: {}
@@ -90,7 +90,7 @@ global:
   # Spinnaker Gate URL configuration; url overwhich spinnaker gate will be accessed
   spinGate:
     protocol: https
-    host: spin-gate.example.ops.com
+    host: susmi-gate.play.opsmx.org
     #port: 31465
 
     serviceAnnotations: {}
@@ -104,7 +104,7 @@ global:
   ## OES-UI url configuration
   oesUI:
     protocol: https
-    host: oes.example.ops.com
+    host: susmi-oes.play.opsmx.org
     # Use below port when hostname above is an external IP instead of a hostname
     #port: 31466
 
@@ -117,7 +117,7 @@ global:
   ## OES-Gate url configuration
   oesGate:
     protocol: https
-    host: oes-gate.example.ops.com
+    host: susmi-gate.play.opsmx.org
     # Use below port when hostname above is an external IP instead of a hostname
     #port: 31467
     
@@ -704,7 +704,7 @@ spinnaker:
       organization: OpsMx
       projectName: ""                # Specify project name only if repo is under a project
       repository: standard-gitops-repo # repo name for GitOps Halyard (Sample Reference: https://github.com/OpsMx/sample-gitops-repo.git).
-      halConfigBranch: master # Branch under which halyard config is present under above repository
+      halConfigBranch: 3.11 # Branch under which halyard config is present under above repository
       halConfigPath: / #relative path from repository root folder
       dynamicAccRepository: standard-gitops-repo # Please provide the repo name of the GitOps Dynamic Accounts Directory. Can be same as Hal repo. 
       dynAccntConfigPath: / #relative path from repository root folder
