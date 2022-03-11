@@ -24,7 +24,7 @@ dependencies:
   repository: ""
   version: 11.16.2
 - name: gitea
-  repository: https://dl.gitea.io/charts/
+  repository: ""
   version: 5.0.1
-digest: sha256:3866fdcf75b9aa9352f6b36a6447a152e7cf52b7cc8d182dede4d8f8c9bec5be
-generated: "2022-03-10T20:00:51.724958953+05:30"
+digest: sha256:911e6248767cac2a9dde498e9b707cb549b354e13c0403c0a6f46350855aae0f
+generated: "2022-03-11T11:08:30.370444213+05:30"

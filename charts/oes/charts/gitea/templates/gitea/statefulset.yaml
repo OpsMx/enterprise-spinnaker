@@ -164,17 +164,17 @@ spec:
             {{- end }}
             {{- end }}
             {{- end }}
-            {{- if .Values.gitea.admin.existingSecret }}
+            {{- if .Values.global.gitea.admin.existingSecret }}
             - name: GITEA_ADMIN_USERNAME
               valueFrom:
                 secretKeyRef:
                   key:  username
-                  name: {{ .Values.gitea.admin.existingSecret }}
+                  name: {{ .Values.global.gitea.admin.existingSecret }}
             - name: GITEA_ADMIN_PASSWORD
               valueFrom:
                 secretKeyRef:
                   key:  password
-                  name: {{ .Values.gitea.admin.existingSecret }}
+                  name: {{ .Values.global.gitea.admin.existingSecret }}
             {{- else }}
             - name: GITEA_ADMIN_USERNAME
               value: {{ .Values.gitea.admin.username | quote }}

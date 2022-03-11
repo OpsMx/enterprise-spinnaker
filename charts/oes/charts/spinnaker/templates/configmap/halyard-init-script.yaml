@@ -47,32 +47,40 @@ data:
     {{- end }}
 
     {{- if and (.Values.gitopsHalyard.enabled) (.Values.global.gitea.enabled) }}
-
+    set -x
+    rm -rf /tmp/spinnaker/repo.json
     gitea_user=`echo $GITEA_USER | sed 's/ *$//g'`
     gitea_pass=`echo $GITEA_PASS | sed 's/ *$//g'`
     basic_auth=$(echo -n $gitea_user:$gitea_pass |base64)
 
+    sleep 1m
     echo "Checking if the local gitea repo exists....." 
-    curl -k -X GET "http://gitea-http.SPINNAKER_NAMESPACE:3000/api/v1/users/$gitea_user/repos" >repo.json
-    checkrepo=$(cat repo.json | jq '.[] | select(.name=="gitea-standard-repo")')
+    curl -k -X GET "http://{{ .Release.Name }}-gitea-http.$SPINNAKER_NAMESPACE:3000/api/v1/users/$gitea_user/repos" >/tmp/spinnaker/repo.json
+    checkrepo=$(cat /tmp/spinnaker/repo.json | jq '.[] | select(.name=="gitea-standard-repo")')
 
         if [ -z "$checkrepo" ]
         then
                 echo "Creating a New Local Gitea Repo gitea-standard-repo......."
-                curl -k -X POST "http://gitea-http.SPINNAKER_NAMESPACE:3000/api/v1/user/repos" -H "content-type: application/json" -H "Authorization: Basic $basic_auth" --data '{"name":"'gitea-standard-repo'"}'
-                git clone https://github.com/OpsMx/standard-gitops-repo.git
-                git clone http://$gitea_user:$gitea_pass@gitea-http.SPINNAKER_NAMESPACE:3000/$gitea_user/gitea-standard-repo.git
-                cp -pr standard-gitops-repo/* gitea-standard-repo/
-                cd gitea-standard-repo/
+                curl -k -X POST "http://{{ .Release.Name }}-gitea-http.$SPINNAKER_NAMESPACE:3000/api/v1/user/repos" -H "content-type: application/json" -H "Authorization: Basic $basic_auth" --data '{"name":"'gitea-standard-repo'"}'
+                git clone https://github.com/OpsMx/standard-gitops-repo.git /tmp/spinnaker/test/standard-gitops-repo/
+                git clone http://$gitea_user:$gitea_pass@{{ .Release.Name }}-gitea-http.$SPINNAKER_NAMESPACE:3000/$gitea_user/gitea-standard-repo.git /tmp/spinnaker/test/gitea-standard-repo/
+                cp -pr /tmp/spinnaker/test/standard-gitops-repo/* /tmp/spinnaker/test/gitea-standard-repo/
+                cd /tmp/spinnaker/test/gitea-standard-repo/
                 git status
                 git add .
+                git config user.email {{ .Values.global.gitea.admin.email }}
+                git config user.name $gitea_user
                 git commit -m "cloned standard-gitops-repo content"
                 git push
-                git clone http://$gitea_user:$gitea_pass@gitea-http.SPINNAKER_NAMESPACE:3000/$gitea_user/gitea-standard-repo.git /tmp/spinnaker/test
+                rm -rf /tmp/spinnaker/test/gitea-standard-repo
+                rm -rf /tmp/spinnaker/test/standard-gitops-repo
+                sleep 30d
+                git clone http://$gitea_user:$gitea_pass@{{ .Release.Name }}-gitea-http.$SPINNAKER_NAMESPACE:3000/$gitea_user/gitea-standard-repo.git /tmp/spinnaker/test/
 
         else
                 echo "Local Repo exits...."
-                git clone http://$gitea_user:$gitea_pass@gitea-http.SPINNAKER_NAMESPACE:3000/$gitea_user/gitea-standard-repo.git /tmp/spinnaker/test
+                rm -rf /tmp/spinnaker/test/gitea-standard-repo
+                git clone http://$gitea_user:$gitea_pass@{{ .Release.Name }}-gitea-http.$SPINNAKER_NAMESPACE:3000/$gitea_user/gitea-standard-repo.git /tmp/spinnaker/test
         fi
     {{- end }}
 
