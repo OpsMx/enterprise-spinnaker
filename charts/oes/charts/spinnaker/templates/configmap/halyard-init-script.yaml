@@ -47,6 +47,30 @@ data:
     {{- end }}
 
     {{- if and (.Values.gitopsHalyard.enabled) (.Values.global.gitea.enabled) }}
+
+    echo \"Checking for Gitea services\"
+    wait_period=0
+    while true
+    do
+    kubectl get po -n {{ .Release.Namespace }} -o jsonpath='{range .items[*]}{..metadata.name}{"\t"}{..containerStatuses..ready}{"\n"}{end}' > /tmp/inst.status
+    GITEA=$(grep gitea-0 /tmp/inst.status |grep -v deck | awk '{print $2}')
+
+    wait_period=$(($wait_period+10))
+    if [ "$GITEA" == "true" ];
+    then
+        echo \"Gitea Pod is ready\"
+        break
+    else
+        if [ $wait_period -gt 1800 ];
+        then
+            echo \"Script is timed out as the Gitea is not ready in 30 min.......\"
+            break
+        else
+            echo \"Waiting for Gitea to be ready\"
+            sleep 1m
+        fi
+    fi
+    done
     rm -rf /tmp/spinnaker/repo.json
     gitea_user=`echo $GITEA_USER | sed 's/ *$//g'`
     gitea_pass=`echo $GITEA_PASS | sed 's/ *$//g'`
@@ -55,7 +79,6 @@ data:
     GIT_USER=$gitea_user
     GIT_TOKEN=$gitea_pass
 
-    sleep 2m
     echo "Checking if the local gitea repo exists....." 
     curl -k -X GET "http://{{ .Release.Name }}-gitea-http.$SPINNAKER_NAMESPACE:3000/api/v1/users/$gitea_user/repos" >/tmp/spinnaker/repo.json
     checkrepo=$(cat /tmp/spinnaker/repo.json | jq '.[] | select(.name=="gitea-standard-repo")')
