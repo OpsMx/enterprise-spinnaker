@@ -47,10 +47,10 @@ spec:
           protocol: TCP
         volumeMounts:
         - name: config-dir
-          mountPath: /var/www/html/assets/config/app-config.json
+          mountPath: /var/www/html/ui/assets/config/app-config.json
           subPath: app-config.json
         - name: config-dir
-          mountPath: /var/www/html/assets/config/help-text.json
+          mountPath: /var/www/html/ui/assets/config/help-text.json
           subPath: help-text.json
         - mountPath: /etc/nginx/nginx.conf
           name: nginx-config
@@ -62,7 +62,7 @@ spec:
           periodSeconds: 5
         livenessProbe:
           httpGet:
-            path: /health
+            path: /ui/indexl.html
             port: 8080
           initialDelaySeconds: 15
           periodSeconds: 5

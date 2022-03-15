@@ -18,9 +18,5 @@ app:
 {{- if .Values.dashboard.config.spinnakerLink }}
 spinnakerLink: {{ .Values.dashboard.config.spinnakerLink }}
 {{- else }}
- {{- if .Values.global.spinDeck.port }}
-spinnakerLink: {{ .Values.global.spinDeck.protocol }}://{{ .Values.global.spinDeck.host }}:{{ .Values.global.spinDeck.port }}
- {{- else }}
-spinnakerLink: {{ .Values.global.spinDeck.protocol }}://{{ .Values.global.spinDeck.host }}
- {{- end }}
+spinnakerLink: /deck/
 {{- end }}
