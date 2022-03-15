@@ -58,7 +58,12 @@ data:
     ]\n        then\n           echo \"Not Provided the Branch in the spinnaker UI....Continuing
     with the default branch sprcified in configmap\"\n           echo $git_branch\n
     else\n      echo \"Provided the User defined Branch in spinnaker UI\"\n      git_branch=$BRANCH_NAME_UI\n
-    \     echo $git_branch\nfi\nsource $SBASE/spin.sh\nsource $SBASE/stash.sh\nsource
+    \     echo $git_branch\nfi\nROOT_FOLDER_UI=$(echo $rootfolder_ui | sed 's/[][]//g')\necho
+    $ROOT_FOLDER_UI\nif [ -z \"$ROOT_FOLDER_UI\" ]\n        then\n           echo
+    \"Not Provided the Branch in the spinnaker UI....Continuing with the default branch
+    sprcified in configmap\"\n           echo $root_folder\n else\n      echo \"Provided
+    the User defined Branch in spinnaker UI\"\n      root_folder=$ROOT_FOLDER_UI\n
+    \     echo $root_folder\nfi\n\nsource $SBASE/spin.sh\nsource $SBASE/stash.sh\nsource
     $SBASE/s3.sh\nsource $SBASE/github.sh\nsource $SBASE/bitbucket.sh\necho \"Sourcing
     complete\"\nsync_repo_from_spinnaker(){\n\tif [[ $repo_type = \"s3\" ]];\n \tthen\n\t
     \  upload_spin_to_s3\n\telif [[ $repo_type = \"stash\" ]]; then\n\t\tsync_spin_to_stash\n
