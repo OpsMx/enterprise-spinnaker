@@ -18,7 +18,7 @@ spec:
     port: 443
     targetPort: 8080
   - name: "http"
-    port: 80
+    port: 8080
     targetPort: 8080
     {{- if eq  .Values.k8sServiceType "NodePort" }}
     nodePort: {{ .Values.global.oesUI.port }}

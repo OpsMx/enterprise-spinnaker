@@ -66,13 +66,12 @@ global:
 
   gitea:
     enabled: true
+    standardrepoBranch: master
     admin:
       existingSecret: gitea-secret
       username: lakki
       password: susmi
       email: "opsmx@local.domain"
-    ingress:
-      host: gitea-spin.play.opsmx.org
 
 
   # Spinnaker Deck URL configuration; url overwhich spinnaker deck will be accessed
