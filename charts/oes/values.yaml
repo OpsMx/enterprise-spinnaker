@@ -66,11 +66,11 @@ global:
 
   gitea:
     enabled: true
-    standardrepoBranch: master
+    standardrepoBranch:
     admin:
       existingSecret: gitea-secret
-      username: lakki
-      password: susmi
+      username:
+      password:
       email: "opsmx@local.domain"
 
 
@@ -1092,7 +1092,7 @@ opa:
   enabled: true  
   image:
     repository: openpolicyagent/opa
-    tag: edge-rootless
+    tag: latest
     pullPolicy: IfNotPresent
 
 ####################################################

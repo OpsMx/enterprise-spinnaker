@@ -75,7 +75,7 @@ data:
     gitea_user=`echo $GITEA_USER | sed 's/ *$//g'`
     gitea_pass=`echo $GITEA_PASS | sed 's/ *$//g'`
     basic_auth=$(echo -n $gitea_user:$gitea_pass |base64)
-    DYNAMIC_ACCOUNTS_REPO=http://$gitea_user:$gitea_pass@{{ .Release.Name }}-gitea-http.$SPINNAKER_NAMESPACE:3000/$gitea_user/gitea-standard-repo.git
+    DYNAMIC_ACCOUNTS_REPO=http://{{ .Release.Name }}-gitea-http.$SPINNAKER_NAMESPACE:3000/$gitea_user/gitea-standard-repo.git
     GIT_USER=$gitea_user
     GIT_TOKEN=$gitea_pass
 
