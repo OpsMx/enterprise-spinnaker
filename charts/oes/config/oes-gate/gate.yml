@@ -28,7 +28,7 @@ services:
      baseUrl: "http://oes-audit-client:8098"
      enabled: true
   oesui:
-    externalUrl: /ui
+    externalUrl: /ui/
 {{- if .Values.global.commonGate.enabled }}
   keel:
     enabled: false
