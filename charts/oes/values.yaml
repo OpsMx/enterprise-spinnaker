@@ -65,12 +65,12 @@ global:
   tolerations: []
 
   gitea:
-    enabled: true
+    enabled: false
     standardrepoBranch:
     admin:
       existingSecret: gitea-secret
-      username:
-      password:
+      username: opsmx
+      password: opsmxadmin123
       email: "opsmx@local.domain"
 
 
@@ -706,7 +706,7 @@ spinnaker:
       organization: OpsMx
       projectName: ""                # Specify project name only if repo is under a project
       repository: standard-gitops-repo # repo name for GitOps Halyard (Sample Reference: https://github.com/OpsMx/sample-gitops-repo.git).
-      halConfigBranch: 3.11 # Branch under which halyard config is present under above repository
+      halConfigBranch: main # Branch under which halyard config is present under above repository
       halConfigPath: / #relative path from repository root folder
       dynamicAccRepository: standard-gitops-repo # Please provide the repo name of the GitOps Dynamic Accounts Directory. Can be same as Hal repo. 
       dynAccntConfigPath: / #relative path from repository root folder
