@@ -39,12 +39,12 @@ global:
 
   # when this flag is set to false; UI will be accessible over http instead of https
   ssl:
-    enabled: true
+    enabled: false
 
   # If cert-manager is installed, TLS secrets will created automatically, as an 'Issuer' will be created
   # Else, the TLS secrets will need to created manually
   certManager:
-    installed: true
+    installed: false
 
   customCerts:
     enabled: false        # Set to true if your organization requires custom TLS certs
@@ -57,7 +57,7 @@ global:
     spinnakerKayanta: false
 
   ## Set to true to expose oes-ui, oes-gate services over ingress
-  createIngress: true
+  createIngress: false
 
   ## Node Selection rules for all the OES components (db, Autopilot, Sapor, Dashboard, Visibility, Audit, Datascience, Platform, Ui, Forwarder, Gate...) 
   nodeSelector: {}
@@ -65,13 +65,13 @@ global:
   tolerations: []
 
   gitea:
-    enabled: false
-    standardrepoBranch:
+    enabled: true
+    standardrepoBranch: master
     admin:
       existingSecret: gitea-secret
       username: opsmx
       password: opsmxadmin123
-      email: "opsmx@local.domain"
+      email: "support@opsmx.com"
 
 
   # Spinnaker Deck URL configuration; url overwhich spinnaker deck will be accessed
