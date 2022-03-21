@@ -28,7 +28,7 @@ oes:
   dashboard:
     url: http://oes-dashboard:8094
   {{- if .Values.global.commonGate.enabled }}
-commongateurl: http://oes-gate:8084
+  commongateurl: http://oes-gate:8084
   {{- else }}
   commongateurl:
   {{- end }}
