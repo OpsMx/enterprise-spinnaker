@@ -17,11 +17,7 @@ spring:
             parameters:
               AbstractSerializableParameter: ERROR
 gate:
-{{- if .Values.global.oesGate.port }}
-  url: {{ .Values.global.oesGate.protocol }}://{{ .Values.global.oesGate.host }}:{{ .Values.global.oesGate.port }}
-{{- else }}
-  url: {{ .Values.global.oesGate.protocol }}://{{ .Values.global.oesGate.host }}
-{{- end }}
+  url: http://oes-gate:8084
 
 jira:
   api:
