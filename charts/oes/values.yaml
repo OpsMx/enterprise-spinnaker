@@ -105,7 +105,7 @@ global:
 
   ## OES-UI url configuration
   oesUI:
-    protocol: https
+    protocol: http
     host: susmi-oes.play.opsmx.org
     # Use below port when hostname above is an external IP instead of a hostname
     #port: 31466
