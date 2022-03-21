@@ -28,9 +28,9 @@ data:
 
     wait_period=$(($wait_period+10))
     {{- if .Values.global.commonGate.spinnakerRBAC }}
-    if [ "$DECK" == "true" ] && [ "$CLOUDCACHING" == "true" ] && [ "$CLOUDRO" == "true" ] && [ "$CLOUDRW" == "true" ] && [ "$CLOUDRODECK" == "true" ] && [ "$FRONT" == "true" ] && [ "$GATE" == "true" ] && [ "$ORCA" == "true" ] && [ "$ECHOWORKER" == "true" ] && [ "$ECHOSCHEDULER" == "true" ] && [ "$FIAT" == "true" ] && [ "SAPORGATE" == "true" ] && [ "OESGATE" == "true" ];
+    if [ "$DECK" == "true" ] && [ "$CLOUDCACHING" == "true" ] && [ "$CLOUDRO" == "true" ] && [ "$CLOUDRW" == "true" ] && [ "$CLOUDRODECK" == "true" ] && [ "$FRONT" == "true" ] && [ "$GATE" == "true" ] && [ "$ORCA" == "true" ] && [ "$ECHOWORKER" == "true" ] && [ "$ECHOSCHEDULER" == "true" ] && [ "$FIAT" == "true" ] && [ "$SAPORGATE" == "true" ] && [ "$OESGATE" == "true" ];
     {{- else }}
-    if [ "$DECK" == "true" ] && [ "$CLOUDCACHING" == "true" ] && [ "$CLOUDRO" == "true" ] && [ "$CLOUDRW" == "true" ] && [ "$CLOUDRODECK" == "true" ] && [ "$FRONT" == "true" ] && [ "$GATE" == "true" ] && [ "$ORCA" == "true" ] && [ "$ECHOWORKER" == "true" ] && [ "$ECHOSCHEDULER" == "true" ] && [ "SAPORGATE" == "true" ] && [ "OESGATE" == "true" ];
+    if [ "$DECK" == "true" ] && [ "$CLOUDCACHING" == "true" ] && [ "$CLOUDRO" == "true" ] && [ "$CLOUDRW" == "true" ] && [ "$CLOUDRODECK" == "true" ] && [ "$FRONT" == "true" ] && [ "$GATE" == "true" ] && [ "$ORCA" == "true" ] && [ "$ECHOWORKER" == "true" ] && [ "$ECHOSCHEDULER" == "true" ] && [ "$SAPORGATE" == "true" ] && [ "$OESGATE" == "true" ];
     {{- end }}
     then
         echo \"Spinnaker and OES is Installed and ready\"
