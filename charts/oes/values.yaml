@@ -566,11 +566,10 @@ sapor:
           
     #encryption key needed for sapor to startup from 3.9
     encrypt:
-      enabled: true
+      enabled: false
       # This key should match the encryption key specified in .hal/default/profiles/spinnakerConfig.yaml 
       # encryption key needed for sapor to startup from 3.9
       key: Q7udUkHPuA3VnNlOtksSgQ
-      salt: deadbeef
     # Set the below field to true if datasource configurations from platform, please don't change
     datasources:
       platform: true
