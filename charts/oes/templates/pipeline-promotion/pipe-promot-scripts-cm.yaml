@@ -443,7 +443,7 @@ data:
     $pipeLine.json\"\n                return 1\n            elif [[ \"$retVal\" !=
     \"0\" && \"$ignore_errors\" == \"true\" ]]; then\n                echo \"ERROR:
     spin pipeline save --file $pipeLine.json, continuing\"\n                continue\n
-    \           fi\n           sleep 5 # Slow it down\n         done < pipelines_in_application.list\n
+    \           fi\n           sleep 10 # Slow it down\n         done < pipelines_in_application.list\n
     \    fi\n     cd ..\n  done\n\n}\nget_pipelines_data(){\n\techo $1 \t\n\tlocal
     \ spinnaker_app=$1\n        IFS=',' read -r -a spinnaker_app_array <<< \"$spinnaker_app\"\n
     \       spinnaker_pipe=$spinnaker_pipelines\n        #IFS=',' read -r -a spinnaker_pipe_array
@@ -519,7 +519,7 @@ data:
     \"ERROR: spin pipeline save --file $pipeLine.json\"\n                return 1\n
     \           elif [[ \"$retVal\" != \"0\" && \"$ignore_errors\" == \"true\" ]];
     then\n                echo \"ERROR: spin pipeline save --file $pipeLine.json,
-    continuing\"\n                continue\n            fi\n            sleep 5 #
+    continuing\"\n                continue\n            fi\n            sleep 10 #
     Slow it down\n         done < pipelines_in_application.list\n     fi\n     cd
     ..\n  done\n\n}\n\nupdate_params() {\n    confDir=${pipelineconfigdir}\n    if
     [ ! -d \"$confDir\" ] ; then\n      echo \"Directory specified for configuratio
