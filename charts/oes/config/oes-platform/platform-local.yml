@@ -49,18 +49,10 @@ oes:
   gate:
     url: http://oes-gate:8084
   approvalGate:
-{{- if .Values.global.oesGate.port }}
-    apiUrl: {{ .Values.global.oesGate.protocol }}://{{ .Values.global.oesGate.host }}:{{ .Values.global.oesGate.port }}/visibilityservice/v5/approvalGates/{id}/trigger
-{{- else }}
-    apiUrl: {{ .Values.global.oesGate.protocol }}://{{ .Values.global.oesGate.host }}/visibilityservice/v5/approvalGates/{id}/trigger
-{{- end }}
+    apiUrl: http://oes-gate:8084/visibilityservice/v5/approvalGates/{id}/trigger
 
   verificationGate:
-{{- if .Values.global.oesGate.port }}
-    apiUrl: {{ .Values.global.oesGate.protocol }}://{{ .Values.global.oesGate.host }}:{{ .Values.global.oesGate.port }}/autopilot/api/v3/registerCanary
-{{- else }}
-    apiUrl: {{ .Values.global.oesGate.protocol }}://{{ .Values.global.oesGate.host }}/autopilot/api/v3/registerCanary
-{{- end }}
+    apiUrl: http://oes-gate:8084/autopilot/api/v3/registerCanary
 
 logging:
   level:

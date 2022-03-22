@@ -208,7 +208,7 @@ global:
 
 #####################################################
 # Centralized Monitoring
-####################################################
+#####################################################
   enableCentralMonitoring: false
 
 ###############################################################################
@@ -290,7 +290,7 @@ audit:
   serviceAnnotations: {}
 
   annotations:
-    prometheus_io_path: /prometheus
+    prometheus_io_path: /mgmt/prometheus
     prometheus_io_port: "8097"
     prometheus.io/scrape: "true"
   resources: {}
@@ -311,7 +311,7 @@ auditClient:
   serviceAnnotations: {}
 
   annotations:
-    prometheus_io_path: /prometheus
+    prometheus_io_path: /mgmt/prometheus
     prometheus_io_port: "8098"
     prometheus.io/scrape: "true"
   resources: {}
@@ -332,7 +332,7 @@ datascience:
   serviceAnnotations: {}
 
   annotations:
-    prometheus_io_path: /prometheus
+    prometheus_io_path: /mgmt/prometheus
     prometheus_io_port: "5005"
     prometheus.io/scrape: "true"
   resources: {}
@@ -400,7 +400,7 @@ gate:
   serviceAnnotations: {}
 
   annotations:
-    prometheus_io_path: /prometheus
+    prometheus_io_path: /mgmt/prometheus
     prometheus_io_port: "8084"
     prometheus.io/scrape: "true"
   resources: {}
