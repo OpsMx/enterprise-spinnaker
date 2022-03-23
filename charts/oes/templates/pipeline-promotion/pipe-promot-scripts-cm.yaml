@@ -86,7 +86,7 @@ data:
     \ if [[ $repo_type == \"git\" || $repo_type == \"bitbucket\" ]]; then\n    clone_result=$(git
     clone https://$git_user:${git_secret_token}@${git_url}/${git_project}/${git_repo}.git
     $tempdir/$git_repo 2> /dev/null)\n    validate_clone\n  elif [[ $repo_type ==
-    \"gitea\" ]]; then\n    clone_result=$(git clone https://$git_user:${git_secret_token}@${git_url}/${git_project}/${git_repo}.git
+    \"gitea\" ]]; then\n    clone_result=$(git clone http://$git_user:${git_secret_token}@${git_url}/${git_project}/${git_repo}.git
     $tempdir/$git_repo 2> /dev/null)\n    validate_clone\n  elif [[ $repo_type ==
     \"stash\" ]]; then\n    #statements\n    if [[ $git_url_port != \"\" ]]; then\n
     \     clone_result=$(git  clone https://$git_user:${git_secret_token}@${git_url}:$git_url_port/scm/${git_project}/$git_repo.git
