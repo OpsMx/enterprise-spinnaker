@@ -60,9 +60,9 @@ data:
     else\n      echo \"Provided the User defined Branch in spinnaker UI\"\n      git_branch=$BRANCH_NAME_UI\n
     \     echo $git_branch\nfi\nROOT_FOLDER_UI=$(echo $rootfolder_ui | sed 's/[][]//g')\necho
     $ROOT_FOLDER_UI\nif [ -z \"$ROOT_FOLDER_UI\" ]\n        then\n           echo
-    \"Not Provided the Save Path in the spinnaker UI....Continuing with the default path
-    specified in configmap\"\n           echo $root_folder\n else\n      echo \"Provided
-    the User defined Branch in spinnaker UI\"\n      root_folder=$ROOT_FOLDER_UI\n
+    \"Not Provided the Save Path in the spinnaker UI....Continuing with the default
+    path specified in configmap\"\n           echo $root_folder\n else\n      echo
+    \"Provided the User defined Branch in spinnaker UI\"\n      root_folder=$ROOT_FOLDER_UI\n
     \     echo $root_folder\nfi\n\nsource $SBASE/spin.sh\nsource $SBASE/stash.sh\nsource
     $SBASE/s3.sh\nsource $SBASE/github.sh\nsource $SBASE/bitbucket.sh\necho \"Sourcing
     complete\"\nsync_repo_from_spinnaker(){\n\tif [[ $repo_type = \"s3\" ]];\n \tthen\n\t
@@ -83,6 +83,8 @@ data:
     5\n\tfi\n}\ngit_clone_http() {\n  echo \"cloning $git_project/$git_repo over https\"\n
     \ if [[ $repo_type == \"git\" || $repo_type == \"bitbucket\" ]]; then\n    clone_result=$(git
     clone https://$git_user:${git_secret_token}@${git_url}/${git_project}/${git_repo}.git
+    $tempdir/$git_repo 2> /dev/null)\n    validate_clone\n  elif [[ $repo_type ==
+    \"gitea\" ]]; then\n    clone_result=$(git clone https://$git_user:${git_secret_token}@${git_url}/${git_project}/${git_repo}.git
     $tempdir/$git_repo 2> /dev/null)\n    validate_clone\n  elif [[ $repo_type ==
     \"stash\" ]]; then\n    #statements\n    if [[ $git_url_port != \"\" ]]; then\n
     \     clone_result=$(git  clone https://$git_user:${git_secret_token}@${git_url}:$git_url_port/scm/${git_project}/$git_repo.git
