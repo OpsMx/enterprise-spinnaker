@@ -111,6 +111,7 @@ data:
         #override the repotye to gitea in order to support pipelin-promotion
         sed -i  s/repo_type=git/repo_type=gitea/ /tmp/spinnaker/test/pipeline-promotion/pipe-promot-config-cm.yaml
         sed -i  s/git_user=/git_user=${GIT_USER}/ /tmp/spinnaker/test/pipeline-promotion/pipe-promot-config-cm.yaml
+        sed -i  s/root_folder=/root_folder=pipeline-promotion/ /tmp/spinnaker/test/pipeline-promotion/pipe-promot-config-cm.yaml
     {{- end }}
 
     {{- if .Values.gitopsHalyard.enabled }}
