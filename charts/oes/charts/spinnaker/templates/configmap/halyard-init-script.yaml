@@ -108,18 +108,9 @@ data:
                 rm -rf /tmp/spinnaker/test/gitea-standard-repo
                 git clone http://$gitea_user:$gitea_pass@{{ .Release.Name }}-gitea-http.$SPINNAKER_NAMESPACE:3000/$gitea_user/gitea-standard-repo.git /tmp/spinnaker/test
         fi
-
-        curl -X POST -H "Content-Type: application/json"  -k -d '{"name":"'"$GIT_USER"'"}' -u $GIT_USER:$gitea_pass http://{{ .Release.Name }}-gitea-http.{{ .Release.Namespace }}:3000/api/v1/users/$GIT_USER/tokens >/tmp/token.json
-        cat /tmp/token.json
-        GITEA_TOKEN=$(cat /tmp/token.json | jq '.sha1' -r)
-        GITEA_URL={{ .Release.Name }}-gitea-http.{{ .Release.Namespace }}:3000
-
-        sed -i  s/GITEA_TOKEN/${GITEA_TOKEN}/ /tmp/spinnaker/test/MISC/PP/git-token-secret.yaml
-        sed -i  s/GITEA_URL/${GITEA_URL}/ /tmp/spinnaker/test/MISC/PP/pipe-promot-config-cm.yaml
-        sed -i  s/GITEA_USER/${GIT_USER}/ /tmp/spinnaker/test/MISC/PP/pipe-promot-config-cm.yaml
-        kubectl apply -f /tmp/spinnaker/test/MISC/PP/git-token-secret.yaml -n {{ .Release.Namespace }}
-        kubectl apply -f /tmp/spinnaker/test/MISC/PP/pipe-promot-config-cm.yaml -n {{ .Release.Namespace }}
-
+        #override the repotye to gitea in order to support pipelin-promotion
+        sed -i  s/repo_type=git/repo_type=gitea/ /tmp/spinnaker/test/pipeline-promotion/pipe-promot-config-cm.yaml
+	sed -i  s/git_user=/git_user=${GIT_USER}/ /tmp/spinnaker/test/pipeline-promotion/pipe-promot-config-cm.yaml
     {{- end }}
 
     {{- if .Values.gitopsHalyard.enabled }}
