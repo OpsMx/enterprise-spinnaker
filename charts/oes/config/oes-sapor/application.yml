@@ -39,10 +39,17 @@ pipeline-promotion:
     {{ else }}
     enabled: false
     {{ end }}
+    {{- if .Values.global.gitea.enabled }}
+    username:  {{ .Values.global.gitea.admin.username }}
+    token: {{ .Values.global.gitea.admin.password }}
+    branch: master
+    cloneUrl: http://{{ .Values.global.gitea.admin.username }}:{{ .Values.global.gitea.admin.password }}@{{ .Release.Name }}-gitea-http.{{ .Release.Namespace }}:3000/{{ .Values.global.gitea.admin.username }}/gitea-standard-repo
+    {{- else }}
     username:  {{ .Values.spinnaker.gitopsHalyard.repo.username }}
     token: {{ .Values.spinnaker.gitopsHalyard.repo.token }}
     branch: master
     cloneUrl: https://{{ .Values.spinnaker.gitopsHalyard.repo.username }}:{{ .Values.spinnaker.gitopsHalyard.repo.token }}@{{ .Values.spinnaker.gitopsHalyard.repo.baseUrlHostName }}/{{ .Values.spinnaker.gitopsHalyard.repo.organization }}/{{ .Values.spinnaker.gitopsHalyard.repo.repository }}
+    {{- end }}
   bitbucket:
     {{ if eq .Values.spinnaker.gitopsHalyard.repo.type "stash" }}
     enabled: true
