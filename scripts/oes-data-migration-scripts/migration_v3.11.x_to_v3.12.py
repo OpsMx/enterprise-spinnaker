@@ -57,6 +57,8 @@ def updateautopilotconstraints():
         print("Successfully dropped constraint serviceriskanalysis table in autopilot db")
         cur.execute(" ALTER TABLE servicegate  DROP CONSTRAINT IF EXISTS uk_lk3buh56ebai2gycw560j2oxm ")
         print("Successfully dropped constraint servicegate table in autopilot db")
+        cur.execute(" ALTER TABLE canaryanalysis ALTER COLUMN metric_template_opsmx_id DROP not null ")
+        print("Successfully dropped not null constraint canaryanalysis table in autopilot db")
     except Exception as e:
         print("Exception occured while  updating script : ", e)
         raise e  
