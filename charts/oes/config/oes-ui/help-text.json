@@ -2231,7 +2231,7 @@
       },
       "FEATURE_VISIBILTY_LISTING":{
          "HEADER": "FEATURE FLAG MANAGEMENT",
-         "BODY":"'Feature Visibilty' is for special cases where one or more User Groups need to have exclusive permission for certain feature. Say, 'Compliance Team' only should have access to Policies. So, when a feature flag is enabled for a User Group, this feature is automatically denied for all other users. Normally, most User Groups will not have any feature flag enabled."
+         "BODY":"'Feature Visibility' is for special cases where one or more User Groups need to have exclusive permission for certain feature. Say, 'Compliance Team' only should have access to Policies. So, when a feature flag is enabled for a User Group, this feature is automatically denied for all other users. Normally, most User Groups will not have any feature flag enabled."
        },
       "FEATURE_VISIBILTY_CREATION": {
            "ROLENAME":{
