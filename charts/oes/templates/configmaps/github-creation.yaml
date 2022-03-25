@@ -1,0 +1,47 @@
+{{- if and (not .Values.global.gitea.enabled) .Release.IsInstall -}}
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  annotations:
+    "helm.sh/hook": "pre-install"
+    "helm.sh/hook-delete-policy": "before-hook-creation"
+    "helm.sh/hook-weight": "-10"
+  name: {{ template "oes.fullname" . }}-github-creation
+  labels:
+{{ include "oes.standard-labels" . | indent 4 }}
+data:
+  github-create.sh: |-
+        #!/bin/sh
+
+          #set -x
+
+        gitusermailid={{ .Values.spinnaker.gitopsHalyard.repo.usermailid }}
+        gitusername={{ .Values.spinnaker.gitopsHalyard.repo.username }}
+        gitpassword={{ .Values.spinnaker.gitopsHalyard.repo.token }}
+        org={{ .Values.spinnaker.gitopsHalyard.repo.organization }}
+        repo_name={{ .Values.spinnaker.gitopsHalyard.repo.repository }}
+
+        git config --global user.email "$gitusermailid"
+        git config --global user.name "$gitusername"
+        object='{"name":"'"$repo_name"'","private":"true"}'
+        message=$(curl -s -X GET -H "Authorization: token $gitpassword" https://api.github.com/repos/$org/$repo_name | jq -r '.name')
+
+
+        if [ "$repo_name" == "$message" ]
+        then
+                echo "REPO EXISTS"
+                exit 0
+        else
+                curl -H "Authorization: token $gitpassword" --data "$object" https://api.github.com/user/repos
+                git clone https://github.com/OpsMx/standard-gitops-repo.git
+                git clone https://$gitusername:$gitpassword@github.com/$gitusername/$repo_name.git
+                cp -pr standard-gitops-repo/* $repo_name/
+                cd $repo_name/
+                git checkout -b master
+                git status
+                git add .
+                git commit -m "cloned standard-gitops-repo content"
+                git push origin master 
+        fi
+{{- end }}
+

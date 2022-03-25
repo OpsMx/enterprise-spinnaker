@@ -37,3 +37,6 @@ dependencies:
   - name: prometheus
     version: 11.16.2
     condition: global.enableCentralMonitoring
+  - name: gitea
+    version: 5.0.1
+    condition: global.gitea.enabled

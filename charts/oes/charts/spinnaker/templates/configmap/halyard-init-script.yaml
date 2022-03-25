@@ -46,11 +46,80 @@ data:
     {{- end }}
     {{- end }}
 
+    {{- if and (.Values.gitopsHalyard.enabled) (.Values.global.gitea.enabled) }}
+
+    echo \"Checking for Gitea services\"
+    wait_period=0
+    while true
+    do
+    kubectl get po -n {{ .Release.Namespace }} -o jsonpath='{range .items[*]}{..metadata.name}{"\t"}{..containerStatuses..ready}{"\n"}{end}' > /tmp/inst.status
+    GITEA=$(grep gitea-0 /tmp/inst.status |grep -v deck | awk '{print $2}')
+
+    wait_period=$(($wait_period+10))
+    if [ "$GITEA" == "true" ];
+    then
+        echo \"Gitea Pod is ready\"
+        break
+    else
+        if [ $wait_period -gt 1800 ];
+        then
+            echo \"Script is timed out as the Gitea is not ready in 30 min.......\"
+            break
+        else
+            echo \"Waiting for Gitea to be ready\"
+            sleep 1m
+        fi
+    fi
+    done
+    rm -rf /tmp/spinnaker/repo.json
+    gitea_user=`echo $GITEA_USER | sed 's/ *$//g'`
+    gitea_pass=`echo $GITEA_PASS | sed 's/ *$//g'`
+    basic_auth=$(echo -n $gitea_user:$gitea_pass |base64)
+    DYNAMIC_ACCOUNTS_REPO=http://{{ .Release.Name }}-gitea-http.$SPINNAKER_NAMESPACE:3000/$gitea_user/gitea-standard-repo.git
+    GIT_USER=$gitea_user
+    GIT_TOKEN=$gitea_pass
+
+    echo "Checking if the local gitea repo exists....." 
+    curl -k -X GET "http://{{ .Release.Name }}-gitea-http.$SPINNAKER_NAMESPACE:3000/api/v1/users/$gitea_user/repos" >/tmp/spinnaker/repo.json
+    checkrepo=$(cat /tmp/spinnaker/repo.json | jq '.[] | select(.name=="gitea-standard-repo")')
+
+        if [ -z "$checkrepo" ]
+        then
+                echo "Creating a New Local Gitea Repo gitea-standard-repo......."
+                curl -k -X POST "http://{{ .Release.Name }}-gitea-http.$SPINNAKER_NAMESPACE:3000/api/v1/user/repos" -H "content-type: application/json" -H "Authorization: Basic $basic_auth" --data '{"name":"'gitea-standard-repo'"}'
+                git clone https://github.com/OpsMx/standard-gitops-repo.git -b {{ .Values.global.gitea.standardrepoBranch }} /tmp/spinnaker/test/standard-gitops-repo/
+                git clone http://$gitea_user:$gitea_pass@{{ .Release.Name }}-gitea-http.$SPINNAKER_NAMESPACE:3000/$gitea_user/gitea-standard-repo.git /tmp/spinnaker/test/gitea-standard-repo/
+                cp -pr /tmp/spinnaker/test/standard-gitops-repo/* /tmp/spinnaker/test/gitea-standard-repo/
+                cd /tmp/spinnaker/test/gitea-standard-repo/
+                git status
+                git add .
+                git config user.email {{ .Values.global.gitea.admin.email }}
+                git config user.name $gitea_user
+                git commit -m "cloned standard-gitops-repo content"
+                git push
+                cd
+                rm -rf /tmp/spinnaker/test/gitea-standard-repo
+                rm -rf /tmp/spinnaker/test/standard-gitops-repo
+                rm -rf /tmp/spinnaker/test
+                git clone http://$gitea_user:$gitea_pass@{{ .Release.Name }}-gitea-http.$SPINNAKER_NAMESPACE:3000/$gitea_user/gitea-standard-repo.git /tmp/spinnaker/test/
+
+        else
+                echo "Local Repo exits...."
+                rm -rf /tmp/spinnaker/test/gitea-standard-repo
+                git clone http://$gitea_user:$gitea_pass@{{ .Release.Name }}-gitea-http.$SPINNAKER_NAMESPACE:3000/$gitea_user/gitea-standard-repo.git /tmp/spinnaker/test
+        fi
+        #override the repotye to gitea in order to support pipelin-promotion
+        sed -i  s/repo_type=git/repo_type=gitea/ /tmp/spinnaker/test/pipeline-promotion/pipe-promot-config-cm.yaml
+        sed -i  s/git_user=/git_user=${GIT_USER}/ /tmp/spinnaker/test/pipeline-promotion/pipe-promot-config-cm.yaml
+        sed -i  s/root_folder=/root_folder=pipeline-promotion/ /tmp/spinnaker/test/pipeline-promotion/pipe-promot-config-cm.yaml
+    {{- end }}
+
     {{- if .Values.gitopsHalyard.enabled }}
     {{- if or (eq .Values.gitopsHalyard.repo.type "git") (eq .Values.gitopsHalyard.repo.type "stash") }}
     #!/bin/bash -x
     rm -rf /tmp/spinnaker/.hal
-    {{- if not .Values.gitopsHalyard.repo.sshkeysecret }}
+    {{- if not (.Values.gitopsHalyard.repo.sshkeysecret) }}
+    {{- if not (.Values.global.gitea.enabled) }}
     GIT_USER=`echo $GIT_USER | sed 's/ *$//g'`
     GIT_TOKEN=`echo $GIT_TOKEN | sed 's/ *$//g'`
     git -c {{ .Values.gitopsHalyard.repo.configArgs }} clone $GIT_CLONE_PARAM -b {{ .Values.gitopsHalyard.repo.halConfigBranch}} /tmp/spinnaker/test 2>/tmp/tmp.log
@@ -65,6 +134,9 @@ data:
        exit 4
     fi
     {{- end }}
+    {{- end }}
+
+
     cp -r /tmp/spinnaker/test/{{ .Values.gitopsHalyard.repo.halConfigPath }} /tmp/spinnaker/.hal
     if [ -d "/tmp/spinnaker/test/pipeline-promotion/" ]
     then

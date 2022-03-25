@@ -23,5 +23,6 @@ spec:
     targetPort: 15672
   selector:
     app: oes
+    component: rabbitmq
   type: ClusterIP
 {{- end -}}

@@ -6,6 +6,9 @@ spring:
     password: '{{ .Values.db.password }}'
 {{- end }}
 
+standardErrorCodes:
+  filePath: /opsmx/conf/standard-error-code.csv
+
 secretManagement:
   source:
     config: {{ .Values.secretStore }}
@@ -24,6 +27,11 @@ oes:
     url: "http://oes-audit-service:8097" 
   dashboard:
     url: http://oes-dashboard:8094
+  {{- if .Values.global.commonGate.enabled }}
+  commongateurl: http://oes-gate:8084
+  {{- else }}
+  commongateurl:
+  {{- end }}
 pipeline-promotion:
   github:
     {{ if eq .Values.spinnaker.gitopsHalyard.repo.type "git" }}
@@ -31,10 +39,17 @@ pipeline-promotion:
     {{ else }}
     enabled: false
     {{ end }}
+    {{- if .Values.global.gitea.enabled }}
+    username:  {{ .Values.global.gitea.admin.username }}
+    token: {{ .Values.global.gitea.admin.password }}
+    branch: master
+    cloneUrl: http://{{ .Values.global.gitea.admin.username }}:{{ .Values.global.gitea.admin.password }}@{{ .Release.Name }}-gitea-http.{{ .Release.Namespace }}:3000/{{ .Values.global.gitea.admin.username }}/gitea-standard-repo
+    {{- else }}
     username:  {{ .Values.spinnaker.gitopsHalyard.repo.username }}
     token: {{ .Values.spinnaker.gitopsHalyard.repo.token }}
     branch: master
     cloneUrl: https://{{ .Values.spinnaker.gitopsHalyard.repo.username }}:{{ .Values.spinnaker.gitopsHalyard.repo.token }}@{{ .Values.spinnaker.gitopsHalyard.repo.baseUrlHostName }}/{{ .Values.spinnaker.gitopsHalyard.repo.organization }}/{{ .Values.spinnaker.gitopsHalyard.repo.repository }}
+    {{- end }}
   bitbucket:
     {{ if eq .Values.spinnaker.gitopsHalyard.repo.type "stash" }}
     enabled: true
@@ -56,12 +71,14 @@ pipeline-promotion:
     region: {{ .Values.spinnaker.gitopsHalyard.repo.s3region }}
     bucketName: {{ .Values.spinnaker.gitopsHalyard.repo.s3bucket }} 
 spinnaker:
-  version: {{ template "oes.spinnakerVersion" . }}
-  images: {{ .Values.sapor.config.spinnakerImages }}
   restart:
     endPoint: /webhooks/webhook/restartSpinnaker
   encrypt:
     enabled: {{ .Values.sapor.config.encrypt.enabled }}
+  sync:
+    permission:
+      enabled: {{ .Values.sapor.config.sync.permission.enabled }}
+
 datasources:
   platform: {{ .Values.sapor.config.datasources.platform }}
   

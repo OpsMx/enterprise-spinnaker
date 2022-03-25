@@ -6,6 +6,8 @@ spring:
 logging:
   level:
     com.opsmx.auditclientservice: INFO
+standardErrorCodes:
+  filePath: /opsmx/conf/standard-error-code.csv
 oes:
   admin:
     user: admin

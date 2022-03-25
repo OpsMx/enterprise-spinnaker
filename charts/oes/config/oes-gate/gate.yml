@@ -28,11 +28,7 @@ services:
      baseUrl: "http://oes-audit-client:8098"
      enabled: true
   oesui:
-  {{- if .Values.global.oesUI.port }}
-    externalUrl: {{ .Values.global.oesUI.protocol }}://{{ .Values.global.oesUI.host }}:{{ .Values.global.oesUI.port }}
-  {{- else }}
-    externalUrl: {{ .Values.global.oesUI.protocol }}://{{ .Values.global.oesUI.host }}
-  {{- end }}
+    externalUrl: /ui/
 {{- if .Values.global.commonGate.enabled }}
   keel:
     enabled: false
@@ -64,11 +60,7 @@ services:
   deck:
     host: 0.0.0.0
     port: 9000
-    {{- if .Values.global.spinDeck.port }}
-    baseUrl: {{ .Values.global.spinDeck.protocol }}://{{ .Values.global.spinDeck.host }}:{{ .Values.global.spinDeck.port }}
-    {{- else }}
-    baseUrl: {{ .Values.global.spinDeck.protocol }}://{{ .Values.global.spinDeck.host }}
-    {{- end }}
+    baseUrl: {{ .Values.global.oesUI.protocol }}://{{ .Values.global.oesUI.host }}
     enabled: true
   echo:
     host: 0.0.0.0
@@ -198,7 +190,11 @@ gate:
     mode: common    #Allowed values are --> oes,common
     {{- else }}
     mode: oes
-    {{- end }} 
+    {{- end }}
+rbac:
+  feature:
+    application:
+      enabled: {{ .Values.global.commonGate.spinnakerRBAC }}
 {{- if .Values.global.commonGate.enabled }}
 spinnaker:
   extensibility:
@@ -224,6 +220,10 @@ spinnaker:
           #url: https://raw.githubusercontent.com/OpsMx/spinnakerPluginRepository/v3.10.0/plugins.json
 {{- end }}
 
+allowUnauthenticatedAccess:
+  agentAPI: {{ .Values.gate.config.agentAPI }}
+  webhooks: {{ .Values.gate.config.webhooks }}
+
 logging:
   level:
     com.netflix.spinnaker.gate.security: INFO
@@ -232,4 +232,5 @@ logging:
     #com.netflix.spinnaker.gate.security: DEBUG
     #org.springframework.security: DEBUG
     #org.springframework.web: DEBUG
+
 

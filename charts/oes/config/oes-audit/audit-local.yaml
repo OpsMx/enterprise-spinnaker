@@ -6,6 +6,8 @@ spring:
 logging:
     level:
       com.opsmx.auditservice: INFO
+standardErrorCodes:
+  filePath: /opsmx/conf/standard-error-code.csv
 feign:
   client:
     config:

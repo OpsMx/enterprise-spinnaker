@@ -23,5 +23,8 @@ dependencies:
 - name: prometheus
   repository: ""
   version: 11.16.2
-digest: sha256:c7c5aa2cbb821e80a05a45273ff067677d947d89bee35b3378333c1d558607d4
-generated: "2022-02-25T13:49:42.421126001+05:30"
+- name: gitea
+  repository: ""
+  version: 5.0.1
+digest: sha256:911e6248767cac2a9dde498e9b707cb549b354e13c0403c0a6f46350855aae0f
+generated: "2022-03-11T11:08:30.370444213+05:30"

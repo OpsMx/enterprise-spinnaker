@@ -16,4 +16,5 @@ data:
     #agentAdvertisePort: "443"
     serviceAuth:
       currentKeyName: "public.pem"
+      headerMutationKeyName: "public.pem"
 {{- end -}}

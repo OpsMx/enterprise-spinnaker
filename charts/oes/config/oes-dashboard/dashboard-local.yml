@@ -2,7 +2,8 @@ opsmx:
   dashboard:
     installation:
       mode: {{ .Values.installationMode }}
-
+standardErrorCodes:
+  filePath: /opsmx/conf/standard-error-code.csv
 platformservice.url: http://oes-platform:8095
 autopilot.url: http://oes-autopilot:8090
 oes.sapor.url: http://oes-sapor:8085
@@ -17,9 +18,5 @@ app:
 {{- if .Values.dashboard.config.spinnakerLink }}
 spinnakerLink: {{ .Values.dashboard.config.spinnakerLink }}
 {{- else }}
- {{- if .Values.global.spinDeck.port }}
-spinnakerLink: {{ .Values.global.spinDeck.protocol }}://{{ .Values.global.spinDeck.host }}:{{ .Values.global.spinDeck.port }}
- {{- else }}
-spinnakerLink: {{ .Values.global.spinDeck.protocol }}://{{ .Values.global.spinDeck.host }}
- {{- end }}
+spinnakerLink: /deck/
 {{- end }}
