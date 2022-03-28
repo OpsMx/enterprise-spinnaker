@@ -23,8 +23,9 @@ data:
 
         git config --global user.email "$gitusermailid"
         git config --global user.name "$gitusername"
-        message=$(curl -s -X GET -H "Authorization: token $gitpassword" https://api.github.com/repos/$org/$repo_name | jq -r '.name')
-
+        object='{"name":"'"$repo_name"'","private":"true"}'
+        curlResp=$(curl -s -X GET -H "Authorization: token $gitpassword" https://api.github.com/repos/$org/$repo_name)
+        message= echo $curlResp | jq -r '.name'
 
         if [ "$repo_name" == "$message" ]
         then
