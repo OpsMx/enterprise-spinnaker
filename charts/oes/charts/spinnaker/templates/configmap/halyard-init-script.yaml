@@ -161,6 +161,7 @@ data:
     {{- end }}
     sed -i  's|DYNAMIC_ACCOUNTS_REPO|'"${DYNAMIC_ACCOUNTS_REPO}"'|' /tmp/spinnaker/.hal/default/profiles/spinnakerconfig.yml
     sed -i  s%DYN_ACCNT_CONFG_PATH%{{ .Values.gitopsHalyard.repo.dynAccntConfigPath }}%g /tmp/spinnaker/.hal/default/profiles/spinnakerconfig.yml
+    sed -i  s/RELEASE_NAME/{{ .Release.Name }}/g /tmp/spinnaker/.hal/default/profiles/rosco-local.yml
     sed -i  s/RELEASE_NAME/{{ .Release.Name }}/g /tmp/spinnaker/.hal/default/service-settings/redis.yml
     {{- if not .Values.global.ldap.enabled }}
     yq e '.deploymentConfigurations.[].security.authn.ldap.enabled = "false"' /tmp/spinnaker/.hal/config > /tmp/spinnaker/.hal/config1
