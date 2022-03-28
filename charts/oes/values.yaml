@@ -704,7 +704,7 @@ spinnaker:
       organization: OpsMx
       projectName: ""                # Specify project name only if repo is under a project
       repository: standard-gitops-repo # repo name for GitOps Halyard (Sample Reference: https://github.com/OpsMx/sample-gitops-repo.git).
-      halConfigBranch: 3.12 # Branch under which halyard config is present under above repository
+      halConfigBranch: master # Branch under which halyard config is present under above repository
       halConfigPath: / #relative path from repository root folder
       dynamicAccRepository: standard-gitops-repo # Please provide the repo name of the GitOps Dynamic Accounts Directory. Can be same as Hal repo. 
       dynAccntConfigPath: / #relative path from repository root folder
@@ -737,7 +737,7 @@ spinnaker:
       username: username
       token: token
       ##SSH key based comminication, sshkey is passed in the secret after helm installation edit secret "git-token" and pass BASE64 encoded id_rsa to git_secret_sshkey
-      ##make sure make empty value for "git_secret_token" in the secret if using SSH
+      ##make sure make empty value for "git_secret_token" in the secret if NOT using SSH
       branch: samplerepo
       usermail: krish@company.com
       #password="K438"   ### Token is preferred, Password also might work, try your luck

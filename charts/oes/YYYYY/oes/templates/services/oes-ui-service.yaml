@@ -1,0 +1,24 @@
+---
+# Source: oes/templates/services/oes-ui-service.yaml
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    app: oes
+    component: ui
+    heritage: "Helm"
+    release: "isd"
+    chart: "oes-3.12.1"
+  name: oes-ui
+spec:
+  type: ClusterIP
+  ports:
+  - name: "https"
+    port: 443
+    targetPort: 8080
+  - name: "http"
+    port: 8080
+    targetPort: 8080
+  selector:
+    app: oes
+    component: ui

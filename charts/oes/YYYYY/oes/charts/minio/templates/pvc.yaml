@@ -1,0 +1,17 @@
+---
+# Source: oes/charts/minio/templates/pvc.yaml
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: isd-minio
+  labels:
+    app: minio
+    chart: minio-8.0.9
+    release: isd
+    heritage: Helm
+spec:
+  accessModes:
+    - "ReadWriteOnce"
+  resources:
+    requests:
+      storage: "10Gi"

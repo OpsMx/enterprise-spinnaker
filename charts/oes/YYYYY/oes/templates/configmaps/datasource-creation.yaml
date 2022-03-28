@@ -1,0 +1,124 @@
+---
+# Source: oes/templates/configmaps/datasource-creation.yaml
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: isd-oes-datasource-creation
+  labels:
+    heritage: "Helm"
+    release: "isd"
+    chart: "oes-3.12.1"
+data:
+  datasource-api.sh: |-
+    #!/bin/bash
+    set -x
+    echo \"Waiting for all Spinnaker and OES Services to come-up\"
+    wait_period=0
+    while true
+    do
+    kubectl get po -n opsmx-isd -o jsonpath='{range .items[*]}{..metadata.name}{"\t"}{..containerStatuses..ready}{"\n"}{end}' > /tmp/inst.status
+    CLOUDRO=$(grep spin-clouddriver-ro /tmp/inst.status |grep -v deck | awk '{print $2}')
+    CLOUDRODECK=$(grep spin-clouddriver-ro-deck /tmp/inst.status | awk '{print $2}')
+    CLOUDRW=$(grep spin-clouddriver-rw /tmp/inst.status | awk '{print $2}')
+    CLOUDCACHING=$(grep spin-clouddriver-caching /tmp/inst.status | awk '{print $2}')
+    DECK=$(grep spin-deck /tmp/inst.status | awk '{print $2}')
+    ECHOWORKER=$(grep spin-echo-worker /tmp/inst.status | awk '{print $2}')
+    ECHOSCHEDULER=$(grep spin-echo-scheduler  /tmp/inst.status | awk '{print $2}')
+    FRONT=$(grep spin-front /tmp/inst.status  | awk '{print $2}')
+    #GATE=$(grep spin-gate /tmp/inst.status | awk '{print $2}')
+    #IGOR=$(grep spin-igor /tmp/inst.status | awk '{print $2}')
+    ORCA=$(grep spin-orca /tmp/inst.status | awk '{print $2}')
+    #ROSCO=$(grep spin-rosco /tmp/inst.status | awk '{print $2}')
+    SAPOR=$(grep oes-sapor /tmp/inst.status | awk '{print $2}')
+    PLATFORM=$(grep oes-platform /tmp/inst.status | awk '{print $2}')
+    AUTOPILOT=$(grep oes-autopilot /tmp/inst.status | awk '{print $2}')
+
+
+    wait_period=$(($wait_period+10))
+
+    if [ "$DECK" == "true" ] && [ "$CLOUDCACHING" == "true" ] && [ "$CLOUDRO" == "true" ] && [ "$CLOUDRW" == "true" ] && [ "$CLOUDRODECK" == "true" ] && [ "$FRONT" == "true" ] && [ "$ORCA" == "true" ]  && [ "$ECHOWORKER" == "true" ] && [ "$ECHOSCHEDULER" == "true" ] && [ "$SAPOR" == "true" ] && [ "$PLATFORM" == "true" ] && [ "$AUTOPILOT" == "true" ];
+        then
+            echo \"Spinnaker and OES services are Up and Ready..\"
+            sleep 5
+            curl --header "Content-Type: application/json"  --header "x-spinnaker-user: admin" --request POST  --data '{"datasourceType": "OPA", "name": "OPA", "configurationFields": {"endPoint": "opa:8181"}}'   http://oes-platform:8095/platformservice/v2/datasources
+            curl --header "Content-Type: application/json"  --header "x-spinnaker-user: admin" --request POST  --data '{"datasourceType": "AUTOPILOT", "name": "Autopilot", "configurationFields": {"username": "admin"} }'   http://oes-platform:8095/platformservice/v2/datasources
+            #curl --header "Content-Type: application/json"  --header "x-spinnaker-user: admin" --request POST  --data '{"datasourceType": "ELASTICSEARCH", "name": "elastic-default", "configurationFields": {"endPoint": "https://newoeselastic.opsmx.com", "username": "opsmxuser", "password": "OpsMx@123", "kibanaEndPoint": "https://newoeskibana.opsmx.com", "kibanaPassword": "OpsMx@123", "kibanaUsername": "opsmxuser" }}'   http://oes-platform:8095/platformservice/v2/datasources
+            #curl --header "Content-Type: application/json"  --header "x-spinnaker-user: admin" --request POST  --data '{"datasourceType": "PROMETHEUS", "name": "prometheus-default", "configurationFields": {"endPoint": "http://prometheus:9090"} }'   http://oes-platform:8095/platformservice/v2/datasources
+
+            STORAGE_TYPE=gitea
+            GITEA_USERNAME=opsmx
+            GITEA_PASSWORD=opsmxadmin123
+            USERNAME=admin
+            PASSWORD=saporadmin
+            response=$(curl -s http://oes-sapor:8085/oes/accountsConfig/v3/spinnaker)
+            name=$(echo $response | jq '.[].name')
+            if [ -z "$name" ];
+            then
+              if [[ "$STORAGE_TYPE"  ==  "gitea" ]];
+              then
+
+              curl -X POST -H "Content-Type: application/json"  -k -d '{"name":"'"$GITEA_USERNAME"'"}' -u $GITEA_USERNAME:$GITEA_PASSWORD http://isd-gitea-http.opsmx-isd:3000/api/v1/users/$GITEA_USERNAME/tokens >token.json
+              TOKEN=$(cat token.json | jq '.sha1' -r)
+
+              response=$(curl --header "Content-Type: application/json"  --header "x-spinnaker-user: admin" --request POST http://oes-platform:8095/platformservice/v6/datasource --data '{"datasourceType": "GITHUB", "name": "gitops", "spinEnabled": "false", "configurationFields": {"token": "'$TOKEN'", "username": "", "hostUrl": "http://isd-gitea-http:3000", "url": "http://isd-gitea-http:3000/api/v1/users/opsmx" } }')
+              
+              id=$(echo $response | jq '.id')
+              curl --header "Content-Type: application/json"  --header "x-spinnaker-user: admin" --request POST http://oes-sapor:8085/oes/accountsConfig/v4/spinnaker --data '{"name":"preview-saas","url":"http://sapor-gate:8084","authenticationType":"LDAP","externalAccountFlag":true,"pipelinePromotionFlag":false,"syncAccountFlag":false,"externalAccountConfiguration":{"accountId": "'"${id}"'","accountName":"gitops","provider":"GITHUB","config":{"bucketName":"","region":"","endPoint":"http://isd-gitea-http:3000/'$GITEA_USERNAME'/gitea-standard-repo.git","sourcePath":""}},"pipelinePromotionConfiguration":null,"password":"'"${PASSWORD}"'","userName":"'"${USERNAME}"'"}'
+                 break
+              fi
+            fi
+
+            STORAGE_TYPE=git
+            USERNAME=admin
+            PASSWORD=saporadmin
+            TOKEN=$(echo -n "$USERNAME":"$PASSWORD" | base64)
+            response=$(curl -s http://oes-sapor:8085/oes/accountsConfig/v3/spinnaker)
+            name=$(echo $response | jq '.[].name')
+            if [ -z "$name" ];
+            then
+              if [[ "$STORAGE_TYPE"  ==  "git" ]];
+              then
+              response=$(curl --header "Content-Type: application/json"  --header "x-spinnaker-user: admin" --request POST http://oes-platform:8095/platformservice/v6/datasource --data '{"datasourceType": "GITHUB", "name": "gitops", "spinEnabled": "false", "configurationFields": {"token": "git/stash_token", "username": "git/stash_username", "hostUrl": "https://github.com/", "url": "https://api.github.com" } }')
+              id=$(echo $response | jq '.id')
+              curl --header "Content-Type: application/json"  --header "x-spinnaker-user: admin" --request POST http://oes-sapor:8085/oes/accountsConfig/v4/spinnaker --data '{"name":"preview-saas","url":"http://sapor-gate:8084","authenticationType":"LDAP","externalAccountFlag":true,"pipelinePromotionFlag":false,"syncAccountFlag":false,"externalAccountConfiguration":{"accountId": "'"${id}"'","accountName":"gitops","provider":"GITHUB","config":{"bucketName":"","region":"","endPoint":"https://github.com/OpsMx/standard-gitops-repo.git","sourcePath":""}},"pipelinePromotionConfiguration":null,"password":"'"${PASSWORD}"'","userName":"'"${USERNAME}"'"}'
+              #curl --header "Content-Type: application/json"  --header "x-spinnaker-user: admin" --request POST http://oes-sapor:8085/oes/accountsConfig/v3/spinnaker --data '{"name": "preview-saas", "url": "https://oes-gate.example.ops.com", "authenticationType": "LDAP", "token": "'"${TOKEN}"'", "externalAccountFlag": "true","pipelinePromotionFlag": "false","syncAccountFlag": "false", "externalAccountConfiguration": {"accountId": "'"${id}"'","accountName": "gitops", "provider": "GITHUB", "config": {"bucketName": "", "region": "","endPoint": "https://github.com/OpsMx/standard-gitops-repo.git", "sourcePath": "" }}}'
+                  break
+              fi
+              if [[ "$STORAGE_TYPE"  ==  "stash" ]];
+              then
+                if [[ "" ]]
+                then
+                  response=$(curl --header "Content-Type: application/json"  --header "x-spinnaker-user: admin" --request POST http://oes-platform:8095/platformservice/v2/datasources --data '{"datasourceType": "BITBUCKET", "name": "gitops-bitbucket", "spinEnabled": "false", "configurationFields": {"authType":"bearer","username": "git/stash_username","token": "git/stash_token","read":"","write":"",  "hostUrl": "https://github.com/OpsMx//standard-gitops-repo.git", "url": "https://api.bitbucket.org/2.0/" } }')
+                  id=$(echo $response | jq '.id')
+                   curl --header "Content-Type: application/json"  --header "x-spinnaker-user: admin" --request POST http://oes-sapor:8085/oes/accountsConfig/v3/spinnaker --data '{"name": "preview-saas", "url": "http://sapor-gate:8084", "authenticationType": "LDAP", "token": "'"${TOKEN}"'", "externalAccountFlag": "true", "pipelinePromotionFlag": "false","syncAccountFlag": "false", externalAccountConfiguration": {"accountId": "'"${id}"'","accountName": "gitops-bitbucket", "provider": "BITBUCKET", "config": {"bucketName": "", "region": "","endPoint": "https://github.com/OpsMx//standard-gitops-repo.git", "sourcePath": " " }}}'
+
+                  break
+                else
+                  response=$(curl --header "Content-Type: application/json"  --header "x-spinnaker-user: admin" --request POST http://oes-platform:8095/platformservice/v2/datasources --data '{"datasourceType": "BITBUCKET", "name": "gitops-bitbucket", "spinEnabled": "false", "configurationFields": {"authType":"bearer","username": "git/stash_username","token": "git/stash_token","read":"","write":"", "hostUrl": "https://github.com/OpsMx//standard-gitops-repo.git", "url": "https://api.bitbucket.org/2.0/" } }')
+                  id=$(echo $response | jq '.id')
+                  curl --header "Content-Type: application/json"  --header "x-spinnaker-user: admin" --request POST http://oes-sapor:8085/oes/accountsConfig/v3/spinnaker --data '{"name": "preview-saas", "url": "http://sapor-gate:8084", "authenticationType": "LDAP", "token": "'"${TOKEN}"'", "externalAccountFlag": "true", "pipelinePromotionFlag":"false","syncAccountFlag":"false", externalAccountConfiguration": {"accountId": "'"${id}"'","accountName": "gitops-bitbucket", "provider": "BITBUCKET", "config": {"bucketName": "", "region": "","endPoint": "https://github.com/OpsMx//standard-gitops-repo.git", "sourcePath": "" }}}'
+                  break
+                fi
+              fi
+              if [[ "$STORAGE_TYPE"  ==  "s3" ]];
+              then
+                 curl --header "Content-Type: application/json"  --header "x-spinnaker-user: admin" --request POST http://oes-platform:8095/platformservice/v2/datasources --data '{"datasourceType":"AMAZONS3","name":"gitops-s3","configurationFields":{"access_id":"AWS_ACCESS_KEY_ID","secret_key":"AWS_SECRET_ACCESS_KEY"},"spinnakerNames":[""],"spinEnabled": "false"} }'
+                 curl --header "Content-Type: application/json"  --header "x-spinnaker-user: admin" --request POST http://oes-sapor:8085/oes/accountsConfig/v3/spinnaker --data '{"name": "preview-saas", "url": "http://sapor-gate:8084", "authenticationType": "LDAP", "token": "'"${TOKEN}"'" , "externalAccountFlag": "true", "pipelinePromotionFlag":"false", "syncAccountFlag":"false", externalAccountConfiguration": {"accountName": "gitops-s3","config":{"bucketName":"bucket name.e.g-testbucket","region":"regionofbucket","endPoint":""},"provider": "AMAZONS3"}}'
+              fi
+            else
+              echo "Spinnaker is already Integrated"
+              break
+            fi
+        
+
+    else
+        if [ $wait_period -gt 2000 ];
+        then
+            echo \"Script is timed out as the Spinnaker is not ready yet.......\"
+            break
+        else
+            echo \"Waiting for Spinnaker services to be ready\"
+            sleep 1m
+        fi
+    fi
+    done

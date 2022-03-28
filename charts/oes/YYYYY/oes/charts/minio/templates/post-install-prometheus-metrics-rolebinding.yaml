@@ -1,0 +1,19 @@
+---
+# Source: oes/charts/minio/templates/post-install-prometheus-metrics-rolebinding.yaml
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: isd-minio-update-prometheus-secret
+  labels:
+    app: minio-update-prometheus-secret
+    chart: minio-8.0.9
+    release: isd
+    heritage: Helm
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: Role
+  name: isd-minio-update-prometheus-secret
+subjects:
+  - kind: ServiceAccount
+    name: isd-minio-update-prometheus-secret
+    namespace: "opsmx-isd"

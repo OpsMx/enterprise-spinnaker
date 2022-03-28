@@ -13,7 +13,7 @@ data:
   github-create.sh: |-
         #!/bin/sh
 
-          #set -x
+        #set -x
 
         gitusermailid={{ .Values.spinnaker.gitopsHalyard.repo.usermailid }}
         gitusername={{ .Values.spinnaker.gitopsHalyard.repo.username }}
@@ -23,7 +23,6 @@ data:
 
         git config --global user.email "$gitusermailid"
         git config --global user.name "$gitusername"
-        object='{"name":"'"$repo_name"'","private":"true"}'
         message=$(curl -s -X GET -H "Authorization: token $gitpassword" https://api.github.com/repos/$org/$repo_name | jq -r '.name')
 
 
@@ -32,16 +31,17 @@ data:
                 echo "REPO EXISTS"
                 exit 0
         else
+                object='{"name":"'"$repo_name"'","private":"true"}'
                 curl -H "Authorization: token $gitpassword" --data "$object" https://api.github.com/user/repos
-                git clone https://github.com/OpsMx/standard-gitops-repo.git
+                git clone https://github.com/OpsMx/standard-gitops-repo.git -b {{ .Values.global.gitea.standardrepoBranch }}
                 git clone https://$gitusername:$gitpassword@github.com/$gitusername/$repo_name.git
                 cp -pr standard-gitops-repo/* $repo_name/
                 cd $repo_name/
-                git checkout -b {{ .Values.spinnaker.gitopsHalyard.repo.halConfigBranch }}
+                git checkout -b master
                 git status
                 git add .
                 git commit -m "cloned standard-gitops-repo content"
-                git push origin 
+                git push origin master
         fi
 {{- end }}
 

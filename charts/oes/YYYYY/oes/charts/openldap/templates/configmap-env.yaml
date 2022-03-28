@@ -1,0 +1,24 @@
+---
+# Source: oes/charts/openldap/templates/configmap-env.yaml
+#
+# A ConfigMap spec for openldap slapd that map directly to env variables in the Pod.
+# List of environment variables supported is from the docker image:
+# https://github.com/osixia/docker-openldap#beginner-guide
+# Note that passwords are defined as secrets
+#
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: isd-openldap-env
+  labels:
+    app: openldap
+    chart: openldap-1.2.3
+    release: isd
+    heritage: Helm
+data:
+  LDAP_BACKEND: hdb
+  LDAP_DOMAIN: example.org
+  LDAP_ORGANISATION: Example Inc.
+  LDAP_REMOVE_CONFIG_AFTER_SETUP: "false"
+  LDAP_TLS: "true"
+  LDAP_TLS_ENFORCE: "false"

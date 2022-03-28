@@ -1,0 +1,25 @@
+---
+# Source: oes/charts/openldap/templates/service.yaml
+apiVersion: v1
+kind: Service
+metadata:
+  name: isd-openldap
+  labels:
+    app: openldap
+    chart: openldap-1.2.3
+    release: isd
+    heritage: Helm
+spec:
+  ports:
+    - name: ldap-port
+      protocol: TCP
+      port: 389
+      targetPort: ldap-port
+    - name: ssl-ldap-port
+      protocol: TCP
+      port: 636
+      targetPort: ssl-ldap-port
+  selector:
+    app: openldap
+    release: isd
+  type: ClusterIP

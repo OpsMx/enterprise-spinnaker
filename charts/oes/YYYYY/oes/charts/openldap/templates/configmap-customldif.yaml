@@ -1,0 +1,115 @@
+---
+# Source: oes/charts/openldap/templates/configmap-customldif.yaml
+#
+# A ConfigMap spec for openldap slapd that map directly to files under
+# /container/service/slapd/assets/config/bootstrap/ldif/custom
+#
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: isd-openldap-customldif
+  labels:
+    app: openldap
+    chart: openldap-1.2.3
+    release: isd
+    heritage: Helm
+data:
+  01-memberof.ldif: |-
+    dn: cn=module,cn=config
+    cn: module
+    objectClass: olcModuleList
+    olcModuleLoad: memberof.la
+    olcModulePath: /usr/lib/ldap
+    
+    dn: olcOverlay={0}memberof,olcDatabase={1}hdb,cn=config
+    objectClass: olcConfig
+    objectClass: olcMemberOf
+    objectClass: olcOverlayConfig
+    objectClass: top
+    olcOverlay: memberof
+    olcMemberOfDangling: ignore
+    olcMemberOfRefInt: TRUE
+    olcMemberOfGroupOC: groupOfNames
+    olcMemberOfMemberAD: member
+    olcMemberOfMemberOfAD: memberOf
+  02-refint1.ldif: |-
+    dn: cn=module{1},cn=config
+    changetype: modify
+    add: olcmoduleload
+    olcmoduleload: refint.la
+  03-refint2.ldif: |-
+    dn: olcOverlay={1}refint,olcDatabase={1}hdb,cn=config
+    objectClass: olcConfig
+    objectClass: olcOverlayConfig
+    objectClass: olcRefintConfig
+    objectClass: top
+    olcOverlay: {1}refint
+    olcRefintAttribute: memberof member manager owner
+  04-add_ou.ldif: |-
+    dn: ou=groups,dc=example,dc=org
+    objectClass: organizationalUnit
+    ou: Groups
+  05-admin.ldif: |-
+    dn: cn=admin,ou=groups,dc=example,dc=org
+    objectClass: groupofnames
+    cn: admin
+    description: read write and execute group
+    member: cn=admin,dc=example,dc=org
+  06-developer.ldif: |-
+    dn: cn=developers,ou=groups,dc=example,dc=org
+    objectClass: groupofnames
+    cn: developers
+    description: read only users
+    member: cn=admin,dc=example,dc=org
+    member: cn=developer,dc=example,dc=org
+  07-qa.ldif: |-
+    dn: cn=QA,ou=groups,dc=example,dc=org
+    objectClass: groupofnames
+    cn: QA
+    description: read only users
+    member: cn=admin,dc=example,dc=org
+    member: cn=qa,dc=example,dc=org
+  08-manager.ldif: |-
+    dn: cn=managers,ou=groups,dc=example,dc=org
+    objectClass: groupofnames
+    cn: managers
+    description: read and execute group
+    member: cn=admin,dc=example,dc=org
+    member: cn=manager,dc=example,dc=org
+  09-IT-manager.ldif: |-
+    dn: cn=ITManagers,ou=groups,dc=example,dc=org
+    objectClass: groupofnames
+    cn: ITManagers
+    description: read and execute group
+    member: cn=admin,dc=example,dc=org
+    member: cn=ITManager,dc=example,dc=org
+  10-users.ldif: |-
+    dn: cn=user1,dc=example,dc=org
+    objectClass: simpleSecurityObject
+    objectClass: organizationalRole
+    cn: user1
+    userpassword: {SSHA}Y9L4AsYL16WLK10qDZ62pTScFnaWb0nz
+    
+    dn: cn=user2,dc=example,dc=org
+    objectClass: simpleSecurityObject
+    objectClass: organizationalRole
+    cn: user2
+    userpassword: {SSHA}DasTBI0eut1F83Bh1F1HXmDT8juJj3pY
+    
+    dn: cn=user3,dc=example,dc=org
+    objectClass: simpleSecurityObject
+    objectClass: organizationalRole
+    cn: user3
+    userpassword: {SSHA}Qu1FW7BdLMndwM/Gf+zc3a8VIMAymbuv
+    
+    dn: cn=developers,ou=groups,dc=example,dc=org
+    changetype: modify
+    add: member
+    member: cn=user1,dc=example,dc=org
+    member: cn=user3,dc=example,dc=org
+    
+    dn: cn=QA,ou=groups,dc=example,dc=org
+    changetype: modify
+    add: member
+    member: cn=user2,dc=example,dc=org
+    member: cn=user3,dc=example,dc=org

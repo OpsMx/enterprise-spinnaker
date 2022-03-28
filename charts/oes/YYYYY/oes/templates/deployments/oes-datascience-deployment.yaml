@@ -1,0 +1,61 @@
+---
+# Source: oes/templates/deployments/oes-datascience-deployment.yaml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: oes
+    component: datascience
+    heritage: "Helm"
+    release: "isd"
+    chart: "oes-3.12.1"
+  name: oes-datascience
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: oes
+      component: datascience
+  template:
+    metadata:
+      annotations:
+        configmap/checksum: 44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a
+        prometheus.io/scrape: "true"
+        prometheus_io_path: /mgmt/prometheus
+        prometheus_io_port: "5005"
+      labels:
+        app: oes
+        component: datascience
+        heritage: "Helm"
+        release: "isd"
+        chart: "oes-3.12.1"
+    spec:
+      containers:
+      - image: quay.io/opsmxpublic/ubi8-oes-datascience:v3.12.0
+        imagePullPolicy: IfNotPresent
+        name: oes-datascience
+        ports:
+        - containerPort: 5005
+          name: backend
+          protocol: TCP
+        readinessProbe:
+          failureThreshold: 3
+          initialDelaySeconds: 60
+          periodSeconds: 10
+          successThreshold: 1
+          tcpSocket:
+            port: 5005
+          timeoutSeconds: 1
+        volumeMounts:
+        - mountPath: /home/ubuntu/.aws/credentials
+          name: datascience-config-volume
+          subPath: minio-credentials
+        - mountPath: /home/ubuntu/datascience/app_config.yaml
+          name: datascience-config-volume
+          subPath: app-config.yml
+      imagePullSecrets:
+      - name: opsmx11-secret
+      volumes:
+      - secret:
+          secretName: oes-datascience-config
+        name: datascience-config-volume

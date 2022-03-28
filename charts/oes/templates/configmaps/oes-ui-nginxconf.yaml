@@ -1,7 +1,11 @@
 {{ if or (eq .Values.installationMode "OES-AP")  (eq .Values.installationMode "EASY") }}
 apiVersion: v1
 data:
+{{- if .Values.installSpinnaker  }}
 {{ (tpl (.Files.Glob "config/oes-ui/nginx.conf").AsConfig . ) | indent 2 }}
+{{- else }}
+{{ (tpl (.Files.Glob "config/oes-ui/nginx-ap-only.conf").AsConfig . ) | indent 2 }}
+{{- end }}
 
 kind: ConfigMap
 metadata:

@@ -1,0 +1,1367 @@
+---
+# Source: oes/templates/configmaps/oes-ui-configmap.yaml
+apiVersion: v1
+data:
+  app-config.json: |
+    {
+        "endPointUrl": "/gate/",
+        "setApplicationInterval": 300000,
+        "triggerPipeline": false
+    }
+  help-text.json: "{\n   \"POLICY_LISTING\": {\n      \"HEADER\": \"Policies not found!\",\n
+    \     \"BODY\": \"<div >The Policy Management feature allows you to create policies
+    to set stringent guidelines for safe and fine grained controls in a CI/CD pipeline.
+    This feature gives you to set guard rails by declaring specific policy rules or
+    guidelines. For e.g., <strong>Automated Testing should be completed before deployment</strong>
+    \ is a rule which must be met when creating a CI/CD pipeline.</div> <br>  <div  >
+    \ Static Policy lets users validate the conditions while creating the pipelines,
+    whereas Runtime Policy enables users for automated decision making during pipeline
+    execution.</div><br> <div > A policy defines a set of conditions that needs to be
+    checked. As an example, a policy could be created to define a blackout window period
+    (or a moratorium period) for performing production deployments. A moratorium period
+    defines the time period within which no production deployments should be performed.
+    Any deployment to the production environment during this period will automatically
+    be rejected/stopped, if that deployment is triggered during the moratorium period.</div><br><div
+    \ > Autopilot uses Open Policy Engine(OPA) for policy definition & execution. OPA
+    is a open source, general-purpose policy engine that unifies policy enforcement
+    across the stack. It uses a high-level declarative language called Rego that lets
+    you specify policy as code and simple APIs to offload policy decision-making from
+    your software.</div><br><div  > Click on <strong>New Policy</strong> button to create
+    a new policy.</div>\"\n   },\n   \"AGENT_LISTING\": {\n      \"HEADER\": \"No Agents
+    found!\",\n      \"BODY\": \"<div><p>The Agent allows Spinnaker installations to
+    reach through firewalls in a secure manner,allowing access to private Kubernetes
+    clusters as well as reach internal services such as Jenkins and Artifactory. The
+    agent is typically used with OpsMx's SaaS Spinnaker offering, where OpsMx hosts
+    the Spinnaker installation, but services used by Spinnaker are within a secure area
+    owned by the customer.One of the core advantages of using an agent is that the credentials
+    do not need to be provided to anyone i.e.credentials remain with - in the cluster
+    where deployment is done. </p><p> The Agent is a two part system: a <b> Controller
+    </b> runs near Spinnaker, and the <b>Agent</b> runs in the target secure cluster.The
+    Agent is configured to communicate with specific services(Kubernetes, Jenkins etc)
+    within a customer 's security domain, while the Controller is in Spinnaker's domain.
+    </p> <p> The Agent is deployed with a manifest provided by OpsMx.This manifest has
+    per - installation credentials to authenticate to the controller,controller address
+    etc.Services are configured in the Agent by the customer.URL endpoints.Spinnaker
+    account names and credentials are specified to the agent configuration using a service
+    configuration.The credentials never leave the agent. </p><p> <b> New Agent </b>
+    button is enabled when Spinnaker is configured in <b>Setup->Spinnaker</b>. Click
+    on <b> New Agent </b> to create the Agent for your environment.</p></div>\"\n   },\n
+    \  \"AGENT_CREATION\": {\n      \"HEADER\": \"Agent\",\n      \"BODY\": \"<p>Adding
+    an agent involves the following steps:</p><ul class='helpTextUI'><li>Enter the details
+    (Agent Name, Cluster Name and Description) and click save</li> <li>Click <b>Download
+    Manifest</b> which appears after save</li> <li>In the remote Kubernetes cluster,
+    create service configmap in the default namespace. <span>Examples are available
+    <a href='https://github.com/OpsMx/standard-gitops-repo/tree/master/SAMPLES/agent-config'
+    target='_blank'>here</a></span> </li> <li>Apply the downloaded manifest in the default
+    namespace using <code>kubectl apply -f &lt;downloaded file&gt; </code> <span>Note
+    that the agent should be able to reach the LB configured with agent-grpc service</span>
+    </li> <li>Check the Setup->Agent screen for the agent connection status</li>  </ul>\",\n
+    \     \"AGENT_NAME\": {\n         \"TOOLTIP\": \"Name of the agent with which it
+    will referred to\",\n         \"VALIDATION_MESSAGE\": {\n            \"required\":
+    \"Agent Name cannot be empty\",\n            \"cannotContainSpace\": \"Agent Name
+    cannot contain space\",\n            \"noSpecialCharacters\": \"Allowed special
+    character is '-'\",\n            \"startingFromNumber\": \"Agent Name should not
+    start with number\",\n            \"agentNameExist\": \"Agent Name already exists\"\n
+    \        }\n      },\n    \"BODY\": \"<p>The Agent allows Spinnaker installations
+    to reach through firewalls in a secure manner,allowing access to private Kubernetes
+    clusters as well as reach internal services such as Jenkins and Artifactory.</p>
+    <p>Adding an agent involves the following steps:</p><ul class='helpTextUI'><li>Enter
+    the details (Agent Name, Cluster Name and Description) and click save</li> <li>Click
+    <b>Download Manifest</b> which appears after save</li> <li>In the remote Kubernetes
+    cluster, create service configmap in the default namespace. <span>Examples are available
+    <a href='https://github.com/OpsMx/standard-gitops-repo/tree/master/SAMPLES/agent-config'
+    target='_blank'>here</a></span> </li> <li>Apply the downloaded manifest in the default
+    namespace using <code>kubectl apply -f &lt;downloaded file&gt; </code> <span>Note
+    that the agent should be able to reach the LB configured with agent-grpc service</span>
+    </li> <li>Check the Setup->Agent screen for the agent connection status</li>  </ul>\",\n
+    \   \"CLUSTER_NAME\": {\n         \"TOOLTIP\": \"Name of the remote cluster on which
+    agent will be installed on\",\n         \"VALIDATION_MESSAGE\": {\n            \"required\":
+    \"Cluster Name cannot be empty\",\n            \"cannotContainSpace\": \"Cluster
+    Name cannot contain space\",\n            \"noSpecialCharacters\": \"Allowed special
+    character is '-'\",\n            \"startingFromNumber\": \"Cluster Name should not
+    start with number\"\n         }\n      },\n      \"DESCRIPTION\": {\n         \"TOOLTIP\":
+    \"Short description about the agent\",\n         \"VALIDATION_MESSAGE\": {}\n      },\n
+    \     \"CONNECT_TO_SPINNAKER\": {\n         \"TOOLTIP\": \"Select the spinnaker
+    instance you want to associate this account to\",\n         \"VALIDATION_MESSAGE\":
+    {\n            \"required\": \"Please select Spinnaker\"\n         }\n      }\n
+    \  },\n   \"CLOUDPROVIDER_LISTING\": {\n      \"HEADER\": \"No Cloud Providers found!\",\n
+    \     \"BODY\": \"<div><p>Providers are integrations to Cloud platforms you deploy
+    your applications to.</p> <p>In this section, you’ll register credentials for your
+    Cloud platforms. Those credentials are known as Accounts. Autopilot allows you to
+    \ create & manage Accounts for different Spinnaker Cloud Providers such as AWS,
+    GCP, Kubernetes, etc.</p><p>When Spinnaker is configured for <b>Direct Sync</b>,
+    <b>New Accounts</b> button will not be visible.</p><p><b>New Accounts</b> button
+    will be enabled when Spinnaker is configured to use External Accounts in <b>Setup->Spinnaker</b>.
+    Click on <b>New Accounts</b> button to create an account for your cloud provider.
+    \ You can create multiple accounts for the same provider.</p><p>Click on <b>Sync
+    Spinnaker Accounts</b> button to sync Cloud Provider accounts with Spinnaker. </p></div>\"\n
+    \  },\n   \"CLOUDPROVIDER_CREATION\": {\n      \"HEADER\": \"Cloud Provider\",\n
+    \     \"BODY\": \"<p>In this page, you can  create & manage Accounts for different
+    Spinnaker Cloud Providers.</p>\",\n      \"AGENT_NAME\": {\n         \"TOOLTIP\":
+    \"\",\n         \"VALIDATION_MESSAGE\": {\n            \"required\": \"Agent name
+    cannot be empty\",\n            \"cannotContainSpace\": \"Agent name cannot contain
+    space\",\n            \"noSpecialCharacters\": \"Allowed special character are ',-'\"\n
+    \        }\n      },\n      \"CLOUD_PROVIDER\": {\n         \"TOOLTIP\": \"The cloud
+    provider type for which you want to add the account\",\n         \"VALIDATION_MESSAGE\":
+    {\n            \"required\": \"Please select Cloud Provider\"\n         }\n      },\n
+    \     \"SPINNAKER\": {\n         \"TOOLTIP\": \"The Spinnaker instance with which
+    this account would be tied to\",\n         \"VALIDATION_MESSAGE\": {\n            \"required\":
+    \"Please select Spinnaker\"\n         }\n      },\n      \"ENVIRONMENT\": {\n         \"TOOLTIP\":
+    \"The environment name for the account. Many accounts can share the same environment
+    (e.g. dev, test, prod)\",\n         \"VALIDATION_MESSAGE\": {\n            \"required\":
+    \"Please select Environment\"\n         }\n      },\n      \"ACCOUNT_NAME\": {\n
+    \        \"TOOLTIP\": \"Name of the account to operate on\",\n         \"VALIDATION_MESSAGE\":
+    {\n            \"required\": \"Account name cannot be empty\",\n            \"cannotContainSpace\":
+    \"Account name cannot contain space\",\n            \"noSpecialCharacters\": \"Allowed
+    special character is '-'\"\n         }\n      },\n      \"NAMESPACE\": {\n         \"TOOLTIP\":
+    \"A list of namespaces this Spinnaker account can deploy to and will cache (namespaces
+    should be 'coma' separated ex: default,dev\",\n         \"VALIDATION_MESSAGE\":
+    {\n            \"required\": \"Namespace cannot be empty\",\n            \"cannotContainSpace\":
+    \"Namespace cannot contain space\",\n            \"noSpecialCharacters\": \"Special
+    characters not allowed except ',-'\"\n         }\n      },\n      \"UPLOAD_KUBECONFIG_FILE\":
+    {\n         \"TOOLTIP\": \"The path to your kubeconfig file. By default, it will
+    be under the Spinnaker user’s home directory in the typical .kube/config location.\",\n
+    \        \"VALIDATION_MESSAGE\": {\n            \"required\": \"File cannot be empty\"\n
+    \        }\n      },\n      \"READ\": {\n         \"TOOLTIP\": \"A user must have
+    at least one of these roles in order to view this account’s cloud resources.\",\n
+    \        \"VALIDATION_MESSAGE\": {\n            \"cannotContainSpace\": \"Read Permissions
+    cannot contain space\"\n         }\n      },\n      \"WRITE\": {\n         \"TOOLTIP\":
+    \"A user must have at least one of these roles in order to make changes to this
+    account’s cloud resources\",\n         \"VALIDATION_MESSAGE\": {\n            \"cannotContainSpace\":
+    \"Write Permissions cannot contain space\"\n         }\n      },\n      \"EXECUTE\":
+    {\n         \"TOOLTIP\": \"\",\n         \"VALIDATION_MESSAGE\": {\n            \"cannotContainSpace\":
+    \"Execute Permissions cannot contain space\"\n         }\n      },\n      \"ACCOUNT_ID\":
+    {\n         \"TOOLTIP\": \"Your AWS account ID to manage. Refer http://docs.aws.amazon.com/IAM/latest/UserGuide/console_account-alias.html
+    for more information\",\n         \"VALIDATION_MESSAGE\": {\n            \"required\":
+    \"Account Id cannot be empty\",\n            \"cannotContainSpace\": \"Account Id
+    cannot contain space\"\n         }\n      },\n      \"ROLE\": {\n         \"TOOLTIP\":
+    \"If set, Halyard will configure a credentials provider that uses AWS Security Token
+    Service to assume the specified role\",\n         \"VALIDATION_MESSAGE\": {\n            \"required\":
+    \"Role cannot be empty\",\n            \"cannotContainSpace\": \"Role cannot contain
+    space\"\n         }\n      },\n      \"REGIONS\": {\n         \"TOOLTIP\": \"The
+    AWS regions this Spinnaker account will manage\",\n         \"VALIDATION_MESSAGE\":
+    {\n            \"required\": \"Region cannot be empty\",\n            \"cannotContainSpace\":
+    \"Region cannot contain space\"\n         }\n      },\n      \"PRIMARY_ACCOUNT\":
+    {\n         \"TOOLTIP\": \"Whether this account is the primary account? If yes then
+    provide the access & secret key details.\",\n         \"VALIDATION_MESSAGE\": {}\n
+    \     },\n      \"ACCESS_KEY\": {\n         \"TOOLTIP\": \"The default access key
+    used to communicate with AWS\",\n         \"VALIDATION_MESSAGE\": {\n            \"required\":
+    \"Access key cannot be empty\"\n         }\n      },\n      \"ACCESS_KEY_BAKERY\":
+    {\n         \"TOOLTIP\": \"The default access key used for AWS bakery configuration\",\n
+    \        \"VALIDATION_MESSAGE\": {\n            \"required\": \"Access Key (Bakery)
+    cannot be empty\"\n         }\n      },\n      \"SECRET_KEY\": {\n         \"TOOLTIP\":
+    \"The secret key used to communicate with AWS\",\n         \"VALIDATION_MESSAGE\":
+    {\n            \"required\": \"Secret key cannot be empty\"\n         }\n      },\n
+    \     \"SECRET_KEY_BAKERY\": {\n         \"TOOLTIP\": \"The default secret key used
+    for AWS baskery configuration\",\n         \"VALIDATION_MESSAGE\": {\n            \"required\":
+    \"Secret Key (Bakery) cannot be empty\"\n         }\n      },\n      \"APP_KEY\":
+    {\n         \"TOOLTIP\": \"The appKey (password) of your service principal\",\n
+    \        \"VALIDATION_MESSAGE\": {\n            \"required\": \"App key cannot be
+    empty\",\n            \"cannotContainSpace\": \"App key cannot contain space\"\n
+    \        }\n      },\n      \"CLIENT_ID\": {\n         \"TOOLTIP\": \"The clientId
+    (also called appId) of your service principal\",\n         \"VALIDATION_MESSAGE\":
+    {\n            \"required\": \"Client Id cannot be empty\",\n            \"cannotContainSpace\":
+    \"Client Id cannot contain space\"\n         }\n      },\n      \"DEFAULT_KEYVALUT\":
+    {\n         \"TOOLTIP\": \"The name of a KeyVault that contains the user name, password,
+    and ssh public key used to create VMs\",\n         \"VALIDATION_MESSAGE\": {\n            \"required\":
+    \"Default Keyvault cannot be empty\",\n            \"cannotContainSpace\": \"Default
+    Keyvault cannot contain space\"\n         }\n      },\n      \"SUBSCRIPTION_ID\":
+    {\n         \"TOOLTIP\": \"The subscriptionId that your service principal is assigned
+    to\",\n         \"VALIDATION_MESSAGE\": {\n            \"required\": \"Subscription
+    Id cannot be empty\",\n            \"cannotContainSpace\": \"Subscription Id cannot
+    contain space\"\n         }\n      },\n      \"TENANT_ID\": {\n         \"TOOLTIP\":
+    \"The tenantId that your service principal is assigned to\",\n         \"VALIDATION_MESSAGE\":
+    {\n            \"required\": \"Tenant Id cannot be empty\",\n            \"cannotContainSpace\":
+    \"Tenant Id cannot contain space\"\n         }\n      },\n      \"GCP_FILE\": {\n
+    \        \"TOOLTIP\": \"The path to a JSON service account that Spinnaker will use
+    as credentials. This is only needed if Spinnaker is not deployed on a Google Compute
+    Engine VM, or needs permissions not afforded to the VM it is running on. Refer https://cloud.google.com/compute/docs/access/service-accounts
+    for more information\",\n         \"VALIDATION_MESSAGE\": {\n            \"required\":
+    \"File cannot be empty\"\n         }\n      },\n      \"AWS_ACCOUNT_NAME\": {\n
+    \        \"TOOLTIP\": \"\",\n         \"VALIDATION_MESSAGE\": {\n            \"required\":
+    \"Please Select AWS Account\"\n         }\n      }\n   },\n   \"SPINNAKER_LISTING\":
+    {\n      \"HEADER\": \"No Spinnaker Configured!\",\n      \"BODY\": \"<div><p>The
+    Spinnaker Setup tab allows you to setup a Spinnaker instance with which you can
+    connect Autopilot and sync all the applications from Spinnaker. </p><p>GitOps style
+    Spinnaker is suported where in all configuration is maintained in a repository such
+    as git.  These optional sections help configure gitOps style Spinnaker:</p> <p><b>Source
+    Control for Accounts:</b>  In this section, you can specify the repository for External
+    configuration in Spinnaker</p> <p><b>Source Control for Pipeline:</b>In this section,
+    you can specify the repository for pipeline gitOps in Spinnaker that allows you
+    to save and restore pipelines from a git repository.</p> <p>Click on the <b>Add
+    Spinnaker</b> button to add Spinnaker instance</p></div>\"\n   },\n   \"SPINNAKER_SETUP\":
+    {\n      \"HEADER\": \"Spinnaker\",\n      \"BODY\": \"<p>In this page you can add
+    / update your Spinnaker instance.</p> <p><strong>Fields:</strong></p> <ul class='helpTextUI'>
+    <li><strong>Spinnaker Name</strong>: User defined name for Spinnaker instance.<br>
+    <span> Example: opsmx-spinnaker</span></li> <li><strong>Spinnaker Gate URL</strong>:
+    Gate URL of the Spinnaker instance.<br> <span>Example: https://spinnaker-gate.xyz.com
+    or http://oes-gate:8084</span></li> <li><strong>Authentication Type:</strong>: Can
+    be LDAP or X509</li> <li><strong>Token: </strong>This is used when Authentication
+    Type is LDAP; username & password to LDAP server separated by ':' in base64 format;
+    Output of 'echo -ne 'username:password' | base64 -w0'</li>  <li><strong>Password:
+    </strong>This is used when Authentication Type is LDAP; Password for P12 File</li>
+    <li><strong>P12 File:</strong> This is used when Authentication Type is X509; P12
+    File needed for X509/AD Authentication</li> <li><strong>Source Control for Accounts:
+    </strong>In this section, you can specify the repository for External configuration
+    in Spinnaker</li> <li><strong>Source Control for Pipeline: </strong>In this section,
+    you can specify the repository for pipeline gitOps in Spinnaker that allows you
+    to save and restore pipelines from a git repository</li> </ul>\",\n      \"SPINNAKER_NAME\":
+    {\n         \"TOOLTIP\": \"Name of the Spinnaker instance\",\n         \"VALIDATION_MESSAGE\":
+    {\n            \"required\": \"Spinnaker Name cannot be empty\",\n            \"cannotContainSpace\":
+    \"Spinnaker Name cannot contain space\",\n            \"noSpecialCharacters\": \"Allowed
+    special character is '-'\",\n            \"startingFromNumber\": \"Spinnaker Name
+    should not start with number\"\n         }\n      },\n      \"SPINNAKER_GATE_URL\":
+    {\n         \"TOOLTIP\": \"Gate Url of the Spinnaker instance\",\n         \"VALIDATION_MESSAGE\":
+    {\n            \"required\": \"Spinnaker Gate URL cannot be empty\",\n            \"cannotContainSpace\":
+    \"Spinnaker Gate URL cannot contain space\",\n            \"invalidUrl\": \"Spinnaker
+    Gate URL is invalid\"\n         }\n      },\n      \"AUTHENTICATION_TYPE\": {\n
+    \        \"TOOLTIP\": \"Select the type of authentication for the spinnaker being
+    added\",\n         \"VALIDATION_MESSAGE\": {\n            \"required\": \"Please
+    select Authentication Type\"\n         }\n      },\n      \"TOKEN\": {\n         \"TOOLTIP\":
+    \"Token for Spinnaker authentication\",\n         \"VALIDATION_MESSAGE\": {\n            \"required\":
+    \"Token cannot be empty\",\n            \"minlength\": \"Token should be more than
+    8 characters\"\n         }\n      },\n      \"PASSWORD\": {\n         \"TOOLTIP\":
+    \"Password\",\n         \"VALIDATION_MESSAGE\": {\n            \"required\": \"Password
+    cannot be empty\",\n            \"minlength\": \"Password should be more than 8
+    characters\"\n         }\n      },\n      \"P12_FILE\": {\n         \"TOOLTIP\":
+    \"P12 File\",\n         \"VALIDATION_MESSAGE\": {\n            \"required\": \"P12
+    File cannot be empty\"\n         }\n      },\n      \"SYNC_ACCOUNTS\": {\n         \"TOOLTIP\":
+    \"Select Mode of synchronisation of Cloud Providers between Autopilot & Spinnaker\",\n
+    \        \"VALIDATION_MESSAGE\": {\n            \"required\": \"Please select Sync
+    Accounts type\"\n         }\n      },\n      \"ACCOUNTS_PROVIDER\": {\n         \"TOOLTIP\":
+    \"Source Control for Halyard Configuration and / or External Account Configuration\",\n
+    \        \"VALIDATION_MESSAGE\": {\n            \"required\": \"Please select provider\"\n
+    \        }\n      },\n      \"ACCOUNTS_ACCOUNT_NAME\": {\n         \"TOOLTIP\":
+    \"Account name of the Source Control\",\n         \"VALIDATION_MESSAGE\": {\n            \"required\":
+    \"Please select Account Name\"\n         }\n      },\n      \"ACCOUNTS_REPOSITORY\":
+    {\n         \"TOOLTIP\": \"Repository name with full path in the selected Source
+    Control Eg., https://github.com/OpsMx/Opsmx-Saas.git\",\n         \"VALIDATION_MESSAGE\":
+    {\n            \"required\": \"Repository cannot be empty\",\n            \"cannotContainSpace\":
+    \"Repository cannot contain space\",\n            \"invalidUrl\": \"Repository is
+    invalid\"\n         }\n      },\n      \"ACCOUNTS_SOURCE_PATH\": {\n         \"TOOLTIP\":
+    \"Existing path in the repository\",\n         \"VALIDATION_MESSAGE\": {}\n      },\n
+    \     \"ACCOUNTS_REGION\": {\n         \"TOOLTIP\": \"The AWS regions this Spinnaker
+    account will manage\",\n         \"VALIDATION_MESSAGE\": {\n            \"required\":
+    \"Region cannot be empty\",\n            \"cannotContainSpace\": \"Region cannot
+    contain space\",\n            \"startingFromNumber\": \"Region should not start
+    with number\"\n         }\n      },\n      \"ACCOUNTS_BUCKET_NAME\": {\n         \"TOOLTIP\":
+    \"Bucket Name\",\n         \"VALIDATION_MESSAGE\": {\n            \"required\":
+    \"Bucket Name cannot be empty\",\n            \"cannotContainSpace\": \"Bucket Name
+    cannot contain space\",\n            \"startingFromNumber\": \"Bucket Name should
+    not start with number\"\n         }\n      },\n      \"PIPELINE_PROVIDER\": {\n
+    \        \"TOOLTIP\": \"Use this Spinnaker for pipeline promotion.\",\n         \"VALIDATION_MESSAGE\":
+    {\n            \"required\": \"Please select provider\"\n         }\n      },\n
+    \     \"PIPELINE_ACCOUNT_NAME\": {\n         \"TOOLTIP\": \"\",\n         \"VALIDATION_MESSAGE\":
+    {\n            \"required\": \"Please select Account Name\"\n         }\n      },\n
+    \     \"PIPELINE_REPOSITORY\": {\n         \"TOOLTIP\": \"\",\n         \"VALIDATION_MESSAGE\":
+    {\n            \"required\": \"Repository cannot be empty\",\n            \"cannotContainSpace\":
+    \"Repository cannot contain space\",\n            \"invalidUrl\": \"Repository is
+    invalid\"\n         }\n      },\n      \"PIPELINE_SOURCE_PATH\": {\n         \"TOOLTIP\":
+    \"Existing path in the repository\",\n         \"VALIDATION_MESSAGE\": {}\n      },\n
+    \     \"PIPELINE_REGION\": {\n         \"TOOLTIP\": \"\",\n         \"VALIDATION_MESSAGE\":
+    {\n            \"required\": \"Region cannot be empty\",\n            \"cannotContainSpace\":
+    \"Region cannot contain space\",\n            \"startingFromNumber\": \"Region should
+    not start with number\"\n         }\n      },\n      \"PIPELINE_BUCKET_NAME\": {\n
+    \        \"TOOLTIP\": \"Bucket Name\",\n         \"VALIDATION_MESSAGE\": {\n            \"required\":
+    \"Bucket Name cannot be empty\",\n            \"cannotContainSpace\": \"Bucket Name
+    cannot contain space\",\n            \"startingFromNumber\": \"Bucket Name should
+    not start with number\"\n         }\n      }\n   },\n   \"INTEGRATOR_LISTING\":
+    {\n      \"HEADER\": \"No Integrator found!\",\n      \"BODY\": \"<div><p>Autopilot
+    offers integration with many CI/CD Tools. Integrations are grouped under the following
+    categories - Artifact, CI, Governance, Monitoring Tools, Notifications, Policy and
+    SAST/DAST.</p> <p> Integrations are used to </p> <ul> <li> pull logs & metrics for
+    Continuous Verification </li> <li> pull meta data from CI/CD Tools for Informed
+    Approvals </li> <li> enforce organizational policies at the time of creating or
+    executing a  pipeline. </li> <li> configure integrations in Spinnaker for Artifacts,
+    Notifications. etc </li> </ul> <p>Click on the <b>New Integration</b> button to
+    add accounts for your CI/CD tools</p> </div>\",\n\n     \"SYNC_SPINNAKER_ACCOUNTS\"
+    : {\n        \"TOOLTIP\": \"Push Integration changes to Spinnaker\",\n        \"VALIDATION_MESSAGE\":
+    \"\"\n     }\n   },\n   \"PIPELINE_EXECUTION_AUDIT_LISTING\": {\n      \"HEADER\":
+    \"Pipeline executions not found!\",\n      \"BODY\": \"<div>This page shows pipeline
+    executions coming from a CD Tool such as Spinnaker in a list view. It also contains
+    the summary view showing the total number of Pipeline Runs, Successful Runs, Failed
+    Runs, Cancelled Runs.</div><br>    <div >Only important fields including Application,
+    Service, Pipeline, Status, Start Time and End Time are shown by default. Additional
+    fields can be enabled using the Hamburger menu towars the right corner.</div><br>
+    <div>Ensure that the Spinnaker is already connected under <strong><a routerLink='/setup/spinnaker'>Setup
+    -> Spinnaker</a></strong>. Pipeline executions will start appearing in this page
+    after establishing connection to Spinnaker. </div>\",\n      \"TOOLTIP\": {\n         \"EXECUTION_DATA\":
+    \"Pipeline is in Running State\",\n         \"CONNECTOR_DATA\": \"Pipeline is in
+    Running State\",\n         \"STAGE_DURATION\": \"Pipeline is in Running State\"\n
+    \     },\n      \"VALIDATION_MESSAGE\": {\n         \"STAGE_DURATION\": \"No Data
+    available to view Stage Duration\"\n      }\n   },\n   \"PIPELINE_AUDIT_LISTING\":
+    {\n      \"HEADER\": \"Pipeline updates not found!\",\n      \"BODY\": \"<div>This
+    page shows pipeline updates coming from a CD Tool such as Spinnaker in a list view.
+    </div> <div >  Ensure that the Spinnaker is already connected under  <strong><a
+    routerLink='/setup/spinnaker'>Setup -> Spinnaker</a></strong>. Pipeline updates
+    will start appearing in this page after establishing connection to Spinnaker.</div>\"\n
+    \  },\n   \"POLICY_AUDIT_LISTING\": {\n      \"HEADER\": \"Policy updates / executions
+    not found!\",\n      \"BODY\": \"<div>This page shows policy updates and policy
+    executions, along with allowed/denied information, in a list view. Possible uses,
+    apart from audit and compliance, includes helping users understand the policies
+    that they might be inadvertently trying to break.</div><br> <div>For policy updates,
+    ensure that a policy is created/updated under <strong><a routerLink='/policymanagement'>Compliance
+    -> Policy Management</a></strong>. For policy execution events, please add a policy
+    in a pipeline and execute it.</div>\"\n   },\n   \"POLICY_CREATION\": {\n      \"BODY\":
+    \"<p>In this page, you can  define & manage policies.</p><p><strong>Fields</strong>:</p><ul
+    class='helpTextUl'><li> <strong>Name:</strong> User defined name for the policy</li><li><strong>Policy
+    Type:</strong> Static or Runtime Policy</li><li> <strong>Policy Engine:</strong>
+    Policy Engine to be used; currently, only OPA is supported</li> <li><strong>Policy
+    Engine Account:</strong> Policy Engine Account for the Credentials </li>        <li><strong>Policy
+    File:</strong> File containing the Policy You can upload the file by clicking on
+    <strong>Choose File</strong> button. This is optional. If not present, you can enter
+    the policy directly in the <strong>Policy Details</strong> field</li><li> <strong>Policy
+    Details:</strong> Policy definition</li>                                 <li><strong>Policy
+    Permissions:</strong> Enable/disable access to the policy in Autopilot to specific
+    usergroup</li></ul>\",\n       \"HEADER\": \"Policy\",\n       \"NAME\": {\n         \"TOOLTIP\":
+    \"Policy Name\",\n         \"VALIDATION_MESSAGE\": {\n            \"required\":
+    \"Name cannot be empty\",\n            \"cannotContainSpace\": \"Name cannot contain
+    space\",\n            \"exists\": \"Name already exists\"\n         }\n      },\n
+    \     \"POLICY_DETAILS\": {\n         \"TOOLTIP\": \"Policy Details\",\n         \"VALIDATION_MESSAGE\":
+    {\n            \"required\": \"Policy Details cannot be empty\"\n         }\n      },\n
+    \     \"POLICY_ENGINE\": {\n         \"TOOLTIP\": \"Supported Policy Account Types\",\n
+    \        \"VALIDATION_MESSAGE\": {\n            \"required\": \"Please select Policy
+    Account Type\"\n         }\n      },\n      \"POLICY_ENGINE_ACCOUNT\": {\n         \"TOOLTIP\":
+    \"Policy Account Names\",\n         \"VALIDATION_MESSAGE\": {\n            \"required\":
+    \"Please select Policy Engine Account\"\n         }\n      },\n      \"POLICY_TYPE\":
+    {\n         \"TOOLTIP\": \"A static policy lets users validate conditions before
+    the start of execution, whereas a Runtime policy enables users for automated decision
+    making during execution.\",\n         \"VALIDATION_MESSAGE\": {\n            \"required\":
+    \"Please select Policy Engine Type\"\n         }\n      },\n      \"POLICY_DESCRIPTION\":
+    {\n         \"TOOLTIP\": \"Policy Description\"\n      },\n      \"POLICY_FILE\":
+    {\n         \"TOOLTIP\": \"Policy File\"\n      }\n   },\n   \"VERIFICATION\": {\n
+    \     \"HEADER\": \"Verfication Gate executions not found!\",\n      \"BODY\": \"<div><p>The
+    Continuous Verification performs automated log and metrics analysis for new   releases
+    with built-in unsupervised and supervised machine learning algorithms for risk analysis
+    and canary deployments.</p> <p>Continuous Verification is a release verification
+    process that provides Dev and Ops engineers an intelligent automated real-time actionable
+    risk assessment of a new release deployed. The Continuous Verification verifies
+    the latest version of the service comparing to the baseline or prior release after
+    production rollout.         The baseline can be a deployment done prior or the current
+    deployment during rollout using canary or blue/green or rolling update strategies.</p>
+    <p>It leverages unsupervised and supervised machine learning techniques to analyze
+    100s of metrics and logs data to perform in-depth analysis of architectural regressions,
+    performance, scalability and security violations of new releases in a scalable way
+    for enterprises.</p> <p>Autopilot provides a Verification Gate to analyse logs from
+    your Target Application and this can be inserted as a Stage in your CI/CD Pipeline.Note
+    that one must configure the metric and log datasources, such as Prometheus and Elastic
+    before using this functionality.</p> <p>This page shows Verification Gate executions
+    in a list view.  </p> <p>Insert Verification Gate to a pipeline in your application
+    using <a [routerLink]='['/setup/applications']'><strong>Setup -> Applications</strong></a>.
+    When the pipeline is run, the Gate executions will start appearing in this page.</p></div>\",\n
+    \     \"LOG_ANALYSIS\": {\n         \"BODY\": \"\",\n         \"SENSITIVITY\": {\n
+    \           \"TOOLTIP\": \"Impact of Unexpected Issues on the log scoring\",\n            \"VALIDATION_MESSAGE\":
+    {}\n         },\n         \"PERCEIVED_RISK\": {\n            \"TOOLTIP\": \"The
+    overall risk associated with the changes in this verification run\",\n            \"VALIDATION_MESSAGE\":
+    {}\n         }\n      },\n      \"ANALYSIS_SUMMARY\": {\n         \"LOG_TEMPLATE\":
+    {\n            \"TOOLTIP\": \"Log Template\",\n            \"VALIDATION_MESSAGE\":
+    {}\n         },\n         \"METRIC_TEMPLATE\": {\n            \"TOOLTIP\": \"Metric
+    Template\",\n            \"VALIDATION_MESSAGE\": {}\n         },\n         \"LOG_BASELINE_START_TIME\":
+    {\n            \"TOOLTIP\": \"Baseline Start Time\",\n            \"VALIDATION_MESSAGE\":
+    {}\n         },\n         \"LOG_BASELINE_END_TIME\": {\n            \"TOOLTIP\":
+    \"Baseline End Time\",\n            \"VALIDATION_MESSAGE\": {}\n         },\n         \"LOG_NEW_RELEASE_START_TIME\":
+    {\n            \"TOOLTIP\": \"New Release Start Time\",\n            \"VALIDATION_MESSAGE\":
+    {}\n         },\n         \"LOG_NEW_RELEASE_END_TIME\": {\n            \"TOOLTIP\":
+    \"New Release End Time\",\n            \"VALIDATION_MESSAGE\": {}\n         },\n
+    \        \"ANALYSIS_TYPE\": {\n            \"TOOLTIP\": \"Analysis Type\",\n            \"VALIDATION_MESSAGE\":
+    {}\n         },\n         \"LOG_STATUS\": {\n            \"TOOLTIP\": \"Log Status\",\n
+    \           \"VALIDATION_MESSAGE\": {}\n         },\n         \"LOG_SCORE\": {\n
+    \           \"TOOLTIP\": \"Log Score\",\n            \"VALIDATION_MESSAGE\": {}\n
+    \        },\n         \"METRIC_STATUS\": {\n            \"TOOLTIP\": \"Metric Status\",\n
+    \           \"VALIDATION_MESSAGE\": {}\n         },\n         \"METRIC_SCORE\":
+    {\n            \"TOOLTIP\": \"Metric Score\",\n            \"VALIDATION_MESSAGE\":
+    {}\n         },\n         \"BASELINE_SIZE\": {\n            \"TOOLTIP\": \"Baseline
+    Size\",\n            \"VALIDATION_MESSAGE\": {}\n         },\n         \"NEW_RELEASE_SIZE\":
+    {\n            \"TOOLTIP\": \"New Release Size\",\n            \"VALIDATION_MESSAGE\":
+    {}\n         },\n         \"BASELINE_LINES\": {\n            \"TOOLTIP\": \"Baseline
+    Lines\",\n            \"VALIDATION_MESSAGE\": {}\n         },\n         \"NEW_RELEASE_LINES\":
+    {\n            \"TOOLTIP\": \"New Release Lines\",\n            \"VALIDATION_MESSAGE\":
+    {}\n         },\n         \"ANALYSIS_DURATION\": {\n            \"TOOLTIP\": \"Analysis
+    Duration\",\n            \"VALIDATION_MESSAGE\": {}\n         },\n         \"LIFETIME_HOURS\":
+    {\n            \"TOOLTIP\": \"Lifetime Hours\",\n            \"VALIDATION_MESSAGE\":
+    {}\n         },\n         \"RECLASSIFICATION_DURATION\": {\n            \"TOOLTIP\":
+    \"Reclassification Duration\",\n            \"VALIDATION_MESSAGE\": {}\n         },\n
+    \        \"INTERVAL_MINUTES\": {\n            \"TOOLTIP\": \"Interval Minutes\",\n
+    \           \"VALIDATION_MESSAGE\": {}\n         },\n         \"REGULAR_EXPRESSION\":
+    {\n            \"TOOLTIP\": \"Regular Expression\",\n            \"VALIDATION_MESSAGE\":
+    {}\n         },\n         \"RESPONSE_KEY\": {\n            \"TOOLTIP\": \"Response
+    Key\",\n            \"VALIDATION_MESSAGE\": {}\n         },\n         \"SCORING_ALGORITHM\":
+    {\n            \"TOOLTIP\": \"Scoring Algorithm\",\n            \"VALIDATION_MESSAGE\":
+    {}\n         },\n         \"BASELINE_LOGS\": {\n            \"TOOLTIP\": \"Baseline
+    Logs\",\n            \"VALIDATION_MESSAGE\": {}\n         },\n         \"NEW_RELEASE_LOGS\":
+    {\n            \"TOOLTIP\": \"New Release Logs\",\n            \"VALIDATION_MESSAGE\":
+    {}\n         }\n      },\n      \"METRIC_ANALYSIS\": {\n         \"BODY\": \"\"\n
+    \     },\n      \"CORRELATION\": {\n         \"BODY\": \"\"\n      }\n   },\n   \"MANUAL_TRIGGER\":
+    {\n      \"BODY\": \"<p>Continuous Verification is a REST service that can be deployed
+    on premise or use managed cloud service for analysis. Continuous Verification interfaces
+    with monitoring systems for logs and metrics and uses the metadata provided in start
+    analysis phase to retrieve the logs and metrics for deployment verification. Continuous
+    Verification does not interface with the services deployed directly for its analysis.
+    \           Deployment Pipeline can be based on Spinnaker or Jenkins for Enterprise
+    Continuous Delivery. Verification can also be triggered manually by providing the
+    required parameters in this dialog box.</p>\",\n      \"APPLICATION\": {\n         \"TOOLTIP\":
+    \"Name of the application\",\n         \"VALIDATION_MESSAGE\": \"\"\n      },\n
+    \     \"BASELINE_START_TIME\": {\n         \"TOOLTIP\": \"Time to enable warming
+    up of the container\",\n         \"VALIDATION_MESSAGE\": \"\"\n      },\n      \"NEW_RELEASE_START_TIME\":
+    {\n         \"TOOLTIP\": \"Intervals in which metric-data is fetched and analysed\",\n
+    \        \"VALIDATION_MESSAGE\": \"\"\n      },\n      \"SUCCESSFUL_SCORE\": {\n
+    \        \"TOOLTIP\": \"The score under which the Analysis should fail\",\n         \"VALIDATION_MESSAGE\":
+    \"\"\n      },\n      \"UNHEALTHY_SCORE\": {\n         \"TOOLTIP\": \"The score
+    above which the Analysis should be a pass\",\n         \"VALIDATION_MESSAGE\": \"\"\n
+    \     },\n      \"ANALYSIS_LIFETIME\": {\n         \"TOOLTIP\": \"The time in hours
+    for which the Canary Analysis should be run\",\n         \"VALIDATION_MESSAGE\":
+    \"\"\n      },\n      \"RUN_INFO\": {\n         \"TOOLTIP\": {\n            \"Build
+    Info\": \"http://jenkins.opsmx.net:8181/jenkins/job/Dev-visibilityservice-build-branch/770/\",\n
+    \           \"Code Repository\": \"https://github.com/OpsMx/visibility-service\",\n
+    \           \"Version\": \"v1.09\"\n         },\n         \"VALIDATION_MESSAGE\":
+    \"\"\n      },\n      \"SERVICE\": {\n         \"TOOLTIP\": \"Service\",\n         \"VALIDATION_MESSAGE\":
+    \"\"\n      },\n      \"TEMPLATE_NAME\": {\n         \"TOOLTIP\": \"Template Name\",\n
+    \        \"VALIDATION_MESSAGE\": \"\"\n      },\n      \"GATE\": {\n         \"TOOLTIP\":
+    \"Gate\",\n         \"VALIDATION_MESSAGE\": \"\"\n      },\n      \"FILTER_KEY\":
+    {\n         \"TOOLTIP\": \"Filter Key\",\n         \"VALIDATION_MESSAGE\": \"\"\n
+    \     },\n      \"BASELINE\": {\n         \"TOOLTIP\": \"Baseline\",\n         \"VALIDATION_MESSAGE\":
+    \"\"\n      },\n      \"NEW_RELEASE\": {\n         \"TOOLTIP\": \"New Release\",\n
+    \        \"VALIDATION_MESSAGE\": \"\"\n      }\n   },\n   \"TEST_VERIFICATON\":
+    {\n      \"HEADER\": \"Test Verfication Gate executions not found!\",\n      \"BODY\":
+    \"<div> <p>The Continuous Verification performs automated log and metric analysis
+    for new releases with built-in unsupervised and supervised machine learning algorithms
+    for risk analysis. Autopilot provides a Test Verification Gate to analyse logs from
+    your Test Harness and this can be inserted as a Stage in your CI/CD Pipeline. </p>
+    \    <p>This page shows Test Verification Gate executions in a list view. </p> <p>Insert
+    Test Verification Gate to a pipeline in your application using <a [routerLink]='['/setup/applications']'><strong>Setup
+    -> Applications</strong></a>.When the pipeline is run, the Gate executions will
+    start appearing in this page.</p> </div>\"\n   },\n   \"VISIBILITY_LISTING\": {\n
+    \     \"HEADER\": \" <div><span style='font-size: 16px; font-weight: bold;'>Approval
+    Gate executions not found!</span></div>\",\n      \"BODY\": \"<div><p>Autopilot
+    provides <strong>approval</strong> mechanism for deployments. To make an informed
+    decision regarding pipeline execution, an approver may need to check the data from
+    multiple data sources, such as CI Systems, Repositories, SAST/DAST Tools etc. Autopilot
+    provides Approval Gate feature which fetches relevant information from multiple
+    CI/CD Tools, presents the data in one place, to enable the user to make an quick
+    and informed decision on pipeline execution. This Gate can be inserted as a Stage
+    in your CI/CD Pipeline. </p> <p>Note that appropriate data sources must be configured
+    in the <strong>Integration</strong> view before Approval stage can be used.</p>
+    <p>This page shows Approval Gate executions in a list view.</p> <p> Insert Approval
+    Gate to a pipeline in your application using <strong><a routerLink='/setup/v2/applications'>Setup
+    -> Applications</a></strong>. When the pipeline is run, the Gate executions will
+    start appearing in this page. </p> </div>\"\n   },\n   \"VISIBILITY_DETAILS\": {\n
+    \     \"APPLICATION_NAME\": {\n         \"TOOLTIP\": \"\",\n         \"VALIDATION_MESSAGE\":
+    \"\"\n      },\n      \"SERVICE_NAME\": {\n         \"TOOLTIP\": \"\",\n         \"VALIDATION_MESSAGE\":
+    \"\"\n      },\n     \"APPROVAL_BTN_TITLE\": {\n        \"TOOLTIP\":  \"Insufficient
+    Permission to execute\",\n        \"VALIDATION_MESSAGE\": \"\"\n     },\n      \"GATE_NAME\":
+    {\n         \"TOOLTIP\": \"\",\n         \"VALIDATION_MESSAGE\": \"\"\n      },\n
+    \     \"STATUS\": {\n         \"TOOLTIP\": \"\",\n         \"VALIDATION_MESSAGE\":
+    \"\"\n      },\n      \"COMMENT\": {\n         \"TOOLTIP\": \"\",\n         \"VALIDATION_MESSAGE\":
+    \"\"\n      },\n      \"TRIGGER_URL\": {\n         \"TOOLTIP\": \"\",\n         \"VALIDATION_MESSAGE\":
+    \"\"\n      },\n      \"APPROVAL_GROUP\": {\n         \"TOOLTIP\": \"\",\n         \"VALIDATION_MESSAGE\":
+    \"\"\n      },\n      \"CONNECTORS\": {\n         \"TOOLTIP\": \"\",\n         \"VALIDATION_MESSAGE\":
+    \"\"\n      },\n      \"ACTIVATED_TIME\": {\n         \"TOOLTIP\": \"\",\n         \"VALIDATION_MESSAGE\":
+    \"\"\n      },\n      \"REVIEWED_AT\": {\n         \"TOOLTIP\": \"\",\n         \"VALIDATION_MESSAGE\":
+    \"\"\n      },\n      \"REVIEWER\": {\n         \"TOOLTIP\": \"\",\n         \"VALIDATION_MESSAGE\":
+    \"\"\n      },\n      \"COMMENTS\": {\n         \"TOOLTIP\": \"\",\n         \"VALIDATION_MESSAGE\":
+    \"\"\n      }\n   },\n   \"FORM_GRID\": {\n      \"ADD_NEW_ROW\": {\n         \"TOOLTIP\":
+    \"Add New Row\",\n         \"VALIDATION_MESSAGE\": \"\"\n      },\n      \"DELETE_ROW\":
+    {\n         \"TOOLTIP\": \"Delete row\",\n         \"VALIDATION_MESSAGE\": \"\"\n
+    \     }\n   },\n  \"APPLICATION_DASHBOARD\": {\n     \"VERIFICATION_FAILURES\":{\n
+    \       \"TOOLTIP\":  \"Total number of Verification Failures including Test Verification
+    Failures\",\n        \"VALIDATION_MESSAGE\": \"\" \n     }\n  },\n   \"APPLICATION_LISTING\":
+    {\n      \"HEADER\": \"No Applications found!\",\n      \"BODY\": \"<p> You will
+    be able to view the applications you have created or imported from a CD Tool such
+    as Spinnaker in this page. There could be just one or multiple services in an application.
+    Each service can have multiple pipelines and each pipeline can have multiple stages
+    needed in order to successfully deploy the application. </p> <p>You can create native
+    Autopilot applications or import the applications created in Spinnaker.</p> <p><strong>Spinnaker
+    Application</strong>: To import applications from Spinnaker, click on the <strong>Sync
+    Spinnaker Applications</strong> button; before doing this, ensure that the Spinnaker
+    is already connected under <strong><a  routerLink='/setup/spinnaker'>Setup -> Spinnaker</a></strong></p>
+    <p><strong>Autopilot Application</strong>: To create a native Autopilot Application,
+    click on the <strong>New Application</strong> button</p>\" ,\n    \"PLACEHOLDER\":
+    \"You don't have access to this Page. Please contact your Administrator\",\n    \"SYNC_SPINNAKER\":{\n
+    \       \"TOOLTIP\":  \"To be able to work on applications created in Spinnaker,
+    you need to import them here\",\n        \"VALIDATION_MESSAGE\": \"\"\n     }\n
+    \  },\n   \"START_DEPLOYMENT\": {\n      \"APPLICATION_NAME\": {\n         \"TOOLTIP\":
+    \"\",\n         \"VALIDATION_MESSAGE\": {\n            \"required\": \"Application
+    Name is required\",\n            \"empty\": \"Please create Spinnaker Application
+    to continue\"\n         }\n      },\n      \"SERVICE_NAME\": {\n         \"TOOLTIP\":
+    \"\",\n         \"VALIDATION_MESSAGE\": {\n            \"required\": \"Service Name
+    is required\",\n            \"empty\": \"Pipelines are not present for this Application\"\n
+    \        }\n      },\n      \"START_DEPLOYMENT_BTN\": {\n         \"TOOLTIP\": \"Please
+    create Spinnaker Application to 'Start New Deployment'\",\n         \"VALIDATION_MESSAGE\":
+    {\n            \"required\": \"Service Name is required\"\n         }\n      }\n
+    \  },\n   \"APPLICATION_DETAILS\": {\n      \"HEADER\": \"Application Details\",\n
+    \     \"BODY\": \"<ul class='helpTextUI'><li><strong>Application Name</strong>:
+    User defined name of the application</li> <li><strong>Description</strong>: Application
+    description</li> <li><strong>Email ID</strong>: Your email id</li></ul>\",\n      \"APPLICATION_NAME\":
+    {\n         \"TOOLTIP\": \"\",\n         \"VALIDATION_MESSAGE\": {\n            \"exists\":
+    \"Application already exists\",\n            \"noSpecialCharacters\": \"Application
+    Name cannot contain special characters\",\n            \"cannotContainSpace\": \"Application
+    Name cannot contain space\",\n            \"required\": \"Application Name cannot
+    be empty\",\n            \"startingFromNumber\": \"Application Name cannot start
+    with numbers\",\n            \"maxlength\": \"Application name should not have more
+    than 63 characters!\"\n         }\n      },\n      \"APPLICATION_DESCRIPTION\":
+    {\n         \"TOOLTIP\": \"\",\n         \"VALIDATION_MESSAGE\": \"\"\n      },\n
+    \     \"EMAIL_ID\": {\n         \"TOOLTIP\": \"\",\n         \"VALIDATION_MESSAGE\":
+    {\n            \"email\": \"Email Id is invalid\",\n            \"required\": \"Email
+    Id cannot be empty\"\n         }\n      }\n   },\n   \"SERVICE_DETAILS\": {\n      \"HEADER\":
+    \"Services\",\n      \"BODY\": \"<p>An Application can contain multiple services.
+    A service can contain multiple pipelines. When a Service is created, a Pipeline
+    with the same name is created automatically. You can add more pipelines by clicking
+    on '+' symbol in <strong>Service Pipeline</strong></p>\",\n      \"SERVICE_NAME\":
+    {\n         \"TOOLTIP\": \"\",\n         \"VALIDATION_MESSAGE\": {\n            \"exists\":
+    \"Service already exists\",\n            \"noSpecialCharacters\": \"Service Name
+    cannot contain special characters\",\n            \"cannotContainSpace\": \"Service
+    Name cannot contain space\",\n            \"required\": \"Service Name cannot be
+    empty\",\n            \"startingFromNumber\": \"Service Name cannot start with number\",\n
+    \           \"maxlength\": \"Service name should not have more than 63 characters!\"\n
+    \        }\n      },\n      \"SERVICE_PIPELINE\": {\n         \"TOOLTIP\": \"\",\n
+    \        \"VALIDATION_MESSAGE\": \"\"\n      },\n      \"ADD_NEW_SERVICE\": {\n
+    \        \"TOOLTIP\": \"Add a new Service\",\n         \"VALIDATION_MESSAGE\": \"\"\n
+    \     },\n      \"SHOW_OR_HIDE_SERVICE\": {\n         \"TOOLTIP\": \"Show / Hide
+    this Service in the Application Dashboard\",\n         \"VALIDATION_MESSAGE\": \"\"\n
+    \     },\n      \"DELETE_PIPELINE_ICON\": {\n         \"TOOLTIP\": \"Delete Pipeline
+    from Service\",\n         \"VALIDATION_MESSAGE\": \"\"\n      },\n     \"DELETE_PERMISSION\":
+    {\n        \"TOOLTIP\": \"Insufficient Permission to Delete this Service\",\n        \"VALIDATION_MESSAGE\":
+    \"\"\n     },\n    \"DELETE_SERVICE\": {\n        \"TOOLTIP\": \"Service can be
+    deleted on deleting pipelines\",\n        \"VALIDATION_MESSAGE\": \"\"\n    }\n
+    \  },\n   \"GROUP_PERMISSION\": {\n      \"APP_PERMISSIONS\": {\n         \"TOOLTIP\":
+    \"Authorization definition for this Application\",\n         \"VALIDATION_MESSAGE\":
+    {\n            \"groupValid\": \"Groups cannot be empty\",\n            \"permissionsValid\":
+    \"Atleast 1 permission should be assigned to the groups\",\n            \"allPermissionForOneGroup\":
+    \"Atleast 1 group should have all permissions\"\n         }\n      },\n      \"INTEGRATORS_PERMISSIONS\":
+    {\n         \"TOOLTIP\": \"Authorization definition for this Integration\",\n         \"VALIDATION_MESSAGE\":
+    \"\"\n      },\n      \"CLOUD_PROVIDER_PERMISSIONS\": {\n        \"TOOLTIP\": \"Authorization
+    definition for this Cloud Provider\",\n        \"VALIDATION_MESSAGE\": \"\"\n     },\n
+    \     \"AGENT_PERMISSIONS\": {\n         \"TOOLTIP\": \"Authorization definition
+    for this Agent\",\n         \"VALIDATION_MESSAGE\": \"\"\n      },\n      \"POLICY_PERMISSIONS\":
+    {\n         \"TOOLTIP\": \"Authorization definition for this Policy\",\n         \"VALIDATION_MESSAGE\":
+    \"\"\n      },\n      \"ADD_GROUP\": {\n         \"TOOLTIP\": \"Add New Group\",\n
+    \        \"VALIDATION_MESSAGE\": \"\"\n      },\n      \"DELETE\": {\n         \"TOOLTIP\":
+    \"Delete\",\n         \"VALIDATION_MESSAGE\": \"\"\n      }\n   },\n   \"GATE_DETAILS\":
+    {\n      \"HEADER\": \"Gate Configuration\",\n      \"BODY\": \"<p>Select Gates
+    from <strong>Existing Gates</strong> dropdown to load Gate Configuration and to
+    add new Gate Configuration click the <strong>Add New Gate</strong> button</p> <p>Autopilot
+    has the following Gate Types</p> <ul class='helpTextUI'> <li><strong>Approval</strong>:
+    Fetches relevant information from multiple CI/CD Tools, presents the data in one
+    place, to enable the user to make quick and informed decision on pipeline execution</li>
+    <li><strong>Verification</strong>: Analyze logs & metrics from your target application
+    to evaluate the risk in software delivery</li> <li><strong>Test Verification</strong>:
+    Analyze logs from your Test Harness to evaluate the risk in software delivery</li>
+    \ <li><strong>Policy</strong>: Defines a set of conditions that need to be verified
+    while creating or executing a CI/CD pipeline</li> </ul>\",\n      \"PIPELINE\":
+    {\n         \"TOOLTIP\": \"Shows the structure of how the Gates are stacked in the
+    Pipeline\",\n         \"VALIDATION_MESSAGE\": \"\"\n      },\n      \"TYPE\": {\n
+    \        \"TOOLTIP\": \"\",\n         \"VALIDATION_MESSAGE\": \"\"\n      },\n      \"EXISITING_GATE\":
+    {\n         \"TOOLTIP\": \"\",\n         \"VALIDATION_MESSAGE\": \"\"\n      },\n
+    \     \"ENVIRONMENT\": {\n         \"TOOLTIP\": \"Specify Environment for this Gate\",\n
+    \        \"VALIDATION_MESSAGE\": {\n            \"required\": \"Environment Name
+    is Invalid\"\n         }\n      },\n      \"CUSTOM_ENVIRONMENT_NAME\": {\n         \"TOOLTIP\":
+    \"\",\n         \"VALIDATION_MESSAGE\": {\n            \"noSpecialCharacters\":
+    \"Environment Name cannot contain special characters\",\n            \"cannotContainSpace\":
+    \"Environment Name cannot contain space\",\n            \"required\": \"Environment
+    Name cannot be empty\",\n            \"startingFromNumber\": \"Environment Name
+    cannot start with number\",\n            \"maxlength\": \"Environment name should
+    not have more than 63 characters!\"\n         }\n      },\n      \"GATE_NAME\":
+    {\n         \"TOOLTIP\": \"\",\n         \"VALIDATION_MESSAGE\": {\n            \"exists\":
+    \"Gate already exists\",\n            \"noSpecialCharacters\": \"Gate Name cannot
+    contain special characters\",\n            \"cannotContainSpace\": \"Gate Name cannot
+    contain space\",\n            \"required\": \"Gate Name cannot be empty\",\n            \"startingFromNumber\":
+    \"Gate Name cannot start with number\",\n            \"maxlength\": \"Gate name
+    should not have more than 63 characters!\"\n         }\n      },\n      \"DEPENDS_ON\":
+    {\n         \"TOOLTIP\": \"This field determines the placement of the current Gate
+    in the Pipeline. This field is not required if there are no Stages in the Pipeline\",\n
+    \        \"VALIDATION_MESSAGE\": {\n            \"required\": \"Depends On cannot
+    be empty\"\n         }\n      },\n      \"CONNECTOR\": {\n         \"TOOLTIP\":
+    \"Tool to gather information for informed Approvals\",\n         \"VALIDATION_MESSAGE\":
+    {\n            \"required\": \"Please select Connector\"\n         }\n      },\n
+    \     \"ACCOUNT\": {\n         \"TOOLTIP\": \"Account name of the connector\",\n
+    \        \"VALIDATION_MESSAGE\": {\n            \"required\": \"Please select Account\"\n
+    \        }\n      },\n      \"TEMPLATE\": {\n         \"TOOLTIP\": \"Define the
+    specific fields of interest from connector\",\n         \"VALIDATION_MESSAGE\":
+    {\n            \"required\": \"Please select Template\"\n         }\n      },\n
+    \     \"ADD_NEW_TEMPLATE\": {\n         \"TOOLTIP\": \"Add New Connector\",\n         \"VALIDATION_MESSAGE\":
+    \"\"\n      },\n      \"EDIT_TEMPLATE\": {\n         \"TOOLTIP\": \"Edit Template\",\n
+    \        \"VALIDATION_MESSAGE\": \"\"\n      },\n      \"VIEW_TEMPLATE\": {\n         \"TOOLTIP\":
+    \"View Template\",\n         \"VALIDATION_MESSAGE\": \"\"\n      },\n      \"DELETE_TEMPLATE\":
+    {\n         \"TOOLTIP\": \"Delete Template\",\n         \"VALIDATION_MESSAGE\":
+    \"\"\n      },\n      \"TEMPLATE_TOOL_TYPE\": {\n         \"TOOLTIP\": \"\",\n         \"VALIDATION_MESSAGE\":
+    \"\"\n      },\n      \"TEMPLATE_NAME\": {\n         \"TOOLTIP\": \"\",\n         \"VALIDATION_MESSAGE\":
+    {\n            \"noSpecialCharacters\": \"Template Name cannot contain special characters\",\n
+    \           \"required\": \"Template Name cannot be empty\",\n            \"startingFromNumber\":
+    \"Template Name cannot start with number\",\n            \"maxlength\": \"Template
+    Name should not have more than 63 characters!\"\n         }\n      },\n      \"TEMPLATE_DESCRIPTION\":
+    {\n         \"TOOLTIP\": \"\",\n         \"VALIDATION_MESSAGE\": \"\"\n      },\n
+    \     \"AUTOMATED_APPROVAL\": {\n         \"TOOLTIP\": \"Use predefined conditions
+    to Approve or Reject a request. You can configure conditions using Policies.\",\n
+    \        \"VALIDATION_MESSAGE\": {\n            \"required\": \"Please select Approval
+    Condition\"\n         }\n      },\n      \"APPROVAL_GROUPS\": {\n         \"TOOLTIP\":
+    \"Selected groups will be able to review this Approval Gate\",\n         \"VALIDATION_MESSAGE\":
+    {\n            \"required\": \"Please select Approval Groups to continue\"\n         }\n
+    \     },\n      \"APPROVAL_GROUP_MSG\": {\n         \"TOOLTIP\": \"Selected groups
+    should have atleast view access to the application\",\n         \"VALIDATION_MESSAGE\":
+    \"\"\n      },\n      \"GATE_SECURITY_SOURCE_URL\": {\n         \"TOOLTIP\": \"Source
+    Url\",\n         \"VALIDATION_MESSAGE\": \"\"\n      },\n      \"GATE_SECURITY_SOURCE_URL_COPY\":
+    {\n         \"TOOLTIP\": \"Copy Source Url\",\n         \"VALIDATION_MESSAGE\":
+    \"\"\n      },\n      \"PAYLOAD_CONSTRAINTS\": {\n         \"TOOLTIP\": \"Payload
+    Constraints for Gate Security\",\n         \"VALIDATION_MESSAGE\": \"\"\n      },\n
+    \     \"PAYLOAD_CONSTRAINTS_KEY\": {\n         \"TOOLTIP\": \"\",\n         \"VALIDATION_MESSAGE\":
+    {\n            \"cannotContainSpace\": \"Key cannot contain space\",\n            \"required\":
+    \"Invalid Key\"\n         }\n      },\n      \"LOG_TEMPLATE\": {\n         \"TOOLTIP\":
+    \"A collection of all the information needed to run the log analysis\",\n         \"VALIDATION_MESSAGE\":
+    \"\"\n      },\n      \"CREATE_GATE_CONFIG_TEMPLATE\": {\n         \"TOOLTIP\":
+    \"Create New Template\",\n         \"VALIDATION_MESSAGE\": \"\"\n      },\n      \"EDIT_GATE_CONFIG_TEMPLATE\":
+    {\n         \"TOOLTIP\": \"Edit Template\",\n         \"VALIDATION_MESSAGE\": \"\"\n
+    \     },\n      \"VIEW_GATE_CONFIG_TEMPLATE\": {\n         \"TOOLTIP\": \"View Template\",\n
+    \        \"VALIDATION_MESSAGE\": \"\"\n      },\n      \"DELETE_GATE_CONFIG_TEMPLATE\":
+    {\n         \"TOOLTIP\": \"Delete Template\",\n         \"VALIDATION_MESSAGE\":
+    \"\"\n      },\n      \"METRIC_TEMPLATE\": {\n         \"TOOLTIP\": \"Information
+    needed to run the metric analysis\",\n         \"VALIDATION_MESSAGE\": \"\"\n      },\n
+    \     \"POLICY\": {\n         \"TOOLTIP\": \"\",\n         \"VALIDATION_MESSAGE\":
+    \"\"\n      },\n     \"DELETE_PERMISSION\":{\n        \"TOOLTIP\": \"Insufficient
+    Permission to Delete this Gate\",\n        \"VALIDATION_MESSAGE\": \"\"\n     }\n
+    \  },\n   \"LOGGED_INUSER_DETAILS\": {\n      \"HEADER\": \"No Users found\",\n
+    \     \"BODY\": \"\"\n   },\n   \"INTEGRATION\": {\n      \"AMAZONS3\": {\n         \"HEADER\":
+    \"Amazon S3\",\n         \"BODY\": \"<span><p>Amazon S3 integration can be used
+    to configure Spinnaker for Amazon S3.</p><p><strong>Fields</strong>:</p><ul class='helpTextUl'><li><strong>Account
+    Name</strong>: User defined name for the Amazon S3 Account <span class='noBr'>(Example:
+    opsmx-s3)</span></li><li><strong>Access Key Id</strong>: AWS Access Key Id</li><li><strong>Secret
+    Access Key</strong>: AWS Secret Access Key</li><li><strong>Connect to Spinnaker</strong>:
+    Toggle to configure Spinnaker for Amazon S3</li><li><strong>Permissions</strong>:
+    Enable/disable access to the Amazon S3 account in Autopilot to specific usergroups</li></ul></span>\",\n
+    \        \"ACCOUNTNAME\": {\n            \"TOOLTIP\": \"User defined name for the
+    Amazon S3 account\",\n            \"VALIDATION_MESSAGE\": {\n               \"noSpecialCharacters\":
+    \"Account Name cannot contain special characters other than -\",\n               \"cannotContainSpace\":
+    \"Account Name cannot contain space\",\n               \"required\": \"Account Name
+    cannot be empty\",\n               \"startingFromNumber\": \"Account Name cannot
+    start with numbers\"\n            }\n         },\n         \"ACCESS_ID\": {\n            \"TOOLTIP\":
+    \"AWS Access Key Id\",\n            \"VALIDATION_MESSAGE\": {\n               \"required\":
+    \"Access Key Id cannot be empty\"\n            }\n         },\n         \"SECRET_KEY\":
+    {\n            \"TOOLTIP\": \"AWS Secret Access Key\",\n            \"VALIDATION_MESSAGE\":
+    {\n               \"required\": \"Secret Access Key cannot be empty\"\n            }\n
+    \        },\n         \"SPINNAKERTOGGLE\": {\n            \"TOOLTIP\": \"\",\n            \"VALIDATION_MESSAGE\":
+    {}\n         }\n      },\n      \"ARTIFACTORY\": {\n         \"HEADER\": \"Artifactory\",\n
+    \        \"BODY\": \"<span><p>Artifactory integration can be used as a datasource
+    for Approval Gate as well as to configure Spinnaker for Artifactory.</p><p><strong>Fields</strong>:</p><ul
+    class='helpTextUl'><li><strong>Account Name</strong>: User defined name for the
+    Artifactory Account <span class='noBr'>(Example: opsmx-artifactory)</span></li><li><strong>Endpoint</strong>:
+    Artifactory URL <span class='noBr'>(Example: https://xyz.myjfrog.com)</span></li><li><strong>Token</strong>:
+    Artifactory personal access token. You can find <a href='https://www.jfrog.com/confluence/display/JFROG/Access+Tokens'
+    target='_blank'>here</a> how to generate personal access tokens. <span class='autolinebreak'>(Example:
+    ZlQDAwMFwvdXNlcnNcL21hZGh1a2FyIiwic2NwIjoiYXBwbGllZC1wZXJtaXNzaW9uc1wvYWRtaW4gYXBpOioiLCJhdWQiOlsiamZydEAqIiwiamZhY0AqIiwiamZldnmbWRAKiJdLCJpc3MiOiJqZmZlQDAAzNzY3MiwiaWF0IjoxNjI5ODY0ODcyLCJqdGkiOiI1ZWFiNjlhYi1hZDY0LTRjOGItOTMyZC0wMDAxMWZiZWU5YWIifQ.tzBgL3fQgZ1dwlLLS2UAT7G)</span></li><li><strong>Connect
+    to Spinnaker</strong>: Toggle to configure Spinnaker for Artifactory</li><li><strong>Permissions</strong>:
+    Enable/disable access to the Artifactory account in Autopilot to specific usergroups</li></ul></span>\",\n
+    \        \"ACCOUNTNAME\": {\n            \"TOOLTIP\": \"User defined name for the
+    Artifactory account\",\n            \"VALIDATION_MESSAGE\": {\n               \"noSpecialCharacters\":
+    \"Account Name cannot contain special characters other than -\",\n               \"cannotContainSpace\":
+    \"Account Name cannot contain space\",\n               \"required\": \"Account Name
+    cannot be empty\",\n               \"startingFromNumber\": \"Account Name cannot
+    start with numbers\"\n            }\n         },\n         \"ENDPOINT\": {\n            \"TOOLTIP\":
+    \"Artifactory URL\",\n            \"VALIDATION_MESSAGE\": {\n               \"required\":
+    \"Endpoint cannot be empty\",\n               \"invalidUrl\": \"URL is invalid\"\n
+    \           }\n         },\n         \"TOKEN\": {\n            \"TOOLTIP\": \"Artifactory
+    Personal Access Token\",\n            \"VALIDATION_MESSAGE\": {\n               \"required\":
+    \"Token cannot be empty\"\n            }\n         },\n         \"SPINNAKERTOGGLE\":
+    {\n            \"TOOLTIP\": \"\",\n            \"VALIDATION_MESSAGE\": {}\n         }\n
+    \     },\n      \"BITBUCKET\": {\n         \"HEADER\": \"Bitbucket Cloud\",\n         \"BODY\":
+    \"<span><p>BitBucket Cloud integration can be used as a datasource for Approval
+    Gate as well as to configure Spinnaker for BitBucket Cloud.</p><p><strong>Fields</strong>:</p><ul
+    class='helpTextUl'><li><strong>Name</strong>: User defined name for the Bitbucket
+    Cloud Account <span class='noBr'>(Example: opsmx-bitbucket)</span></li><li><strong>Host
+    URL</strong>: BitBucket Cloud URL <span class='noBr'>(Example: https://bitbucket.org)</span></li><li><strong>API
+    URL</strong>: This is needed by Autopilot to access Bitbucket Cloud resources such
+    as accounts & repositories through API calls <span class='noBr'>(Example: https://api.bitbucket.org/2.0/repositories)</span></li><li><strong>Authentication
+    Type</strong>: can be Token or User Name/Password</li><li><strong>User Name</strong>:
+    Bitbucket Cloud User Name</li><li><strong>Token</strong>: BitBucket personal access
+    token <span class='noBr'>(Example: xCPkVZfxaE9iULmfYYkK)</span></li> <li><strong>Password</strong>:
+    Bitbucket Cloud Password</li><li><strong>Connect to Spinnaker</strong>: Toggle to
+    configure Spinnaker for Bitbucket Cloud</li><li><strong>Permissions</strong>: Enable/disable
+    access to the Bitbucket Account in Autopilot to specific usergroups</li></ul></span>\",\n
+    \        \"ACCOUNTNAME\": {\n            \"TOOLTIP\": \"User defined name for the
+    BitBucket Cloud account\",\n            \"VALIDATION_MESSAGE\": {\n               \"noSpecialCharacters\":
+    \"Account Name cannot contain special characters other than -\",\n               \"cannotContainSpace\":
+    \"Account Name cannot contain space\",\n               \"required\": \"Account Name
+    cannot be empty\",\n               \"startingFromNumber\": \"Account Name cannot
+    start with numbers\"\n            }\n         },\n         \"HOSTURL\": {\n            \"TOOLTIP\":
+    \"BitBucket Cloud URL\",\n            \"VALIDATION_MESSAGE\": {\n               \"required\":
+    \"Host URL cannot be empty\",\n               \"invalidUrl\": \"URL is invalid\"\n
+    \           }\n         },\n         \"APIURL\": {\n            \"TOOLTIP\": \"BitBucket
+    Cloud Api URL. This is needed by Autopilot to access Bitbucket Cloud resources such
+    as accounts & repositories through API calls\",\n            \"VALIDATION_MESSAGE\":
+    {\n               \"required\": \"API URL cannot be empty\",\n               \"invalidUrl\":
+    \"URL is invalid\"\n            }\n         },\n         \"AUTHENTICATIONTYPE\":
+    {\n            \"TOOLTIP\": \"can be Token or User Name/Password\",\n            \"VALIDATION_MESSAGE\":
+    {}\n         },\n         \"TOKEN\": {\n            \"TOOLTIP\": \"BitBucket Cloud
+    personal access token\",\n            \"VALIDATION_MESSAGE\": {\n               \"required\":
+    \"Token cannot be empty\"\n            }\n         },\n         \"USERNAME\": {\n
+    \           \"TOOLTIP\": \"BitBucket Cloud User Name\",\n            \"VALIDATION_MESSAGE\":
+    {\n               \"noSpecialCharacters\": \"User Name cannot contain special characters
+    other than - and _\",\n               \"cannotContainSpace\": \"User Name cannot
+    contain space\",\n               \"required\": \"User Name cannot be empty\",\n
+    \              \"startingFromNumber\": \"User Name cannot start with numbers\"\n
+    \           }\n         },\n         \"PASSWORD\": {\n            \"TOOLTIP\": \"BitBucket
+    Cloud Password\",\n            \"VALIDATION_MESSAGE\": {\n               \"required\":
+    \"Password cannot be empty\"\n            }\n         },\n         \"SPINNAKERTOGGLE\":
+    {\n            \"TOOLTIP\": \"\",\n            \"VALIDATION_MESSAGE\": {}\n         }\n
+    \     },\n      \"BITBUCKET_SERVER\": {\n         \"HEADER\": \"Bitbucket Server\",\n
+    \        \"BODY\": \"<span><p>BitBucket Server integration can be used as a datasource
+    for Approval Gate as well as to configure Spinnaker for BitBucket Server.</p><p><strong>Fields</strong>:</p><ul
+    class='helpTextUl'><li><strong>Account Name</strong>: User defined name for the
+    Bitbucket Server Account <span class='noBr'>(Example: opsmx-bitbucket)</span></li><li><strong>Host
+    URL</strong>: BitBucket Server URL <span class='noBr'>(Example: https://xyz.mybitbucket.com)</span></li><li><strong>Authentication
+    Type</strong>: can be Token or User Name/Password</li><li><strong>User Name</strong>:
+    Bitbucket Server User Name</li><li><strong>Token</strong>: BitBucket Server personal
+    access token. You can find <a href='https://confluence.atlassian.com/bitbucketserver/personal-access-tokens-939515499.html'
+    target='_blank'>here</a> how to generate personal access tokens. <span class='noBr'>(Example:
+    DjpMgHmwqUnIvvmljFgqGQ)</span></li><li><strong>Password</strong>: Bitbucket Server
+    Password</li><li><strong>Connect to Spinnaker</strong>: Toggle to configure Spinnaker
+    for Bitbucket Server</li><li><strong>Permissions</strong>: Enable/disable access
+    to the Bitbucket Server account in Autopilot to specific usergroups</li></ul></span>\",\n
+    \        \"ACCOUNTNAME\": {\n            \"TOOLTIP\": \"User defined name for the
+    Bitbucket Server account\",\n            \"VALIDATION_MESSAGE\": {\n               \"noSpecialCharacters\":
+    \"Account Name cannot contain special characters other than -\",\n               \"cannotContainSpace\":
+    \"Account Name cannot contain space\",\n               \"required\": \"Account Name
+    cannot be empty\",\n               \"startingFromNumber\": \"Account Name cannot
+    start with numbers\"\n            }\n         },\n         \"HOSTURL\": {\n            \"TOOLTIP\":
+    \"BitBucket Server URL\",\n            \"VALIDATION_MESSAGE\": {\n               \"required\":
+    \"Host URL cannot be empty\",\n               \"invalidUrl\": \"URL is invalid\"\n
+    \           }\n         },\n         \"AUTHENTICATIONTYPE\": {\n            \"TOOLTIP\":
+    \"can be Token or User Name/Password\",\n            \"VALIDATION_MESSAGE\": {}\n
+    \        },\n         \"TOKEN\": {\n            \"TOOLTIP\": \"Bitbucket Server
+    personal access token\",\n            \"VALIDATION_MESSAGE\": {\n               \"required\":
+    \"Token cannot be empty\"\n            }\n         },\n         \"USERNAME\": {\n
+    \           \"TOOLTIP\": \"Bitbucket Server User Name\",\n            \"VALIDATION_MESSAGE\":
+    {\n               \"noSpecialCharacters\": \"User Name cannot contain special characters
+    other than - and _\",\n               \"cannotContainSpace\": \"User Name cannot
+    contain space\",\n               \"required\": \"User Name cannot be empty\",\n
+    \              \"startingFromNumber\": \"User Name cannot start with numbers\"\n
+    \           }\n         },\n         \"PASSWORD\": {\n            \"TOOLTIP\": \"Bitbucket
+    Server Password\",\n            \"VALIDATION_MESSAGE\": {\n               \"required\":
+    \"Password cannot be empty\"\n            }\n         },\n         \"SPINNAKERTOGGLE\":
+    {\n            \"TOOLTIP\": \"\",\n            \"VALIDATION_MESSAGE\": {}\n         }\n
+    \     },\n      \"DOCKERHUB\": {\n         \"HEADER\": \"Docker Hub\",\n         \"BODY\":
+    \"\",\n         \"ACCOUNTNAME\": {\n            \"TOOLTIP\": \"User defined name
+    for the Docker Hub account\",\n            \"VALIDATION_MESSAGE\": {\n               \"noSpecialCharacters\":
+    \"Account Name cannot contain special characters other than -\",\n               \"cannotContainSpace\":
+    \"Account Name cannot contain space\",\n               \"required\": \"Account Name
+    cannot be empty\",\n               \"startingFromNumber\": \"Account Name cannot
+    start with numbers\"\n            }\n         },\n         \"TOKEN\": {\n            \"TOOLTIP\":
+    \"Dockerhub Personal Access Token\",\n            \"VALIDATION_MESSAGE\": {\n               \"required\":
+    \"Token cannot be empty\"\n            }\n         },\n         \"USERNAME\": {\n
+    \           \"TOOLTIP\": \"Dockerhub User Name\",\n            \"VALIDATION_MESSAGE\":
+    {\n               \"noSpecialCharacters\": \"User Name cannot contain special characters
+    other than - and _\",\n               \"cannotContainSpace\": \"User Name cannot
+    contain space\",\n               \"required\": \"User Name cannot be empty\",\n
+    \              \"startingFromNumber\": \"User Name cannot start with numbers\"\n
+    \           }\n         },\n         \"HOSTURL\": {\n            \"TOOLTIP\": \"Dockerhub
+    Host URL\",\n            \"VALIDATION_MESSAGE\": {\n               \"required\":
+    \"Host URL cannot be empty\",\n               \"invalidUrl\": \"URL is invalid\"\n
+    \           }\n         }\n      },\n      \"GITHUB\": {\n         \"HEADER\": \"GitHub\",\n
+    \        \"BODY\": \"<span><p>GIT HUB integration can be used as a datasource for
+    Approval Gate as well as to configure Spinnaker for GitHub.</p><p><strong>Fields</strong>:</p><ul
+    class='helpTextUl'><li><strong>Account Name</strong>: User defined name for the
+    GitHub Account<span class='noBr'>(Example: opsmx-github)</span></li><li><strong>Token</strong>:
+    GitHub personal access token. You can find <a href='https://docs.github.com/en/authentication/keeping-your-account-and-data-secure/creating-a-personal-access-token'
+    target='_blank'>here</a> how to generate personal access tokens. <span class='noBr'>(Example:
+    ghp_ln1eJK4yuomnY6JREp72IDJC4Hq6Sm)</span></li><li><strong>User Name</strong>: GitHub
+    User Name</li><li><strong>Connect to Spinnaker</strong>: Toggle to configure Spinnaker
+    for GitHub</li><li><strong>Permissions</strong>: Enable/disable access to the GIT
+    HUB account in Autopilot to specific usergroups</li></ul></span>\",\n         \"ACCOUNTNAME\":
+    {\n            \"TOOLTIP\": \"User defined name for the GitHub account\",\n            \"VALIDATION_MESSAGE\":
+    {\n               \"noSpecialCharacters\": \"Account Name cannot contain special
+    characters other than -\",\n               \"cannotContainSpace\": \"Account Name
+    cannot contain space\",\n               \"required\": \"Account Name cannot be empty\",\n
+    \              \"startingFromNumber\": \"Account Name cannot start with numbers\"\n
+    \           }\n         },\n         \"HOSTURL\": {\n            \"TOOLTIP\": \"GitHub
+    Host URL\",\n            \"VALIDATION_MESSAGE\": {\n               \"required\":
+    \"Host URL cannot be empty\",\n               \"invalidUrl\": \"URL is invalid\"\n
+    \           }\n         },\n         \"URL\": {\n            \"TOOLTIP\": \"GitHub
+    Api URL to access resources such as accounts & repositories through API calls.\",\n
+    \           \"VALIDATION_MESSAGE\": {\n               \"required\": \"API URL cannot
+    be empty\",\n               \"invalidUrl\": \"URL is invalid\"\n            }\n
+    \        },\n         \"TOKEN\": {\n            \"TOOLTIP\": \"GitHub Personal Access
+    Token. You can generate token (settings -> Developer Settings -> Personal access
+    tokens -> generate new Token)\",\n            \"VALIDATION_MESSAGE\": {\n               \"required\":
+    \"Token cannot be empty\"\n            }\n         },\n         \"USERNAME\": {\n
+    \           \"TOOLTIP\": \"GitHub User Name\",\n            \"VALIDATION_MESSAGE\":
+    {\n               \"noSpecialCharacters\": \"User Name cannot contain special characters
+    other than - and _\",\n               \"cannotContainSpace\": \"User Name cannot
+    contain space\",\n               \"required\": \"User Name cannot be empty\",\n
+    \              \"startingFromNumber\": \"User Name cannot start with numbers\"\n
+    \           }\n         },\n         \"SPINNAKERTOGGLE\": {\n            \"TOOLTIP\":
+    \"\",\n            \"VALIDATION_MESSAGE\": {}\n         }\n      },\n      \"BAMBOO\":
+    {\n         \"HEADER\": \"Bamboo CI\",\n         \"BODY\": \" <span><p>Bamboo CI
+    integration can be used as a datasource for Approval Gate.</p><p><strong>Fields</strong>:</p><ul
+    class='helpTextUl'> <li><strong>Name</strong>: User defined name for the Bamboo
+    CI Account <span class='noBr'>(Example: opsmx-bamboo)</span></li><li><strong>Endpoint</strong>:
+    Bamboo CI URL <span class='noBr'>(Example: https://xyz.mybamboo.com)</span></li><li><strong>Token</strong>:
+    Bamboo CI personal access token. You can find <a href='https://confluence.atlassian.com/bamboo/personal-access-tokens-976779873.html'
+    target='_blank'>here</a> how to generate personal access tokens. <span>(Example:
+    YmFrwqw0w9r90skfsOk9wcdd014p98kklw==)</span></li><li><strong>User Name</strong>:
+    Bamboo CI User Name</li><li><strong>Password</strong>: Bamboo CI Password</li><li><strong>Permissions</strong>:
+    Enable/disable access to the Bamboo CI account in Autopilot to specific usergroups</li></ul></span>\",\n
+    \        \"ACCOUNTNAME\": {\n            \"TOOLTIP\": \"User defined name for the
+    Bamboo CI account\",\n            \"VALIDATION_MESSAGE\": {\n               \"noSpecialCharacters\":
+    \"Account Name cannot contain special characters other than -\",\n               \"cannotContainSpace\":
+    \"Account Name cannot contain space\",\n               \"required\": \"Account Name
+    cannot be empty\",\n               \"startingFromNumber\": \"Account Name cannot
+    start with numbers\"\n            }\n         },\n         \"ENDPOINT\": {\n            \"TOOLTIP\":
+    \"Bamboo CI URL\",\n            \"VALIDATION_MESSAGE\": {\n               \"required\":
+    \"Bamboo End Point cannot be empty\",\n               \"invalidUrl\": \"URL is invalid\"\n
+    \           }\n         },\n         \"AUTHENTICATIONTYPE\": {\n            \"TOOLTIP\":
+    \"can be Token or User Name/Password\",\n            \"VALIDATION_MESSAGE\": {}\n
+    \        },\n         \"TOKEN\": {\n            \"TOOLTIP\": \"Bamboo CI personal
+    access token\",\n            \"VALIDATION_MESSAGE\": {\n               \"required\":
+    \"Token cannot be empty\"\n            }\n         },\n         \"USERNAME\": {\n
+    \           \"TOOLTIP\": \"Bamboo CI User Name\",\n            \"VALIDATION_MESSAGE\":
+    {\n               \"noSpecialCharacters\": \"User Name cannot contain special characters
+    other than - and _\",\n               \"cannotContainSpace\": \"User Name cannot
+    contain space\",\n               \"required\": \"User Name cannot be empty\",\n
+    \              \"startingFromNumber\": \"User Name cannot start with numbers\"\n
+    \           }\n         },\n         \"PASSWORD\": {\n            \"TOOLTIP\": \"Bamboo
+    CI Password\",\n            \"VALIDATION_MESSAGE\": {\n               \"required\":
+    \"Password cannot be empty\"\n            }\n         }\n      },\n      \"JENKINS\":
+    {\n         \"HEADER\": \"Jenkins\",\n         \"BODY\": \"<span><p>Jenkins integration
+    can be used as a datasource for Approval Gate as well as to configure Spinnaker
+    for Jenkins.</p><p><strong>Fields</strong>:</p><ul class='helpTextUl'><li><strong>Account
+    Name</strong>: User defined name for the Jenkins Account <span class='noBr'>(Example:
+    opsmx-jenkins)</span></li><li><strong>Host URL</strong>: Jenkins URL <span class='noBr'>(Example:
+    https://xyz.my-jenkins.com/jenkins)</span></li><li><strong>Authentication Type</strong>:
+    can be Token or User Name/Password    </li><li><strong>Token</strong>: Jenkins personal
+    access token. You can find <a href='https://www.jenkins.io/doc/book/using/using-credentials/'
+    target='_blank'>here</a> how to generate personal access tokens. <span>(Example:
+    77d67609a841b1811a114b7fbfa109b3c2)</span></li><li><strong>User Name</strong>: Jenkins
+    User Name</li><li><strong>Password</strong>: Jenkins Password</li><li><strong>Connect
+    to Spinnaker</strong>: Toggle to configure Spinnaker for Jenkins</li><li><strong>Permissions</strong>:
+    Enable/disable access to the Jenkins account in Autopilot to specific usergroups</li></ul></span>\",\n
+    \        \"ACCOUNTNAME\": {\n            \"TOOLTIP\": \"User defined name for the
+    Jenkins account\",\n            \"VALIDATION_MESSAGE\": {\n               \"noSpecialCharacters\":
+    \"Account Name cannot contain special characters other than -\",\n               \"cannotContainSpace\":
+    \"Account Name cannot contain space\",\n               \"required\": \"Account Name
+    cannot be empty\",\n               \"startingFromNumber\": \"Account Name cannot
+    start with numbers\"\n            }\n         },\n         \"HOSTURL\": {\n            \"TOOLTIP\":
+    \"Jenkins URL\",\n            \"VALIDATION_MESSAGE\": {\n               \"required\":
+    \"Host URL cannot be empty\",\n               \"invalidUrl\": \"URL is invalid\"\n
+    \           }\n         },\n         \"AUTHENTICATIONTYPE\": {\n            \"TOOLTIP\":
+    \"can be Token or User Name/Password\",\n            \"VALIDATION_MESSAGE\": {}\n
+    \        },\n         \"TOKEN\": {\n            \"TOOLTIP\": \"Jenkins personal
+    access token\",\n            \"VALIDATION_MESSAGE\": {\n               \"required\":
+    \"Token cannot be empty\"\n            }\n         },\n         \"USERNAME\": {\n
+    \           \"TOOLTIP\": \"Jenkins User Name\",\n            \"VALIDATION_MESSAGE\":
+    {\n               \"noSpecialCharacters\": \"User Name cannot contain special characters
+    other than - and _\",\n               \"cannotContainSpace\": \"User Name cannot
+    contain space\",\n               \"required\": \"User Name cannot be empty\",\n
+    \              \"startingFromNumber\": \"User Name cannot start with numbers\"\n
+    \           }\n         },\n         \"PASSWORD\": {\n            \"TOOLTIP\": \"Jenkins
+    Password\",\n            \"VALIDATION_MESSAGE\": {\n               \"required\":
+    \"Password cannot be empty\"\n            }\n         },\n         \"SPINNAKERTOGGLE\":
+    {\n            \"TOOLTIP\": \"\",\n            \"VALIDATION_MESSAGE\": {}\n         }\n
+    \     },\n      \"JIRA\": {\n         \"HEADER\": \"Jira\",\n         \"BODY\":
+    \"\",\n         \"ACCOUNTNAME\": {\n            \"TOOLTIP\": \"User defined name
+    for the Jira account\",\n            \"VALIDATION_MESSAGE\": {\n               \"noSpecialCharacters\":
+    \"Account Name cannot contain special characters other than -\",\n               \"cannotContainSpace\":
+    \"Account Name cannot contain space\",\n               \"required\": \"Account Name
+    cannot be empty\",\n               \"startingFromNumber\": \"Account Name cannot
+    start with numbers\"\n            }\n         },\n         \"EMAIL\": {\n            \"TOOLTIP\":
+    \"Jira Email Id\",\n            \"VALIDATION_MESSAGE\": {\n               \"email\":
+    \"Email Id is invalid\",\n               \"required\": \"Email Id cannot be empty\"\n
+    \           }\n         },\n         \"TOKEN\": {\n            \"TOOLTIP\": \"Jira
+    Personal Access Token\",\n            \"VALIDATION_MESSAGE\": {\n               \"required\":
+    \"Token cannot be empty\"\n            }\n         },\n         \"HOSTURL\": {\n
+    \           \"TOOLTIP\": \"Jira Host URL\",\n            \"VALIDATION_MESSAGE\":
+    {\n               \"required\": \"Host URL cannot be empty\",\n               \"invalidUrl\":
+    \"URL is invalid\"\n            }\n         },\n         \"SPINNAKERTOGGLE\": {\n
+    \           \"TOOLTIP\": \"\",\n            \"VALIDATION_MESSAGE\": {}\n         }\n
+    \     },\n      \"SERVICENOW\": {\n         \"HEADER\": \"Service Now\",\n         \"BODY\":
+    \"\",\n         \"ACCOUNTNAME\": {\n            \"TOOLTIP\": \"User defined name
+    for the Service Now account\",\n            \"VALIDATION_MESSAGE\": {\n               \"noSpecialCharacters\":
+    \"Account Name cannot contain special characters other than -\",\n               \"cannotContainSpace\":
+    \"Account Name cannot contain space\",\n               \"required\": \"Account Name
+    cannot be empty\",\n               \"startingFromNumber\": \"Account Name cannot
+    start with numbers\"\n            }\n         },\n         \"USERNAME\": {\n            \"TOOLTIP\":
+    \"Service Now User Name\",\n            \"VALIDATION_MESSAGE\": {\n               \"noSpecialCharacters\":
+    \"User Name cannot contain special characters other than - and _\",\n               \"cannotContainSpace\":
+    \"User Name cannot contain space\",\n               \"required\": \"User Name cannot
+    be empty\",\n               \"startingFromNumber\": \"User Name cannot start with
+    numbers\"\n            }\n         },\n         \"PASSWORD\": {\n            \"TOOLTIP\":
+    \"Service Now Password\",\n            \"VALIDATION_MESSAGE\": {\n               \"required\":
+    \"Password cannot be empty\"\n            }\n         },\n         \"HOSTURL\":
+    {\n            \"TOOLTIP\": \"Service Now Host URL\",\n            \"VALIDATION_MESSAGE\":
+    {\n               \"required\": \"Host URL cannot be empty\",\n               \"invalidUrl\":
+    \"URL is invalid\"\n            }\n         }\n      },\n      \"APPDYNAMICS\":
+    {\n         \"HEADER\": \"APPDYNAMICS\",\n         \"BODY\": \"\",\n         \"ACCOUNTNAME\":
+    {\n            \"TOOLTIP\": \"User defined name for the APPDYNAMICS account\",\n
+    \           \"VALIDATION_MESSAGE\": {\n               \"noSpecialCharacters\": \"Account
+    Name cannot contain special characters other than -\",\n               \"cannotContainSpace\":
+    \"Account Name cannot contain space\",\n               \"required\": \"Account Name
+    cannot be empty\",\n               \"startingFromNumber\": \"Account Name cannot
+    start with numbers\"\n            }\n         },\n         \"CONTROLLERHOST\": {\n
+    \           \"TOOLTIP\": \"APPDYNAMICS Controller Host\",\n            \"VALIDATION_MESSAGE\":
+    {\n               \"required\": \"Controller Host  cannot be empty\",\n               \"invalidUrl\":
+    \"URL is invalid\"\n            }\n         },\n         \"TEMPORARYACCESSTOKEN\":
+    {\n            \"TOOLTIP\": \"APPDYNAMICS Personal Temporary Access Token\",\n            \"VALIDATION_MESSAGE\":
+    {\n               \"required\": \"Temporary Access Token cannot be empty\"\n            }\n
+    \        }\n      },\n      \"CLOUDWATCH\": {\n         \"HEADER\": \"AWS-CLOUDWATCH\",\n
+    \        \"BODY\": \"\",\n         \"ACCOUNTNAME\": {\n            \"TOOLTIP\":
+    \"User defined name for the AWS-CLOUDWATCH account\",\n            \"VALIDATION_MESSAGE\":
+    {\n               \"noSpecialCharacters\": \"Account Name cannot contain special
+    characters other than -\",\n               \"cannotContainSpace\": \"Account Name
+    cannot contain space\",\n               \"required\": \"Account Name cannot be empty\",\n
+    \              \"startingFromNumber\": \"Account Name cannot start with numbers\"\n
+    \           }\n         },\n         \"ACCESS_ID\": {\n            \"TOOLTIP\":
+    \"AWS-CLOUDWATCH Access Key Id\",\n            \"VALIDATION_MESSAGE\": {\n               \"required\":
+    \"Access Key Id cannot be empty\"\n            }\n         },\n         \"SECRET_KEY\":
+    {\n            \"TOOLTIP\": \"AWS-CLOUDWATCH Secret Access Key\",\n            \"VALIDATION_MESSAGE\":
+    {\n               \"required\": \"Secret Access Key cannot be empty\"\n            }\n
+    \        }\n      },\n      \"DATADOG\": {\n         \"HEADER\": \"DATADOG\",\n
+    \        \"BODY\": \"\",\n         \"ACCOUNTNAME\": {\n            \"TOOLTIP\":
+    \"User defined name for the DATADOG account\",\n            \"VALIDATION_MESSAGE\":
+    {\n               \"noSpecialCharacters\": \"Account Name cannot contain special
+    characters other than -\",\n               \"cannotContainSpace\": \"Account Name
+    cannot contain space\",\n               \"required\": \"Account Name cannot be empty\",\n
+    \              \"startingFromNumber\": \"Account Name cannot start with numbers\"\n
+    \           }\n         },\n         \"API_KEY\": {\n            \"TOOLTIP\": \"DATADOG
+    Api Key\",\n            \"VALIDATION_MESSAGE\": {\n               \"required\":
+    \"Application Key cannot be empty\"\n            }\n         },\n         \"APPLICATION_KEY\":
+    {\n            \"TOOLTIP\": \"DATADOG Application Key\",\n            \"VALIDATION_MESSAGE\":
+    {\n               \"required\": \"Application Key cannot be empty\"\n            }\n
+    \        }\n      },\n      \"DYNATRACE\": {\n         \"HEADER\": \"Dynatrace\",\n
+    \        \"BODY\": \"\",\n         \"ACCOUNTNAME\": {\n            \"TOOLTIP\":
+    \"User defined name for the Dynatrace account\",\n            \"VALIDATION_MESSAGE\":
+    {\n               \"noSpecialCharacters\": \"Account Name cannot contain special
+    characters other than -\",\n               \"cannotContainSpace\": \"Account Name
+    cannot contain space\",\n               \"required\": \"Account Name cannot be empty\",\n
+    \              \"startingFromNumber\": \"Account Name cannot start with numbers\"\n
+    \           }\n         },\n         \"END_POINT\": {\n            \"TOOLTIP\":
+    \"Dynatrace URL\",\n            \"VALIDATION_MESSAGE\": {\n               \"required\":
+    \"Url cannot be empty\",\n               \"invalidUrl\": \"URL is invalid\"\n            }\n
+    \        },\n         \"API_TOKEN\": {\n            \"TOOLTIP\": \"Dynatrace Personal
+    Access Token\",\n            \"VALIDATION_MESSAGE\": {\n               \"required\":
+    \"Api Token cannot be empty\"\n            }\n         }\n      },\n      \"ELASTICSEARCH\":
+    {\n         \"HEADER\": \"Elasticsearch\",\n         \"BODY\": \"\",\n         \"ACCOUNTNAME\":
+    {\n            \"TOOLTIP\": \"User defined name for the Elasticsearch account\",\n
+    \           \"VALIDATION_MESSAGE\": {\n               \"noSpecialCharacters\": \"Account
+    Name cannot contain special characters other than -\",\n               \"cannotContainSpace\":
+    \"Account Name cannot contain space\",\n               \"required\": \"Account Name
+    cannot be empty\",\n               \"startingFromNumber\": \"Account Name cannot
+    start with numbers\"\n            }\n         },\n         \"ENDPOINT\": {\n            \"TOOLTIP\":
+    \"ElasticSearch End Point\",\n            \"VALIDATION_MESSAGE\": {\n               \"required\":
+    \"Elastic End Point cannot be empty\",\n               \"invalidUrl\": \"URL is
+    invalid\"\n            }\n         },\n         \"USERNAME\": {\n            \"TOOLTIP\":
+    \"ElasticSearch User Name\",\n            \"VALIDATION_MESSAGE\": {\n               \"noSpecialCharacters\":
+    \"User Name cannot contain special characters other than - and _\",\n               \"cannotContainSpace\":
+    \"User Name cannot contain space\",\n               \"startingFromNumber\": \"User
+    Name cannot start with numbers\"\n            }\n         },\n         \"PASSWORD\":
+    {\n            \"TOOLTIP\": \"ElasticSearch Password\",\n            \"VALIDATION_MESSAGE\":
+    {\n               \"required\": \"Password cannot be empty\"\n            }\n         },\n
+    \        \"KIBANAENDPOINT\": {\n            \"TOOLTIP\": \"ElasticSearch Kibana
+    End Point\",\n            \"VALIDATION_MESSAGE\": {\n               \"required\":
+    \"Kibana End Point cannot be empty\",\n               \"invalidUrl\": \"URL is invalid\"\n
+    \           }\n         },\n         \"KIBANAUSERNAME\": {\n            \"TOOLTIP\":
+    \"ElasticSearch Kibana User Name\",\n            \"VALIDATION_MESSAGE\": {\n               \"noSpecialCharacters\":
+    \"Kibana User Name cannot contain special characters other than - and _\",\n               \"cannotContainSpace\":
+    \"Kibana User Name cannot contain space\",\n               \"required\": \"Kibana
+    User Name cannot be empty\",\n               \"startingFromNumber\": \"Kibana User
+    Name cannot start with numbers\"\n            }\n         },\n         \"KIBANAPASSWORD\":
+    {\n            \"TOOLTIP\": \"ElasticSearch Kibana Password\",\n            \"VALIDATION_MESSAGE\":
+    {\n               \"required\": \"Kibana Password cannot be empty\"\n            }\n
+    \        }\n      },\n      \"GRAPHITE\": {\n         \"HEADER\": \"Graphite\",\n
+    \        \"BODY\": \"\",\n         \"ACCOUNTNAME\": {\n            \"TOOLTIP\":
+    \"User defined name for the Graphite account\",\n            \"VALIDATION_MESSAGE\":
+    {\n               \"noSpecialCharacters\": \"Account Name cannot contain special
+    characters other than -\",\n               \"cannotContainSpace\": \"Account Name
+    cannot contain space\",\n               \"required\": \"Account Name cannot be empty\",\n
+    \              \"startingFromNumber\": \"Account Name cannot start with numbers\"\n
+    \           }\n         },\n         \"URL\": {\n            \"TOOLTIP\": \"Graphite
+    End Point\",\n            \"VALIDATION_MESSAGE\": {\n               \"required\":
+    \"End Point cannot be empty\",\n               \"invalidUrl\": \"URL is invalid\"\n
+    \           }\n         }\n      },\n      \"GRAYLOG\": {\n         \"HEADER\":
+    \"GRAYLOG\",\n         \"BODY\": \"\",\n         \"ACCOUNTNAME\": {\n            \"TOOLTIP\":
+    \"User defined name for the GRAYLOG account\",\n            \"VALIDATION_MESSAGE\":
+    {\n               \"noSpecialCharacters\": \"Account Name cannot contain special
+    characters other than -\",\n               \"cannotContainSpace\": \"Account Name
+    cannot contain space\",\n               \"required\": \"Account Name cannot be empty\",\n
+    \              \"startingFromNumber\": \"Account Name cannot start with numbers\"\n
+    \           }\n         },\n         \"ENDPOINT\": {\n            \"TOOLTIP\": \"GrayLog
+    End Point\",\n            \"VALIDATION_MESSAGE\": {\n               \"required\":
+    \"End Point cannot be empty\",\n               \"invalidUrl\": \"URL is invalid\"\n
+    \           }\n         },\n         \"TOKEN\": {\n            \"TOOLTIP\": \"GrayLog
+    Personal Access Token\",\n            \"VALIDATION_MESSAGE\": {\n               \"required\":
+    \"Token cannot be empty\"\n            }\n         }\n      },\n      \"NEWRELIC\":
+    {\n         \"HEADER\": \"New Relic\",\n         \"BODY\": \"\",\n         \"ACCOUNTNAME\":
+    {\n            \"TOOLTIP\": \"User defined name for the New Relic account\",\n            \"VALIDATION_MESSAGE\":
+    {\n               \"noSpecialCharacters\": \"Account Name cannot contain special
+    characters other than -\",\n               \"cannotContainSpace\": \"Account Name
+    cannot contain space\",\n               \"required\": \"Account Name cannot be empty\",\n
+    \              \"startingFromNumber\": \"Account Name cannot start with numbers\"\n
+    \           }\n         },\n         \"APIKEY\": {\n            \"TOOLTIP\": \"NewRelic
+    Api Key\",\n            \"VALIDATION_MESSAGE\": {\n               \"required\":
+    \"Token cannot be empty\"\n            }\n         },\n         \"APPLICATIONKEY\":
+    {\n            \"TOOLTIP\": \"NewRelic Application Key\",\n            \"VALIDATION_MESSAGE\":
+    {\n               \"required\": \"Token cannot be empty\"\n            }\n         },\n
+    \        \"ACCOUNTID\": {\n            \"TOOLTIP\": \"NewRelic Account Id\",\n            \"VALIDATION_MESSAGE\":
+    {\n               \"required\": \"Token cannot be empty\"\n            }\n         },\n
+    \        \"QUERYKEY\": {\n            \"TOOLTIP\": \"NewRelic Query Key\",\n            \"VALIDATION_MESSAGE\":
+    {\n               \"required\": \"Token cannot be empty\"\n            }\n         }\n
+    \     },\n      \"PROMETHEUS\": {\n         \"HEADER\": \"Prometheus\",\n         \"BODY\":
+    \"\",\n         \"ACCOUNTNAME\": {\n            \"TOOLTIP\": \"User defined name
+    for the Prometheus account\",\n            \"VALIDATION_MESSAGE\": {\n               \"noSpecialCharacters\":
+    \"Account Name cannot contain special characters other than -\",\n               \"cannotContainSpace\":
+    \"Account Name cannot contain space\",\n               \"required\": \"Account Name
+    cannot be empty\",\n               \"startingFromNumber\": \"Account Name cannot
+    start with numbers\"\n            }\n         },\n         \"ENDPOINT\": {\n            \"TOOLTIP\":
+    \"Prometheus End Point\",\n            \"VALIDATION_MESSAGE\": {\n               \"required\":
+    \"End Point cannot be empty\",\n               \"invalidUrl\": \"URL is invalid\"\n
+    \           }\n         },\n         \"USERNAME\": {\n            \"TOOLTIP\": \"Prometheus
+    User Name\",\n            \"VALIDATION_MESSAGE\": {\n               \"noSpecialCharacters\":
+    \"User Name cannot contain special characters other than - and _\",\n               \"cannotContainSpace\":
+    \"User Name cannot contain space\",\n               \"required\": \"User Name cannot
+    be empty\",\n               \"startingFromNumber\": \"User Name cannot start with
+    numbers\"\n            }\n         },\n         \"PASSWORD\": {\n            \"TOOLTIP\":
+    \"Prometheus Password\",\n            \"VALIDATION_MESSAGE\": {\n               \"required\":
+    \"Password cannot be empty\"\n            }\n         }\n      },\n      \"SPLUNK\":
+    {\n         \"HEADER\": \"Splunk\",\n         \"BODY\": \"\",\n         \"ACCOUNTNAME\":
+    {\n            \"TOOLTIP\": \"User defined name for the Splunk account\",\n            \"VALIDATION_MESSAGE\":
+    {\n               \"noSpecialCharacters\": \"Account Name cannot contain special
+    characters other than -\",\n               \"cannotContainSpace\": \"Account Name
+    cannot contain space\",\n               \"required\": \"Account Name cannot be empty\",\n
+    \              \"startingFromNumber\": \"Account Name cannot start with numbers\"\n
+    \           }\n         },\n         \"END_POINT\": {\n            \"TOOLTIP\":
+    \"Splunk Splunk URL\",\n            \"VALIDATION_MESSAGE\": {\n               \"required\":
+    \"Splunk Url  cannot be empty\",\n               \"invalidUrl\": \"URL is invalid\"\n
+    \           }\n         },\n         \"PASSWORD\": {\n            \"TOOLTIP\": \"Splunk
+    Password\",\n            \"VALIDATION_MESSAGE\": {\n               \"required\":
+    \"Password cannot be empty\"\n            }\n         },\n         \"USER_NAME\":
+    {\n            \"TOOLTIP\": \"Splunk User Name\",\n            \"VALIDATION_MESSAGE\":
+    {\n               \"noSpecialCharacters\": \"Account Name cannot contain special
+    characters other than -\",\n               \"cannotContainSpace\": \"Account Name
+    cannot contain space\",\n               \"required\": \"Account Name cannot be empty\",\n
+    \              \"startingFromNumber\": \"Account Name cannot start with numbers\"\n
+    \           }\n         },\n         \"DASHBOARD_ENDPOINT\": {\n            \"TOOLTIP\":
+    \"Splunk DashBoard URL\",\n            \"VALIDATION_MESSAGE\": {\n               \"required\":
+    \"Splunk DashBoard Url cannot be empty\",\n               \"invalidUrl\": \"URL
+    is invalid\"\n            }\n         }\n      },\n      \"STACKDRIVER\": {\n         \"HEADER\":
+    \"Stackdriver\",\n         \"BODY\": \"\",\n         \"ACCOUNTNAME\": {\n            \"TOOLTIP\":
+    \"User defined name for the Stackdriver account\",\n            \"VALIDATION_MESSAGE\":
+    {\n               \"noSpecialCharacters\": \"Account Name cannot contain special
+    characters other than -\",\n               \"cannotContainSpace\": \"Account Name
+    cannot contain space\",\n               \"required\": \"Account Name cannot be empty\",\n
+    \              \"startingFromNumber\": \"Account Name cannot start with numbers\"\n
+    \           }\n         },\n         \"KEY_FILE\": {\n            \"TOOLTIP\": \"Stackdriver
+    Encrypted Key file\",\n            \"VALIDATION_MESSAGE\": {\n               \"required\":
+    \"Encrypted Key File cannot be empty\"\n            }\n         }\n      },\n      \"SUMOLOGIC\":
+    {\n         \"HEADER\": \"Sumo Logic\",\n         \"BODY\": \"\",\n         \"ACCOUNTNAME\":
+    {\n            \"TOOLTIP\": \"User defined name for the Sumologic account\",\n            \"VALIDATION_MESSAGE\":
+    {\n               \"noSpecialCharacters\": \"Account Name cannot contain special
+    characters other than -\",\n               \"cannotContainSpace\": \"Account Name
+    cannot contain space\",\n               \"required\": \"Account Name cannot be empty\",\n
+    \              \"startingFromNumber\": \"Account Name cannot start with numbers\"\n
+    \           }\n         },\n         \"ACCESSID\": {\n            \"TOOLTIP\": \"sumologic
+    Access Id. You can generate Access Id (Administration > Security > Access Keys)\",\n
+    \           \"VALIDATION_MESSAGE\": {\n               \"required\": \"Access Id
+    cannot be empty\"\n            }\n         },\n         \"ACCESSKEY\": {\n            \"TOOLTIP\":
+    \"sumologic Access Key. You can generate Access Id (Administration > Security >
+    Access Keys)\",\n            \"VALIDATION_MEeSSAGE\": {\n               \"required\":
+    \"Access Key cannot be empty\"\n            }\n         },\n         \"ZONE\": {\n
+    \           \"TOOLTIP\": \"sumologic Zone\",\n            \"VALIDATION_MESSAGE\":
+    {\n               \"noSpecialCharacters\": \"Zone cannot contain special characters
+    other than -\",\n               \"cannotContainSpace\": \"Zone cannot contain space\",\n
+    \              \"required\": \"Zone cannot be empty\",\n               \"startingFromNumber\":
+    \"Zone cannot start with numbers\"\n            }\n         }\n      },\n    \"VMWARETANZU\":{\n
+    \     \"HEADER\": \"VMWare Tanzu Observability\",\n      \"BODY\":\"\",\n      \"ACCOUNTNAME\":{\n
+    \       \"TOOLTIP\":\"User defined name for the VMWare Tanzu Observability account\",\n
+    \       \"VALIDATION_MESSAGE\":{\n      \"noSpecialCharacters\": \"Account Name
+    cannot contain special characters other than -\",\n      \"cannotContainSpace\":\"Account
+    Name cannot contain space\",\n      \"required\":\"Account Name cannot be empty\",\n
+    \     \"startingFromNumber\": \"Account Name cannot start with numbers\"\n    }\n
+    \     },\n       \"END_POINT\":{\n        \"TOOLTIP\":\"VMWare Tanzu Observability
+    URL\",\n        \"VALIDATION_MESSAGE\":{\n          \"required\":\"Url cannot be
+    empty\",\n          \"invalidUrl\": \"URL is invalid\"\n        }\n      },\n      \"EMAIL\":{\n
+    \       \"TOOLTIP\":\"VMWare Tanzu Observability Email Id\",\n        \"VALIDATION_MESSAGE\":{\n
+    \         \"email\":\"Email Id is invalid\",\n          \"required\":\"Email Id
+    cannot be empty\"\n        }\n      },\n      \"API_TOKEN\":{\n        \"TOOLTIP\":\"VMWare
+    Tanzu Observability Personal Access Token\",\n        \"VALIDATION_MESSAGE\":{\n
+    \         \"required\":\"Api Token cannot be empty\"\n        }\n      }\n    },\n
+    \     \"MSTEAMS\": {\n         \"HEADER\": \"Microsoft Teams\",\n         \"BODY\":
+    \"\"\n      },\n      \"SLACK\": {\n         \"HEADER\": \"Slack\",\n         \"BODY\":
+    \"\",\n         \"ACCOUNTNAME\": {\n            \"TOOLTIP\": \"User defined name
+    for the Slack account\",\n            \"VALIDATION_MESSAGE\": {\n               \"noSpecialCharacters\":
+    \"Account Name cannot contain special characters other than -\",\n               \"cannotContainSpace\":
+    \"Account Name cannot contain space\",\n               \"required\": \"Account Name
+    cannot be empty\",\n               \"startingFromNumber\": \"Account Name cannot
+    start with numbers\"\n            }\n         },\n         \"BOTNAME\": {\n            \"TOOLTIP\":
+    \"Slack Bot Name\",\n            \"VALIDATION_MESSAGE\": {\n               \"noSpecialCharacters\":
+    \"Bot Name cannot contain special characters other than -\",\n               \"cannotContainSpace\":
+    \"Bot Name cannot contain space\",\n               \"required\": \"Bot Name cannot
+    be empty\",\n               \"startingFromNumber\": \"Bot Name cannot start with
+    numbers\"\n            }\n         },\n         \"TOKEN\": {\n            \"TOOLTIP\":
+    \"Slack Personal Access Token\",\n            \"VALIDATION_MESSAGE\": {\n               \"required\":
+    \"Token cannot be empty\"\n            }\n         },\n         \"SPINNAKERTOGGLE\":
+    {\n            \"TOOLTIP\": \"\",\n            \"VALIDATION_MESSAGE\": {}\n         }\n
+    \     },\n      \"OPA\": {\n         \"HEADER\": \"OPA\",\n         \"BODY\": \"\",\n
+    \        \"ACCOUNTNAME\": {\n            \"TOOLTIP\": \"User defined name for the
+    OPA account\",\n            \"VALIDATION_MESSAGE\": {\n               \"noSpecialCharacters\":
+    \"Account Name cannot contain special characters other than -\",\n               \"cannotContainSpace\":
+    \"Account Name cannot contain space\",\n               \"required\": \"Account Name
+    cannot be empty\",\n               \"startingFromNumber\": \"Account Name cannot
+    start with numbers\"\n            }\n         },\n         \"ENDPOINT\": {\n            \"TOOLTIP\":
+    \"OPA End Point\",\n            \"VALIDATION_MESSAGE\": {\n               \"required\":
+    \"End Point cannot be empty\",\n               \"invalidUrl\": \"URL is invalid\"\n
+    \           }\n         }\n      },\n      \"AQUAWAVE\": {\n         \"HEADER\":
+    \"Aqua Wave\",\n         \"BODY\": \"\",\n         \"ACCOUNTNAME\": {\n            \"TOOLTIP\":
+    \"User defined name for the Aqua Wave account\",\n            \"VALIDATION_MESSAGE\":
+    {\n               \"noSpecialCharacters\": \"Account Name cannot contain special
+    characters other than -\",\n               \"cannotContainSpace\": \"Account Name
+    cannot contain space\",\n               \"required\": \"Account Name cannot be empty\",\n
+    \              \"startingFromNumber\": \"Account Name cannot start with numbers\"\n
+    \           }\n         },\n         \"USERNAME\": {\n            \"TOOLTIP\": \"Aqua
+    Wave User Name\",\n            \"VALIDATION_MESSAGE\": {\n               \"noSpecialCharacters\":
+    \"User Name cannot contain special characters other than - and _\",\n               \"cannotContainSpace\":
+    \"User Name cannot contain space\",\n               \"required\": \"User Name cannot
+    be empty\",\n               \"startingFromNumber\": \"User Name cannot start with
+    numbers\"\n            }\n         },\n         \"TOKEN\": {\n            \"TOOLTIP\":
+    \"Aqua Wave Personal Access Token\",\n            \"VALIDATION_MESSAGE\": {\n               \"required\":
+    \"Token cannot be empty\"\n            }\n         }\n      },\n      \"APPSCAN\":
+    {\n         \"HEADER\": \"HCL AppScan\",\n         \"BODY\": \"\",\n         \"ACCOUNTNAME\":
+    {\n            \"TOOLTIP\": \"User defined name for the HCL AppScan account\",\n
+    \           \"VALIDATION_MESSAGE\": {\n               \"noSpecialCharacters\": \"Account
+    Name cannot contain special characters other than -\",\n               \"cannotContainSpace\":
+    \"Account Name cannot contain space\",\n               \"required\": \"Account Name
+    cannot be empty\",\n               \"startingFromNumber\": \"Account Name cannot
+    start with numbers\"\n            }\n         },\n         \"TOKEN\": {\n            \"TOOLTIP\":
+    \"Appscan Personal Access Token\",\n            \"VALIDATION_MESSAGE\": {\n               \"required\":
+    \"Token cannot be empty\"\n            }\n         }\n      },\n      \"JFROG\":
+    {\n         \"HEADER\": \"JFrog XRay Scanning\",\n         \"BODY\": \"\",\n         \"ACCOUNTNAME\":
+    {\n            \"TOOLTIP\": \"User defined name for the JFrog XRay Scanning account\",\n
+    \           \"VALIDATION_MESSAGE\": {\n               \"noSpecialCharacters\": \"Account
+    Name cannot contain special characters other than -\",\n               \"cannotContainSpace\":
+    \"Account Name cannot contain space\",\n               \"required\": \"Account Name
+    cannot be empty\",\n               \"startingFromNumber\": \"Account Name cannot
+    start with numbers\"\n            }\n         },\n         \"ENDPOINT\": {\n            \"TOOLTIP\":
+    \"JFrog URL\",\n            \"VALIDATION_MESSAGE\": {\n               \"required\":
+    \"Endpoint cannot be empty\",\n               \"invalidUrl\": \"URL is invalid\"\n
+    \           }\n         },\n         \"TOKEN\": {\n            \"TOOLTIP\": \"JFrog
+    Personal Access Token\",\n            \"VALIDATION_MESSAGE\": {\n               \"required\":
+    \"Token cannot be empty\"\n            }\n         }\n      },\n      \"PRISMACLOUD\":
+    {\n         \"HEADER\": \"Prisma Cloud\",\n         \"BODY\": \"\",\n         \"ACCOUNTNAME\":
+    {\n            \"TOOLTIP\": \"User defined name for the Prisma Cloud account\",\n
+    \           \"VALIDATION_MESSAGE\": {\n               \"noSpecialCharacters\": \"Account
+    Name cannot contain special characters other than -\",\n               \"cannotContainSpace\":
+    \"Account Name cannot contain space\",\n               \"required\": \"Account Name
+    cannot be empty\",\n               \"startingFromNumber\": \"Account Name cannot
+    start with numbers\"\n            }\n         },\n         \"HOSTURL\": {\n            \"TOOLTIP\":
+    \"Prisma Cloud Host URL\",\n            \"VALIDATION_MESSAGE\": {\n               \"required\":
+    \"Host URL cannot be empty\",\n               \"invalidUrl\": \"URL is invalid\"\n
+    \           }\n         },\n         \"APPLICATIONURL\": {\n            \"TOOLTIP\":
+    \"Prisma Cloud Application URL\",\n            \"VALIDATION_MESSAGE\": {\n               \"required\":
+    \"Application URL cannot be empty\",\n               \"invalidUrl\": \"URL is invalid\"\n
+    \           }\n         },\n         \"ACCESSKEYID\": {\n            \"TOOLTIP\":
+    \"Prisma Cloud Access Key Id\",\n            \"VALIDATION_MESSAGE\": {\n               \"required\":
+    \"Access Key Id cannot be empty\"\n            }\n         },\n         \"SECRETKEY\":
+    {\n            \"TOOLTIP\": \"Prisma Cloud Secret Key\",\n            \"VALIDATION_MESSAGE\":
+    {\n               \"required\": \"Secret Key cannot be empty\"\n            }\n
+    \        }\n      },\n      \"SONARQUBE\": {\n         \"HEADER\": \"SonarQube\",\n
+    \        \"BODY\": \"\",\n         \"ACCOUNTNAME\": {\n            \"TOOLTIP\":
+    \"User defined name for the SonarQube account\",\n            \"VALIDATION_MESSAGE\":
+    {\n               \"noSpecialCharacters\": \"Account Name cannot contain special
+    characters other than -\",\n               \"cannotContainSpace\": \"Account Name
+    cannot contain space\",\n               \"required\": \"Account Name cannot be empty\",\n
+    \              \"startingFromNumber\": \"Account Name cannot start with numbers\"\n
+    \           }\n         },\n         \"HOSTURL\": {\n            \"TOOLTIP\": \"Sonarqube
+    Host URL\",\n            \"VALIDATION_MESSAGE\": {\n               \"required\":
+    \"Host URL cannot be empty\",\n               \"invalidUrl\": \"URL is invalid\"\n
+    \           }\n         },\n         \"TOKEN\": {\n            \"TOOLTIP\": \"Sonarqube
+    Personal Access Token\",\n            \"VALIDATION_MESSAGE\": {\n               \"required\":
+    \"Token cannot be empty\"\n            }\n         }\n      },\n      \"AUTOPILOT\":
+    {\n         \"HEADER\": \"Autopilot\",\n         \"BODY\": \"\",\n         \"ACCOUNTNAME\":
+    {\n            \"TOOLTIP\": \"User defined name for the Autopilot account\",\n            \"VALIDATION_MESSAGE\":
+    {\n               \"noSpecialCharacters\": \"Account Name cannot contain special
+    characters other than -\",\n               \"cannotContainSpace\": \"Account Name
+    cannot contain space\",\n               \"required\": \"Account Name cannot be empty\",\n
+    \              \"startingFromNumber\": \"Account Name cannot start with numbers\"\n
+    \           }\n         },\n         \"USERNAME\": {\n            \"TOOLTIP\": \"
+    Autopilot User Name\",\n            \"VALIDATION_MESSAGE\": {\n               \"noSpecialCharacters\":
+    \"User Name cannot contain special characters other than - and _\",\n               \"cannotContainSpace\":
+    \"User Name cannot contain space\",\n               \"required\": \"User Name cannot
+    be empty\",\n               \"startingFromNumber\": \"User Name cannot start with
+    numbers\"\n            }\n         }\n      }\n   },\n   \"UNCHANGED_FORM\": \"Form
+    is unchanged. Please make modifications in the form to enable the button.\",\n   \"INVALID_FORM\":
+    \"Few fields are mandatory or invalid. Please fill the form to enable the button.\",\n
+    \  \"NO_WRITE_ACCESS\": \"You have only read permission. Please check with your
+    administrator for updating permissions.\",\n   \"METRIC_TEMPLATE\": {\n      \"APM_INFRA\":
+    {\n         \"TEMPLATE_NAME\": {\n            \"TOOLTIP\": \"Metric Template Name\",\n
+    \           \"VALIDATION_MESSAGE\": {\n               \"required\": \"Template Name
+    cannot be empty\"\n            }\n         },\n         \"APM_MONITORING_PROVIDER\":
+    {\n            \"TOOLTIP\": \"Data source for Risk Analysis\",\n            \"VALIDATION_MESSAGE\":
+    {}\n         },\n         \"APM_ACCOUNT\": {\n            \"TOOLTIP\": \"APM Account\",\n
+    \           \"VALIDATION_MESSAGE\": {}\n         },\n         \"APM_APPLICATION\":
+    {\n            \"TOOLTIP\": \"APM Application\",\n            \"VALIDATION_MESSAGE\":
+    {}\n         },\n         \"APM_API_SELECTION\": {\n            \"TOOLTIP\": \"APM
+    API Selection\",\n            \"VALIDATION_MESSAGE\": {}\n         },\n         \"INFRA_MONITORING_PROVIDER\":
+    {\n            \"TOOLTIP\": \"Data source for Risk Analysis\",\n            \"VALIDATION_MESSAGE\":
+    {}\n         },\n         \"INFRA_ACCOUNT\": {\n            \"TOOLTIP\": \"Infrastructure
+    Account\",\n            \"VALIDATION_MESSAGE\": {}\n         },\n         \"INFRA_METRIC_GROUPS\":
+    {\n            \"TOOLTIP\": \"Infrastructure Metric Groups\",\n            \"VALIDATION_MESSAGE\":
+    {}\n         },\n         \"FILTER_KEY\": {\n            \"TOOLTIP\": \"Filter Key\",\n
+    \           \"VALIDATION_MESSAGE\": {\n               \"required\": \"Filter Key
+    cannot be empty\"\n            }\n         },\n         \"BASELINE\": {\n            \"TOOLTIP\":
+    \"Baseline\",\n            \"VALIDATION_MESSAGE\": {\n               \"required\":
+    \"Baseline cannot be empty\"\n            }\n         },\n         \"NEW_RELEASE\":
+    {\n            \"TOOLTIP\": \"New Release\",\n            \"VALIDATION_MESSAGE\":
+    {\n               \"required\": \"New Release cannot be empty\"\n            }\n
+    \        },\n         \"NORMALIZATION\": {\n            \"TOOLTIP\": \"Apply load
+    based normalization\",\n            \"VALIDATION_MESSAGE\": {}\n         },\n         \"THRESHOLD\":
+    {\n            \"TOOLTIP\": \"Threshold for Metric failure\",\n            \"VALIDATION_MESSAGE\":
+    {}\n         },\n         \"SPECIFY_CRITICAL_WATCHLIST\": {\n            \"TOOLTIP\":
+    \"Specify critical/watchlist for metrics\",\n            \"VALIDATION_MESSAGE\":
+    {}\n         }\n      },\n      \"CUSTOM\": {\n         \"TEMPLATE_NAME\": {\n            \"TOOLTIP\":
+    \"Template Name\",\n            \"VALIDATION_MESSAGE\": {\n               \"required\":
+    \"Template Name cannot be empty\"\n            }\n         },\n         \"DATA_SOURCE\":
+    {\n            \"TOOLTIP\": \"Data source for Risk Analysis\",\n            \"VALIDATION_MESSAGE\":
+    {\n              \"required\":\"Data source cannot be empty\"\n           }\n         },\n
+    \        \"ACCOUNT\": {\n            \"TOOLTIP\": \"Account\",\n            \"VALIDATION_MESSAGE\":
+    {\n              \"required\":\"Account cannot be empty\"\n           }\n         },\n
+    \        \"FILTER_KEY\": {\n            \"TOOLTIP\": \"Filter Key\",\n            \"VALIDATION_MESSAGE\":
+    {\n               \"required\": \"Filter Key cannot be empty\"\n            }\n
+    \        },\n         \"BASELINE\": {\n            \"TOOLTIP\": \"Baseline\",\n
+    \           \"VALIDATION_MESSAGE\": {\n               \"required\": \"Baseline cannot
+    be empty\"\n            }\n         },\n         \"NEW_RELEASE\": {\n            \"TOOLTIP\":
+    \"New Release\",\n            \"VALIDATION_MESSAGE\": {\n               \"required\":
+    \"New Release cannot be empty\"\n            }\n         },\n         \"ADD_NEW_QUERY\":
+    {\n            \"TOOLTIP\": \"Add New Query\",\n            \"VALIDATION_MESSAGE\":
+    {}\n         },\n         \"QUERY_SELECTION\": {\n            \"TOOLTIP\": \"Query
+    Selection\",\n            \"VALIDATION_MESSAGE\": {}\n         },\n         \"QUERY_NAME\":
+    {\n            \"TOOLTIP\": \"Query Name\",\n            \"VALIDATION_MESSAGE\":
+    {\n               \"required\": \"Query Name cannot be empty\"\n            }\n
+    \        },\n         \"QUERY_STRING\": {\n            \"TOOLTIP\": \"Query String\",\n
+    \           \"VALIDATION_MESSAGE\": {\n               \"required\": \"Query String
+    cannot be empty\"\n            }\n         },\n         \"RISK_DIRECTION\": {\n
+    \           \"TOOLTIP\": \"Risk Direction\",\n            \"VALIDATION_MESSAGE\":
+    {}\n         },\n         \"THRESHOLD\": {\n            \"TOOLTIP\": \"Threshold\",\n
+    \           \"VALIDATION_MESSAGE\": {}\n         },\n         \"CRITICAL\": {\n
+    \           \"TOOLTIP\": \"Critical\",\n            \"VALIDATION_MESSAGE\": {}\n
+    \        },\n         \"WATCHLIST\": {\n            \"TOOLTIP\": \"Watchlist\",\n
+    \           \"VALIDATION_MESSAGE\": {}\n         },\n         \"WEIGHT\": {\n            \"TOOLTIP\":
+    \"Weight\",\n            \"VALIDATION_MESSAGE\": {}\n         }\n      }\n   },\n
+    \  \"USAGE_INSIGHTS\": {\n      \"APPLICATIONS\": {\n         \"TOOLTIP\": \"Application\"\n
+    \     },\n      \"PIPELINES\": {\n         \"TOOLTIP\": \"Pipelines\"\n      },\n
+    \     \"PIPELINES_WITH_INTELLIGENT_GATES\": {\n         \"TOOLTIP\": \"Pipelines
+    with Intelligent Gates\"\n      },\n      \"INTELLIGENT_GATES_BREAKDOWN\": {\n         \"TOOLTIP\":
+    \"Intelligent Gates Breakdown\"\n      },\n      \"GATES_USED\": {\n         \"TOOLTIP\":
+    \"Gates Used\"\n      },\n      \"USERS\": {\n         \"TOOLTIP\": \"Users\"\n
+    \     }\n   },\n   \"DELIVERY_INSIGHTS\": {\n      \"PIPELINES\": {\n         \"TOOLTIP\":
+    \"Pipelines\"\n      },\n      \"MOST_ACTIVE_PIPELINES\": {\n         \"TOOLTIP\":
+    \"Most Active Pipelines\"\n      },\n      \"MOST_SUCCESSFUL_PIPELINES\": {\n         \"TOOLTIP\":
+    \"Most Successful Pipelines\"\n      },\n      \"MOST_FAILED_PIPELINES\": {\n         \"TOOLTIP\":
+    \"Most Failed Pipelines\"\n      },\n      \"FASTEST_PIPELINES\": {\n         \"TOOLTIP\":
+    \"Fastest Pipelines \"\n      },\n      \"SLOWEST_PIPELINES\": {\n         \"TOOLTIP\":
+    \"Slowest Pipelines \"\n      },\n      \"MANUAL_JUDGEMENT\": {\n         \"TOOLTIP\":
+    \"Manual Judgement\"\n      }\n   },\n   \"ACCESS_MANAGEMENT\": {\n      \"ADMINISTRATOR\":
+    {\n         \"INFO\":\"Super Administrator Groups will not appear in the dropdown
+    since their Access Permissions cannot be modified.<br> Administrators will have
+    full Access to all Resources.\",\n         \"TOOLTIP\": \"Groups with Administration
+    Permissions\"\n       },\n      \"USER_ROLE_LISTING\": {\n         \"HEADER\": \"ROLE
+    MANAGEMENT\",\n         \"BODY\": \"Users should be assigned user roles only if
+    they need global access to one or more resources.\"\n      },\n      \"USER_ROLE_CREATION\":
+    {\n         \"ROLENAME\": {\n            \"TOOLTIP\": \"\",\n            \"VALIDATION_MESSAGE\":
+    {\n               \"required\": \"Role Name cannot be empty\"\n            }\n         },\n
+    \        \"USER_GROUPS\": {\n            \"TOOLTIP\": \"\",\n            \"VALIDATION_MESSAGE\":
+    {\n               \"required\": \"Groups cannot be empty\"\n            }\n         },\n
+    \        \"PERMISSIONS\": {\n            \"VALIDATION_MESSAGE\": {\n               \"required\":
+    \"Atleast one feature has to be enabled with permissions\"\n            }\n         }\n
+    \     },\n      \"FEATURE_VISIBILTY_LISTING\":{\n         \"HEADER\": \"FEATURE
+    FLAG MANAGEMENT\",\n         \"BODY\":\"'Feature Visibilty' is for special cases
+    where one or more User Groups need to have exclusive permission for certain feature.
+    Say, 'Compliance Team' only should have access to Policies. So, when a feature flag
+    is enabled for a User Group, this feature is automatically denied for all other
+    users. Normally, most User Groups will not have any feature flag enabled.\"\n       },\n
+    \     \"FEATURE_VISIBILTY_CREATION\": {\n           \"ROLENAME\":{\n             \"TOOLTIP\":
+    \"\",\n             \"VALIDATION_MESSAGE\": {\n               \"required\":\"Role
+    Name cannot be empty\"\n              }\n           },\n          \"USER_GROUPS\":{\n
+    \           \"TOOLTIP\": \"\",\n            \"VALIDATION_MESSAGE\": {\n            \"required\":\"Groups
+    cannot be empty\"\n               }\n           },\n          \"PERMISSIONS\":{\n
+    \           \"VALIDATION_MESSAGE\":{\n             \"required\":\"Atleast one feature
+    has to be enabled\"\n              }\n           }\n        } \n   },\n   \"LOG_TEMPLATE\":
+    {\n      \"STRING_PATTERN\": {\n         \"TOOLTIP\": \"String Pattern\",\n         \"VALIDATION_MESSAGE\":
+    {\n            \"required\": \"String Pattern cannot be empty\"\n         }\n      },\n
+    \     \"LOG_TOPICS\":{\n        \"TOOLTIP\" :\"Strings that appear in logs with
+    their characterization\"\n        },\n        \"LOG_TAGS\":{\n           \"TOOLTIP\"
+    :\"Create custom tags based on business logic.\"\n        },\n      \"CHARACTERIZATION_TOPIC\":
+    {\n         \"TOOLTIP\": \"Characterization Topic\",\n         \"VALIDATION_MESSAGE\":
+    {\n            \"required\": \"Characterization Topic cannot be empty\"\n         }\n
+    \     },\n      \"TYPE\": {\n         \"TOOLTIP\": \"Type\",\n         \"VALIDATION_MESSAGE\":
+    {}\n      },\n      \"ENABLE_CLUSTER_TAG\": {\n         \"TOOLTIP\": \"Create custom
+    tags based on business logic.\",\n         \"VALIDATION_MESSAGE\": {}\n      },\n
+    \     \"CLUSTER_TAG_STRING\": {\n         \"TOOLTIP\": \"The string pattern that
+    appears in logs\",\n         \"VALIDATION_MESSAGE\": {\n            \"required\":
+    \"Cluster Tag String cannot be empty\"\n         }\n      },\n      \"CLUSTER_TAG\":
+    {\n         \"TOOLTIP\": \"Cluster Tag\",\n         \"VALIDATION_MESSAGE\": {\n
+    \           \"required\": \"Cluster Tag cannot be empty\"\n         }\n      },\n
+    \     \"LOG_TEMPLATE_NAME\": {\n         \"TOOLTIP\": \"Log Template Name\",\n         \"VALIDATION_MESSAGE\":
+    {\n            \"required\": \"Template Name cannot be empty\"\n         }\n      },\n
+    \     \"PROVIDER\": {\n         \"TOOLTIP\": \"Data source for Risk Analysis\",\n
+    \        \"VALIDATION_MESSAGE\": {\n            \"required\": \"Provider cannot
+    be empty\"\n         }\n      },\n      \"LOG_ACCOUNT\": {\n         \"TOOLTIP\":
+    \"Account of the Log provider; Refer Integrations tab under Setup\",\n         \"VALIDATION_MESSAGE\":
+    {\n            \"required\": \"Log Account cannot be empty\"\n         }\n      },\n
+    \     \"QUERY_FILTER_KEY\": {\n         \"TOOLTIP\": \"Unique Key which identify
+    logs to be processed in the Index\",\n         \"VALIDATION_MESSAGE\": {\n            \"required\":
+    \"Query Filter Key cannot be empty\"\n         }\n      },\n      \"BASELINE\":
+    {\n         \"TOOLTIP\": \"Unique value which identify baseline logs in the Index\",\n
+    \        \"VALIDATION_MESSAGE\": {\n            \"required\": \"Baseline cannot
+    be empty\"\n         }\n      },\n      \"NEW_RELEASE\": {\n         \"TOOLTIP\":
+    \"Unique value which identify New Release logs in the Index\",\n         \"VALIDATION_MESSAGE\":
+    {\n            \"required\": \"New Release cannot be empty\"\n         }\n      },\n
+    \     \"RESPONSE_KEYWORDS\": {\n         \"TOOLTIP\": \"Field name in the Index
+    containing logs to be processed\",\n         \"VALIDATION_MESSAGE\": {\n            \"required\":
+    \"Response Keywords cannot be empty\"\n         }\n      },\n      \"TIMESTAMP_KEY\":
+    {\n         \"TOOLTIP\": \"Unique Key which identify the timestamp for log; this
+    field is optional; by default, it is @timestamp for elasticsearch and timestamp
+    for graylog\",\n         \"VALIDATION_MESSAGE\": {}\n      },\n      \"AUTOBASELINE\":
+    {\n         \"TOOLTIP\": \"ML based learning of the baseline from historic analysis\",\n
+    \        \"VALIDATION_MESSAGE\": {}\n      },\n      \"CONTEXTUAL_CLUSTER\": {\n
+    \        \"TOOLTIP\": \"Enable/disable cluster of unexpected events in similar context\",\n
+    \        \"VALIDATION_MESSAGE\": {}\n      },\n      \"CONTEXTUAL_WINDOW_SIZE\":
+    {\n         \"TOOLTIP\": \"Number of Log events to be seen in a Context. Allowed
+    size in between 25 and 50\",\n         \"VALIDATION_MESSAGE\": {\n            \"max\":
+    \"Allowed size is in between 25 to 50\",\n            \"min\": \"Allowed size is
+    in between 25 to 50\"\n         }\n      },\n      \"INFO_CLUSTER_SCORING\": {\n
+    \        \"TOOLTIP\": \"Enabling this option will include INFO clusters in scoring\",\n
+    \        \"VALIDATION_MESSAGE\": {}\n      },\n      \"SENSITIVITY\": {\n         \"TOOLTIP\":
+    \"Impact of Unexpected Issues on the log scoring\",\n         \"VALIDATION_MESSAGE\":
+    {\n            \"required\": \"Sensitivity cannot be empty\"\n         }\n      },\n
+    \     \"SCORING_ALGORITHM\": {\n         \"TOOLTIP\": \"Scoring Algorithm for Risk
+    Analysis\",\n         \"VALIDATION_MESSAGE\": {}\n      },\n      \"LOG_GROUP\":
+    {\n         \"TOOLTIP\": \"Group of log streams that share the same retention, monitoring,
+    and access control settings\",\n         \"VALIDATION_MESSAGE\": {\n            \"required\":
+    \"Log Group cannot be empty\"\n         }\n      },\n      \"LOG_STREAM\": {\n         \"TOOLTIP\":
+    \"Sequence of log events that share the same source\",\n         \"VALIDATION_MESSAGE\":
+    {\n            \"required\": \"Log Stream cannot be empty\"\n         }\n      },\n
+    \     \"REGION\": {\n         \"TOOLTIP\": \"Geographic area where AWS data center\",\n
+    \        \"VALIDATION_MESSAGE\": {\n            \"required\": \"Region cannot be
+    empty\"\n         }\n      },\n      \"INDEX_PATTERN\": {\n         \"TOOLTIP\":
+    \"Index containing logs for processing\",\n         \"VALIDATION_MESSAGE\": {\n
+    \           \"required\": \"Intex Pattern cannot be empty\"\n         }\n      },\n
+    \     \"CUSTOM_REGEX\": {\n         \"TOOLTIP\": \"Custom Regular Expression to
+    filter the logs\",\n         \"VALIDATION_MESSAGE\": {}\n      },\n      \"REGULAR_EXPRESSION\":
+    {\n         \"TOOLTIP\": \"Sequence of characters that specifies a search pattern\",\n
+    \        \"VALIDATION_MESSAGE\": {}\n      },\n      \"RESPONSE_KEY\": {\n         \"TOOLTIP\":
+    \"Field name in the Index where regex to be searched\",\n         \"VALIDATION_MESSAGE\":
+    {}\n      },\n      \"STREAM_ID\": {\n         \"TOOLTIP\": \"The streams are a
+    mechanism to route messages into categories in realtime while they are processed\",\n
+    \        \"VALIDATION_MESSAGE\": {\n            \"required\": \"Stream ID cannot
+    be empty\"\n         }\n      },\n      \"NAMESPACE\": {\n         \"TOOLTIP\":
+    \"Namespace\",\n         \"VALIDATION_MESSAGE\": {\n            \"required\": \"Namespace
+    cannot be empty\"\n         }\n      },\n      \"TEST_CASE_KEY\": {\n         \"TOOLTIP\":
+    \"Field in the log index which holds the test case names\",\n         \"VALIDATION_MESSAGE\":
+    {\n            \"required\": \"Test Case Key cannot be empty\"\n         }\n      },\n
+    \     \"TEST_SUITE_KEY\": {\n         \"TOOLTIP\": \"Field in the log index which
+    \ holds the test suite names\",\n         \"VALIDATION_MESSAGE\": {\n            \"required\":
+    \"Test Suite Key cannot be empty\"\n         }\n      }\n   }\n}    \n"
+kind: ConfigMap
+metadata:
+  name: oes-ui-config
+  labels:
+    app: oes
+    component: ui
+    heritage: "Helm"
+    release: "isd"
+    chart: "oes-3.12.1"

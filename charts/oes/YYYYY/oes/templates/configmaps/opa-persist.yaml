@@ -1,0 +1,53 @@
+---
+# Source: oes/templates/configmaps/opa-persist.yaml
+apiVersion: v1
+data:
+  opa-persist.sh: |
+    wait_period=0
+    while true
+    do
+    kubectl get po -n opsmx-isd -o jsonpath='{range .items[*]}{..metadata.name}{"\t"}{..containerStatuses..ready}{"\n"}{end}' > /tmp/inst.status
+    SAPOR=$(grep oes-sapor /tmp/inst.status | awk '{print $2}')
+    PLATFORM=$(grep oes-platform /tmp/inst.status | awk '{print $2}')
+
+    wait_period=$(($wait_period+10))
+
+    if [ "$SAPOR" == "true" ] && [ "$PLATFORM" == "true" ];
+    then
+      echo \"Spinnaker and OES services are Up and Ready..\"
+      set -x
+      sleep 5
+      BASEURL=$GATEURL
+      USERPASS="-u ${GATEUSER}:${GATEPASS}"
+      curl $USERPASS $BASEURL/oes/v1/policies/list > listofpolicies.json
+      #Get the policy NAMES
+      [ -s "listofpolicies.json" ] && (cat listofpolicies.json | jq .[] | jq -r .policyName > policies) || sleep infinity
+      #for each NAME
+      while read -e name; do
+        #Get content
+        curl $USERPASS $BASEURL/oes/v1/policy/$name > tmp.json
+
+        #Get Policy ID
+        ID=`cat tmp.json|jq .response | jq '.policyId'`
+        #Delete Policy ID
+        cat tmp.json|jq .response | jq 'del(.policyId)'  > update.json
+
+        #update
+        curl $USERPASS -X PUT -H "Content-Type: application/json" -d @update.json $BASEURL/oes/v1/policy/$ID
+      done <  policies
+      sleep infinity
+      #endFOR
+    else
+      if [ $wait_period -gt 2000 ];
+      then
+          echo \"Script is timed out as the OES is not ready yet.......\"
+          break
+      else
+          echo \"Waiting for OES services to be ready\"
+          sleep 1m
+      fi
+    fi
+    done
+kind: ConfigMap
+metadata:
+  name: opa-persist

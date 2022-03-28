@@ -1,58 +1,19 @@
-
-Thank you for installing {{ .Chart.Name }}.
-
-Your release is named {{ .Release.Name }}.
-
-To learn more about the release, try:
-
-  $ helm status {{ .Release.Name }} [--namespace <namespace>]
-  $ helm get all {{ .Release.Name }} [--namespace <namespace>]
-
-{{ if and (.Values.installSpinnaker) (.Values.global.createIngress) }}
-#### Connecting to Spinnaker
+Thank you for installing Intelligent Software Delivery (ISD) platform from OpsMx
+#### Instructions for Accessing the UI in your browser
+{{- if .Values.global.createIngress }}
 
   Once the service is up and running, connect using below url
-
-
-  {{ .Values.global.spinDeck.protocol }}://{{ .Values.global.spinDeck.host }}
-
+      {{ .Values.global.oesUI.protocol }}://{{ .Values.global.oesUI.host }}
 {{- else }}
-#### Connecting to Spinnaker
 
-  Once the service is up and running, find the service ip address
+  Once the service is up and running, issue this command in a terminal:
+      kubectl -n opsmx-isd  port-forward svc/oes-ui 8080
 
-      kubectl get svc spin-deck-lb [--namespace mynamespace]
-
-  Example output would be:
-
-      NAME           TYPE           CLUSTER-IP     EXTERNAL-IP   PORT(S)          AGE
-      spin-deck-lb   LoadBalancer   10.0.139.222   40.78.4.201   9000:31030/TCP   8m9s
-
-  Using the EXTERNAL-IP address, go to http://EXTERNAL-IP:9000/
+  and navigate to http://localhost:8080
+  
 {{- end }}
-
-{{ if and (not (eq .Values.installationMode "None")) ( .Values.global.createIngress ) }}
-#### Connecting to OpsMx Enterprise Spinnaker Extensions(OES)
-
-  Once the service is up and running, connect using below url
-
-  {{ .Values.global.oesUI.protocol }}://{{ .Values.global.oesUI.host }}
-
-
-{{- else }}
-#### Connecting to OpsMx Enterprise Spinnaker Extensions(OES)
-
-  Once the service is up and running, find the service ip address
-
-  	kubectl get svc oes-ui [--namespace mynamespace]
-
-  Example output would be:
-
-  NAME 	     TYPE             CLUSTER-IP   EXTERNAL-IP     PORT(S)          AGE
-  oes-ui     LoadBalancer     10.0.33.110  52.149.54.222   80:30860/TCP     20h
-
-  Using the EXTERNAL-IP address, go to http://EXTERNAL-IP:80/
-
-{{- end }}
-
     You can login with admin/opsmxadmin123
+
+You will need to complete a few post-installation steps before using ISD:
+Create kubernetes account named "default" that is allowed to deploy to the namespace where ISD is installed
+   by navigating to setup->Cloud Providers->New Account and uploading the kubeconfig file

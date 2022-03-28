@@ -1,0 +1,27 @@
+---
+# Source: oes/charts/redis/templates/configmap.yaml
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: isd-redis
+  labels:
+    app: redis
+    chart: redis-10.5.3
+    heritage: Helm
+    release: isd
+data:
+  redis.conf: |-
+    # User-supplied configuration:
+    # Enable AOF https://redis.io/topics/persistence#append-only-file
+    appendonly no
+    # Disable RDB persistence, AOF persistence already enabled.
+    save 60 1000
+  master.conf: |-
+    dir /data
+    rename-command FLUSHDB ""
+    rename-command FLUSHALL ""
+  replica.conf: |-
+    dir /data
+    slave-read-only yes
+    rename-command FLUSHDB ""
+    rename-command FLUSHALL ""

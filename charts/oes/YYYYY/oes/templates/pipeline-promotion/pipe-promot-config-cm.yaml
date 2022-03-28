@@ -1,0 +1,42 @@
+---
+# Source: oes/templates/pipeline-promotion/pipe-promot-config-cm.yaml
+apiVersion: v1
+data:
+  repo.properties: |
+    #properties file for pipeline promotion scripts
+
+    # Common Stuff
+    repo_type=git
+    repo_name=repo_name
+    root_folder=pipeline/
+    #S3 Specific
+    export AWS_ACCESS_KEY_ID=access_key
+    export AWS_SECRET_ACCESS_KEY=secret_key
+
+    #git mandatory patameters
+    git_url=example.repo.com
+    git_project=project_name
+    git_user=username
+    git_branch=samplerepo
+    #git_password=
+    #API
+    git_api_url=https://api.github.com/repos  # bitbucket
+
+    #Auto PR requirements
+    merge_branch=false
+    auto_merge=false
+    git_approve_user=approver_user
+    target_branch=master
+
+    #optional
+    #git_user_email=krish@company.com
+
+    #delete pipeLine
+    delete_on_sync_spin=
+    delete_on_sync_repo=
+    #git_approve_user_password=
+    #git_secret_sshkey=
+kind: ConfigMap
+metadata:
+  creationTimestamp: null
+  name: pipe-promot-config
