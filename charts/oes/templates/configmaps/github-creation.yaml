@@ -37,11 +37,11 @@ data:
                 git clone https://$gitusername:$gitpassword@github.com/$gitusername/$repo_name.git
                 cp -pr standard-gitops-repo/* $repo_name/
                 cd $repo_name/
-                git checkout -b master
+                git checkout -b {{ .Values.spinnaker.gitopsHalyard.repo.halConfigBranch }}
                 git status
                 git add .
                 git commit -m "cloned standard-gitops-repo content"
-                git push origin master 
+                git push origin 
         fi
 {{- end }}
 
