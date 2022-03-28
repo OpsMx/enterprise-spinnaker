@@ -143,7 +143,7 @@ global:
     groupSearchBase: ou=groups,dc=example,dc=org
     groupSearchFilter: member={0}
     groupRoleAttributes: cn
-    userDnPattern: oes-gate.example.ops.com
+    userDnPattern: cn={0},dc=example,dc=org
   ###############################################################################
   # Best left unchanged
   # Use the below flag to exclude pre-delete helm hooks to the rendered manifests
