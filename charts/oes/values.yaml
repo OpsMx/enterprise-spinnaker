@@ -77,7 +77,7 @@ global:
   # Spinnaker Deck URL configuration; url overwhich spinnaker deck will be accessed
   spinDeck:
     protocol: https
-    host: susmi-spin.play.opsmx.org
+    host: spin.example.ops.com
     #port: 31464
 
     serviceAnnotations: {}
@@ -92,7 +92,7 @@ global:
   # Spinnaker Gate URL configuration; url overwhich spinnaker gate will be accessed
   spinGate:
     protocol: https
-    host: susmi-gate.play.opsmx.org
+    host: spin-gate.example.ops.com
     #port: 31465
 
     serviceAnnotations: {}
@@ -106,7 +106,7 @@ global:
   ## OES-UI url configuration
   oesUI:
     protocol: http
-    host: susmi-oes.play.opsmx.org
+    host: oes.example.ops.com
     # Use below port when hostname above is an external IP instead of a hostname
     #port: 31466
 
@@ -119,7 +119,7 @@ global:
   ## OES-Gate url configuration
   oesGate:
     protocol: https
-    host: susmi-gate.play.opsmx.org
+    host: oes-gate.example.ops.com
     # Use below port when hostname above is an external IP instead of a hostname
     #port: 31467
     
@@ -143,8 +143,7 @@ global:
     groupSearchBase: ou=groups,dc=example,dc=org
     groupSearchFilter: member={0}
     groupRoleAttributes: cn
-    userDnPattern: cn={0},dc=example,dc=org
-
+    userDnPattern: oes-gate.example.ops.com
   ###############################################################################
   # Best left unchanged
   # Use the below flag to exclude pre-delete helm hooks to the rendered manifests
@@ -588,7 +587,7 @@ saporgate:
   enabled: true
   image:
     repository: ubi8-oes-spin-gate
-    tag: 1.22.1
+    tag: v3.12.0
     pullPolicy: IfNotPresent
 
   serviceAnnotations: {}
@@ -705,7 +704,7 @@ spinnaker:
       organization: OpsMx
       projectName: ""                # Specify project name only if repo is under a project
       repository: standard-gitops-repo # repo name for GitOps Halyard (Sample Reference: https://github.com/OpsMx/sample-gitops-repo.git).
-      halConfigBranch: master # Branch under which halyard config is present under above repository
+      halConfigBranch: 3.12 # Branch under which halyard config is present under above repository
       halConfigPath: / #relative path from repository root folder
       dynamicAccRepository: standard-gitops-repo # Please provide the repo name of the GitOps Dynamic Accounts Directory. Can be same as Hal repo. 
       dynAccntConfigPath: / #relative path from repository root folder
@@ -723,7 +722,7 @@ spinnaker:
       s3region: regionofbucket
     # Promote applications and pipelines from one environment to another or take backup
     pipelinePromotion:  # GitHub only,  Not supportd on S3 or Stash
-      enabled: true
+      enabled: false
       type: git  # git, s3, stash
       gitConfig: "git config --global http.sslVerify false"
       organization: project_name  # Also called "project" in some repos
