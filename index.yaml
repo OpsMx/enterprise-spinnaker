@@ -43,6 +43,61 @@ entries:
     version: 1.0.0
   oes:
   - apiVersion: v2
+    appVersion: 3.12.0
+    created: "2022-03-28T06:21:46.981496269Z"
+    dependencies:
+    - condition: global.installOpenLdap
+      name: openldap
+      repository: ""
+      version: 1.2.3
+    - condition: installSpinnaker
+      name: spinnaker
+      repository: ""
+      version: 2.2.3
+    - condition: global.minio.enabled
+      name: minio
+      repository: ""
+      version: 8.0.9
+    - condition: installRedis
+      name: redis
+      repository: ""
+      version: 10.5.3
+    - condition: enableCentralLogging
+      name: elasticsearch
+      repository: ""
+      version: 7.5.0
+    - condition: enableCentralLogging
+      name: kibana
+      repository: ""
+      version: 7.5.0
+    - condition: enableCentralLogging
+      name: fluent-bit
+      repository: ""
+      version: 2.8.2
+    - condition: global.enableCentralMonitoring
+      name: prometheus
+      repository: ""
+      version: 11.16.2
+    - condition: global.gitea.enabled
+      name: gitea
+      repository: ""
+      version: 5.0.1
+    description: New Features of ISD comes with Single URL, Gitea, RBAC.
+    digest: 9e2a6470511f59d1cee5e3d9783f70bb2a16f9824731013d2b04dbddb7ad3e6d
+    home: https://www.opsmx.com/
+    icon: https://raw.githubusercontent.com/OpsMx/enterprise-spinnaker/master/img/opsmx.png
+    keywords:
+    - OpsMx
+    - OES
+    - Autopilot
+    maintainers:
+    - email: srinivas@opsmx.io
+      name: ksrinimba
+    name: oes
+    urls:
+    - https://github.com/OpsMx/enterprise-spinnaker/releases/download/oes-3.12.0/oes-3.12.0.tgz
+    version: 3.12.0
+  - apiVersion: v2
     appVersion: 3.11.1
     created: "2022-03-22T13:43:24.799489792Z"
     dependencies:
