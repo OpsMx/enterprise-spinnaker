@@ -8,7 +8,7 @@ import json
 
 def perform_migration():
     try:
-        for step in tqdm(range(17), desc="Migrating from v3.11 to v3.12..."):
+        for step in tqdm(range(19), desc="Migrating from v3.11 to v3.12..."):
             if step == 0:
                 drop_table_user_group_permission_3_11()
             elif step == 1:
@@ -38,16 +38,20 @@ def perform_migration():
             elif step == 13:
                 gate_pipeline_maps = get_gate_pipeline_map()
             elif step == 14:
-                update_pipeline_with_unified_url(gate_pipeline_maps)
+                pipelines = get_pipelines(gate_pipeline_maps)
             elif step == 15:
-                platform_conn.commit()
+                update_pipeline_json_with_unified_url(pipelines)
             elif step == 16:
+                platform_conn.commit()
+            elif step == 17:
+                update_pipeline_with_unified_url(gate_pipeline_maps)
+            elif step == 18:
                 updateautopilotconstraints()
                 autopilot_conn.commit()
 
         print("Successfully migrated to v3.12")
     except Exception as e:
-        print("Exception occured while migration : ", e)
+        print("Exception occurred while migration : ", e)
         platform_conn.rollback()
         autopilot_conn.rollback()
     finally:
@@ -63,6 +67,62 @@ def get_gate_pipeline_map():
         return cur.fetchall()
     except Exception as e:
         print("Exception occurred while fetching gate pipeline map details : ", e)
+        raise e
+
+
+def get_pipelines(gate_pipeline_maps):
+    try:
+        cur = platform_conn.cursor()
+        pipeline_ids = []
+        for gate_pipeline_map in gate_pipeline_maps:
+            pipeline_ids.append(gate_pipeline_map[0])
+
+        data = tuple(pipeline_ids)
+        cur.execute("SELECT id, pipeline_json from pipeline where id IN %s", (data,))
+        return cur.fetchall()
+    except Exception as e:
+        print("Exception occurred while fetching pipeline json : ", e)
+        raise e
+
+
+def update_pipeline_json_with_unified_url(pipelines):
+    try:
+        cur = platform_conn.cursor()
+        for pipeline in pipelines:
+            pipe_json = json.loads(pipeline[1])
+            pipeline_id = pipeline[0]
+            if pipe_json is not None and len(pipe_json) > 0:
+                stages = pipe_json["stages"]
+                updated_stages = []
+                for stage in stages:
+                    try:
+                        parameters = stage["parameters"]
+                        try:
+                            gate_url = parameters["gateUrl"]
+                        except KeyError as ke:
+                            gate_url = parameters["gateurl"]
+
+                        domain_name = host_url.split("/")[2] + "/" + host_url.split("/")[3]
+                        url_comps = str(gate_url).split("/")
+                        url_comps[2] = domain_name
+                        gate_url = "/"
+                        gate_url = str(gate_url).join(url_comps)
+                        try:
+                            if parameters["gateUrl"] is not None:
+                                parameters["gateUrl"] = gate_url
+                        except KeyError as ke:
+                            parameters["gateurl"] = gate_url
+
+                        stage["parameters"] = parameters
+                    except KeyError as ke:
+                        pass
+                    updated_stages.append(stage)
+                if stages is not None and len(updated_stages) > 0:
+                    pipe_json["stages"] = updated_stages
+                    update_data = json.dumps(pipe_json), pipeline_id
+                    cur.execute("UPDATE pipeline SET pipeline_json = %s WHERE id = %s", update_data)
+    except Exception as e:
+        print("Exception occurred while updating the pipeline with unified url : ", e)
         raise e
 
 
@@ -321,12 +381,11 @@ if __name__ == '__main__':
                                       port=port)
     print("autopilot database connection established successfully")
 
-    host_url = input('''Please enter the unified gate url 
-                      ex:https://oes-release.dev.opsmx.org/gate ''')
+    host_url = input('''Please enter the unified gate url, 
+    ex: https://sample-example.com/gate : ''')
     cookie = input('''Please enter the Cookie. Steps to retrieve the cookie are : 
     1. Login to ISD using admin credential.
     2. Open the browser network console.
     3. Under Headers tab -> Request Headers -> cookie :  ''')
 
     perform_migration()
-
