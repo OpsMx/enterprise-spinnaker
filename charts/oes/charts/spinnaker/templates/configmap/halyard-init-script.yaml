@@ -145,6 +145,7 @@ data:
     rm -rf /tmp/spinnaker/test
     DYNAMIC_ACCOUNTS_REPO=`echo $DYNAMIC_ACCOUNTS_REPO | sed 's/ *$//g'`
     sed -i  s/SPINNAKER_NAMESPACE/${SPINNAKER_NAMESPACE}/ /tmp/spinnaker/.hal/config
+    sed -i  s/SPINNAKER_NAMESPACE/${SPINNAKER_NAMESPACE}/ /tmp/spinnaker/.hal/clouddriver-local.yml
     sed -i  s/RELEASE_NAME/{{ .Release.Name }}/g /tmp/spinnaker/.hal/config
     {{- if .Values.gitopsHalyard.environment }}
     sed -i  s/ENVIRONMENT/{{ .Values.gitopsHalyard.environment }}/g /tmp/spinnaker/.hal/config
