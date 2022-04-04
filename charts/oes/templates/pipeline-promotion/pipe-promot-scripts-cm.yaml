@@ -72,9 +72,10 @@ data:
     = \"gitea\" ]]; then\n                sync_spin_to_github\n\telse\n\t\techo \"Not
     specified Repo type\"\n\t\texit 5\n\tfi\n}\nsync_spinnaker_from_repo(){\n\tif
     [[ $repo_type = \"s3\" ]];\n \tthen\n\t   sync_from_s3_spin\n\telif [[ $repo_type
-    = \"stash\" || $repo_type = \"git\" || $repo_type = \"bitbucket\" ]]; then\n\t\tsync_git_to_spin\n\tfi\n}\n\nif
-    [[ \"$command\" == \"download\" ]]; then\n\tsync_spinnaker_from_repo\nelif [[
-    \"$command\" == \"upload\" ]]; then\n        echo \"executing upload\"\n\t#statement\n\tsync_repo_from_spinnaker\nelse\n\techo
+    = \"stash\" || $repo_type = \"git\" || $repo_type = \"bitbucket\" ]]; then\n\t\tsync_git_to_spin\n\telif
+    [[ $repo_type = \"gitea\" ]]; then\n\t\tsync_git_to_spin\n\tfi\n}\n\nif [[ \"$command\"
+    == \"download\" ]]; then\n\tsync_spinnaker_from_repo\nelif [[ \"$command\" ==
+    \"upload\" ]]; then\n        echo \"executing upload\"\n\t#statement\n\tsync_repo_from_spinnaker\nelse\n\techo
     \"ERROR: unknown command\"\n\nfi\necho \"Done executing\"\n"
   git.sh: "#!/bin/bash\nsource scripts/spin.sh\n\ngit_repo=$repo_name\ntempdir=\"/tmp/\"\npull_requred=false\nif
     [[ $git_branch == \"\" ]]\nthen\n  git_branch=\"master\"\nfi\nsetup_git() {\n
@@ -604,6 +605,7 @@ data:
     \       merge_pr_stash\n      fi\n    else\n      create_pr_stash\n      if [[
     $auto_merge == \"true\" ]]; then\n        approve_pr_stash\n        merge_pr_stash\n
     \     fi\n    fi\n  fi\n}\n"
+
 kind: ConfigMap
 metadata:
   name: pipe-promot-scripts
