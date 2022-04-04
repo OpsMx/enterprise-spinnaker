@@ -22,18 +22,22 @@ def perform_migration():
             elif step == 5:
                 policies = get_policy()
             elif step == 6:
+                clear_policy_data()
                 migrate_policy(policies)
             elif step == 7:
                 cloud_providers = get_cloud_provider()
             elif step == 8:
+                clear_cloud_provider_data()
                 migrate_cloud_providers(cloud_providers)
             elif step == 9:
                 agents = get_agent()
             elif step == 10:
+                clear_agents()
                 migrate_agents(agents)
             elif step == 11:
                 user_group_permissions = get_user_group_permission()
             elif step == 12:
+                clear_user_group_permission()
                 migrate_user_group_permission(user_group_permissions)
             elif step == 13:
                 gate_pipeline_maps = get_gate_pipeline_map()
@@ -41,8 +45,10 @@ def perform_migration():
                 pipelines = get_pipelines(gate_pipeline_maps)
             elif step == 15:
                 update_pipeline_json_with_unified_url(pipelines)
+                update_spinnaker_gate_url()
             elif step == 16:
                 platform_conn.commit()
+                oesdb_conn.commit()
             elif step == 17:
                 update_pipeline_with_unified_url(gate_pipeline_maps)
             elif step == 18:
@@ -54,10 +60,20 @@ def perform_migration():
         print("Exception occurred while migration : ", e)
         platform_conn.rollback()
         autopilot_conn.rollback()
+        oesdb_conn.rollback()
     finally:
         platform_conn.close()
         oesdb_conn.close()
         autopilot_conn.close()
+
+
+def update_spinnaker_gate_url():
+    try:
+        cur = oesdb_conn.cursor()
+        cur.execute("UPDATE spinnaker set url = '"+str(spinnaker_gate_url)+"'")
+    except Exception as e:
+        print("Exception occurred while updating the spinnaker gate url : ", e)
+        raise e
 
 
 def get_gate_pipeline_map():
@@ -122,7 +138,7 @@ def update_pipeline_json_with_unified_url(pipelines):
                     update_data = json.dumps(pipe_json), pipeline_id
                     cur.execute("UPDATE pipeline SET pipeline_json = %s WHERE id = %s", update_data)
     except Exception as e:
-        print("Exception occurred while updating the pipeline with unified url : ", e)
+        print("Exception occurred while updating the pipeline json with unified url : ", e)
         raise e
 
 
@@ -188,11 +204,8 @@ def updateautopilotconstraints():
     try:
         cur = autopilot_conn.cursor()
         cur.execute(" ALTER TABLE serviceriskanalysis  DROP CONSTRAINT IF EXISTS fkmef9blhpcxhcj431kcu52nm1e ")
-        print("Successfully dropped constraint serviceriskanalysis table in autopilot db")
         cur.execute(" ALTER TABLE servicegate  DROP CONSTRAINT IF EXISTS uk_lk3buh56ebai2gycw560j2oxm ")
-        print("Successfully dropped constraint servicegate table in autopilot db")
         cur.execute(" ALTER TABLE canaryanalysis ALTER COLUMN metric_template_opsmx_id DROP not null ")
-        print("Successfully dropped not null constraint canaryanalysis table in autopilot db")
     except Exception as e:
         print("Exception occured while  updating script : ", e)
         raise e
@@ -253,6 +266,14 @@ def get_policy():
         raise e
 
 
+def clear_policy_data():
+    try:
+        cur = platform_conn.cursor()
+        cur.execute("DELETE FROM policy")
+    except Exception as e:
+        print("Exception occurred while clearing the policy : ", e)
+        raise e
+
 def migrate_policy(policies):
     try:
         cur = platform_conn.cursor()
@@ -273,6 +294,15 @@ def get_cloud_provider():
         return cur.fetchall()
     except Exception as e:
         print("Exception occurred while reading cloud provider from SAPOR db : ", e)
+        raise e
+
+
+def clear_cloud_provider_data():
+    try:
+        cur = platform_conn.cursor()
+        cur.execute("DELETE FROM cloud_provider")
+    except Exception as e:
+        print("Exception occurred while clearing cloud provider data : ", e)
         raise e
 
 
@@ -299,6 +329,15 @@ def get_agent():
         raise e
 
 
+def clear_agents():
+    try:
+        cur = platform_conn.cursor()
+        cur.execute("DELETE FROM agent")
+    except Exception as e:
+        print("Exception occurred while clearing agent data : ", e)
+        raise e
+
+
 def migrate_agents(agents):
     try:
         cur = platform_conn.cursor()
@@ -319,6 +358,15 @@ def get_user_group_permission():
         return cur.fetchall()
     except Exception as e:
         print("Exception occurred while reading user group permission : ", e)
+        raise e
+
+
+def clear_user_group_permission():
+    try:
+        cur = platform_conn.cursor()
+        cur.execute("DELETE FROM user_group_permission_3_12")
+    except Exception as e:
+        print("Exception occurred while clearing user group permission 3_12: ", e)
         raise e
 
 
@@ -383,9 +431,12 @@ if __name__ == '__main__':
 
     host_url = input('''Please enter the unified gate url, 
     ex: https://sample-example.com/gate : ''')
+
     cookie = input('''Please enter the Cookie. Steps to retrieve the cookie are : 
     1. Login to ISD using admin credential.
     2. Open the browser network console.
     3. Under Headers tab -> Request Headers -> cookie :  ''')
+
+    spinnaker_gate_url = input('''Please enter the unified spinnaker gate url that has to be updated in the spinnaker setup : ''')
 
     perform_migration()
