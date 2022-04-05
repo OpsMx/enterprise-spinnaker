@@ -16,7 +16,6 @@ spring:
           models: 
             parameters:
               AbstractSerializableParameter: ERROR
-
 ui:
   approval:
     url: {{ .Values.global.oesUI.protocol }}://{{ .Values.global.oesUI.host }}/ui/application/visibility/{applicationId}/{serviceId}/{approvalGateId}  

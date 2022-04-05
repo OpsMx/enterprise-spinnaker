@@ -54,3 +54,5 @@ data:
                 git commit -m "cloned standard-gitops-repo content"
                 git push origin master
         fi
+
+{{- end }}
