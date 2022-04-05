@@ -147,7 +147,7 @@ def update_pipeline_with_unified_url(gate_pipeline_maps):
         for gate_pipeline_map in gate_pipeline_maps:
             pipeline_id = gate_pipeline_map[0]
             gate_id = gate_pipeline_map[1]
-            url = host_url + "/dashboardservice/v3/pipelines/" + str(pipeline_id) + "/gates/" + str(gate_id)
+            url = host_url + "/dashboardservice/v4/pipelines/" + str(pipeline_id) + "/gates/" + str(gate_id)
             headers = {'Cookie': cookie}
             response = requests.get(url=url, headers=headers)
             gate_response = json.loads(response.content)
@@ -174,9 +174,9 @@ def update_gate(gate_response, pipeline_id, gate_id):
         except KeyError as e:
             gate_response["payloadConstraint"] = []
 
+
         req_payload = {
             "applicationId": gate_response["applicationId"],
-            "approvalGateId": gate_response["approvalGateId"],
             "approvalGatePolicies": gate_response["approvalGatePolicies"],
             "isAutomatedApproval": gate_response["isAutomatedApproval"],
             "gateId": gate_response["gateId"],
@@ -189,6 +189,38 @@ def update_gate(gate_response, pipeline_id, gate_id):
             "pipelineId": pipeline_id,
             "payloadConstraint": gate_response["payloadConstraint"]
         }
+
+        try:
+            req_payload["approvalGateId"] = gate_response["approvalGateId"]
+        except KeyError as ke:
+            pass
+
+        try:
+            req_payload["id"] = gate_id
+        except KeyError as ke:
+            pass
+
+        try:
+            req_payload["logTemplateName"] = gate_response["logTemplateName"]
+        except KeyError as ke:
+            pass
+
+        try:
+            req_payload["metricTemplateName"] = gate_response["metricTemplateName"]
+        except KeyError as ke:
+            pass
+
+        try:
+            req_payload["policyId"] = gate_response["policyId"]
+        except KeyError as ke:
+            pass
+
+        try:
+            req_payload["policyName"] = gate_response["policyName"]
+        except KeyError as ke:
+            pass
+
+
         url = host_url + "/dashboardservice/v4/pipelines/" + str(pipeline_id) + "/gates/" + str(gate_id)
         headers = {'Cookie': cookie,
                    'Content-Type': 'application/json'}
