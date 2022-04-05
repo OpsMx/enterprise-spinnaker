@@ -21,6 +21,7 @@ data:
         org={{ .Values.spinnaker.gitopsHalyard.repo.organization }}
         repo_name={{ .Values.spinnaker.gitopsHalyard.repo.repository }}
 
+
         git config --global user.email "$gitusermailid"
         git config --global user.name "$gitusername"
         object='{"name":"'"$repo_name"'","private":"true"}'
@@ -33,9 +34,18 @@ data:
                 exit 0
         else
                 object='{"name":"'"$repo_name"'","private":"true"}'
+	
+		if [ "$gitusername" == "$org" ]
+                then
                 curl -H "Authorization: token $gitpassword" --data "$object" https://api.github.com/user/repos
+		git clone https://github.com/OpsMx/standard-gitops-repo.git -b {{ .Values.global.gitea.standardrepoBranch }}
+		git clone https://$gitusername:$gitpassword@{{ .Values.spinnaker.gitopsHalyard.repo.baseUrlHostName }}/$gitusername/$repo_name.git
+	        else
+	        curl -X POST -H "Accept: application/vnd.github.v3+json" -H "Authorization: token $gitpassword" https://api.github.com/orgs/$org/repos -d '{"name":"'$repo_name'"}'
                 git clone https://github.com/OpsMx/standard-gitops-repo.git -b {{ .Values.global.gitea.standardrepoBranch }}
-                git clone https://$gitusername:$gitpassword@github.com/$gitusername/$repo_name.git
+		git clone https://$gitusername:$gitpassword@{{ .Values.spinnaker.gitopsHalyard.repo.baseUrlHostName }}/$org/$repo_name.git
+	        fi
+
                 cp -pr standard-gitops-repo/* $repo_name/
                 cd $repo_name/
                 git checkout -b master
@@ -44,5 +54,3 @@ data:
                 git commit -m "cloned standard-gitops-repo content"
                 git push origin master
         fi
-{{- end }}
-
