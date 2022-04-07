@@ -1,3 +1,4 @@
+{{- if (eq .Values.spinnaker.gitopsHalyard.repo.type "git") }}
 {{- if and (not .Values.global.gitea.enabled) .Release.IsInstall -}}
 apiVersion: batch/v1
 kind: Job
@@ -37,5 +38,6 @@ spec:
           defaultMode: 420
           name: {{ template "oes.fullname" . }}-github-creation
         name: github-creation
+{{- end }}
 {{- end }}
 

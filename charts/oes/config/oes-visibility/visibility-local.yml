@@ -16,6 +16,9 @@ spring:
           models: 
             parameters:
               AbstractSerializableParameter: ERROR
+ui:
+  approval:
+    url: {{ .Values.global.oesUI.protocol }}://{{ .Values.global.oesUI.host }}/ui/application/visibility/{applicationId}/{serviceId}/{approvalGateId}  
 gate:
   url: http://oes-gate:8084
 
@@ -32,9 +35,9 @@ git:
 
 jenkins:
   api:
-    url: /jenkins/job/{jobname}/{buildId}/api/json
+    url: /job/{jobname}/{buildId}/api/json
   navigate:
-    url: hosturl/jenkins/job/{jobname}/{buildId}
+    url: hosturl/job/{jobname}/{buildId}
 
 sonar:
   navigate:
