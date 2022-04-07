@@ -171,6 +171,11 @@ data:
     {{- if .Values.global.commonGate.spinnakerRBAC }}
     yq e '.deploymentConfigurations.[].security.authz.enabled = "true"' /tmp/spinnaker/.hal/config > /tmp/spinnaker/.hal/config1
     mv /tmp/spinnaker/.hal/config1 /tmp/spinnaker/.hal/config
+    yq e '.tasks.useManagedServiceAccounts = "true"' /tmp/spinnaker/.hal/default/profiles/orca-local.yml > /tmp/spinnaker/.hal/default/profiles/orca-local1.yml
+    mv /tmp/spinnaker/.hal/default/profiles/orca-local1.yml /tmp/spinnaker/.hal/default/profiles/orca-local.yml
+    sed -i s/false/true/ /tmp/spinnaker/.hal/default/profiles/settings-local.js
+    yq e '.migrations.migrateToManagedServiceAccounts = "true"' /tmp/spinnaker/.hal/default/profiles/front50-local.yml > /tmp/spinnaker/.hal/default/profiles/front50-local1.yml
+    mv /tmp/spinnaker/.hal/default/profiles/front50-local1.yml /tmp/spinnaker/.hal/default/profiles/front50-local.yml
     {{- else }}
     yq e '.deploymentConfigurations.[].security.authz.enabled = "false"' /tmp/spinnaker/.hal/config > /tmp/spinnaker/.hal/config1
     mv /tmp/spinnaker/.hal/config1 /tmp/spinnaker/.hal/config
