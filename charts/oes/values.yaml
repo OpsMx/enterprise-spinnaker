@@ -1066,7 +1066,7 @@ spinnaker:
 ## Name of the secret for pulling images from container registry.
 ## Use it when the images are stored under private registry.
 ## Create this secret before installing the chart
-imagePullSecret: "opsmx11-secret"
+imagePullSecret: ""
 
 ## Installation mode, available modes OES-AP, None (do not install AP (previously called OES)
 installationMode: OES-AP
