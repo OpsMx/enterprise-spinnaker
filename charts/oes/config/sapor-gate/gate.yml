@@ -38,3 +38,5 @@ services:
     config:
       dynamicEndpoints:
         deck: http://spin-clouddriver-ro-deck:7002
+  platform:
+    enabled: true
