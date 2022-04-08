@@ -251,7 +251,7 @@ autopilot:
   ## Image specific details
   image:
     repository: ubi8-oes-autopilot
-    tag: v3.12.0
+    tag: v3.12.1
     pullPolicy: IfNotPresent
 
   annotations:
@@ -283,7 +283,7 @@ audit:
   ##
   image:
     repository: ubi8-oes-audit-service
-    tag: v3.12.0
+    tag: v3.12.1
     pullPolicy: IfNotPresent
 
   serviceAnnotations: {}
@@ -304,7 +304,7 @@ auditClient:
   ##
   image:
     repository: ubi8-oes-audit-client
-    tag: v3.12.0
+    tag: v3.12.1
     pullPolicy: IfNotPresent
 
   serviceAnnotations: {}
@@ -325,7 +325,7 @@ datascience:
   ##
   image:
     repository: ubi8-oes-datascience
-    tag: v3.12.0
+    tag: v3.12.1
     pullPolicy: IfNotPresent
 
   serviceAnnotations: {}
@@ -343,7 +343,7 @@ dashboard:
   ## Image specific details
   image:
     repository: ubi8-oes-dashboard
-    tag: v3.12.0
+    tag: v3.12.1
     pullPolicy: IfNotPresent
 
   annotations:
@@ -393,7 +393,7 @@ gate:
   ## Image specific details
   image:
     repository: ubi8-gate
-    tag: v3.12.0.1
+    tag: v3.12.1
     pullPolicy: IfNotPresent
 
   serviceAnnotations: {}
@@ -469,7 +469,7 @@ platform:
   ## Image specific details
   image:
     repository: ubi8-oes-platform
-    tag: v3.12.0
+    tag: v3.12.1
     pullPolicy: IfNotPresent
 
   annotations:
@@ -491,7 +491,7 @@ platform:
 
     ## Source of groups for authorization
     ## Supported sources:- ldap, file, gate. In general, use "gate" for SAML
-    userSource: ldap
+    userSource: gate
 
     ## List of features to be supported by OES, please do not change
     supportedFeatures:
@@ -522,7 +522,7 @@ sapor:
   ## Image specific details
   image:
     repository: ubi8-oes-sapor
-    tag: v3.12.0
+    tag: v3.12.1
     pullPolicy: IfNotPresent
 
   annotations:
@@ -610,7 +610,7 @@ ui:
   ## Image specific details
   image:
     repository: ubi8-oes-ui
-    tag: v3.12.0
+    tag: v3.12.1
     pullPolicy: IfNotPresent
   serviceAnnotations: {}
 
@@ -624,7 +624,7 @@ visibility:
   ## Image specific details
   image:
     repository: ubi8-oes-visibility
-    tag: v3.12.0
+    tag: v3.12.1
     pullPolicy: IfNotPresent
 
   annotations:
@@ -1066,7 +1066,7 @@ spinnaker:
 ## Name of the secret for pulling images from container registry.
 ## Use it when the images are stored under private registry.
 ## Create this secret before installing the chart
-imagePullSecret: "opsmx11-secret"
+imagePullSecret: ""
 
 ## Installation mode, available modes OES-AP, None (do not install AP (previously called OES)
 installationMode: OES-AP
