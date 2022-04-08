@@ -22,18 +22,21 @@ data:
     ECHOWORKER=$(grep spin-echo-worker /tmp/inst.status | awk '{print $2}')
     ECHOSCHEDULER=$(grep spin-echo-scheduler  /tmp/inst.status | awk '{print $2}')
     FRONT=$(grep spin-front /tmp/inst.status  | awk '{print $2}')
-    #GATE=$(grep spin-gate /tmp/inst.status | awk '{print $2}')
-    #IGOR=$(grep spin-igor /tmp/inst.status | awk '{print $2}')
+    GATE=$(grep spin-gate /tmp/inst.status | awk '{print $2}')
+    IGOR=$(grep spin-igor /tmp/inst.status | awk '{print $2}')
     ORCA=$(grep spin-orca /tmp/inst.status | awk '{print $2}')
     #ROSCO=$(grep spin-rosco /tmp/inst.status | awk '{print $2}')
     SAPOR=$(grep oes-sapor /tmp/inst.status | awk '{print $2}')
     PLATFORM=$(grep oes-platform /tmp/inst.status | awk '{print $2}')
     AUTOPILOT=$(grep oes-autopilot /tmp/inst.status | awk '{print $2}')
-
+    FIAT=$(grep spin-fiat /tmp/inst.status | awk '{print $2}')
 
     wait_period=$(($wait_period+10))
-
-    if [ "$DECK" == "true" ] && [ "$CLOUDCACHING" == "true" ] && [ "$CLOUDRO" == "true" ] && [ "$CLOUDRW" == "true" ] && [ "$CLOUDRODECK" == "true" ] && [ "$FRONT" == "true" ] && [ "$ORCA" == "true" ]  && [ "$ECHOWORKER" == "true" ] && [ "$ECHOSCHEDULER" == "true" ] && [ "$SAPOR" == "true" ] && [ "$PLATFORM" == "true" ] && [ "$AUTOPILOT" == "true" ];
+    {{- if .Values.global.commonGate.spinnakerRBAC }}
+    if [ "$DECK" == "true" ] && [ "$CLOUDCACHING" == "true" ] && [ "$CLOUDRO" == "true" ] && [ "$CLOUDRW" == "true" ] && [ "$CLOUDRODECK" == "true" ] && [ "$FRONT" == "true" ] && [ "$GATE" == "true" ] && [ "$ORCA" == "true" ] && [ "$ECHOWORKER" == "true" ] && [ "$ECHOSCHEDULER" == "true" ] && [ "$FIAT" == "true" ] && [ "$SAPOR" == "true" ] && [ "$IGOR" == "true" ] && [ "$PLATFORM" == "true" ] && [ "$AUTOPILOT" == "true" ];
+    {{- else }}
+    if [ "$DECK" == "true" ] && [ "$CLOUDCACHING" == "true" ] && [ "$CLOUDRO" == "true" ] && [ "$CLOUDRW" == "true" ] && [ "$CLOUDRODECK" == "true" ] && [ "$FRONT" == "true" ] && [ "$ORCA" == "true" ]  && [ "$ECHOWORKER" == "true" ] && [ "$ECHOSCHEDULER" == "true" ] && [ "$SAPOR" == "true" ] && [ "$PLATFORM" == "true" ] && [ "$AUTOPILOT" == "true" ] && [ "$GATE" == "true" ] && && [ "$IGOR" == "true" ];
+    {{- end }}
         then
             echo \"Spinnaker and OES services are Up and Ready..\"
             sleep 5

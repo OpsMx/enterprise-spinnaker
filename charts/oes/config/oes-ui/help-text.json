@@ -35,7 +35,7 @@
          "VALIDATION_MESSAGE": {}
       },
       "CONNECT_TO_SPINNAKER": {
-         "TOOLTIP": "Select the spinnaker instance you want to associate this account to",
+         "TOOLTIP": "The spinnaker instance you want to associate this account to",
          "VALIDATION_MESSAGE": {
             "required": "Please select Spinnaker"
          }
@@ -72,6 +72,17 @@
          "TOOLTIP": "The environment name for the account. Many accounts can share the same environment (e.g. dev, test, prod)",
          "VALIDATION_MESSAGE": {
             "required": "Please select Environment"
+         }
+      },
+      "CUSTOM_ENVIRONMENT": {
+         "TOOLTIP": "",
+         "VALIDATION_MESSAGE": {
+         "noSpecialCharacters": "Environment Name cannot contain special characters",
+         "cannotContainSpace":"Environment Name cannot contain space",
+         "required":"Environment Name cannot be empty",
+         "startingFromNumber": "Environment Name cannot start with number",
+         "maxlength": "Environment name should not have more than 63 characters!",
+         "exists": "Environment name already exists"
          }
       },
       "ACCOUNT_NAME": {
@@ -240,6 +251,20 @@
          "VALIDATION_MESSAGE": {
             "required": "Please select Authentication Type"
          }
+      },
+      "LDAP_USERNAME" : {
+        "TOOLTIP": "User Name",
+        "VALIDATION_MESSAGE": { 
+        "required":"User Name cannot be empty",
+        "minlength":"User Name should be more than 4 characters"
+        }
+      },
+      "LDAP_PASSWORD" : {
+        "TOOLTIP": "Password",
+        "VALIDATION_MESSAGE": { 
+        "required":"Password cannot be empty",
+        "minlength":"Password should be more than 8 characters"
+        }
       },
       "TOKEN": {
          "TOOLTIP": "Token for Spinnaker authentication",
@@ -600,6 +625,10 @@
    "TEST_VERIFICATON": {
       "HEADER": "Test Verfication Gate executions not found!",
       "BODY": "<div> <p>The Continuous Verification performs automated log and metric analysis for new releases with built-in unsupervised and supervised machine learning algorithms for risk analysis. Autopilot provides a Test Verification Gate to analyse logs from your Test Harness and this can be inserted as a Stage in your CI/CD Pipeline. </p>     <p>This page shows Test Verification Gate executions in a list view. </p> <p>Insert Test Verification Gate to a pipeline in your application using <a [routerLink]='['/setup/applications']'><strong>Setup -> Applications</strong></a>.When the pipeline is run, the Gate executions will start appearing in this page.</p> </div>"
+   },
+   "TEST_CASE": {
+      "HEADER": "Test Cases not found!",
+      "BODY": "<div> <p>The Continuous Verification performs automated log and metric analysis for new releases with built-in unsupervised and supervised machine learning algorithms for risk analysis. Autopilot provides a Test Verification Gate to analyse logs from your Test Harness and this can be inserted as a Stage in your CI/CD Pipeline. </p>     <p>This page shows Test Cases in a list view. </p> <p>Insert Test Verification Gate to a pipeline in your application using <a [routerLink]='['/setup/applications']'><strong>Setup -> Applications</strong></a>.When the pipeline is run, the Gate executions will start appearing in this page.</p> </div>"
    },
    "VISIBILITY_LISTING": {
       "HEADER": " <div><span style='font-size: 16px; font-weight: bold;'>Approval Gate executions not found!</span></div>",
@@ -1142,10 +1171,10 @@
          }
       },
       "DOCKERHUB": {
-         "HEADER": "Docker Hub",
+         "HEADER": "Docker Registry",
          "BODY": "",
          "ACCOUNTNAME": {
-            "TOOLTIP": "User defined name for the Docker Hub account",
+            "TOOLTIP": "User defined name for the Docker Registry account",
             "VALIDATION_MESSAGE": {
                "noSpecialCharacters": "Account Name cannot contain special characters other than -",
                "cannotContainSpace": "Account Name cannot contain space",
@@ -1154,13 +1183,13 @@
             }
          },
          "TOKEN": {
-            "TOOLTIP": "Dockerhub Personal Access Token",
+            "TOOLTIP": "Docker Registry Personal Access Token",
             "VALIDATION_MESSAGE": {
                "required": "Token cannot be empty"
             }
          },
          "USERNAME": {
-            "TOOLTIP": "Dockerhub User Name",
+            "TOOLTIP": "Docker Registry User Name",
             "VALIDATION_MESSAGE": {
                "noSpecialCharacters": "User Name cannot contain special characters other than - and _",
                "cannotContainSpace": "User Name cannot contain space",
@@ -1169,7 +1198,7 @@
             }
          },
          "HOSTURL": {
-            "TOOLTIP": "Dockerhub Host URL",
+            "TOOLTIP": "Docker Registry Host URL",
             "VALIDATION_MESSAGE": {
                "required": "Host URL cannot be empty",
                "invalidUrl": "URL is invalid"
@@ -2231,7 +2260,7 @@
       },
       "FEATURE_VISIBILTY_LISTING":{
          "HEADER": "FEATURE FLAG MANAGEMENT",
-         "BODY":"'Feature Visibilty' is for special cases where one or more User Groups need to have exclusive permission for certain feature. Say, 'Compliance Team' only should have access to Policies. So, when a feature flag is enabled for a User Group, this feature is automatically denied for all other users. Normally, most User Groups will not have any feature flag enabled."
+         "BODY":"Feature Visibility is used for scenarios where one or more user groups need exclusive access to a specific feature. For example, the 'Compliance Team' should only access the Policy Management feature. Administrators can enable the feature flag for the compliance team user group. The feature visibility function will ensure that the policy management feature is not visible for all other user groups."
        },
       "FEATURE_VISIBILTY_CREATION": {
            "ROLENAME":{
