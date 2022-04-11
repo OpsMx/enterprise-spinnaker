@@ -491,7 +491,7 @@ platform:
 
     ## Source of groups for authorization
     ## Supported sources:- ldap, file, gate. In general, use "gate" for SAML
-    userSource: gate
+    userSource: ldap
 
     ## List of features to be supported by OES, please do not change
     supportedFeatures:
