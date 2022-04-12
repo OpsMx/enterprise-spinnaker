@@ -54,7 +54,11 @@ spec:
           subPath: help-text.json
         - mountPath: /etc/nginx/nginx.conf
           name: nginx-config
+          {{- if .Values.installSpinnaker  }}
           subPath: nginx.conf
+          {{- else }}
+          subPath: nginx-ap-only.conf
+          {{- end }}
         readinessProbe:
           tcpSocket:
             port: 8080
