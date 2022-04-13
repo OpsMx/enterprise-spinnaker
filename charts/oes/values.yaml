@@ -695,7 +695,7 @@ redis:
     affinity: {}
     tolerations: []
     podAnnotations:
-      moniker.spinnaker.io/application: redis
+      moniker.spinnaker.io/application: spin
 
   ## Redis config file
   ## ref: https://redis.io/topics/config
@@ -1119,7 +1119,7 @@ opa:
     tag: latest
     pullPolicy: IfNotPresent
   annotations:
-    moniker.spinnaker.io/application: opa
+    moniker.spinnaker.io/application: isd
 
 ####################################################
 # AP installs a trial LDAP for POCs and testing purposes
@@ -1132,7 +1132,7 @@ openldap:
   affinity: {}
   tolerations: []
   podAnnotations:
-    moniker.spinnaker.io/application: openldap
+    moniker.spinnaker.io/application: spin
 
 
   persistence:

@@ -2,7 +2,7 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   annotations:
-    moniker.spinnaker.io/application: openldap
+    moniker.spinnaker.io/application: isd
   name:  {{ template "openldap.fullname" . }}
   labels:
     app: {{ template "openldap.name" . }}

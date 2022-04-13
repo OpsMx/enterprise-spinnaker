@@ -4,7 +4,6 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   annotations:
-    moniker.spinnaker.io/application: opa
 {{ include "isd.standard-annotations" . | indent 4 }}
   labels:
     app: opa
