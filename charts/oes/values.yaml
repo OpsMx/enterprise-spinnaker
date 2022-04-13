@@ -229,6 +229,9 @@ db:
     tag: v3.0.0
     pullPolicy: IfNotPresent
 
+  annotations:
+    moniker.spinnaker.io/application: isd
+
   serviceAnnotations: {}
 
   ## Strategy to rollout statefulset pods

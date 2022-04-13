@@ -20,7 +20,9 @@ spec:
   template:
     metadata:
       annotations:
-{{ include "isd.standard-annotations" . | indent 8 }}
+{{- if .Values.db.annotations -}}
+{{ toYaml .Values.db.annotations | nindent 8 }}
+{{- end }}
       labels:
         app: oes
         component: db
