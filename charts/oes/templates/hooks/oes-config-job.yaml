@@ -3,6 +3,7 @@ apiVersion: batch/v1
 kind: Job
 metadata:
   annotations:
+{{ include "isd.standard-annotations" . | indent 4 }}
     "helm.sh/hook": "post-install,post-upgrade"
     "helm.sh/hook-delete-policy": "before-hook-creation"
     "helm.sh/hook-weight": "5"
@@ -16,6 +17,7 @@ spec:
     metadata:
       annotations:
         checksum/configmap: {{ (.Files.Glob "templates/configmaps/datasource-creation.yaml").AsConfig | sha256sum }}
+{{ include "isd.standard-annotations" . | indent 8 }}
       labels:
         app: oes
         component: oes-config

@@ -229,6 +229,9 @@ db:
     tag: v3.0.0
     pullPolicy: IfNotPresent
 
+  annotations:
+    moniker.spinnaker.io/application: isd
+
   serviceAnnotations: {}
 
   ## Strategy to rollout statefulset pods
@@ -255,6 +258,7 @@ autopilot:
     pullPolicy: IfNotPresent
 
   annotations:
+    moniker.spinnaker.io/application: isd
     prometheus_io_path: /mgmt/prometheus
     prometheus_io_port: "8090"
     prometheus.io/scrape: "true"
@@ -289,6 +293,7 @@ audit:
   serviceAnnotations: {}
 
   annotations:
+    moniker.spinnaker.io/application: isd
     prometheus_io_path: /mgmt/prometheus
     prometheus_io_port: "8097"
     prometheus.io/scrape: "true"
@@ -310,6 +315,7 @@ auditClient:
   serviceAnnotations: {}
 
   annotations:
+    moniker.spinnaker.io/application: isd
     prometheus_io_path: /mgmt/prometheus
     prometheus_io_port: "8098"
     prometheus.io/scrape: "true"
@@ -331,6 +337,7 @@ datascience:
   serviceAnnotations: {}
 
   annotations:
+    moniker.spinnaker.io/application: isd
     prometheus_io_path: /mgmt/prometheus
     prometheus_io_port: "5005"
     prometheus.io/scrape: "true"
@@ -347,6 +354,7 @@ dashboard:
     pullPolicy: IfNotPresent
 
   annotations:
+    moniker.spinnaker.io/application: isd
     prometheus_io_path: /mgmt/prometheus
     prometheus_io_port: "8094"
     prometheus.io/scrape: "true"
@@ -383,6 +391,8 @@ forwarder:
     repository: quay.io/opsmxpublic/forwarder-controller
     tag: v3.12.0
     pullPolicy: IfNotPresent
+  annotations:
+    moniker.spinnaker.io/application: isd
   serviceAnnotations: {}
 
 ###############################################################################
@@ -399,6 +409,7 @@ gate:
   serviceAnnotations: {}
 
   annotations:
+    moniker.spinnaker.io/application: isd
     prometheus_io_path: /mgmt/prometheus
     prometheus_io_port: "8084"
     prometheus.io/scrape: "true"
@@ -473,6 +484,7 @@ platform:
     pullPolicy: IfNotPresent
 
   annotations:
+    moniker.spinnaker.io/application: isd
     prometheus_io_path: /mgmt/prometheus
     prometheus_io_port: "8095"
     prometheus.io/scrape: "true"
@@ -514,6 +526,10 @@ rabbitmq:
   image:
     registry: quay.io/opsmxpublic/rabbitmq
     repository: 3-management
+
+  annotations:
+    moniker.spinnaker.io/application: isd
+
   serviceAnnotations: {}
 
 ###############################################################################
@@ -526,6 +542,7 @@ sapor:
     pullPolicy: IfNotPresent
 
   annotations:
+    moniker.spinnaker.io/application: isd
     prometheus_io_path: /mgmt/prometheus
     prometheus_io_port: "8085"
     prometheus.io/scrape: "true"
@@ -590,6 +607,9 @@ saporgate:
     tag: v3.12.0-saporgate
     pullPolicy: IfNotPresent
 
+  annotations:
+    moniker.spinnaker.io/application: "isd"
+
   serviceAnnotations: {}
 
   resources: {}
@@ -612,6 +632,10 @@ ui:
     repository: ubi8-oes-ui
     tag: v3.12.1
     pullPolicy: IfNotPresent
+
+  annotations:
+    moniker.spinnaker.io/application: "isd"
+
   serviceAnnotations: {}
 
   config:
@@ -628,6 +652,7 @@ visibility:
     pullPolicy: IfNotPresent
 
   annotations:
+    moniker.spinnaker.io/application: isd
     prometheus_io_path: /mgmt/prometheus
     prometheus_io_port: "8096"
     prometheus.io/scrape: "true"
@@ -672,6 +697,8 @@ redis:
   master:
     affinity: {}
     tolerations: []
+    podAnnotations:
+      moniker.spinnaker.io/application: spin
 
   ## Redis config file
   ## ref: https://redis.io/topics/config
@@ -919,7 +946,8 @@ spinnaker:
     # additionalInitScript: |-
 
     ## Uncomment if you want to add annotations on halyard and install-using-hal pods
-    # annotations:
+    annotations:
+      moniker.spinnaker.io/application: spin
     #   iam.amazonaws.com/role: <role_arn>
 
     ## Uncomment the following resources definitions to control the cpu and memory
@@ -1093,6 +1121,8 @@ opa:
     repository: openpolicyagent/opa
     tag: latest
     pullPolicy: IfNotPresent
+  annotations:
+    moniker.spinnaker.io/application: isd
 
 ####################################################
 # AP installs a trial LDAP for POCs and testing purposes
@@ -1104,6 +1134,9 @@ openldap:
   omitClusterIP: true
   affinity: {}
   tolerations: []
+  podAnnotations:
+    moniker.spinnaker.io/application: spin
+
 
   persistence:
     enabled: false

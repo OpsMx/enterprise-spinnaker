@@ -42,6 +42,13 @@ chart: "{{ .Chart.Name }}-{{ .Chart.Version }}"
 {{- end -}}
 
 {{/*
+Common annotations for ISD.
+*/}}
+{{- define "isd.standard-annotations" -}}
+moniker.spinnaker.io/application: isd
+{{- end -}}
+
+{{/*
 Return the proper UI image name
 */}}
 {{- define "ui.image" -}}
