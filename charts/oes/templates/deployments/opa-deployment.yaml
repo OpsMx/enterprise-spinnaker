@@ -3,6 +3,9 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
+  annotations:
+    moniker.spinnaker.io/application: opa
+{{ include "isd.standard-annotations" . | indent 4 }}
   labels:
     app: opa
 {{ include "oes.standard-labels" . | indent 4 }}
@@ -14,6 +17,10 @@ spec:
       app: opa
   template:
     metadata:
+      annotations:
+{{- if .Values.opa.annotations -}}
+{{ toYaml .Values.opa.annotations | nindent 8 }}
+{{- end }}
       labels:
         app: opa
 {{ include "oes.standard-labels" . | indent 8 }}

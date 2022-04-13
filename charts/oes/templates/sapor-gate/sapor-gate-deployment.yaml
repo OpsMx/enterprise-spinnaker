@@ -4,6 +4,7 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   annotations:
+{{ include "isd.standard-annotations" . | indent 4 }}
   labels:
     app: oes
     component: sapor-gate
@@ -19,6 +20,9 @@ spec:
     metadata:
       annotations:
         checksum/secret: {{ (.Files.Glob "config/sapor-gate/gate.yml").AsConfig | sha256sum }}
+{{- if .Values.saporgate.annotations -}}
+        {{ toYaml .Values.saporgate.annotations | nindent 8 }}
+{{- end }}
       labels:
         app: oes
         component: sapor-gate

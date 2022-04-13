@@ -2,6 +2,8 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
+  annotations:
+{{ include "isd.standard-annotations" . | indent 4 }}
   labels:
     app: oes
     component: ui
@@ -17,6 +19,9 @@ spec:
     metadata:
       annotations:
         checksum/configmap: {{ (.Files.Glob "config/oes-ui/app-config.json").AsConfig | sha256sum }}
+{{- if .Values.ui.annotations -}}
+        {{ toYaml .Values.ui.annotations | nindent 8 }}
+{{- end }}
       labels:
         app: oes
         component: ui

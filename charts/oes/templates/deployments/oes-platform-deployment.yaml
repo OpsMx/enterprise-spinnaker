@@ -2,7 +2,8 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  creationTimestamp: null
+  annotations:
+{{ include "isd.standard-annotations" . | indent 4 }}
   labels:
     app: oes
     component: platform

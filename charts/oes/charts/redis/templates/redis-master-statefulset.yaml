@@ -1,6 +1,8 @@
 apiVersion: apps/v1
 kind: StatefulSet
 metadata:
+  annotations:
+    moniker.spinnaker.io/application: redis
   name: {{ template "redis.fullname" . }}-master
   labels:
     app: {{ template "redis.name" . }}

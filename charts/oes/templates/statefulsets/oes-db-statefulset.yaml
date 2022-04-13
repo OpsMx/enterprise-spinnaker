@@ -2,6 +2,8 @@
 apiVersion: apps/v1
 kind: StatefulSet
 metadata:
+  annotations:
+{{ include "isd.standard-annotations" . | indent 4 }}
   labels:
     app: oes
     component: db
@@ -17,6 +19,8 @@ spec:
       component: db
   template:
     metadata:
+      annotations:
+{{ include "isd.standard-annotations" . | indent 8 }}
       labels:
         app: oes
         component: db

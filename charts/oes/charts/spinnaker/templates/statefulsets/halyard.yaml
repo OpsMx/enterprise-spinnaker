@@ -1,6 +1,8 @@
 apiVersion: apps/v1
 kind: StatefulSet
 metadata:
+  annotations:
+    moniker.spinnaker.io/application: spin
   name: {{ template "spinnaker.fullname" . }}-halyard
   labels:
 {{ include "spinnaker.standard-labels" . | indent 4 }}

@@ -4,6 +4,7 @@ apiVersion: batch/v1
 kind: Job
 metadata:
   annotations:
+{{ include "isd.standard-annotations" . | indent 4 }}
     "helm.sh/hook": "pre-install"
     "helm.sh/hook-delete-policy": "before-hook-creation"
     "helm.sh/hook-weight": "1"
@@ -16,6 +17,8 @@ spec:
   backoffLimit: 1
   template:
     metadata:
+      annotations:
+{{ include "isd.standard-annotations" . | indent 8 }}
       labels:
         app: oes
         component: github-config
