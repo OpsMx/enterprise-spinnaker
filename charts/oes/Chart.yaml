@@ -40,3 +40,6 @@ dependencies:
   - name: gitea
     version: 5.0.1
     condition: global.gitea.enabled
+  - name: argo-cd
+    version: 4.5.3
+    condition: installArgoCD
