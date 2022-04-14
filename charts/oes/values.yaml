@@ -15,6 +15,11 @@ imageCredentials:
 installSpinnaker: true
 
 ####################################################
+## Option to install ArgoCD
+## Setting this to true will install ArgoCD
+installArgoCD: true
+
+####################################################
 ## Redis configuration
 ## Set it to false only if OES needs to be configured with external redis
 installRedis: true
