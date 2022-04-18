@@ -10,7 +10,7 @@ security:
   user:
     name: {{ .Values.saporgate.config.username }}
     password: {{ .Values.saporgate.config.password }}
-    roles: ADMIN
+    roles: admin
 {{- if not .Values.installRedis }}
 redis:
   configuration:
