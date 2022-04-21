@@ -296,7 +296,7 @@ audit:
     moniker.spinnaker.io/application: isd
     prometheus_io_path: /mgmt/prometheus
     prometheus_io_port: "8097"
-    prometheus.io/scrape: "true"
+    prometheus.io/scrape: "false"
   resources: {}
   config: {}
 
@@ -340,7 +340,7 @@ datascience:
     moniker.spinnaker.io/application: isd
     prometheus_io_path: /mgmt/prometheus
     prometheus_io_port: "5005"
-    prometheus.io/scrape: "true"
+    prometheus.io/scrape: "false"
   resources: {}
   config: {}
 
@@ -412,7 +412,7 @@ gate:
     moniker.spinnaker.io/application: isd
     prometheus_io_path: /mgmt/prometheus
     prometheus_io_port: "8084"
-    prometheus.io/scrape: "true"
+    prometheus.io/scrape: "false"
   resources: {}
   #  requests:
   #    memory: 500Mi
