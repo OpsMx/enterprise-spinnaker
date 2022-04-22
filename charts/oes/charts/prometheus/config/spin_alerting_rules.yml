@@ -255,13 +255,6 @@ groups:
     expr: up{component="auditclient"}==0
     labels:
       severity: critical
-  - alert: oes-audit-service-scrape-target-is-down
-    annotations:
-      description: The scrape target endpoint of component {{$labels.component}} in namespace {{$labels.kubernetes_namespace}} is down
-      summary: oes-audit-service scrape target is down
-    expr: up{component="auditservice"} == 0
-    labels:
-      severity: critical
   - alert: oes-autopilot-scrape-target-is-down
     annotations:
       description: The scrape target endpoint of component {{$labels.component}} in namespace {{$labels.kubernetes_namespace}} is down
@@ -276,20 +269,6 @@ groups:
     expr: up{component="dashboard"}==0
     labels:
       severity: critical		  
-  - alert: oes-datascience-scrape-target-is-down
-    annotations:
-      description: The scrape target endpoint of component {{$labels.component}} in namespace {{$labels.kubernetes_namespace}} is down
-      summary: oes-datascience scrape target is down
-    expr: up{component="datascience"} == 0
-    labels:
-      severity: critical		  
-  - alert: oes-gate-scrape-target-is-down
-    annotations:
-      description: The scrape target endpoint of component {{$labels.component}} in namespace {{$labels.kubernetes_namespace}} is down
-      summary: oes-gate scrape target is down
-    expr: up{component="gate"}==0
-    labels:
-      severity: critical
   - alert: oes-platform-scrape-target-is-down
     annotations:
       description: The scrape target endpoint of component {{$labels.component}} in namespace {{$labels.kubernetes_namespace}} is down
