@@ -1,8 +1,8 @@
 apiVersion: v2
 name: oes
-version: 3.12.3
-appVersion: 3.12.1
-description: LDAP Session Expired Issue Fixed
+version: 3.12.4
+appVersion: 3.12.2
+description: "ISD-3.12.2 - Fixed Minor issues related to Autopilot"
 icon: https://raw.githubusercontent.com/OpsMx/enterprise-spinnaker/master/img/opsmx.png
 maintainers:
 - email: srinivas@opsmx.io
