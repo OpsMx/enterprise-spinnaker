@@ -16,47 +16,45 @@ imageCredentials:
   repoUrl: https://docker.io/
   registry: opsmx11
 
+imagePullSecret: "opsmx11-secret"
+
 autopilot:
   image:
-    repository: ubi8-oes-autopilot
-    tag: v3.12.2
+    repository: oes-autopilot
+    tag: v3.12.3-rc1
 audit:
   image:
-    repository: ubi8-oes-audit-service
-    tag: v3.12.2
+    repository: oes-audit-service
+    tag: v3.12.3-rc1
 auditClient:
   image:
-    repository: ubi8-oes-audit-client
-    tag: v3.12.2
+    repository: oes-audit-client
+    tag: v3.12.3-rc1
 datascience:
   image:
-    repository: ubi8-oes-datascience
-    tag: v3.12.2
+    repository: oes-datascience
+    tag: v3.12.3-rc1
 dashboard:
   image:
-    repository: ubi8-oes-dashboard
-    tag: v3.12.2
+    repository: oes-dashboard
+    tag: v3.12.3-rc1
 gate:
   image:
-    repository: ubi8-gate
-    tag: v3.12.2
+    repository: gate
+    tag: v3.12.3-rc1
 platform:
   image:
-    repository: ubi8-oes-platform
-    tag: v3.12.2
+    repository: oes-platform
+    tag: v3.12.3-rc1
 sapor:
   image:
-    repository: ubi8-oes-sapor
-    tag: v3.12.2
-saporgate:
-  image:
-    repository: ubi8-oes-spin-gate
-    tag: v3.12.0-saporgate
+    repository: oes-sapor
+    tag: v3.12.3-rc1
 ui:
   image:
-    repository: ubi8-oes-ui
-    tag: v3.12.2
+    repository: oes-ui
+    tag: v3.12.3-rc1
 visibility:
   image:
-    repository: ubi8-oes-visibility
-    tag: v3.12.2
+    repository: oes-visibility
+    tag: v3.12.3-rc1
