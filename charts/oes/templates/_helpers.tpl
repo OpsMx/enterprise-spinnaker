@@ -46,7 +46,6 @@ Common annotations for ISD.
 */}}
 {{- define "isd.standard-annotations" -}}
 moniker.spinnaker.io/application: isd
-strategy.spinnaker.io/versioned: "false"
 {{- end -}}
 
 {{/*
