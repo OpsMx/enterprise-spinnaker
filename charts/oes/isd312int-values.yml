@@ -1,0 +1,65 @@
+global:
+  certManager:
+    installed: true
+  createIngress: true
+  gitea:
+    admin:
+    enabled: false
+    standardrepoBranch: 3.12
+  oesUI:
+    host: isd-n.release.opsmx.org
+    protocol: https
+  ssl:
+    enabled: true
+spinnaker:
+  autoInstallSampleApps: true
+  gitopsHalyard:
+    enabled: false
+    pipelinePromotion:
+      enabled: false
+
+autopilot:
+  image:
+    repository: ubi8-oes-autopilot
+    tag: v3.12.2
+audit:
+  image:
+    repository: ubi8-oes-audit-service
+    tag: v3.12.2
+auditClient:
+  image:
+    repository: ubi8-oes-audit-client
+    tag: v3.12.2
+datascience:
+  image:
+    repository: ubi8-oes-datascience
+    tag: v3.12.2
+dashboard:
+  image:
+    repository: ubi8-oes-dashboard
+    tag: v3.12.2
+gate:
+  image:
+    repository: ubi8-gate
+    tag: v3.12.2
+platform:
+  image:
+    repository: ubi8-oes-platform
+    tag: v3.12.2
+sapor:
+  image:
+    repository: ubi8-oes-sapor
+    tag: v3.12.2
+saporgate:
+  image:
+    repository: ubi8-oes-spin-gate
+    tag: v3.12.0-saporgate
+ui:
+  image:
+    repository: ubi8-oes-ui
+    tag: v3.12.2
+visibility:
+  image:
+    repository: ubi8-oes-visibility
+    tag: v3.12.2
+
