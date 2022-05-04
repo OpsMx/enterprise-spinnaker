@@ -1,3 +1,5 @@
+{{- if .Values.installSpinnaker }}
+{{- if or (.Values.spinnaker.gitopsHalyard.pipelinePromotion.enabled) (.Values.global.gitea.enabled) }}
 apiVersion: v1
 data:
   bitbucket.sh: "#!/bin/bash\n\n#this script funtions only work for bitbucket central
@@ -609,3 +611,5 @@ data:
 kind: ConfigMap
 metadata:
   name: pipe-promot-scripts
+{{- end }}
+{{- end }}
