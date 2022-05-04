@@ -12,6 +12,10 @@ global:
   ssl:
     enabled: true
 
+imageCredentials:
+  repoUrl: https://docker.io/
+  registry: opsmx11
+
 autopilot:
   image:
     repository: ubi8-oes-autopilot
