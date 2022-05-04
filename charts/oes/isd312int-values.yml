@@ -12,6 +12,7 @@ global:
     protocol: https
   ssl:
     enabled: true
+installSpinnaker: false
 spinnaker:
   autoInstallSampleApps: true
   gitopsHalyard:
