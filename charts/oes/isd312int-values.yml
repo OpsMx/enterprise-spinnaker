@@ -16,8 +16,6 @@ spinnaker:
   autoInstallSampleApps: true
   gitopsHalyard:
     enabled: false
-    pipelinePromotion:
-      enabled: false
 
 autopilot:
   image:
