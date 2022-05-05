@@ -137,7 +137,7 @@ data:
           {{- else }}
           sed -i 's,PROTOCOL,http,g' /tmp/spinnaker/.hal/config
           {{- end }}
-         
+
           {{- if .Values.global.commonGate.enabled }}
           sed -i 's,OVERRIDE_API_URL,{{ tpl .Values.global.oesGate.host . }},g' /tmp/spinnaker/.hal/config
           {{- else }}
