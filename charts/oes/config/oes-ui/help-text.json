@@ -254,14 +254,14 @@
       },
       "LDAP_USERNAME" : {
         "TOOLTIP": "User Name",
-        "VALIDATION_MESSAGE": { 
+        "VALIDATION_MESSAGE": {
         "required":"User Name cannot be empty",
         "minlength":"User Name should be more than 4 characters"
         }
       },
       "LDAP_PASSWORD" : {
         "TOOLTIP": "Password",
-        "VALIDATION_MESSAGE": { 
+        "VALIDATION_MESSAGE": {
         "required":"Password cannot be empty",
         "minlength":"Password should be more than 8 characters"
         }
@@ -701,7 +701,7 @@
   "APPLICATION_DASHBOARD": {
      "VERIFICATION_FAILURES":{
         "TOOLTIP":  "Total number of Verification Failures including Test Verification Failures",
-        "VALIDATION_MESSAGE": "" 
+        "VALIDATION_MESSAGE": ""
      }
   },
    "APPLICATION_LISTING": {
@@ -2280,7 +2280,7 @@
              "required":"Atleast one feature has to be enabled"
               }
            }
-        } 
+        }
    },
    "LOG_TEMPLATE": {
       "STRING_PATTERN": {
@@ -2457,4 +2457,4 @@
          }
       }
    }
-}    
+}
