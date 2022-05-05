@@ -272,7 +272,7 @@ data:
       SERVICENOW_USER=$(kubectl get secret servicenow-secret -o jsonpath='{.data.SERVICENOW_USERNAME}' -n ${SPINNAKER_NAMESPACE} | base64 -d)
       SERVICENOW_DNS=$(kubectl get secret servicenow-secret -o jsonpath='{.data.SERVICENOW_URL}' -n ${SPINNAKER_NAMESPACE} | base64 -d)
       SERVICENOW_PASSWD=$(kubectl get secret servicenow-secret -o jsonpath='{.data.SERVICENOW_PASSWORD}' -n ${SPINNAKER_NAMESPACE} | base64 -d)
-      SERVICENOW_BASE64_USR_PASSWD=$(echo "$SERVICENOW_USER:$SERVICENOW_PASSWD" | base64)
+      SERVICENOW_BASE64_USR_PASSWD=$(echo -n "$SERVICENOW_USER:$SERVICENOW_PASSWD" | base64)
       sed -i s%SERVICENOW_URL%${SERVICENOW_DNS}%g /tmp/spinnaker/.hal/default/profiles/orca-local.yml
       sed -i  s/SERVICENOW_BASE64_USR_PASSWD/${SERVICENOW_BASE64_USR_PASSWD}/g /tmp/spinnaker/.hal/default/profiles/orca-local.yml
      fi
