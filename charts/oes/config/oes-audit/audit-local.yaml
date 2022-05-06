@@ -11,10 +11,6 @@ standardErrorCodes:
 feign:
   client:
     config:
-      default:
-        connectTimeout: 100000
-        readTimeout: 100000
-        loggerLevel: basic
     platformservice:
       name: platformservice
       url: http://oes-platform:8095
