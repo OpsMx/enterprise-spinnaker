@@ -13,7 +13,6 @@ oes:
     user: admin
 feign:
   client:
-    config:
     platformservice:
       name: platformservice
       url: http://oes-platform:8095

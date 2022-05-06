@@ -10,7 +10,6 @@ standardErrorCodes:
   filePath: /opsmx/conf/standard-error-code.csv
 feign:
   client:
-    config:
     platformservice:
       name: platformservice
       url: http://oes-platform:8095
