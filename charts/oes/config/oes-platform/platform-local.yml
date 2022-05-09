@@ -20,6 +20,15 @@ supportedFeatures:
 {{ toYaml .Values.platform.config.supportedFeatures | indent 2 }}
 userGroup:
   superAdminGroups: {{ .Values.platform.config.adminGroups }}
+app:
+ dashboard:
+   adminuser: {{ .Values.platform.config.app.dashboard.adminuser }} # mandatory to provide admin user name to run admin jobs that compute dashboard counts
+fixedDelay:
+ in:
+   milliseconds: 120000
+initialDelay:
+ in:
+   milliseconds: 600000
 user:
   {{- if .Values.gate.config.saml.enabled }}
   source: {{ .Values.gate.config.saml.userSource }}

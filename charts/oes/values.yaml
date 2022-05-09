@@ -511,6 +511,10 @@ platform:
       - sapor
       - visibility
 
+    app:
+      dashboard:
+        adminuser: admin # mandatory to provide admin user name to run admin jobs that compute dashboard counts
+
 ###############################################################################
 ## Details of rabbitmq message bus image for OES
 ##
