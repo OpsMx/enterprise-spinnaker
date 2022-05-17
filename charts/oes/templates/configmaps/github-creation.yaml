@@ -1,3 +1,4 @@
+{{- if and (eq .Values.spinnaker.gitopsHalyard.repo.type "git") (eq .Values.spinnaker.gitopsHalyard.repo.baseUrlHostName "github.com")}}
 {{- if and (not .Values.global.gitea.enabled) .Release.IsInstall -}}
 apiVersion: v1
 kind: ConfigMap
@@ -53,4 +54,5 @@ data:
                 git commit -m "cloned standard-gitops-repo content"
                 git push origin master
         fi
+{{- end }}
 {{- end }}
