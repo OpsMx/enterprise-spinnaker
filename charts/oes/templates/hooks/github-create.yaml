@@ -1,4 +1,4 @@
-{{- if (eq .Values.spinnaker.gitopsHalyard.repo.type "git") }}
+{{- if and (eq .Values.spinnaker.gitopsHalyard.repo.type "git") (eq .Values.spinnaker.gitopsHalyard.repo.baseUrlHostName "github.com")}}
 {{- if and (not .Values.global.gitea.enabled) .Release.IsInstall -}}
 apiVersion: batch/v1
 kind: Job
