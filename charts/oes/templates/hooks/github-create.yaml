@@ -1,4 +1,4 @@
-{{- if and (eq .Values.spinnaker.gitopsHalyard.repo.type "git") (eq .Values.spinnaker.gitopsHalyard.repo.baseUrlHostName "github.com")}}
+{{- if .Values.global.githubcreationHook }}
 {{- if and (not .Values.global.gitea.enabled) .Release.IsInstall -}}
 apiVersion: batch/v1
 kind: Job
@@ -43,4 +43,3 @@ spec:
         name: github-creation
 {{- end }}
 {{- end }}
-
