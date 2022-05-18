@@ -63,8 +63,8 @@ global:
   nodeSelector: {}
   affinity: {}
   tolerations: []
-  ## Set to true only if user uses gitops style and user wants the repo to be created automatically in github.com
-  githubcreationHook: false
+  ## Set to false only if user uses gitops style and user dont want the repo to be created automatically in github.com
+  githubcreationHook: true
 
   gitea:
     enabled: true
