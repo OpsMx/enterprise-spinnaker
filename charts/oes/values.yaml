@@ -432,7 +432,7 @@ gate:
       session:
         timeoutInSeconds: 7200
     agentAPI: false
-    webhooks: false
+    webhooks: true
 
     #####################################################
     # SAML AUthentication
