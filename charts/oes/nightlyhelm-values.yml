@@ -1,0 +1,60 @@
+global:
+  certManager:
+    installed: true
+  createIngress: true
+  gitea:
+    admin:
+    enabled: false
+    standardrepoBranch: 3.12
+  oesUI:
+    host: isd-n.release.opsmx.org
+    protocol: https
+  ssl:
+    enabled: true
+
+imageCredentials:
+  repoUrl: https://docker.io/
+  registry: opsmx11
+
+imagePullSecret: "opsmx11-secret"
+
+autopilot:
+  image:
+    repository: autopilot
+    tag: autopilottagname
+audit:
+  image:
+    repository: oes-audit-service
+    tag: oesauditservicetagname
+auditClient:
+  image:
+    repository: oes-audit-client
+    tag: oesauditclienttagname
+datascience:
+  image:
+    repository: oes-datascience
+    tag: oesdatasciencetagname
+dashboard:
+  image:
+    repository: oes-dashboard
+    tag: oesdashboardtagname
+gate:
+  image:
+    repository: gate
+    tag: gatetagname
+platform:
+  image:
+    repository: oes-platform
+    tag: oesplatformtagname
+sapor:
+  image:
+    repository: oes-sapor
+    tag: oessaportagname
+ui:
+  image:
+    repository: oes-ui
+    tag: oesuitagname
+visibility:
+  image:
+    repository: oes-visibility
+    tag: oesvisibilitytagname
