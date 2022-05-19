@@ -1,3 +1,4 @@
+
 {
    "POLICY_LISTING": {
       "HEADER": "Policies not found!",
@@ -1251,6 +1252,465 @@
             "VALIDATION_MESSAGE": {}
          }
       },
+       "GITREPO":{
+  "HEADER": "Git Repo",
+  "BODY": "",
+  "ACCOUNTNAME":{
+    "TOOLTIP":"The name of the account to operate on",
+    "VALIDATION_MESSAGE":{
+      "noSpecialCharacters": "Account Name cannot contain special characters other than -",
+      "cannotContainSpace":"Account Name cannot contain space",
+      "required":"Account Name cannot be empty",
+      "startingFromNumber": "Account Name cannot start with numbers"
+    }
+  },
+  "DEPLOYMENT":{
+    "TOOLTIP":"This Halyard deployment will be used for Account creation / update",
+    "VALIDATION_MESSAGE":{
+      "required":"URL cannot be empty",
+      "invalidUrl": "URL is invalid"
+    }
+  },
+  "AUTHENTICATIONTYPE":{
+    "TOOLTIP":"Select how the external resource confirms the user credentials",
+    "VALIDATION_MESSAGE":{}
+  },
+  "URL":{
+    "TOOLTIP":"",
+    "VALIDATION_MESSAGE":{
+      "required":"API URL cannot be empty",
+      "invalidUrl": "URL is invalid"
+    }
+  },
+  "TOKEN":{
+    "TOOLTIP":"Git token",
+    "VALIDATION_MESSAGE":{
+      "required":"Token cannot be empty"
+    }
+  },
+  "PASSWORD":{
+    "TOOLTIP":"Git password",
+    "VALIDATION_MESSAGE":{
+      "required":"Password cannot be empty"
+    }
+  },
+  "USERNAME":{
+    "TOOLTIP":"Git username",
+    "VALIDATION_MESSAGE":{
+      "noSpecialCharacters": "User Name cannot contain special characters other than - and _",
+      "cannotContainSpace":"User Name cannot contain space",
+      "required":"User Name cannot be empty",
+      "startingFromNumber": "User Name cannot start with numbers"
+    }
+  },
+  "SPINNAKERTOGGLE":{
+    "TOOLTIP":"Switch On this toggle to configure the resource in a gitops enabled Spinnaker instance",
+    "VALIDATION_MESSAGE":{}
+  }
+},
+"HELM":{
+  "HEADER": "Helm",
+  "BODY": "",
+  "ACCOUNTNAME":{
+    "TOOLTIP":"The name of the account to operate on",
+    "VALIDATION_MESSAGE":{
+      "noSpecialCharacters": "Account Name cannot contain special characters other than -",
+      "cannotContainSpace":"Account Name cannot contain space",
+      "required":"Account Name cannot be empty",
+      "startingFromNumber": "Account Name cannot start with numbers"
+    }
+  },
+  "REPOSITORY":{
+    "TOOLTIP":"URL of the Helm Chart Repository",
+    "VALIDATION_MESSAGE":{
+      "required":"URL cannot be empty",
+      "invalidUrl": "URL is invalid"
+    }
+  },
+  "DEPLOYMENT":{
+    "TOOLTIP":"This Halyard deployment will be used for Account creation / update",
+    "VALIDATION_MESSAGE":{
+    
+    }
+  },
+  "AUTHENTICATIONTYPE":{
+    "TOOLTIP":"Select how the external resource confirms the user credentials",
+    "VALIDATION_MESSAGE":{}
+  },
+  "TOKEN":{
+    "TOOLTIP":"",
+    "VALIDATION_MESSAGE":{
+      "required":"Token cannot be empty"
+    }
+  },
+  "USERNAME":{
+    "TOOLTIP":"User Name",
+    "VALIDATION_MESSAGE":{
+      "noSpecialCharacters": "User Name cannot contain special characters other than - and _",
+      "cannotContainSpace":"User Name cannot contain space",
+      "required":"User Name cannot be empty",
+      "startingFromNumber": "User Name cannot start with numbers"
+    }
+  },
+  "PASSWORD": {
+    "TOOLTIP": "Password",
+    "VALIDATION_MESSAGE":{
+    }
+  },
+  "PASSWORDCOMMAND": {
+    "TOOLTIP": "Command to retrieve docker token/password, commands must be available in environment",
+    "VALIDATION_MESSAGE":{
+    }
+  },
+  "FILE": {
+    "TOOLTIP": "The path to a file containing your docker password in plaintext (not a docker/config.json file)",
+    "VALIDATION_MESSAGE": {
+    }
+  },
+  "SPINNAKERTOGGLE":{
+    "TOOLTIP":"Switch On this toggle to configure the resource in a gitops enabled Spinnaker instance",
+    "VALIDATION_MESSAGE":{}
+  }
+},
+"HTTP":{
+  "HEADER": "Http",
+  "BODY": "",
+  "ACCOUNTNAME":{
+    "TOOLTIP":"The name of the account to operate on",
+    "VALIDATION_MESSAGE":{
+      "noSpecialCharacters": "Account Name cannot contain special characters other than -",
+      "cannotContainSpace":"Account Name cannot contain space",
+      "required":"Account Name cannot be empty",
+      "startingFromNumber": "Account Name cannot start with numbers"
+    }
+  },
+
+  "AUTHENTICATIONTYPE":{
+    "TOOLTIP":"Select how the external resource confirms the user credentials",
+    "VALIDATION_MESSAGE":{}
+  },
+  "TOKEN":{
+    "TOOLTIP":"",
+    "VALIDATION_MESSAGE":{
+      "required":"Token cannot be empty"
+    }
+  },
+  "USERNAME":{
+    "TOOLTIP":"User Name",
+    "VALIDATION_MESSAGE":{
+      "noSpecialCharacters": "User Name cannot contain special characters other than - and _",
+      "cannotContainSpace":"User Name cannot contain space",
+      "required":"User Name cannot be empty",
+      "startingFromNumber": "User Name cannot start with numbers"
+    }
+  },
+  "PASSWORD": {
+    "TOOLTIP": "Password",
+    "VALIDATION_MESSAGE":{
+    }
+  },
+  "PASSWORDCOMMAND": {
+    "TOOLTIP": "Command to retrieve docker token/password, commands must be available in environment",
+    "VALIDATION_MESSAGE":{
+    }
+  },
+  "FILE": {
+    "TOOLTIP": "The path to a file containing your docker password in plaintext (not a docker/config.json file)",
+    "VALIDATION_MESSAGE": {
+    }
+  },
+  "SPINNAKERTOGGLE":{
+    "TOOLTIP":"Switch On this toggle to configure the resource in a gitops enabled Spinnaker instance",
+    "VALIDATION_MESSAGE":{}
+  }
+},
+"GCS":{
+  "HEADER": "GCS",
+  "BODY": "",
+  "ACCOUNTNAME":{
+    "TOOLTIP":"The name of the account to operate on",
+    "VALIDATION_MESSAGE":{
+      "noSpecialCharacters": "Account Name cannot contain special characters other than -",
+      "cannotContainSpace":"Account Name cannot contain space",
+      "required":"Account Name cannot be empty",
+      "startingFromNumber": "Account Name cannot start with numbers"
+    }
+  },
+  "AUTHENTICATIONTYPE":{
+    "TOOLTIP":"Select how the external resource confirms the user credentials",
+    "VALIDATION_MESSAGE":{}
+  },
+  "FILE": {
+    "TOOLTIP": "JSON service account that Spinnaker will use as credentials",
+    "VALIDATION_MESSAGE": {
+    }
+  },
+  "SPINNAKERTOGGLE":{
+    "TOOLTIP":"Switch On this toggle to configure the resource in a gitops enabled Spinnaker instance",
+    "VALIDATION_MESSAGE":{}
+  }
+},
+"ECR":{
+  "HEADER": "ECR",
+  "BODY": "",
+  "ACCOUNTNAME":{
+    "TOOLTIP":"The name of the account to operate on",
+    "VALIDATION_MESSAGE":{
+      "noSpecialCharacters": "Account Name cannot contain special characters other than -",
+      "cannotContainSpace":"Account Name cannot contain space",
+      "required":"Account Name cannot be empty",
+      "startingFromNumber": "Account Name cannot start with numbers"
+    }
+  },
+  "REPOSITORIES":{
+    "TOOLTIP":"An optional list of repositories to cache images from",
+    "VALIDATION_MESSAGE":{
+      "cannotContainSpace":"Repository cannot contain space",
+      "startingFromNumber": "Repository cannot start with numbers"
+    }
+  },
+  "REGISTRYURL":{
+    "TOOLTIP":"The registry address you want to pull and deploy images from. For example: gcr.io",
+    "VALIDATION_MESSAGE":{
+    }
+  },
+  "GROUPMEMBERSHIP":{
+    "TOOLTIP":"A user must be a member of at least one specified group in order to make changes to this account’s cloud resources",
+    "VALIDATION_MESSAGE":{
+      "cannotContainSpace":"Repository cannot contain space"
+    }
+  },
+  "REGION": {
+    "TOOLTIP": "AWS region"
+  },
+  "EMAIL":{
+    "TOOLTIP":"Your docker registry email",
+    "VALIDATION_MESSAGE":{
+      "email":"Email Id is invalid",
+      "required":"Email Id cannot be empty"
+    }
+  },
+  "AUTHENTICATIONTYPE":{
+    "TOOLTIP":"Select how the external resource confirms the user credentials",
+    "VALIDATION_MESSAGE":{}
+  },
+  "TOKEN":{
+    "TOOLTIP":"",
+    "VALIDATION_MESSAGE":{
+      "required":"Token cannot be empty"
+    }
+  },
+  "USERNAME":{
+    "TOOLTIP":"GCR User Name",
+    "VALIDATION_MESSAGE":{
+      "noSpecialCharacters": "User Name cannot contain special characters other than - and _",
+      "cannotContainSpace":"User Name cannot contain space",
+      "required":"User Name cannot be empty",
+      "startingFromNumber": "User Name cannot start with numbers"
+    }
+  },
+  "PASSWORD": {
+    "TOOLTIP": "Your docker registry password",
+    "VALIDATION_MESSAGE":{
+    }
+  },
+  "PASSWORDCOMMAND": {
+    "TOOLTIP": "Command to retrieve docker token/password, commands must be available in environment",
+    "VALIDATION_MESSAGE":{
+    }
+  },
+  "FILE": {
+    "TOOLTIP": "The path to a file containing your docker password in plaintext (not a docker/config.json file)",
+    "VALIDATION_MESSAGE": {
+    }
+  },
+  "SPINNAKERTOGGLE":{
+    "TOOLTIP":"Switch On this toggle to configure the resource in a gitops enabled Spinnaker instance",
+    "VALIDATION_MESSAGE":{}
+  }
+},
+"PUBSUB":{
+  "HEADER": "PUBSUB",
+  "BODY": "",
+  "ACCOUNTNAME":{
+    "TOOLTIP":"The name of the account to operate on",
+    "VALIDATION_MESSAGE":{
+      "noSpecialCharacters": "Account Name cannot contain special characters other than -",
+      "cannotContainSpace":"Account Name cannot contain space",
+      "required":"Account Name cannot be empty",
+      "startingFromNumber": "Account Name cannot start with numbers"
+    }
+  },
+  "PROJECTNAME": {
+    "TOOLTIP": "The name of the GCP project your subscription lives in",
+    "VALIDATION_MESSAGE":{
+      "cannotContainSpace":"Project Name cannot contain space",
+      "required":"Project Name cannot be empty"
+    }
+  },
+  "SUBSCRIPTIONNAME": {
+    "TOOLTIP": "The name of the subscription to listen to. This identifier does not include the name of the project, and must already be configured for Spinnaker to work.",
+    "VALIDATION_MESSAGE":{
+      "cannotContainSpace":"Subscription Name cannot contain space",
+      "required":"Subscription Name cannot be empty"
+    }
+  },
+  "MESSAGEFORMAT": {
+    "TOOLTIP": "This can be used to help Spinnaker translate the contents of the Pub/Sub message into Spinnaker artifacts.",
+    "VALIDATION_MESSAGE":{
+    }
+  },
+  "AUTHENTICATIONTYPE":{
+    "TOOLTIP":"Select how the external resource confirms the user credentials",
+    "VALIDATION_MESSAGE":{}
+  },
+  "FILE": {
+    "TOOLTIP": "JSON service account that Spinnaker will use as credentials",
+    "VALIDATION_MESSAGE": {
+    }
+  },
+  "SPINNAKERTOGGLE":{
+    "TOOLTIP":"Switch On this toggle to configure the resource in a gitops enabled Spinnaker instance",
+    "VALIDATION_MESSAGE":{}
+  }
+},
+"GCB":{
+  "HEADER": "GCB",
+  "BODY": "",
+  "ACCOUNTNAME":{
+    "TOOLTIP":"The name of the account to operate on",
+    "VALIDATION_MESSAGE":{
+      "noSpecialCharacters": "Account Name cannot contain special characters other than -",
+      "cannotContainSpace":"Account Name cannot contain space",
+      "required":"Account Name cannot be empty",
+      "startingFromNumber": "Account Name cannot start with numbers"
+    }
+  },
+  "PROJECTNAME": {
+    "TOOLTIP": "The name of the GCP project in which to trigger and monitor builds",
+    "VALIDATION_MESSAGE":{
+      "cannotContainSpace":"Project Name cannot contain space",
+      "required":"Project Name cannot be empty"
+    }
+  },
+  "SUBSCRIPTIONNAME": {
+    "TOOLTIP": "The name of the PubSub subscription on which to listen for build changes",
+    "VALIDATION_MESSAGE":{
+      "cannotContainSpace":"Subscription Name cannot contain space",
+      "required":"Subscription Name cannot be empty"
+    }
+  },
+  "AUTHENTICATIONTYPE":{
+    "TOOLTIP":"Select how the external resource confirms the user credentials",
+    "VALIDATION_MESSAGE":{}
+  },
+  "FILE": {
+    "TOOLTIP": "JSON service account that Spinnaker will use as credentials",
+    "VALIDATION_MESSAGE": {
+    }
+  },
+  "USERNAME":{
+    "TOOLTIP":"GCB User Name",
+    "VALIDATION_MESSAGE":{
+      "noSpecialCharacters": "User Name cannot contain special characters other than - and _",
+      "cannotContainSpace":"User Name cannot contain space",
+      "required":"User Name cannot be empty",
+      "startingFromNumber": "User Name cannot start with numbers"
+    }
+  },
+  "PASSWORD": {
+    "TOOLTIP": "Password",
+    "VALIDATION_MESSAGE":{
+    }
+  },
+  "SPINNAKERTOGGLE":{
+    "TOOLTIP":"Switch On this toggle to configure the resource in a gitops enabled Spinnaker instance",
+    "VALIDATION_MESSAGE":{}
+  }
+},
+"GCR":{
+  "HEADER": "GCR",
+  "BODY": "",
+  "ACCOUNTNAME":{
+    "TOOLTIP":"The name of the account to operate on",
+    "VALIDATION_MESSAGE":{
+      "noSpecialCharacters": "Account Name cannot contain special characters other than -",
+      "cannotContainSpace":"Account Name cannot contain space",
+      "required":"Account Name cannot be empty",
+      "startingFromNumber": "Account Name cannot start with numbers"
+    }
+  },
+  "AUTHENTICATIONTYPE":{
+    "TOOLTIP":"Select how the external resource confirms the user credentials",
+    "VALIDATION_MESSAGE":{}
+  },
+  "REPOSITORIES":{
+    "TOOLTIP":"An optional list of repositories to cache images from",
+    "VALIDATION_MESSAGE":{
+      "cannotContainSpace":"Repository cannot contain space",
+      "startingFromNumber": "Repository cannot start with numbers"
+    }
+  },
+  "REGISTRYURL":{
+    "TOOLTIP":"The registry address you want to pull and deploy images from. For example: gcr.io",
+    "VALIDATION_MESSAGE":{
+    }
+  },
+  "REQUIREDGROUPMEMBERSHIP":{
+    "TOOLTIP":"A user must be a member of at least one specified group in order to make changes to this account’s cloud resources",
+    "VALIDATION_MESSAGE":{
+      "cannotContainSpace":"Repository cannot contain space"
+    }
+  },
+  "EMAIL":{
+    "TOOLTIP":"Your docker registry email",
+    "VALIDATION_MESSAGE":{
+      "email":"Email Id is invalid",
+      "required":"Email Id cannot be empty"
+    }
+  },
+  "URL":{
+    "TOOLTIP":"",
+    "VALIDATION_MESSAGE":{
+      "required":"API URL cannot be empty",
+      "invalidUrl": "URL is invalid"
+    }
+  },
+  "TOKEN":{
+    "TOOLTIP":"",
+    "VALIDATION_MESSAGE":{
+      "required":"Token cannot be empty"
+    }
+  },
+  "USERNAME":{
+    "TOOLTIP":"GCR User Name",
+    "VALIDATION_MESSAGE":{
+      "noSpecialCharacters": "User Name cannot contain special characters other than - and _",
+      "cannotContainSpace":"User Name cannot contain space",
+      "required":"User Name cannot be empty",
+      "startingFromNumber": "User Name cannot start with numbers"
+    }
+  },
+  "PASSWORD": {
+    "TOOLTIP": "Your docker registry password",
+    "VALIDATION_MESSAGE":{
+    }
+  },
+  "PASSWORDCOMMAND": {
+    "TOOLTIP": "Command to retrieve docker token/password, commands must be available in environment",
+    "VALIDATION_MESSAGE":{
+    }
+  },
+  "FILE": {
+    "TOOLTIP": "The path to a file containing your docker password in plaintext (not a docker/config.json file)",
+    "VALIDATION_MESSAGE": {
+    }
+  },
+  "SPINNAKERTOGGLE":{
+    "TOOLTIP":"Switch On this toggle to configure the resource in a gitops enabled Spinnaker instance",
+    "VALIDATION_MESSAGE":{}
+  }
+},
       "BAMBOO": {
          "HEADER": "Bamboo CI",
          "BODY": " <span><p>Bamboo CI integration can be used as a datasource for Approval Gate.</p><p><strong>Fields</strong>:</p><ul class='helpTextUl'> <li><strong>Name</strong>: User defined name for the Bamboo CI Account <span class='noBr'>(Example: opsmx-bamboo)</span></li><li><strong>Endpoint</strong>: Bamboo CI URL <span class='noBr'>(Example: https://xyz.mybamboo.com)</span></li><li><strong>Token</strong>: Bamboo CI personal access token. You can find <a href='https://confluence.atlassian.com/bamboo/personal-access-tokens-976779873.html' target='_blank'>here</a> how to generate personal access tokens. <span>(Example: YmFrwqw0w9r90skfsOk9wcdd014p98kklw==)</span></li><li><strong>User Name</strong>: Bamboo CI User Name</li><li><strong>Password</strong>: Bamboo CI Password</li><li><strong>Permissions</strong>: Enable/disable access to the Bamboo CI account in Autopilot to specific usergroups</li></ul></span>",
@@ -2041,83 +2501,96 @@
    "UNCHANGED_FORM": "Form is unchanged. Please make modifications in the form to enable the button.",
    "INVALID_FORM": "Few fields are mandatory or invalid. Please fill the form to enable the button.",
    "NO_WRITE_ACCESS": "You have only read permission. Please check with your administrator for updating permissions.",
-   "METRIC_TEMPLATE": {
-      "APM_INFRA": {
-         "TEMPLATE_NAME": {
-            "TOOLTIP": "Metric Template Name",
-            "VALIDATION_MESSAGE": {
-               "required": "Template Name cannot be empty"
-            }
-         },
-         "APM_MONITORING_PROVIDER": {
-            "TOOLTIP": "Data source for Risk Analysis",
-            "VALIDATION_MESSAGE": {}
-         },
-         "APM_ACCOUNT": {
-            "TOOLTIP": "APM Account",
-            "VALIDATION_MESSAGE": {}
-         },
-         "APM_APPLICATION": {
-            "TOOLTIP": "APM Application",
-            "VALIDATION_MESSAGE": {}
-         },
-         "APM_API_SELECTION": {
-            "TOOLTIP": "APM API Selection",
-            "VALIDATION_MESSAGE": {}
-         },
-         "INFRA_MONITORING_PROVIDER": {
-            "TOOLTIP": "Data source for Risk Analysis",
-            "VALIDATION_MESSAGE": {}
-         },
-         "INFRA_ACCOUNT": {
-            "TOOLTIP": "Infrastructure Account",
-            "VALIDATION_MESSAGE": {}
-         },
-         "INFRA_METRIC_GROUPS": {
-            "TOOLTIP": "Infrastructure Metric Groups",
-            "VALIDATION_MESSAGE": {}
-         },
-         "FILTER_KEY": {
-            "TOOLTIP": "Filter Key",
-            "VALIDATION_MESSAGE": {
-               "required": "Filter Key cannot be empty"
-            }
-         },
-         "BASELINE": {
-            "TOOLTIP": "Baseline",
-            "VALIDATION_MESSAGE": {
-               "required": "Baseline cannot be empty"
-            }
-         },
-         "NEW_RELEASE": {
-            "TOOLTIP": "New Release",
-            "VALIDATION_MESSAGE": {
-               "required": "New Release cannot be empty"
-            }
-         },
-         "NORMALIZATION": {
-            "TOOLTIP": "Apply load based normalization",
-            "VALIDATION_MESSAGE": {}
-         },
-         "THRESHOLD": {
-            "TOOLTIP": "Threshold for Metric failure",
-            "VALIDATION_MESSAGE": {}
-         },
-         "SPECIFY_CRITICAL_WATCHLIST": {
-            "TOOLTIP": "Specify critical/watchlist for metrics",
-            "VALIDATION_MESSAGE": {}
-         }
-      },
-      "CUSTOM": {
-         "TEMPLATE_NAME": {
-            "TOOLTIP": "Template Name",
-            "VALIDATION_MESSAGE": {
-               "required": "Template Name cannot be empty"
-            }
-         },
-         "DATA_SOURCE": {
-            "TOOLTIP": "Data source for Risk Analysis",
-            "VALIDATION_MESSAGE": {
+   "METRIC_TEMPLATE" : {
+     "APM_INFRA" : {
+        "TEMPLATE_NAME" : {
+           "TOOLTIP":"Metric Template Name",
+           "VALIDATION_MESSAGE": {
+              "required":"Template Name cannot be empty",
+              "noSpecialCharacters": "Template Name cannot contain special characters",
+              "cannotContainSpace":"Template Name cannot contain space",
+              "startingFromNumber": "Template Name cannot start with number",
+              "maxlength": "Template name should not have more than 63 characters!",
+              "exists": "Template already exists"
+           }
+        },
+        "APM_MONITORING_PROVIDER": {
+           "TOOLTIP" :"Data source for Risk Analysis",
+           "VALIDATION_MESSAGE" : {}
+        },
+        "APM_ACCOUNT": {
+           "TOOLTIP" :"APM Account",
+           "VALIDATION_MESSAGE" : {}
+        },
+        "APM_APPLICATION": {
+           "TOOLTIP" :"APM Application",
+           "VALIDATION_MESSAGE" : {}
+        },
+        "APM_API_SELECTION": {
+           "TOOLTIP" :"APM API Selection",
+           "VALIDATION_MESSAGE" : {}
+        },
+        "INFRA_MONITORING_PROVIDER": {
+           "TOOLTIP" :"Data source for Risk Analysis",
+           "VALIDATION_MESSAGE" : {}
+        },
+        "INFRA_ACCOUNT": {
+           "TOOLTIP" :"Infrastructure Account",
+           "VALIDATION_MESSAGE" : {}
+        },
+        "INFRA_METRIC_GROUPS": {
+           "TOOLTIP" :"Infrastructure Metric Groups",
+           "VALIDATION_MESSAGE" : {}
+        },
+        "FILTER_KEY": {
+           "TOOLTIP" :"Metric Scope Placeholder will be replaced by Baseline & New Release values in the Metric Query. For example, Scope Placeholder “pod_name” will be replaced by Baseline & New Release values in the metric query avg(container_memory_usage_bytes{pod=~'pod_name',container!=''}) for getting baseline & New Release metrics data respectively from the monitoring provider",
+           "VALIDATION_MESSAGE" : {
+              "required":"Filter Key cannot be empty",
+              "cannotContainSpace":"Filter Key cannot contain space"
+           }
+        },
+        "BASELINE": {
+           "TOOLTIP" :"Baseline",
+           "VALIDATION_MESSAGE" : {
+              "required":"Baseline cannot be empty",
+              "cannotContainSpace":"Baseline cannot contain space"
+           }
+        },
+        "NEW_RELEASE": {
+           "TOOLTIP" :"New Release",
+           "VALIDATION_MESSAGE" : {
+              "required":"New Release cannot be empty",
+              "cannotContainSpace":"New Release cannot contain space"
+           }
+        },
+        "NORMALIZATION": {
+           "TOOLTIP" :"Apply load based normalization",
+           "VALIDATION_MESSAGE" : {}
+        },
+        "THRESHOLD": {
+           "TOOLTIP" :"Threshold for Metric failure",
+           "VALIDATION_MESSAGE" : {}
+        },
+        "SPECIFY_CRITICAL_WATCHLIST": {
+           "TOOLTIP" :"Specify critical/watchlist for metrics",
+           "VALIDATION_MESSAGE" : {}
+        }
+     },
+     "CUSTOM" : {
+        "TEMPLATE_NAME" : {
+        "TOOLTIP":"Template Name",
+        "VALIDATION_MESSAGE": {
+           "required":"Template Name cannot be empty",
+           "noSpecialCharacters": "Template Name cannot contain special characters",
+           "cannotContainSpace":"Template Name cannot contain space",
+           "startingFromNumber": "Template Name cannot start with number",
+           "maxlength": "Template name should not have more than 63 characters!",
+           "exists": "Template already exists"
+        }
+        },
+        "DATA_SOURCE": {
+           "TOOLTIP" :"Data source for Risk Analysis",
+           "VALIDATION_MESSAGE" : {
               "required":"Data source cannot be empty"
            }
          },
@@ -2126,66 +2599,69 @@
             "VALIDATION_MESSAGE": {
               "required":"Account cannot be empty"
            }
-         },
-         "FILTER_KEY": {
-            "TOOLTIP": "Filter Key",
-            "VALIDATION_MESSAGE": {
-               "required": "Filter Key cannot be empty"
-            }
-         },
-         "BASELINE": {
-            "TOOLTIP": "Baseline",
-            "VALIDATION_MESSAGE": {
-               "required": "Baseline cannot be empty"
-            }
-         },
-         "NEW_RELEASE": {
-            "TOOLTIP": "New Release",
-            "VALIDATION_MESSAGE": {
-               "required": "New Release cannot be empty"
-            }
-         },
-         "ADD_NEW_QUERY": {
-            "TOOLTIP": "Add New Query",
-            "VALIDATION_MESSAGE": {}
-         },
-         "QUERY_SELECTION": {
-            "TOOLTIP": "Query Selection",
-            "VALIDATION_MESSAGE": {}
-         },
-         "QUERY_NAME": {
-            "TOOLTIP": "Query Name",
-            "VALIDATION_MESSAGE": {
-               "required": "Query Name cannot be empty"
-            }
-         },
-         "QUERY_STRING": {
-            "TOOLTIP": "Query String",
-            "VALIDATION_MESSAGE": {
-               "required": "Query String cannot be empty"
-            }
-         },
-         "RISK_DIRECTION": {
-            "TOOLTIP": "Risk Direction",
-            "VALIDATION_MESSAGE": {}
-         },
-         "THRESHOLD": {
-            "TOOLTIP": "Threshold",
-            "VALIDATION_MESSAGE": {}
-         },
-         "CRITICAL": {
-            "TOOLTIP": "Critical",
-            "VALIDATION_MESSAGE": {}
-         },
-         "WATCHLIST": {
-            "TOOLTIP": "Watchlist",
-            "VALIDATION_MESSAGE": {}
-         },
-         "WEIGHT": {
-            "TOOLTIP": "Weight",
-            "VALIDATION_MESSAGE": {}
-         }
-      }
+        },
+        "FILTER_KEY" :{
+           "TOOLTIP":"Metric Scope Placeholder will be replaced by Baseline & New Release values in the Metric Query. For example, Scope Placeholder “pod_name” will be replaced by Baseline & New Release values in the metric query avg(container_memory_usage_bytes{pod=~'pod_name',container!=''}) for getting baseline & New Release metrics data respectively from the monitoring provider",
+           "VALIDATION_MESSAGE": {
+              "required":"Filter Key cannot be empty",
+              "cannotContainSpace":"Filter Key cannot contain space"
+           }
+        },
+        "BASELINE" :{
+           "TOOLTIP":"Baseline",
+           "VALIDATION_MESSAGE": {
+              "required":"Baseline cannot be empty",
+              "cannotContainSpace":"Baseline cannot contain space"
+           }
+        },
+        "NEW_RELEASE" :{
+           "TOOLTIP":"New Release",
+           "VALIDATION_MESSAGE": {
+              "required":"New Release cannot be empty",
+              "cannotContainSpace":"New Release cannot contain space"
+           }
+        },
+        "ADD_NEW_QUERY": {
+           "TOOLTIP": "Add New Query",
+           "VALIDATION_MESSAGE": {}
+        },
+        "QUERY_SELECTION" :{
+           "TOOLTIP":"Query Selection",
+           "VALIDATION_MESSAGE": {}
+        },
+        "QUERY_NAME": {
+           "TOOLTIP" :"Query Name",
+           "VALIDATION_MESSAGE" : {
+              "required":"Query Name cannot be empty"
+           }
+        },
+        "QUERY_STRING": {
+           "TOOLTIP" :"Query String",
+           "VALIDATION_MESSAGE" : {
+              "required":"Query String cannot be empty"
+           }
+        },
+        "RISK_DIRECTION": {
+           "TOOLTIP" :"Risk Direction",
+           "VALIDATION_MESSAGE" : {}
+        },
+        "THRESHOLD": {
+           "TOOLTIP" :"Threshold",
+           "VALIDATION_MESSAGE" : {}
+        },
+        "CRITICAL": {
+           "TOOLTIP" :"Critical",
+           "VALIDATION_MESSAGE" : {}
+        },
+        "WATCHLIST": {
+           "TOOLTIP" :"Watchlist",
+           "VALIDATION_MESSAGE" : {}
+        },
+        "WEIGHT": {
+           "TOOLTIP" :"Weight",
+           "VALIDATION_MESSAGE" : {}
+        }
+     }
    },
    "USAGE_INSIGHTS": {
       "APPLICATIONS": {
