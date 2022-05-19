@@ -281,7 +281,6 @@ data:
            sed -i  s/SERVICENOW_BASE64_USR_PASSWD/${SERVICENOW_BASE64_USR_PASSWD}/g /tmp/spinnaker/.hal/default/profiles/orca-local.yml
         else
            echo "Not able to find the ServiceNow secret file"
-           exit 5
         fi
         if [ -r "/tmp/spinnaker/clusterconfig/jira-secret.yaml" ]
         then
@@ -294,7 +293,6 @@ data:
            sed -i  s/JIRA_BASE64_USR_PASSWD/${JIRA_BASE64_USR_PASSWD}/g /tmp/spinnaker/.hal/default/profiles/orca-local.yml
         else
            echo "Not able to find the ServiceNow secret file"
-           exit 5
         fi
      fi
     fi
