@@ -240,7 +240,9 @@ data:
     if [ -d "/tmp/spinnaker/pipeline-promotion/" ]
     then
       #decrypt_key=$(kubectl get cm bootstrap -o yaml  -n ${SPINNAKER_NAMESPACE}| grep 'password:' | awk '{ print $2}')
-      decrypt_key=$(kubectl get secret bootstrap -o jsonpath='{.data.bootstrap\.yml}' -n ${SPINNAKER_NAMESPACE} | base64 -d | grep 'password:' | awk '{ print $2}')
+      #decrypt_key=$(kubectl get secret bootstrap -o jsonpath='{.data.bootstrap\.yml}' -n ${SPINNAKER_NAMESPACE} | base64 -d | grep 'password:' | awk '{ print $2}')
+      kubectl get secret bootstrap -o jsonpath='{.data.bootstrap\.yml}' -n ${SPINNAKER_NAMESPACE} | base64 -d > /tmp/decryptkry.txt
+      decrypt_key=$(yq e '.jasypt.encryptor.password' /tmp/decryptkry.txt)
       if [[ $decrypt_key != "" ]];
       then
         for filename in /tmp/spinnaker/pipeline-promotion/*; do
@@ -257,7 +259,9 @@ data:
 
     if [ -d "/tmp/spinnaker/clusterconfig/" ]
     then
-      decrypt_key=$(kubectl get secret bootstrap -o jsonpath='{.data.bootstrap\.yml}' -n ${SPINNAKER_NAMESPACE} | base64 -d | grep 'password:' | awk '{ print $2}')
+      #decrypt_key=$(kubectl get secret bootstrap -o jsonpath='{.data.bootstrap\.yml}' -n ${SPINNAKER_NAMESPACE} | base64 -d | grep 'password:' | awk '{ print $2}')
+      kubectl get secret bootstrap -o jsonpath='{.data.bootstrap\.yml}' -n ${SPINNAKER_NAMESPACE} | base64 -d > /tmp/decryptkry.txt
+      decrypt_key=$(yq e '.jasypt.encryptor.password' /tmp/decryptkry.txt)
       if [[ $decrypt_key != "" ]];
       then
         for filename in /tmp/spinnaker/clusterconfig/*; do
@@ -266,14 +270,29 @@ data:
       mkdir /tmp/spinnaker/clusterconfig-decrypted/
       mv /tmp/spinnaker/clusterconfig/*decrypted.yaml /tmp/spinnaker/clusterconfig-decrypted/
       kubectl apply -f /tmp/spinnaker/clusterconfig-decrypted/ -n ${SPINNAKER_NAMESPACE}
-
-      #### Extracting the Service NOW information from secret ####
-
-      SERVICENOW_USER=$(kubectl get secret servicenow-secret -o jsonpath='{.data.SERVICENOW_USERNAME}' -n ${SPINNAKER_NAMESPACE} | base64 -d)
-      SERVICENOW_DNS=$(kubectl get secret servicenow-secret -o jsonpath='{.data.SERVICENOW_URL}' -n ${SPINNAKER_NAMESPACE} | base64 -d)
-      SERVICENOW_PASSWD=$(kubectl get secret servicenow-secret -o jsonpath='{.data.SERVICENOW_PASSWORD}' -n ${SPINNAKER_NAMESPACE} | base64 -d)
-      SERVICENOW_BASE64_USR_PASSWD=$(echo -n "$SERVICENOW_USER:$SERVICENOW_PASSWD" | base64)
-      sed -i s%SERVICENOW_URL%${SERVICENOW_DNS}%g /tmp/spinnaker/.hal/default/profiles/orca-local.yml
-      sed -i  s/SERVICENOW_BASE64_USR_PASSWD/${SERVICENOW_BASE64_USR_PASSWD}/g /tmp/spinnaker/.hal/default/profiles/orca-local.yml
+        if [ -r "/tmp/spinnaker/clusterconfig/servicenow-secret.yaml" ]
+        then
+           #### Extracting the Service NOW information from secret ####
+           SERVICENOW_USER=$(kubectl get secret servicenow-secret -o jsonpath='{.data.SERVICENOW_USERNAME}' -n ${SPINNAKER_NAMESPACE} | base64 -d)
+           SERVICENOW_DNS=$(kubectl get secret servicenow-secret -o jsonpath='{.data.SERVICENOW_URL}' -n ${SPINNAKER_NAMESPACE} | base64 -d)
+           SERVICENOW_PASSWD=$(kubectl get secret servicenow-secret -o jsonpath='{.data.SERVICENOW_PASSWORD}' -n ${SPINNAKER_NAMESPACE} | base64 -d)
+           SERVICENOW_BASE64_USR_PASSWD=$(echo -n "$SERVICENOW_USER:$SERVICENOW_PASSWD" | base64)
+           sed -i s%SERVICENOW_URL%${SERVICENOW_DNS}%g /tmp/spinnaker/.hal/default/profiles/orca-local.yml
+           sed -i  s/SERVICENOW_BASE64_USR_PASSWD/${SERVICENOW_BASE64_USR_PASSWD}/g /tmp/spinnaker/.hal/default/profiles/orca-local.yml
+        else
+           echo "Not able to find the ServiceNow secret file"
+        fi
+        if [ -r "/tmp/spinnaker/clusterconfig/jira-secret.yaml" ]
+        then
+           #### Extracting the JIRA information from secret ####
+           JIRA_USER=$(kubectl get secret jira-secret -o jsonpath='{.data.JIRA_USERNAME}' -n ${SPINNAKER_NAMESPACE} | base64 -d)
+           JIRA_DNS=$(kubectl get secret jira-secret -o jsonpath='{.data.JIRA_URL}' -n ${SPINNAKER_NAMESPACE} | base64 -d)
+           JIRA_TOKN=$(kubectl get secret jira-secret -o jsonpath='{.data.JIRA_TOKEN}' -n ${SPINNAKER_NAMESPACE} | base64 -d)
+           JIRA_BASE64_USR_PASSWD=$(echo -n "$JIRA_USER:$JIRA_TOKN" | base64)
+           sed -i s%JIRA_URL%${JIRA_DNS}%g /tmp/spinnaker/.hal/default/profiles/orca-local.yml
+           sed -i  s/JIRA_BASE64_USR_PASSWD/${JIRA_BASE64_USR_PASSWD}/g /tmp/spinnaker/.hal/default/profiles/orca-local.yml
+        else
+           echo "Not able to find the ServiceNow secret file"
+        fi
      fi
     fi

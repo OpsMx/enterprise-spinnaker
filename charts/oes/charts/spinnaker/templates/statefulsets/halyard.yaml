@@ -76,7 +76,7 @@ spec:
       {{- end }}
       - name: "create-halyard-local"
       {{- if .Values.gitopsHalyard.enabled }}
-        image: {{ .Values.global.customImages.registry }}/awsgit:v2-openssh-javalib
+        image: {{ .Values.global.customImages.registry }}/awsgit:v2-openssh-javalibs
       {{- else }}
         image: {{ .Values.halyard.image.repository }}:{{ .Values.halyard.image.tag }}
       {{- end }}
