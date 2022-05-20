@@ -1,4 +1,3 @@
-
 {
    "POLICY_LISTING": {
       "HEADER": "Policies not found!",
@@ -1555,10 +1554,13 @@
       "required":"Subscription Name cannot be empty"
     }
   },
-  "MESSAGEFORMAT": {
-    "TOOLTIP": "This can be used to help Spinnaker translate the contents of the Pub/Sub message into Spinnaker artifacts.",
-    "VALIDATION_MESSAGE":{
-    }
+   "MESSAGEFORMAT": {
+    "TOOLTIP":"Supporting Message Formats: GCB,GCS,GCR,CUSTOM",
+    "VALIDATION_MESSAGE": {}
+  },
+  "TEMPLATEFILE": {
+    "TOOLTIP":"Applicable only for CUSTOM message format",
+    "VALIDATION_MESSAGE": {}
   },
   "AUTHENTICATIONTYPE":{
     "TOOLTIP":"Select how the external resource confirms the user credentials",
