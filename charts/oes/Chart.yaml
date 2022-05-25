@@ -1,8 +1,8 @@
 apiVersion: v2
 name: oes
-version: 3.12.5
-appVersion: 3.12.3
-description: "ISD-3.12.3 - Improvements in loading Application dashboard in ISD UI"
+version: 3.12.6
+appVersion: 3.12.4
+description: "ISD-3.12.4 - Improvements in loading Application dashboard in ISD UI"
 icon: https://raw.githubusercontent.com/OpsMx/enterprise-spinnaker/master/img/opsmx.png
 maintainers:
 - email: srinivas@opsmx.io
