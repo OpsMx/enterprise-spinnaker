@@ -191,6 +191,38 @@ data:
     if [ -f /tmp/spinnaker/.hal/halyard.yaml ]; then
     cp /tmp/spinnaker/.hal/halyard.yaml /tmp/config
     fi
+    {{- if .Values.global.auth.saml }}
+    kubectl get secret oes-gate-config -o jsonpath='{.data.*}' -n ${SPINNAKER_NAMESPACE} | base64 -d > /tmp/gate1.yml
+    oesuihost=$(yq e '.saml.redirectHostname' /tmp/gate1.yml)
+    oesuiurl={{ .Values.global.oesUI.protocol }}://$oesuihost
+    echo $oesuiurl
+    #yq e '.services.gate.baseUrl = "'$oesuiurl'"' /tmp/gate1.yml > /tmp/gate2.yml
+    #yq e '.services.gate.baseUrl = {{ .Values.global.oesUI.protocol }}:"'$oesuiurl'"' /tmp/gate1.yml > /tmp/gate2.yml
+    yq e '.services.gate.baseUrl = "'$oesuiurl'"' /tmp/gate1.yml > /tmp/gate2.yml
+    mv /tmp/gate2.yml /tmp/gate.yml
+    yq e '.deploymentConfigurations.[].security.apiSecurity.overrideBaseUrl = "'$oesuiurl'"' /tmp/spinnaker/.hal/config > /tmp/spinnaker/.hal/config1
+    mv /tmp/spinnaker/.hal/config1 /tmp/spinnaker/.hal/config
+    yq e -j '.' /tmp/gate.yml  > /tmp/saml.yml
+    jq '.saml |= . + {"metadataLocal": "encryptedFile:oesmetadataxml:oesmetadata.xml"} + {"serviceAddress": "'$oesuiurl'"} + {"keyStore": "encryptedFile:oessamljks:oessaml.jks"} + {"keyStorePassword":"encrypted:samljks-password:password"}' /tmp/saml.yml > /tmp/finalsaml.yml
+    #yq eval -P /tmp/saml1.yml > /tmp/saml2.yml
+    #yq e '.saml.serviceAddress = {{ .Values.global.oesUI.protocol }}:"'$oesuiurl'"' /tmp/saml2.yml > /tmp/finalsaml.yml
+    yq e -j '.saml' /tmp/finalsaml.yml > /tmp/delete.yml
+    yq eval -j 'del(.enabled) | del(.userSource) | del(.jksSecretName) | del(.metadataSecretName) | del(.metadataUrl) | del(.redirectBasePath)| del(.redirectHostname) | del(.redirectProtocol) | del(.redirectBasePath)' /tmp/delete.yml > /tmp/delete1.yml
+    replace=$(cat /tmp/delete1.yml)
+    yq e -j '.' /tmp/spinnaker/.hal/config  > /tmp/spinnaker/.hal/config.json
+    jq --argjson toolConnectorParameteres ''"$replace"'' '.deploymentConfigurations[].security.authn.saml += $toolConnectorParameteres' /tmp/spinnaker/.hal/config.json > /tmp/spinnaker/.hal/config1.json
+    yq eval -P /tmp/spinnaker/.hal/config1.json > /tmp/spinnaker/.hal/finalconfig.json
+    mv /tmp/spinnaker/.hal/finalconfig.json /tmp/spinnaker/.hal/config
+    yq e '.deploymentConfigurations.[].security.authn.saml.enabled = "true"' /tmp/spinnaker/.hal/config > /tmp/spinnaker/.hal/config1
+    mv /tmp/spinnaker/.hal/config1 /tmp/spinnaker/.hal/config
+    sleep 30s
+    kubectl delete secret oes-gate-config -n ${SPINNAKER_NAMESPACE}
+    kubectl create secret generic oes-gate-config --from-file=/tmp/gate.yml -n ${SPINNAKER_NAMESPACE}
+    kubectl delete pod -l component=gate -n ${SPINNAKER_NAMESPACE}
+    {{- else }}
+    yq e '.deploymentConfigurations.[].security.authn.saml.enabled = "false"' /tmp/spinnaker/.hal/config > /tmp/spinnaker/.hal/config1
+    mv /tmp/spinnaker/.hal/config1 /tmp/spinnaker/.hal/config
+    {{- end }}
     {{- end }}  # git or stash
     {{- end }}  # Enabled
 
