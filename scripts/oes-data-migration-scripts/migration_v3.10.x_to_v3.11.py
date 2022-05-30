@@ -29,17 +29,6 @@ def perform_migration():
         autopilot_conn.close()
         audit_conn.close()
 
-def updateautopilotconstraints():
-    try:
-        cur = autopilot_conn.cursor()
-        cur.execute(" ALTER TABLE serviceriskanalysis  DROP CONSTRAINT IF EXISTS fkmef9blhpcxhcj431kcu52nm1e ")
-        print("Successfully dropped constraint serviceriskanalysis table in autopilot db")
-        cur.execute(" ALTER TABLE servicegate  DROP CONSTRAINT IF EXISTS uk_lk3buh56ebai2gycw560j2oxm ")
-        print("Successfully dropped constraint servicegate table in autopilot db")
-    except Exception as e:
-        print("Exception occured while  updating script : ", e)
-        raise e
-
 
 def updatescript():
     try:
@@ -49,6 +38,17 @@ def updatescript():
     except Exception as e:
         print("Exception occured while  updating script : ", e)
         raise e
+        
+def updateautopilotconstraints():
+    try:
+        cur = autopilot_conn.cursor()
+        cur.execute(" ALTER TABLE serviceriskanalysis  DROP CONSTRAINT IF EXISTS fkmef9blhpcxhcj431kcu52nm1e ")
+        print("Successfully dropped constraint serviceriskanalysis table in autopilot db")
+        cur.execute(" ALTER TABLE servicegate  DROP CONSTRAINT IF EXISTS uk_lk3buh56ebai2gycw560j2oxm ")
+        print("Successfully dropped constraint servicegate table in autopilot db")
+    except Exception as e:
+        print("Exception occured while  updating script : ", e)
+        raise e          
 
 def updatescriptformetricdetails():
     try:
@@ -134,4 +134,3 @@ if __name__ == '__main__':
     print("autopilot database connection established successfully")
 
     perform_migration()
-
