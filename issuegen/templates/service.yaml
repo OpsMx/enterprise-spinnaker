@@ -1,0 +1,20 @@
+apiVersion: v1
+kind: Service
+metadata:
+  annotations:
+    artifact.spinnaker.io/name: issuegen
+    artifact.spinnaker.io/type: kubernetes/service
+    moniker.spinnaker.io/cluster: service issuegen
+  labels:
+    app.kubernetes.io/managed-by: spinnaker
+  name: issuegen
+spec:
+  ports:
+  - name: http
+    port: 8080
+    protocol: TCP
+    targetPort: 8080
+  selector:
+    app: issuegen
+  sessionAffinity: None
+  type: ClusterIP
