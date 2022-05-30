@@ -1,32 +1,41 @@
 groups:
-- name: pod_cpu_usage_is_high
+- name: container_cpu_usage_is_high
   rules:
-    - alert: CPUISHIGH
-      expr: sum(rate(container_cpu_usage_seconds_total{container_name!="POD",pod_name!=""}[5m])) by (pod_name)  > 0.1
+    - alert: POD_CPU_IS_HIGH
+      expr: sum(rate(container_cpu_usage_seconds_total{container!=""}[3m])) BY (container, pod, namespace) * 100 > 80
       for: 1m
       labels:
         severity: critical
       annotations:
-        description: 'POD {{ $labels.pod }} cpu is high'
+        description: 'Container {{ $labels.container}} inside POD {{ $labels.pod }} cpu is high in {{$labels.namespace}}'
         summary: 'pod cpu is high'
-
+- name: container_memory_usage_is_high
+  rules:
+    - alert: POD_MEMORY_USAGE_IS_HIGH
+      expr: (sum(container_memory_working_set_bytes{container!=""}) BY (container, pod, namespace) / sum(container_spec_memory_limit_bytes > 0) BY (container, pod, namespace) * 100) > 80
+      for: 1m
+      labels:
+        severity: critical
+      annotations:
+        summary: 'Container {{ $labels.container }} Memory usage inside POD {{ $labels.pod}} is high in {{ $labels.namespace}}'
+        description: "Container Memory usage is above 80%\n  VALUE = {{ $value }}\n  LABELS = {{ $labels }}"  
 - name: node_cpu_greater_than_80
   rules:
-    - alert: NODECPUISHIGH
-      expr: (avg by(instance) (irate(node_cpu_seconds_total{mode="idle"}[5m])) * 100) > 80
+    - alert: NODE_CPU_IS_HIGH
+      expr: 100 - (avg by(instance) (rate(node_cpu_seconds_total{mode="idle"}[2m])) * 100) > 80
       for: 1m
       labels:
         severity: critical
       annotations:
-        description: 'node {{ $labels.node }} cpu is high'
+        description: 'node {{ $labels.kubernetes_node }} cpu is high'
         summary: 'node cpu is greater than 80 precent'
 - name: node_memory_left_lessser_than_10
   rules:
-    - alert: NODEMEMORY
+    - alert: NODE_MEMORY_LESS_THAN_10%
       expr: node_memory_MemAvailable_bytes / node_memory_MemTotal_bytes * 100 < 10
       for: 1m
       labels:
         severity: critical
       annotations:
-        description: 'node {{ $labels.node }} memory left is low'
-        summary: 'node memory left is lesser than 10 precent'
+        description: 'node {{ $labels.kubernetes_node }} memory left is low'
+        summary: 'node memory left is lesser than 10 precent'                 

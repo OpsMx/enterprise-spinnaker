@@ -2,6 +2,8 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
+  annotations:
+{{ include "isd.standard-annotations" . | indent 4 }}
   labels:
     app: oes
     component: dashboard
@@ -40,6 +42,9 @@ spec:
         - mountPath: /opsmx/conf/bootstrap.yml
           name: bootstrap-config-volume
           subPath: bootstrap.yml
+        - mountPath: /opsmx/conf/standard-error-code.csv
+          name: standard-error-conf
+          subPath: standard-error-codes.csv
         {{- if .Values.global.customCerts.enabled }}
         - mountPath: /etc/pki/ca-trust/extracted/java/cacerts
           subPath: cacerts
@@ -62,9 +67,17 @@ spec:
       imagePullSecrets:
       - name: {{ .Values.imagePullSecret}}
       {{- end }}
-      {{- if .Values.dashboard.nodeSelector }}
+      {{- if .Values.global.nodeSelector }}
       nodeSelector:
-{{ toYaml .Values.dashboard.nodeSelector | indent 8 }}
+{{ toYaml .Values.global.nodeSelector | indent 8 }}
+      {{- end }}
+      {{- if .Values.global.affinity }}
+      affinity:
+{{ toYaml .Values.global.affinity | indent 8 }}
+      {{- end }}
+      {{- if .Values.global.tolerations }}
+      tolerations:
+{{ toYaml .Values.global.tolerations | indent 8 }}
       {{- end }}
       volumes:
       {{- if .Values.global.customCerts.enabled }}
@@ -84,4 +97,11 @@ spec:
             path: bootstrap.yml
           secretName: bootstrap
         name: bootstrap-config-volume
+      - configMap:
+          defaultMode: 420
+          items:
+          - key: standard-error-codes.csv
+            path: standard-error-codes.csv
+          name: standard-error-codes-config
+        name: standard-error-conf
 {{- end -}}

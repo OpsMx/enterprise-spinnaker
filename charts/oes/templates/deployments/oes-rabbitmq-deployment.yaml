@@ -1,6 +1,8 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
+  annotations:
+{{ include "isd.standard-annotations" . | indent 4 }}
   labels:
     app: oes
     component: rabbitmq
@@ -14,6 +16,10 @@ spec:
       component: rabbitmq
   template:
     metadata:
+      annotations:
+{{- if .Values.rabbitmq.annotations -}}
+{{ toYaml .Values.rabbitmq.annotations | nindent 8 }}
+{{- end }}
       labels:
         app: oes
         component: rabbitmq
@@ -34,3 +40,12 @@ spec:
       restartPolicy: Always
       securityContext:
         fsGroup: 1000
+      {{- if .Values.global.affinity }}
+      affinity:
+{{ toYaml .Values.global.affinity | indent 8 }}
+      {{- end }}
+      {{- if .Values.global.tolerations }}
+      tolerations:
+{{ toYaml .Values.global.tolerations | indent 8 }}
+      {{- end }}
+

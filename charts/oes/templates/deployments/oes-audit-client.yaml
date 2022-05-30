@@ -2,6 +2,12 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
+  annotations:
+{{ include "isd.standard-annotations" . | indent 4 }}
+  labels:
+    app: oes
+    component: auditclient
+{{ include "oes.standard-labels" . | indent 4 }}
   name: oes-audit-client
 spec:
   replicas: 1
@@ -53,13 +59,24 @@ spec:
         - mountPath: /opsmx/conf/bootstrap.yml
           name: bootstrap-config-volume
           subPath: bootstrap.yml
+        - mountPath: /opsmx/conf/standard-error-code.csv
+          name: standard-error-conf
+          subPath: standard-error-codes.csv
       {{- if .Values.imagePullSecret}}
       imagePullSecrets:
       - name: {{ .Values.imagePullSecret}}
       {{- end }}
-      {{- if .Values.auditClient.nodeSelector }}
+      {{- if .Values.global.nodeSelector }}
       nodeSelector:
-{{ toYaml .Values.auditClient.nodeSelector | indent 8 }}
+{{ toYaml .Values.global.nodeSelector | indent 8 }}
+      {{- end }}
+      {{- if .Values.global.affinity }}
+      affinity:
+{{ toYaml .Values.global.affinity | indent 8 }}
+      {{- end }}
+      {{- if .Values.global.tolerations }}
+      tolerations:
+{{ toYaml .Values.global.tolerations | indent 8 }}
       {{- end }}
       volumes:
       {{- if .Values.global.customCerts.enabled }}
@@ -70,15 +87,21 @@ spec:
           - key: cacerts
             path: cacerts
       {{- end }}
-      - configMap:
-          defaultMode: 420
+      - secret:
           items:
           - key: audit-local.yml
             path: audit-local.yml
-          name: oes-audit-client-config
+          secretName: oes-audit-client-config
         name: audit-config-volume
       - name: bootstrap-config-volume
         secret:
           defaultMode: 420
           secretName: bootstrap
+      - configMap:
+          defaultMode: 420
+          items:
+          - key: standard-error-codes.csv
+            path: standard-error-codes.csv
+          name: standard-error-codes-config
+        name: standard-error-conf
 {{- end -}}

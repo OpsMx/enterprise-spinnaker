@@ -2,6 +2,8 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
+  annotations:
+{{ include "isd.standard-annotations" . | indent 4 }}
   name: opsmx-controller-controller1
   labels:
     agent.opsmx.com/name: controller1
@@ -21,6 +23,10 @@ spec:
 {{ include "oes.standard-labels" . | indent 8 }}
       annotations:
         pullversion: "16"
+        checksum/configmap: {{ (.Files.Glob "templates/forwarder/oes-forwarder-config.yaml").AsConfig | sha256sum }}
+{{- if .Values.forwarder.annotations -}}
+{{ toYaml .Values.forwarder.annotations | nindent 8 }}
+{{- end }}
     spec:
       containers:
       - name: opsmx-controller-controller1
@@ -58,6 +64,14 @@ spec:
           limits:
             memory: "128Mi"
             cpu: "250m"
+      {{- if .Values.global.affinity }}
+      affinity:
+{{ toYaml .Values.global.affinity | indent 8 }}
+      {{- end }}
+      {{- if .Values.global.tolerations }}
+      tolerations:
+{{ toYaml .Values.global.tolerations | indent 8 }}
+      {{- end }}
       volumes:
       - name: ca-secret
         secret:

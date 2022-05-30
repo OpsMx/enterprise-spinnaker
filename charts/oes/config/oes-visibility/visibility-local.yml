@@ -2,8 +2,9 @@ spring:
   datasource:
 {{- if (eq .Values.secretStore "db") }}
     url: {{ .Values.db.url }}/visibilitydb
-    username: {{ .Values.db.username }}
-    password: {{ .Values.db.password }}
+    username: '{{ .Values.db.username }}'
+    password: '{{ .Values.db.password }}'
+    #sslmode: require
 {{- end }}
   visiblity:
     connectors:
@@ -15,12 +16,29 @@ spring:
           models: 
             parameters:
               AbstractSerializableParameter: ERROR
+
+management:
+  endpoints:
+    web:
+      base-path: /mgmt
+      exposure:
+        include: health,info,metrics,prometheus
+  endpoint:
+    health:
+      show-details: always
+      show-components: always
+  health:
+    elasticsearch:
+      enabled: false
+    ldap:
+      enabled: false
+
+ui:
+  approval:
+    url: {{ .Values.global.oesUI.protocol }}://{{ .Values.global.oesUI.host }}/ui/application/visibility/{applicationId}/{serviceId}/{approvalGateId}  
+
 gate:
-{{- if .Values.global.oesGate.port }}
-  url: {{ .Values.global.oesGate.protocol }}://{{ .Values.global.oesGate.host }}:{{ .Values.global.oesGate.port }}
-{{- else }}
-  url: {{ .Values.global.oesGate.protocol }}://{{ .Values.global.oesGate.host }}
-{{- end }}
+  url: http://oes-gate:8084
 
 jira:
   api:
@@ -35,9 +53,9 @@ git:
 
 jenkins:
   api:
-    url: /jenkins/job/{jobname}/{buildId}/api/json
+    url: /job/{jobname}/{buildId}/api/json
   navigate:
-    url: hosturl/jenkins/job/{jobname}/{buildId}
+    url: hosturl/job/{jobname}/{buildId}
 
 sonar:
   navigate:
@@ -56,4 +74,11 @@ autopilot:
 platform:
   service:
     url: http://oes-platform:8095
+
+datasource:
+  secretManagement:
+    source: {{ .Values.secretStore }}
+
+standardErrorCodes:
+  filePath: /opsmx/conf/standard-error-code.csv
 

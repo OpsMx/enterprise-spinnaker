@@ -1,8 +1,8 @@
 retrofit:
-  connectTimeout: 30000
-  readTimeout: 30000
-  callTimeout: 30000
-  writeTimeout: 30000
+  connectTimeout: 60000
+  readTimeout: 60000
+  callTimeout: 60000
+  writeTimeout: 60000
   retryOnConnectionFailure: true
 services:
   opsmx:
@@ -28,18 +28,14 @@ services:
      baseUrl: "http://oes-audit-client:8098"
      enabled: true
   oesui:
-  {{- if .Values.global.oesUI.port }}
-    externalUrl: {{ .Values.global.oesUI.protocol }}://{{ .Values.global.oesUI.host }}:{{ .Values.global.oesUI.port }}
-  {{- else }}
-    externalUrl: {{ .Values.global.oesUI.protocol }}://{{ .Values.global.oesUI.host }}
-  {{- end }}
+    externalUrl: /ui/
 {{- if .Values.global.commonGate.enabled }}
   keel:
     enabled: false
   clouddriver:
     host: 0.0.0.0
     port: 7002
-    baseUrl: http://spin-clouddriver-caching:7002
+    baseUrl: http://spin-clouddriver-rw.spinnaker:7002
     enabled: true
   clouddriverCaching:
     host: 0.0.0.0
@@ -64,11 +60,7 @@ services:
   deck:
     host: 0.0.0.0
     port: 9000
-    {{- if .Values.global.spinDeck.port }}
-    baseUrl: {{ .Values.global.spinDeck.protocol }}://{{ .Values.global.spinDeck.host }}:{{ .Values.global.spinDeck.port }}
-    {{- else }}
-    baseUrl: {{ .Values.global.spinDeck.protocol }}://{{ .Values.global.spinDeck.host }}
-    {{- end }}
+    baseUrl: {{ .Values.global.oesUI.protocol }}://{{ .Values.global.oesUI.host }}
     enabled: true
   echo:
     host: 0.0.0.0
@@ -130,7 +122,7 @@ services:
   redis:
     host: 0.0.0.0
     port: {{ .Values.redis.port }}
-    baseUrl: {{ tpl .Values.redis.url . }}:{{ .Values.redis.port }}
+    baseUrl: {{ template "spinnaker.redisBaseURL" . }}
     enabled: true
   rosco:
     host: 0.0.0.0
@@ -179,7 +171,11 @@ authn:
   mode: session
 google: {}
 redis:
-  connection: {{ tpl .Values.redis.url . }}:{{ .Values.redis.port }}
+  connection: {{ template "spinnaker.redisBaseURL" . }}
+{{- if not .Values.installRedis }}
+  configuration:
+    secure: true
+{{- end }}
 server:
   session:
     timeoutInSeconds: {{ .Values.gate.config.server.session.timeoutInSeconds }}
@@ -188,6 +184,17 @@ server:
     internalProxies: .*
     protocolHeader: X-Forwarded-Proto
     remoteIpHeader: X-Forwarded-For
+gate:
+  installation:
+    {{- if .Values.global.commonGate.enabled }}
+    mode: common    #Allowed values are --> oes,common
+    {{- else }}
+    mode: oes
+    {{- end }}
+rbac:
+  feature:
+    application:
+      enabled: {{ .Values.global.commonGate.spinnakerRBAC }}
 {{- if .Values.global.commonGate.enabled }}
 spinnaker:
   extensibility:
@@ -213,6 +220,10 @@ spinnaker:
           #url: https://raw.githubusercontent.com/OpsMx/spinnakerPluginRepository/v3.10.0/plugins.json
 {{- end }}
 
+allowUnauthenticatedAccess:
+  agentAPI: {{ .Values.gate.config.agentAPI }}
+  webhooks: {{ .Values.gate.config.webhooks }}
+
 logging:
   level:
     com.netflix.spinnaker.gate.security: INFO
@@ -221,4 +232,5 @@ logging:
     #com.netflix.spinnaker.gate.security: DEBUG
     #org.springframework.security: DEBUG
     #org.springframework.web: DEBUG
+
 

@@ -104,6 +104,7 @@ Parameter | Description | Default
 `global.oesUI.host` | Host using which UI needs to be accessed | `oes.domain.com`
 `global.oesGate.protocol` | Change this to https if TLS is enabled for ingress endpoint | `http`
 `global.oesGate.host` | Host using which Gate needs to be accessed | `oes-api.domain.com`
+`global.enableCentralMonitoring` | Enable monitoring for Spinnaker | `false`
 `k8sServiceType` | Service Type of oes-ui, oes-gate, spin-deck-ui, spin-gate | `LoadBalancer`
 `installRedis` | If true, OES will install its own Redis for caching. This option is mutually exclusive with installSpinnaker | `false`
 `redis.url` | Set custom URL if installRedis is set to false | `redis://{{ .Release.Name }}-redis-master:6379`
@@ -147,7 +148,6 @@ Parameter | Description | Default
 `ldap.enabled` | Set it to true if LDAP is to be enabled for OES | `true`
 `ldap.url` | URL of LDAP server | `ldap://{{ .Release.Name }}-openldap:389`
 `spinnaker.enableHA` | Enable HA for orca & echo | `true`
-`spinnaker.enableCentralMonitoring` | Enable monitoring for Spinnaker | `false`
 `spinnaker.gitopsHalyard.enabled` | Enable gitops style halyard & account config | `false`
 `spinnaker.gitopsHalyard.mTLS.enabled` | Enable mTLS for Spinnaker Services and SSL for Deck and Gate | `false`
 `spinnaker.gitopsHalyard.mTLS.deckIngressHost` | Ingress host for deck | `spindeck.{{ .Release.Name }}.domain.com`

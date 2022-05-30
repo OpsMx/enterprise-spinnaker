@@ -1,4 +1,4 @@
-{{- if and .Values.autoInstallSampleApps .Release.IsInstall }}
+{{- if .Values.autoInstallSampleApps }}
 apiVersion: batch/v1
 kind: Job
 metadata:
@@ -11,6 +11,18 @@ spec:
         fsGroup: 1000
         runAsUser: 1000
       restartPolicy: OnFailure
+      {{- if .Values.nodeSelector }}
+      nodeSelector:
+{{ toYaml .Values.nodeSelector | indent 8 }}
+      {{- end }}
+      {{- if .Values.affinity }}
+      affinity:
+{{ toYaml .Values.affinity | indent 8 }}
+      {{- end }}
+      {{- if .Values.tolerations }}
+      tolerations:
+{{ toYaml .Values.tolerations | indent 8 }}
+      {{- end }}
       volumes:
       - secret:
           secretName: {{ .Release.Name }}-spinnaker-spin-config
