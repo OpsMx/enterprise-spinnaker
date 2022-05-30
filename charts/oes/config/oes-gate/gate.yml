@@ -35,7 +35,7 @@ services:
   clouddriver:
     host: 0.0.0.0
     port: 7002
-    baseUrl: http://spin-clouddriver-rw.spinnaker:7002
+    baseUrl: http://spin-clouddriver-rw:7002
     enabled: true
   clouddriverCaching:
     host: 0.0.0.0
