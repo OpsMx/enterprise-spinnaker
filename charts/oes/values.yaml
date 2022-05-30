@@ -1145,7 +1145,8 @@ openldap:
 
 
   persistence:
-    enabled: false
+    enabled: true
+    size: 5Gi
   env:
     LDAP_REMOVE_CONFIG_AFTER_SETUP: "false"
 
