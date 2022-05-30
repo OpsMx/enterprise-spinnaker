@@ -1,8 +1,26 @@
 spring:
   datasource:
     url: {{ .Values.db.url }}/auditdb
-    username: {{ .Values.db.username }}
-    password: {{ .Values.db.password }}
+    username: '{{ .Values.db.username }}'
+    password: '{{ .Values.db.password }}'
 logging:
     level:
       com.opsmx.auditservice: INFO
+standardErrorCodes:
+  filePath: /opsmx/conf/standard-error-code.csv
+feign:
+  client:
+    platformservice:
+      name: platformservice
+      url: http://oes-platform:8095
+    auditclientservice:
+      name: auditclientservice
+      url: http://oes-audit-client:8098
+    oes:
+      url: http://oes-sapor:8085
+    autopilot:
+      url: http://oes-autopilot:8090
+    visibilityservice:
+      url: http://oes-visibility:8096
+    dashboard:
+      url: http://oes-dashboard:8094

@@ -6,4 +6,3 @@
         python3 <scriptfilename> <platform_db-name> <platform_host> <oes-db-name> <oes-db-host> <autopilot_db> <autopilot_host> <db-port>
 
     ex: python3 migration_v3.11_to_v3.12.py platformdb oes-db oesdb oes-db  opsmx oes-db 5432
-

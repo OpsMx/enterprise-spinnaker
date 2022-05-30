@@ -1,8 +1,5 @@
 {
-{{- if .Values.global.oesGate.port }}
-    "endPointUrl": "{{ .Values.global.oesGate.protocol }}://{{ .Values.global.oesGate.host }}:{{ .Values.global.oesGate.port }}/",
-{{- else }}
-    "endPointUrl": "{{ .Values.global.oesGate.protocol }}://{{ .Values.global.oesGate.host }}/",
-{{- end }}
-    "setApplicationInterval": {{ .Values.ui.config.setApplicationRefreshInterval }}
+    "endPointUrl": "/gate/",
+    "setApplicationInterval": {{ .Values.ui.config.setApplicationRefreshInterval }},
+    "triggerPipeline": false
 }

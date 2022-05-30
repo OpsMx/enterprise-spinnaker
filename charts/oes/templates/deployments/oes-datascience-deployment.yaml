@@ -2,6 +2,8 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
+  annotations:
+{{ include "isd.standard-annotations" . | indent 4 }}
   labels:
     app: oes
     component: datascience
@@ -52,9 +54,17 @@ spec:
       imagePullSecrets:
       - name: {{ .Values.imagePullSecret}}
       {{- end }}
-      {{- if .Values.datascience.nodeSelector }}
+      {{- if .Values.global.nodeSelector }}
       nodeSelector:
-{{ toYaml .Values.datascience.nodeSelector | indent 8 }}
+{{ toYaml .Values.global.nodeSelector | indent 8 }}
+      {{- end }}
+      {{- if .Values.global.affinity }}
+      affinity:
+{{ toYaml .Values.global.affinity | indent 8 }}
+      {{- end }}
+      {{- if .Values.global.tolerations }}
+      tolerations:
+{{ toYaml .Values.global.tolerations | indent 8 }}
       {{- end }}
       volumes:
       {{- if .Values.global.customCerts.enabled }}
@@ -65,8 +75,7 @@ spec:
           - key: cacerts
             path: cacerts
       {{- end }}
-      - configMap:
-          defaultMode: 420
-          name: oes-datascience-config
+      - secret:
+          secretName: oes-datascience-config
         name: datascience-config-volume
 {{- end -}}

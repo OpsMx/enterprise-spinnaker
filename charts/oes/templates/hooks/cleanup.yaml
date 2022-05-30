@@ -20,8 +20,21 @@ spec:
         image: {{ .Values.spinnaker.halyard.image.repository }}:{{ .Values.spinnaker.halyard.image.tag }}
         command: ["/bin/bash","-c"]
 {{- if .Values.global.certManager.installed }}
-        args: ["kubectl delete issuer letsencrypt-{{ .Release.Namespace }}-spin; kubectl delete ingress oes-gate-ingress oes-ui-ingress {{ template "spinnaker.fullname" . }}-deck; kubectl delete secret ca-secret deck-authtls demo-authtls jwt-secret oes-cacerts oes-control-secret oes-gate-authtls oes-ui-authtls"]
+        args: ["kubectl delete issuer --ignore-not-found letsencrypt-{{ .Release.Namespace }}-spin; kubectl delete ingress --ignore-not-found oes-gate-ingress oes-ui-ingress {{ template "spinnaker.fullname" . }}-deck; kubectl delete secret --ignore-not-found ca-secret spin-deck-ingress demo-authtls jwt-secret oes-cacerts oes-control-secret oes-gate-ingress oes-ui-ingress"]
 {{- else }}
-        args: ["kubectl delete ingress oes-gate-ingress oes-ui-ingress {{ template "spinnaker.fullname" . }}-deck; kubectl delete secret ca-secret jwt-secret oes-cacerts oes-control-secret"]
+        args: ["kubectl delete ingress --ignore-not-found oes-gate-ingress oes-ui-ingress {{ template "spinnaker.fullname" . }}-deck; kubectl delete secret --ignore-not-found ca-secret jwt-secret oes-cacerts oes-control-secret"]
 {{- end }}
+      {{- if .Values.global.nodeSelector }}
+      nodeSelector:
+{{ toYaml .Values.global.nodeSelector | indent 8 }}
+      {{- end }}
+      {{- if .Values.global.affinity }}
+      affinity:
+{{ toYaml .Values.global.affinity | indent 8 }}
+      {{- end }}
+      {{- if .Values.global.tolerations }}
+      tolerations:
+{{ toYaml .Values.global.tolerations | indent 8 }}
+      {{- end }}
 {{- end }}
+

@@ -38,3 +38,7 @@ services:
     config:
       dynamicEndpoints:
         deck: http://spin-clouddriver-ro-deck:7002
+  platform:
+    baseUrl: http://oes-platform:8095
+    userGroupApiPath: /platformservice/v1/users/{username}/usergroups/importAndCache
+    enabled: true

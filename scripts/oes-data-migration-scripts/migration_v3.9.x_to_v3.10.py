@@ -335,6 +335,26 @@ def modifyOpsmxdb():
         print("Exception occurred while fetching userservicetemplate data : ", e)
         raise e
 
+def updateautopilotconstraints():
+    try:
+        cur = opsmxdb_conn.cursor()
+        cur.execute(" ALTER TABLE serviceriskanalysis  DROP CONSTRAINT IF EXISTS fkmef9blhpcxhcj431kcu52nm1e ")
+        print("Successfully dropped constraint serviceriskanalysis table in autopilot db")
+        cur.execute(" ALTER TABLE servicegate  DROP CONSTRAINT IF EXISTS uk_lk3buh56ebai2gycw560j2oxm ")
+        print("Successfully dropped constraint servicegate table in autopilot db")
+    except Exception as e:
+        print("Exception occured while  updating script : ", e)
+        raise e
+
+def updatescript():
+    try:
+        cur = opsmxdb_conn.cursor()
+        cur.execute(" ALTER TABLE entropy ALTER COLUMN service_id DROP NOT NULL ")
+        print("Successfully altered entropy table in autopilot db")
+    except Exception as e:
+        print("Exception occured while  updating script : ", e)
+        raise e
+
 
 def updatescript():
     try:

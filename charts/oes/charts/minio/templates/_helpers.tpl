@@ -180,3 +180,4 @@ Formats volume for Minio tls keys and trusted certs
     {{- end }}
 {{- end }}
 {{- end -}}
+

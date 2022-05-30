@@ -7,7 +7,7 @@
 imageCredentials:
   repoUrl: https://quay.io/
   # Update this is using a private repo such as ACR, ECR, GCR, JFrog, etc.
-  registry: quay.io/opsmxpublic  
+  registry: quay.io/opsmxpublic 
 
 ####################################################
 ## Option to skip installation of OpsMx Spinnaker
@@ -39,12 +39,12 @@ global:
 
   # when this flag is set to false; UI will be accessible over http instead of https
   ssl:
-    enabled: true
+    enabled: false
 
   # If cert-manager is installed, TLS secrets will created automatically, as an 'Issuer' will be created
   # Else, the TLS secrets will need to created manually
   certManager:
-    installed: true
+    installed: false
 
   customCerts:
     enabled: false        # Set to true if your organization requires custom TLS certs
@@ -57,7 +57,24 @@ global:
     spinnakerKayanta: false
 
   ## Set to true to expose oes-ui, oes-gate services over ingress
-  createIngress: true
+  createIngress: false
+
+  ## Node Selection rules for all the OES components (db, Autopilot, Sapor, Dashboard, Visibility, Audit, Datascience, Platform, Ui, Forwarder, Gate...) 
+  nodeSelector: {}
+  affinity: {}
+  tolerations: []
+  ## Set to false only if user uses gitops style and user dont want the repo to be created automatically in github.com
+  githubcreationHook: true
+
+  gitea:
+    enabled: true
+    standardrepoBranch: 3.12
+    admin:
+      existingSecret: gitea-secret
+      username: opsmx
+      password: opsmxadmin123
+      email: "support@opsmx.com"
+
 
   # Spinnaker Deck URL configuration; url overwhich spinnaker deck will be accessed
   spinDeck:
@@ -72,7 +89,7 @@ global:
         ingress.kubernetes.io/ssl-redirect: "true"
         kubernetes.io/ingress.class: nginx
       tls:
-        secretName: deck-authtls
+        secretName: spin-deck-ingress
 
   # Spinnaker Gate URL configuration; url overwhich spinnaker gate will be accessed
   spinGate:
@@ -86,11 +103,11 @@ global:
         ingress.kubernetes.io/ssl-redirect: "true"
         kubernetes.io/ingress.class: nginx
       tls:
-        secretName: gate-authtls
+        secretName: spin-gate-ingress
 
   ## OES-UI url configuration
   oesUI:
-    protocol: https
+    protocol: http
     host: oes.example.ops.com
     # Use below port when hostname above is an external IP instead of a hostname
     #port: 31466
@@ -99,7 +116,7 @@ global:
       annotations:
         kubernetes.io/ingress.class: nginx
       tls:
-        secretName: oes-ui-authtls
+        secretName: oes-ui-ingress
 
   ## OES-Gate url configuration
   oesGate:
@@ -112,7 +129,7 @@ global:
       annotations:
         kubernetes.io/ingress.class: nginx
       tls:
-        secretName: oes-gate-authtls
+        secretName: oes-gate-ingress
 
   ###############################################################################
   # A trial LDAP is installed by default, with users: admin, user1,2,3 with user1password, user2pa...
@@ -129,7 +146,6 @@ global:
     groupSearchFilter: member={0}
     groupRoleAttributes: cn
     userDnPattern: cn={0},dc=example,dc=org
-
   ###############################################################################
   # Best left unchanged
   # Use the below flag to exclude pre-delete helm hooks to the rendered manifests
@@ -165,6 +181,8 @@ global:
       enabled: true
       name: "spinnaker"
     nodeSelector: {}
+    affinity: {}
+    tolerations: []
     persistence:
       enabled: true
       size: 10Gi
@@ -189,6 +207,11 @@ global:
       # to fetch External Load Balancer IP of oes-gate and vice versa
       externalIpCheckDelay: 180
 
+#####################################################
+# Centralized Monitoring
+#####################################################
+  enableCentralMonitoring: false
+
 ###############################################################################
 # AutoPilot, Sapor, Platform, Visibility and DS services use a Postgress DB for backend. A DB is automatically installed
 # Values of OES Database
@@ -207,6 +230,9 @@ db:
     repository: ubi8-oes-db
     tag: v3.0.0
     pullPolicy: IfNotPresent
+
+  annotations:
+    moniker.spinnaker.io/application: isd
 
   serviceAnnotations: {}
 
@@ -230,10 +256,11 @@ autopilot:
   ## Image specific details
   image:
     repository: ubi8-oes-autopilot
-    tag: v3.10.1
+    tag: v3.12.4
     pullPolicy: IfNotPresent
 
   annotations:
+    moniker.spinnaker.io/application: isd
     prometheus_io_path: /mgmt/prometheus
     prometheus_io_port: "8090"
     prometheus.io/scrape: "true"
@@ -262,15 +289,16 @@ audit:
   ##
   image:
     repository: ubi8-oes-audit-service
-    tag: v3.10.1
+    tag: v3.12.4
     pullPolicy: IfNotPresent
 
   serviceAnnotations: {}
 
   annotations:
-    prometheus_io_path: /prometheus
+    moniker.spinnaker.io/application: isd
+    prometheus_io_path: /mgmt/prometheus
     prometheus_io_port: "8097"
-    prometheus.io/scrape: "true"
+    prometheus.io/scrape: "false"
   resources: {}
   config: {}
 
@@ -283,13 +311,14 @@ auditClient:
   ##
   image:
     repository: ubi8-oes-audit-client
-    tag: v3.10.1
+    tag: v3.12.4
     pullPolicy: IfNotPresent
 
   serviceAnnotations: {}
 
   annotations:
-    prometheus_io_path: /prometheus
+    moniker.spinnaker.io/application: isd
+    prometheus_io_path: /mgmt/prometheus
     prometheus_io_port: "8098"
     prometheus.io/scrape: "true"
   resources: {}
@@ -304,15 +333,16 @@ datascience:
   ##
   image:
     repository: ubi8-oes-datascience
-    tag: v3.10.1
+    tag: v3.12.4
     pullPolicy: IfNotPresent
 
   serviceAnnotations: {}
 
   annotations:
-    prometheus_io_path: /prometheus
+    moniker.spinnaker.io/application: isd
+    prometheus_io_path: /mgmt/prometheus
     prometheus_io_port: "5005"
-    prometheus.io/scrape: "true"
+    prometheus.io/scrape: "false"
   resources: {}
   config: {}
 
@@ -322,10 +352,11 @@ dashboard:
   ## Image specific details
   image:
     repository: ubi8-oes-dashboard
-    tag: v3.10.1
+    tag: v3.12.4
     pullPolicy: IfNotPresent
 
   annotations:
+    moniker.spinnaker.io/application: isd
     prometheus_io_path: /mgmt/prometheus
     prometheus_io_port: "8094"
     prometheus.io/scrape: "true"
@@ -354,14 +385,16 @@ forwarder:
   externalName: controller.exampleopsmx.net    # This hostname should reach agent-grpc service from the agent
   enabled: true
   agent:
-    image: quay.io/opsmxpublic/forwarder-agent:v20210722T133815
+    image: quay.io/opsmxpublic/forwarder-agent:v3.12.0
     serviceType: LoadBalancer
     # Value is also used in sapor configuration for kubernetes.agent.serverHostName
     host: opsmx-controller-controller1
   image:
     repository: quay.io/opsmxpublic/forwarder-controller
-    tag: v20210722T133815
+    tag: v3.12.0
     pullPolicy: IfNotPresent
+  annotations:
+    moniker.spinnaker.io/application: isd
   serviceAnnotations: {}
 
 ###############################################################################
@@ -372,15 +405,16 @@ gate:
   ## Image specific details
   image:
     repository: ubi8-gate
-    tag: v3.10.1
+    tag: v3.12.4
     pullPolicy: IfNotPresent
 
   serviceAnnotations: {}
 
   annotations:
-    prometheus_io_path: /prometheus
+    moniker.spinnaker.io/application: isd
+    prometheus_io_path: /mgmt/prometheus
     prometheus_io_port: "8084"
-    prometheus.io/scrape: "true"
+    prometheus.io/scrape: "false"
   resources: {}
   #  requests:
   #    memory: 500Mi
@@ -397,15 +431,17 @@ gate:
     server:
       session:
         timeoutInSeconds: 7200
+    agentAPI: false
+    webhooks: true
 
     #####################################################
     # SAML AUthentication
     #####################################################
     # keytool -genkey -v -keystore oessaml.jks -alias saml -keyalg RSA -keysize 2048 -validity 10000
     # oessaml.jks and oesmetadata.xml are mounted as secrets, create them as follows
-    # kubectl create secret generic oesmetadataxml --from-file=oesmetadata.xml
-    # kubectl create secret generic oessamljks --from-file=oessaml.jks
-    # kubectl create secret generic samljks-password --from-literal password=changeit 
+    # kubectl create secret generic oesmetadataxml --from-file=oesmetadata.xml -n <namespace>
+    # kubectl create secret generic oessamljks --from-file=oessaml.jks -n <namespace>
+    # kubectl create secret generic samljks-password --from-literal password=changeit -n <namespace>
     saml:
       enabled: false
       userSource: gate  # Groups will be obtained from SAML
@@ -446,10 +482,11 @@ platform:
   ## Image specific details
   image:
     repository: ubi8-oes-platform
-    tag: v3.10.1
+    tag: v3.12.4
     pullPolicy: IfNotPresent
 
   annotations:
+    moniker.spinnaker.io/application: isd
     prometheus_io_path: /mgmt/prometheus
     prometheus_io_port: "8095"
     prometheus.io/scrape: "true"
@@ -476,6 +513,10 @@ platform:
       - sapor
       - visibility
 
+    app:
+      dashboard:
+        adminuser: admin # mandatory to provide admin user name to run admin jobs that compute dashboard counts
+
 ###############################################################################
 ## Details of rabbitmq message bus image for OES
 ##
@@ -486,9 +527,15 @@ rabbitmq:
   ## url: default port 5672
   url: rabbitmq-service
   port: 5672
+  username: rabbitmq
+  password: Networks123
   image:
-    registry: docker.io/rabbitmq
+    registry: quay.io/opsmxpublic/rabbitmq
     repository: 3-management
+
+  annotations:
+    moniker.spinnaker.io/application: isd
+
   serviceAnnotations: {}
 
 ###############################################################################
@@ -497,10 +544,11 @@ sapor:
   ## Image specific details
   image:
     repository: ubi8-oes-sapor
-    tag: v3.10.1
+    tag: v3.12.4
     pullPolicy: IfNotPresent
 
   annotations:
+    moniker.spinnaker.io/application: isd
     prometheus_io_path: /mgmt/prometheus
     prometheus_io_port: "8085"
     prometheus.io/scrape: "true"
@@ -540,14 +588,16 @@ sapor:
           
     #encryption key needed for sapor to startup from 3.9
     encrypt:
-      enabled: true
+      enabled: false
       # This key should match the encryption key specified in .hal/default/profiles/spinnakerConfig.yaml 
       # encryption key needed for sapor to startup from 3.9
       key: Q7udUkHPuA3VnNlOtksSgQ
-      salt: deadbeef
     # Set the below field to true if datasource configurations from platform, please don't change
     datasources:
       platform: true
+    sync:
+      permission:
+        enabled: true
 
 ###############################################################################
 ## Use this SAPOR GATE Configuration to Enable Basic Authentication for OES SAPOR to communitcate 
@@ -560,8 +610,11 @@ saporgate:
   enabled: true
   image:
     repository: ubi8-oes-spin-gate
-    tag: 1.22.1
+    tag: v3.12.0-saporgate
     pullPolicy: IfNotPresent
+
+  annotations:
+    moniker.spinnaker.io/application: "isd"
 
   serviceAnnotations: {}
 
@@ -583,8 +636,12 @@ ui:
   ## Image specific details
   image:
     repository: ubi8-oes-ui
-    tag: v3.10.1
+    tag: v3.12.4
     pullPolicy: IfNotPresent
+
+  annotations:
+    moniker.spinnaker.io/application: "isd"
+
   serviceAnnotations: {}
 
   config:
@@ -597,10 +654,11 @@ visibility:
   ## Image specific details
   image:
     repository: ubi8-oes-visibility
-    tag: v3.10.1
+    tag: v3.12.4
     pullPolicy: IfNotPresent
 
   annotations:
+    moniker.spinnaker.io/application: isd
     prometheus_io_path: /mgmt/prometheus
     prometheus_io_port: "8096"
     prometheus.io/scrape: "true"
@@ -642,6 +700,11 @@ redis:
     port: 6379
     # password: ""
   nodeSelector: {}
+  master:
+    affinity: {}
+    tolerations: []
+    podAnnotations:
+      moniker.spinnaker.io/application: spin
 
   ## Redis config file
   ## ref: https://redis.io/topics/config
@@ -677,9 +740,15 @@ spinnaker:
       halConfigBranch: master # Branch under which halyard config is present under above repository
       halConfigPath: / #relative path from repository root folder
       dynamicAccRepository: standard-gitops-repo # Please provide the repo name of the GitOps Dynamic Accounts Directory. Can be same as Hal repo. 
-      dynAccntConfigPath: dynaccount/ #relative path from repository root folder
+      dynAccntConfigPath: / #relative path from repository root folder
       username: git/stash_username  # Username to authenticate with git/stash repo
       token: git/stash_token  # Token corresponding to above username
+      usermailid: user@mail.com # Enter a valid email address for the above repo
+      sshkeysecret: false
+      sshsecretName: ssh-secret # Please create a secret with the ssh private key and the known hosts for the github/gitlab/bitbucket.com
+      ## kubectl create secret generic ssh-secret --from-file=ssh --from-file=known_hosts -n <namespace> 
+      ## please make sure the rsa key is present in file called ssh and known host for the github.com present in known_hosts file
+      ## ssh-keyscan github.com >> ~/.ssh/known_hosts
       ## Configure below fields only if repo type is s3
       s3accesskey: AWS_ACCESS_KEY_ID
       s3secretkey: AWS_SECRET_ACCESS_KEY
@@ -687,7 +756,7 @@ spinnaker:
       s3region: regionofbucket
     # Promote applications and pipelines from one environment to another or take backup
     pipelinePromotion:  # GitHub only,  Not supportd on S3 or Stash
-      enabled: true
+      enabled: false
       type: git  # git, s3, stash
       gitConfig: "git config --global http.sslVerify false"
       organization: project_name  # Also called "project" in some repos
@@ -701,6 +770,8 @@ spinnaker:
       baseUrl: example.repo.com  #  "git_url"
       username: username
       token: token
+      ##SSH key based comminication, sshkey is passed in the secret after helm installation edit secret "git-token" and pass BASE64 encoded id_rsa to git_secret_sshkey
+      ##make sure make empty value for "git_secret_token" in the secret if NOT using SSH
       branch: samplerepo
       usermail: krish@company.com
       #password="K438"   ### Token is preferred, Password also might work, try your luck
@@ -815,6 +886,7 @@ spinnaker:
               service: ldap
               ldap:
                 url: ldap://RELEASE_NAME-openldap:389
+
                 managerDn: cn=admin,dc=example,dc=org
                 managerPassword: opsmxadmin123
                 groupSearchBase: ou=groups,dc=example,dc=org
@@ -880,7 +952,8 @@ spinnaker:
     # additionalInitScript: |-
 
     ## Uncomment if you want to add annotations on halyard and install-using-hal pods
-    # annotations:
+    annotations:
+      moniker.spinnaker.io/application: spin
     #   iam.amazonaws.com/role: <role_arn>
 
     ## Uncomment the following resources definitions to control the cpu and memory
@@ -958,8 +1031,8 @@ spinnaker:
   # Ref: https://kubernetes.io/docs/user-guide/node-selection/
   # nodeSelector to provide to each of the Spinnaker components
   nodeSelector: {}
-
-
+  affinity: {}
+  tolerations: []
   # Google Cloud Storage
   gcs:
     enabled: false
@@ -1008,20 +1081,16 @@ spinnaker:
   ## Option to enable HA in Spinnaker; Enabled by default
   enableHA: true
 
-  ## Centralized Monitoring enable for Prometheus
-  enableCentralMonitoring: false
-
-
   ## Auth mechanism and credentials to be used by spin-cli for creating the sample pipelines
   ## Here basic ldap auth is used by default; everything under spinCli will be pasted in ~/.spin/config
   spinCli:
     gate:
-      endpoint: http://oes-gate:8084 # URL that needs to be used to talk to spinnaker gate and create sample pipelines
+      endpoint: http://sapor-gate:8084 # URL that needs to be used to talk to spinnaker gate and create sample pipelines
     auth:
       enabled: true
       basic:
-        username: admin          # Use credentials corresponding to spinCli.gate.endpoint
-        password: opsmxadmin123  # Use credentials corresponding to spinCli.gate.endpoint
+        username: admin          # Use credentials corresponding to saporgate.config.username
+        password: saporadmin     # Use credentials corresponding to saporgate.config.password
 
 ###############################################################################################
 ###############################################################################################
@@ -1056,8 +1125,10 @@ opa:
   enabled: true  
   image:
     repository: openpolicyagent/opa
-    tag: edge-rootless
+    tag: latest
     pullPolicy: IfNotPresent
+  annotations:
+    moniker.spinnaker.io/application: isd
 
 ####################################################
 # AP installs a trial LDAP for POCs and testing purposes
@@ -1067,6 +1138,12 @@ openldap:
   adminPassword: opsmxadmin123
   configPassword: opsmxconfig123
   omitClusterIP: true
+  affinity: {}
+  tolerations: []
+  podAnnotations:
+    moniker.spinnaker.io/application: spin
+
+
   persistence:
     enabled: false
   env:

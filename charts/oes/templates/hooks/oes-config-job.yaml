@@ -3,6 +3,7 @@ apiVersion: batch/v1
 kind: Job
 metadata:
   annotations:
+{{ include "isd.standard-annotations" . | indent 4 }}
     "helm.sh/hook": "post-install,post-upgrade"
     "helm.sh/hook-delete-policy": "before-hook-creation"
     "helm.sh/hook-weight": "5"
@@ -14,6 +15,9 @@ metadata:
 spec:
   template:
     metadata:
+      annotations:
+        checksum/configmap: {{ (.Files.Glob "templates/configmaps/datasource-creation.yaml").AsConfig | sha256sum }}
+{{ include "isd.standard-annotations" . | indent 8 }}
       labels:
         app: oes
         component: oes-config
@@ -31,6 +35,18 @@ spec:
       - name: {{ .Values.imagePullSecret}}
       {{- end }}
       restartPolicy: OnFailure
+      {{- if .Values.global.nodeSelector }}
+      nodeSelector:
+{{ toYaml .Values.global.nodeSelector | indent 8 }}
+      {{- end }}
+      {{- if .Values.global.affinity }}
+      affinity:
+{{ toYaml .Values.global.affinity | indent 8 }}
+      {{- end }}
+      {{- if .Values.global.tolerations }}
+      tolerations:
+{{ toYaml .Values.global.tolerations | indent 8 }}
+      {{- end }}
       volumes:
       - configMap:
           defaultMode: 420
