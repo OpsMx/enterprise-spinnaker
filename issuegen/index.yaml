@@ -3,12 +3,22 @@ entries:
   issuegen:
   - apiVersion: v2
     appVersion: 0.1.0
-    created: "2022-05-27T13:33:50.740205587+05:30"
+    created: "2022-05-30T12:03:33.625788636+05:30"
     description: A Helm chart for Kubernetes
-    digest: af81668da669459e8402d27df3d15b68df33501084c45789ec1087b56abe027e
+    digest: b6b4f20b67b8f6e5f56aab20cd75fd3fe1d733543709e2b3dd45a48efd3cc650
+    name: issuegen
+    type: application
+    urls:
+    - https://helmcharts.opsmx.com/issuegen-1.0.1.tgz
+    version: 1.0.1
+  - apiVersion: v2
+    appVersion: 0.1.0
+    created: "2022-05-30T12:03:33.625225535+05:30"
+    description: A Helm chart for Kubernetes
+    digest: d9a5260f3128a820e899d6d46756b21330611d355f6b19d77a2e0ed01325cdc9
     name: issuegen
     type: application
     urls:
     - https://helmcharts.opsmx.com/issuegen-0.1.0.tgz
     version: 0.1.0
-generated: "2022-05-27T13:33:50.739520511+05:30"
+generated: "2022-05-30T12:03:33.624640883+05:30"
