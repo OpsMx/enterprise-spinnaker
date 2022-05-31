@@ -191,7 +191,7 @@ data:
     if [ -f /tmp/spinnaker/.hal/halyard.yaml ]; then
     cp /tmp/spinnaker/.hal/halyard.yaml /tmp/config
     fi
-    {{- if .Values.global.auth.saml }}
+    {{- if and (.Values.global.auth.saml) (.Values.global.commonGate.enabled) }}
     kubectl get secret oes-gate-config -o jsonpath='{.data.*}' -n ${SPINNAKER_NAMESPACE} | base64 -d > /tmp/gate1.yml
     oesuihost=$(yq e '.saml.redirectHostname' /tmp/gate1.yml)
     oesuiurl={{ .Values.global.oesUI.protocol }}://$oesuihost
