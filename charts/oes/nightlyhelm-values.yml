@@ -1,17 +1,3 @@
-global:
-  certManager:
-    installed: true
-  createIngress: true
-  gitea:
-    admin:
-    enabled: false
-    standardrepoBranch: 3.12
-  oesUI:
-    host: isd-n.release.opsmx.org
-    protocol: https
-  ssl:
-    enabled: true
-
 imageCredentials:
   repoUrl: https://docker.io/
   registry: opsmx11
