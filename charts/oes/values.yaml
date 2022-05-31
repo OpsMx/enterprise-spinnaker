@@ -78,7 +78,7 @@ global:
 
   # Spinnaker Deck URL configuration; url overwhich spinnaker deck will be accessed
   spinDeck:
-    protocol: https
+    protocol: http
     host: spin.example.ops.com
     #port: 31464
 
@@ -93,7 +93,7 @@ global:
 
   # Spinnaker Gate URL configuration; url overwhich spinnaker gate will be accessed
   spinGate:
-    protocol: https
+    protocol: http
     host: spin-gate.example.ops.com
     #port: 31465
 
@@ -120,7 +120,7 @@ global:
 
   ## OES-Gate url configuration
   oesGate:
-    protocol: https
+    protocol: http
     host: oes-gate.example.ops.com
     # Use below port when hostname above is an external IP instead of a hostname
     #port: 31467
@@ -135,6 +135,10 @@ global:
   # A trial LDAP is installed by default, with users: admin, user1,2,3 with user1password, user2pa...
   # Set it to false if own LDAP is to be configured
   installOpenLdap: true
+
+  auth:
+    saml: false
+    oauth2: false
 
   ## ldap configuration used in oes-gate, oes-platform and spinnaker gate for authentication and authorization
   ldap:
@@ -1145,7 +1149,8 @@ openldap:
 
 
   persistence:
-    enabled: false
+    enabled: true
+    size: 5Gi
   env:
     LDAP_REMOVE_CONFIG_AFTER_SETUP: "false"
 
