@@ -1,0 +1,50 @@
+global:
+  # Custom Images registry where all the OSS and customized images used in the helm chart are stored
+  # Only update this is using a private repo such as ACR, ECR, GCR, JFrog, etc.
+  createIngress: true
+  
+  oesUI:
+    host: isd.nightly.opsmx.net
+
+  commonGate:
+    spinnakerRBAC: false  # Set to true if RBAC is enabled in Spinnaker
+
+  # when this flag is set to false; UI will be accessible over http instead of https
+  gitea:
+    enabled: false
+    standardrepoBranch: 3.12
+
+  githubcreationHook: true
+
+spinnaker:
+  autoInstallSampleApps: true   # Set this to FALSE if upgrading
+  # Initialize gitOps style Halyard
+  gitopsHalyard:
+    enabled: true
+    repo:
+      type: git # git, s3, stash(bitbucket server) use a different sample values file for s3/bitbuck-stash
+      baseUrlHostName: github.com    # Specify the Base FQDN of your repository without the protocol
+      organization: OpsMx
+      repository: nightlyhelm # repo name for GitOps Halyard (Sample Reference: https://github.com/OpsMx/sample-gitops-repo.git).
+      halConfigBranch: master # Branch under which halyard config is present under above repository
+      halConfigPath: / #relative path from repository root folder
+      dynamicAccRepository: nightlyhelm # Please provide the repo name of the GitOps Dynamic Accounts Directory. Can be same as Hal repo. 
+      dynAccntConfigPath: / #relative path from repository root folder
+      username: saitejaopsmx  # Username to authenticate with git/stash repo
+      token: xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+      #usermailid: saiteja.katabhatina@opsmx.io
+    pipelinePromotion:  # GitHub only,  Not supportd on S3 or Stash
+      enabled: true
+      type: git  # git, s3, stash
+      organization: saitejaopsmx  # Also called "project" in some repos
+      repository: nightlyhelm  # bucket name in case of S3
+      rootFolder: pipeline/
+      ##### ONLY In case of S3
+      baseUrl: github.com  #  "git_url"
+      username: saitejaopsmx
+      token: xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+      ##SSH key based comminication, sshkey is passed in the secret after helm installation edit secret "git-token" and pass BASE64 encoded id_rsa to git_secret_sshkey
+      ##make sure make empty value for "git_secret_token" in the secret if NOT using SSH
+      branch: master
+      usermail: krish@company.com
+
