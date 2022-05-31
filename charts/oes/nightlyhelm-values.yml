@@ -6,7 +6,7 @@ imagePullSecret: "opsmx11-secret"
 
 autopilot:
   image:
-    repository: autopilot
+    repository: oes-autopilot
     tag: autopilottagname
 audit:
   image:
@@ -34,7 +34,7 @@ platform:
     tag: oesplatformtagname
 sapor:
   image:
-    repository: oes-sapor
+    repository: sapor
     tag: oessaportagname
 ui:
   image:
