@@ -2,13 +2,13 @@ groups:
 - name: container_cpu_usage_is_high
   rules:
     - alert: POD_CPU_IS_HIGH
-      expr: sum(rate(container_cpu_usage_seconds_total{container!=""}[5m])) BY (container, pod, namespace) * 100 > 90
+      expr: sum(rate(container_cpu_usage_seconds_total{container!=""}[3m])) BY (container, pod, namespace) * 100 > 80
       for: 1m
       labels:
         severity: critical
       annotations:
-        description: 'Container {{ $labels.container }} CPU usage inside POD {{ $labels.pod}} is high in {{ $labels.namespace}}'	
-        summary: 'POD {{ $labels.pod}} CPU Usage is high in {{ $labels.namespace}}'
+        description: 'Container {{ $labels.container}} inside POD {{ $labels.pod }} cpu is high in {{$labels.namespace}}'
+        summary: 'pod cpu is high'
 - name: container_memory_usage_is_high
   rules:
     - alert: POD_MEMORY_USAGE_IS_HIGH
@@ -38,14 +38,4 @@ groups:
         severity: critical
       annotations:
         description: 'node {{ $labels.kubernetes_node }} memory left is low'
-        summary: 'node memory left is lesser than 10 precent'
-- name: node_down
-  rules:
-    - alert: NODE_DOWN
-      expr: up{component="node-exporter"} == 0
-      for: 3m
-      labels:
-        severity: warning
-      annotations:
-        summary: 'Node {{ $labels.kubernetes_node }} is down'
-        description: '{{ $labels.job }} job failed to scrape instance {{ $labels.instance }} for more than 3 minutes. Node Seems to be down'
+        summary: 'node memory left is lesser than 10 precent'                 
