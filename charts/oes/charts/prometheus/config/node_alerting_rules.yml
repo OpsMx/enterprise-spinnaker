@@ -2,13 +2,13 @@ groups:
 - name: container_cpu_usage_is_high
   rules:
     - alert: POD_CPU_IS_HIGH
-      expr: sum(rate(container_cpu_usage_seconds_total{container!=""}[3m])) BY (container, pod, namespace) * 100 > 80
+      expr: sum(rate(container_cpu_usage_seconds_total{container!=""}[5m])) BY (container, pod, namespace) * 100 > 90
       for: 1m
       labels:
         severity: critical
       annotations:
-        description: 'Container {{ $labels.container}} inside POD {{ $labels.pod }} cpu is high in {{$labels.namespace}}'
-        summary: 'pod cpu is high'
+        description: 'Container {{ $labels.container }} CPU usage inside POD {{ $labels.pod}} is high in {{ $labels.namespace}}'
+        summary: 'POD {{ $labels.pod}} CPU Usage is high in {{ $labels.namespace}}'
 - name: container_memory_usage_is_high
   rules:
     - alert: POD_MEMORY_USAGE_IS_HIGH
@@ -22,7 +22,7 @@ groups:
 - name: node_cpu_greater_than_80
   rules:
     - alert: NODE_CPU_IS_HIGH
-      expr: 100 - (avg by(instance) (rate(node_cpu_seconds_total{mode="idle"}[2m])) * 100) > 80
+      expr: 100 - (avg by(instance) (rate(node_cpu_seconds_total{mode="idle"}[5m])) * 100) > 90
       for: 1m
       labels:
         severity: critical
@@ -38,4 +38,24 @@ groups:
         severity: critical
       annotations:
         description: 'node {{ $labels.kubernetes_node }} memory left is low'
-        summary: 'node memory left is lesser than 10 precent'                 
+        summary: 'node memory left is lesser than 10 precent'
+- name: node_disk_space_too_low
+  rules:
+    - alert: NODE_DISK_SPACE_IS_LOW
+      expr: (100 * ((node_filesystem_avail_bytes{mountpoint="/",fstype!="rootfs"} )  / (node_filesystem_size_bytes{mountpoint="/",fstype!="rootfs"})))  < 10
+      for: 1m
+      labels:
+        severity: critical
+      annotations:
+        description: node {{ $labels.node }} disk space is only {{ printf "%0.2f" $value }}% free.
+        summary: 'node disk space remaining is less than 10 percent'
+- name: node_down
+  rules:
+    - alert: NODE_DOWN
+      expr: up{component="node-exporter"} == 0
+      for: 3m
+      labels:
+        severity: warning
+      annotations:
+        summary: 'Node {{ $labels.kubernetes_node }} is down'
+        description: '{{ $labels.job }} job failed to scrape instance {{ $labels.instance }} for more than 3 minutes. Node Seems to be down'
