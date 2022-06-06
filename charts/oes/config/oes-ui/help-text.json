@@ -2777,8 +2777,8 @@
       "SLOWEST_PIPELINES": {
          "TOOLTIP": "Slowest Pipelines "
       },
-      "MANUAL_JUDGEMENT": {
-         "TOOLTIP": "Manual Judgement"
+      "MANUAL_JUDGMENT": {
+         "TOOLTIP": "Manual Judgment"
       }
    },
    "ACCESS_MANAGEMENT": {
