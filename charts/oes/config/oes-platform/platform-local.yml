@@ -28,7 +28,7 @@ fixedDelay:
    milliseconds: 120000
 initialDelay:
  in:
-   milliseconds: 600000
+   milliseconds: 300000
 user:
   {{- if .Values.gate.config.saml.enabled }}
   source: {{ .Values.gate.config.saml.userSource }}

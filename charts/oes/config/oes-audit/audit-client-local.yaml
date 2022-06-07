@@ -19,3 +19,13 @@ feign:
     visibilityservice:
       name: visibilityservice
       url: http://oes-visibility:8096
+app:
+  insights:
+    adminuser: {{ .Values.saporgate.config.config.username }} # mandatory to provide admin user name to run admin jobs that compute insights counts
+
+fixedDelay:
+  in:
+    milliseconds: 120000
+initialDelay:
+  in:
+    milliseconds: 300000
