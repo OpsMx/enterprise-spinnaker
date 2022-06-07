@@ -55,6 +55,12 @@ oes:
     url: http://oes-visibility:8096
   auditclient:
     url: http://oes-audit-client:8098
+  policyGate:
+    url: "{{ .Values.global.oesUI.protocol }}://{{ .Values.global.oesUI.host }}/gate"
+    path: /v1/data/
+  ui:
+  # Ex: "https://oes-poc.dev.opsmx.org/"
+    url: "{{ .Values.global.oesUI.protocol }}://{{ .Values.global.oesUI.host }}/ui"
   gate:
     url: http://oes-gate:8084
   approvalGate:
