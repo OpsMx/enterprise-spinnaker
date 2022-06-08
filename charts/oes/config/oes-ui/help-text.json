@@ -1205,6 +1205,41 @@
             }
          }
       },
+      "OCR":{
+  "HEADER": "Other Container Registry",
+  "BODY":"",
+  "ACCOUNTNAME":{
+    "TOOLTIP":"User defined name for the Other Container Registry account",
+    "VALIDATION_MESSAGE":{
+      "noSpecialCharacters": "Account Name cannot contain special characters other than -",
+      "cannotContainSpace":"Account Name cannot contain space",
+      "required":"Account Name cannot be empty",
+      "startingFromNumber": "Account Name cannot start with numbers"
+    }
+  },
+  "TOKEN":{
+    "TOOLTIP":"Container Registry Personal Access Token",
+    "VALIDATION_MESSAGE":{
+      "required":"Token cannot be empty"
+    }
+  },
+  "USERNAME":{
+    "TOOLTIP":"Container Registry User Name",
+    "VALIDATION_MESSAGE":{
+      "noSpecialCharacters": "User Name cannot contain special characters other than - and _",
+      "cannotContainSpace":"User Name cannot contain space",
+      "required":"User Name cannot be empty",
+      "startingFromNumber": "User Name cannot start with numbers"
+    }
+  },
+  "HOSTURL":{
+    "TOOLTIP":"Container Registry Host URL",
+    "VALIDATION_MESSAGE":{
+      "required":"Host URL cannot be empty",
+      "invalidUrl": "URL is invalid"
+    }
+  }
+},
       "GITHUB": {
          "HEADER": "GitHub",
          "BODY": "<span><p>GIT HUB integration can be used as a datasource for Approval Gate as well as to configure Spinnaker for GitHub.</p><p><strong>Fields</strong>:</p><ul class='helpTextUl'><li><strong>Account Name</strong>: User defined name for the GitHub Account<span class='noBr'>(Example: opsmx-github)</span></li><li><strong>Token</strong>: GitHub personal access token. You can find <a href='https://docs.github.com/en/authentication/keeping-your-account-and-data-secure/creating-a-personal-access-token' target='_blank'>here</a> how to generate personal access tokens. <span class='noBr'>(Example: ghp_ln1eJK4yuomnY6JREp72IDJC4Hq6Sm)</span></li><li><strong>User Name</strong>: GitHub User Name</li><li><strong>Connect to Spinnaker</strong>: Toggle to configure Spinnaker for GitHub</li><li><strong>Permissions</strong>: Enable/disable access to the GIT HUB account in Autopilot to specific usergroups</li></ul></span>",
@@ -1251,7 +1286,45 @@
             "VALIDATION_MESSAGE": {}
          }
       },
-       "GITREPO":{
+"GITLAB":{
+  "HEADER": "GitLab",
+  "BODY":"",
+  "ACCOUNTNAME":{
+    "TOOLTIP":"User defined name for the GitLab account",
+    "VALIDATION_MESSAGE":{
+      "noSpecialCharacters": "Account Name cannot contain special characters other than -",
+      "cannotContainSpace":"Account Name cannot contain space",
+      "required":"Account Name cannot be empty",
+      "startingFromNumber": "Account Name cannot start with numbers"
+    }
+  },
+  "HOSTURL":{
+    "TOOLTIP":"GitLab Host URL",
+    "VALIDATION_MESSAGE":{
+      "required":"Host URL cannot be empty",
+      "invalidUrl": "URL is invalid"
+    }
+  },
+  "APIBASEURL":{
+    "TOOLTIP":"",
+    "VALIDATION_MESSAGE":{
+      "required":"API URL cannot be empty",
+      "invalidUrl": "URL is invalid"
+    }
+  },
+  "TOKEN":{
+    "TOOLTIP":"",
+    "VALIDATION_MESSAGE":{
+      "required":"Token cannot be empty"
+    }
+  },
+  "SPINNAKERTOGGLE":{
+    "TOOLTIP":"Switch On this toggle to configure the resource in a gitops enabled Spinnaker instance",
+    "VALIDATION_MESSAGE":{}
+  }
+},
+
+"GITREPO":{
   "HEADER": "Git Repo",
   "BODY": "",
   "ACCOUNTNAME":{
@@ -2704,8 +2777,8 @@
       "SLOWEST_PIPELINES": {
          "TOOLTIP": "Slowest Pipelines "
       },
-      "MANUAL_JUDGEMENT": {
-         "TOOLTIP": "Manual Judgement"
+      "MANUAL_JUDGMENT": {
+         "TOOLTIP": "Manual Judgment"
       }
    },
    "ACCESS_MANAGEMENT": {

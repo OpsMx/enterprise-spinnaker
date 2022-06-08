@@ -83,6 +83,7 @@ data:
         {{- if .Values.spinnaker.gitopsHalyard.enabled }}
 
             STORAGE_TYPE={{ .Values.spinnaker.gitopsHalyard.repo.type }}
+            BASEURL_HOST={{ .Values.spinnaker.gitopsHalyard.repo.baseUrlHostName }}
             USERNAME={{ .Values.spinnaker.spinCli.auth.basic.username }}
             PASSWORD={{ .Values.spinnaker.spinCli.auth.basic.password }}
             TOKEN=$(echo -n "$USERNAME":"$PASSWORD" | base64)
@@ -90,12 +91,19 @@ data:
             name=$(echo $response | jq '.[].name')
             if [ -z "$name" ];
             then
-              if [[ "$STORAGE_TYPE"  ==  "git" ]];
+              if [[ "$STORAGE_TYPE"  ==  "git" && "$BASEURL_HOST" == "github.com" ]];
               then
               response=$(curl --header "Content-Type: application/json"  --header "x-spinnaker-user: admin" --request POST http://oes-platform:8095/platformservice/v6/datasource --data '{"datasourceType": "GITHUB", "name": "gitops", "spinEnabled": "false", "configurationFields": {"token": "{{ .Values.spinnaker.gitopsHalyard.repo.token }}", "username": "{{ .Values.spinnaker.gitopsHalyard.repo.username }}", "hostUrl": "https://github.com/", "url": "https://api.github.com" } }')
               id=$(echo $response | jq '.id')
               curl --header "Content-Type: application/json"  --header "x-spinnaker-user: admin" --request POST http://oes-sapor:8085/oes/accountsConfig/v4/spinnaker --data '{"name":"preview-saas","url":"{{ .Values.spinnaker.spinCli.gate.endpoint }}","authenticationType":"LDAP","externalAccountFlag":true,"pipelinePromotionFlag":false,"syncAccountFlag":false,"externalAccountConfiguration":{"accountId": "'"${id}"'","accountName":"gitops","provider":"GITHUB","config":{"bucketName":"","region":"","endPoint":"https://github.com/{{ .Values.spinnaker.gitopsHalyard.repo.organization }}/{{ .Values.spinnaker.gitopsHalyard.repo.repository }}.git","sourcePath":""}},"pipelinePromotionConfiguration":null,"password":"'"${PASSWORD}"'","userName":"'"${USERNAME}"'"}'
               #curl --header "Content-Type: application/json"  --header "x-spinnaker-user: admin" --request POST http://oes-sapor:8085/oes/accountsConfig/v3/spinnaker --data '{"name": "preview-saas", "url": "{{ .Values.global.oesGate.protocol }}://{{ .Values.global.oesGate.host }}", "authenticationType": "LDAP", "token": "'"${TOKEN}"'", "externalAccountFlag": "true","pipelinePromotionFlag": "false","syncAccountFlag": "false", "externalAccountConfiguration": {"accountId": "'"${id}"'","accountName": "gitops", "provider": "GITHUB", "config": {"bucketName": "", "region": "","endPoint": "https://github.com/{{ .Values.spinnaker.gitopsHalyard.repo.organization }}/{{ .Values.spinnaker.gitopsHalyard.repo.repository }}.git", "sourcePath": "" }}}'
+                  break
+              fi
+              if [[ "$STORAGE_TYPE"  ==  "git" && "$BASEURL_HOST" == "gitlab.com" ]];
+              then
+              response=$(curl --header "Content-Type: application/json"  --header "x-spinnaker-user: admin" --request POST http://oes-platform:8095/platformservice/v6/datasource --data '{"datasourceType": "GITLAB", "name": "gitops", "spinEnabled": "false", "configurationFields": {"token": "{{ .Values.spinnaker.gitopsHalyard.repo.token }}", "hostUrl": "https://gitlab.com/" } }')
+              id=$(echo $response | jq '.id')
+              curl --header "Content-Type: application/json"  --header "x-spinnaker-user: admin" --request POST http://oes-sapor:8085/oes/accountsConfig/v4/spinnaker --data '{"name":"preview-saas","url":"{{ .Values.spinnaker.spinCli.gate.endpoint }}","authenticationType":"LDAP","externalAccountFlag":true,"pipelinePromotionFlag":false,"syncAccountFlag":false,"externalAccountConfiguration":{"accountId": "'"${id}"'","accountName":"gitops","provider":"GITLAB","config":{"bucketName":"","region":"","endPoint":"https://gitlab.com/{{ .Values.spinnaker.gitopsHalyard.repo.organization }}/{{ .Values.spinnaker.gitopsHalyard.repo.repository }}.git","sourcePath":""}},"pipelinePromotionConfiguration":null,"password":"'"${PASSWORD}"'","userName":"'"${USERNAME}"'"}'
                   break
               fi
               if [[ "$STORAGE_TYPE"  ==  "stash" ]];

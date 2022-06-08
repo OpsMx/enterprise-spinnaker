@@ -19,3 +19,12 @@ feign:
     visibilityservice:
       name: visibilityservice
       url: http://oes-visibility:8096
+
+fixedDelay:
+  in:
+    milliseconds: 120000
+initialDelay:
+  in:
+    milliseconds: 300000
+scheduler:
+  threads: 16
