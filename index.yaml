@@ -1,36 +1,5 @@
 apiVersion: v1
 entries:
-  issuegen:
-  - apiVersion: v2
-    appVersion: 0.1.0
-    created: "2022-05-30T18:15:38.410210793+05:30"
-    description: A Helm chart for Kubernetes
-    digest: 84536126e850df5d26712f1e01d5f3496a889914f955036480da16e1ab436c13
-    name: issuegen
-    type: application
-    urls:
-    - https://helmcharts.opsmx.com/issuegen-1.0.2.tgz
-    version: 1.0.2
-  - apiVersion: v2
-    appVersion: 0.1.0
-    created: "2022-05-30T12:03:33.625788636+05:30"
-    description: A Helm chart for Kubernetes
-    digest: b6b4f20b67b8f6e5f56aab20cd75fd3fe1d733543709e2b3dd45a48efd3cc650
-    name: issuegen
-    type: application
-    urls:
-    - https://helmcharts.opsmx.com/issuegen-1.0.1.tgz
-    version: 1.0.1
-  - apiVersion: v2
-    appVersion: 0.1.0
-    created: "2022-05-27T13:33:50.740205587+05:30"
-    description: A Helm chart for Kubernetes
-    digest: af81668da669459e8402d27df3d15b68df33501084c45789ec1087b56abe027e
-    name: issuegen
-    type: application
-    urls:
-    - https://helmcharts.opsmx.com/issuegen-0.1.0.tgz
-    version: 0.1.0
   hello-kubernetes:
   - apiVersion: v2
     appVersion: "1.10"
@@ -72,7 +41,93 @@ entries:
     urls:
     - https://opsmx.github.io/enterprise-spinnaker/hello-world/hello-kubernetes-1.0.0.tgz
     version: 1.0.0
+  issuegen:
+  - apiVersion: v2
+    appVersion: 0.1.0
+    created: "2022-05-30T18:15:38.410210793+05:30"
+    description: A Helm chart for Kubernetes
+    digest: 84536126e850df5d26712f1e01d5f3496a889914f955036480da16e1ab436c13
+    name: issuegen
+    type: application
+    urls:
+    - https://helmcharts.opsmx.com/issuegen-1.0.2.tgz
+    version: 1.0.2
+  - apiVersion: v2
+    appVersion: 0.1.0
+    created: "2022-05-30T12:03:33.625788636+05:30"
+    description: A Helm chart for Kubernetes
+    digest: b6b4f20b67b8f6e5f56aab20cd75fd3fe1d733543709e2b3dd45a48efd3cc650
+    name: issuegen
+    type: application
+    urls:
+    - https://helmcharts.opsmx.com/issuegen-1.0.1.tgz
+    version: 1.0.1
+  - apiVersion: v2
+    appVersion: 0.1.0
+    created: "2022-05-27T13:33:50.740205587+05:30"
+    description: A Helm chart for Kubernetes
+    digest: af81668da669459e8402d27df3d15b68df33501084c45789ec1087b56abe027e
+    name: issuegen
+    type: application
+    urls:
+    - https://helmcharts.opsmx.com/issuegen-0.1.0.tgz
+    version: 0.1.0
   oes:
+  - apiVersion: v2
+    appVersion: 3.12.5
+    created: "2022-06-08T15:01:22.958066811Z"
+    dependencies:
+    - condition: global.installOpenLdap
+      name: openldap
+      repository: ""
+      version: 1.2.3
+    - condition: installSpinnaker
+      name: spinnaker
+      repository: ""
+      version: 2.2.3
+    - condition: global.minio.enabled
+      name: minio
+      repository: ""
+      version: 8.0.9
+    - condition: installRedis
+      name: redis
+      repository: ""
+      version: 10.5.3
+    - condition: enableCentralLogging
+      name: elasticsearch
+      repository: ""
+      version: 7.5.0
+    - condition: enableCentralLogging
+      name: kibana
+      repository: ""
+      version: 7.5.0
+    - condition: enableCentralLogging
+      name: fluent-bit
+      repository: ""
+      version: 2.8.2
+    - condition: global.enableCentralMonitoring
+      name: prometheus
+      repository: ""
+      version: 11.16.2
+    - condition: global.gitea.enabled
+      name: gitea
+      repository: ""
+      version: 5.0.1
+    description: ISD-3.12.5 - Enhanced the connection authentication messages fotr Integrators in ISD UI
+    digest: 6e7a9642e0e28e66494711c58a1e3cc4a2d7836eede13d73c85b995a6a773fdd
+    home: https://www.opsmx.com/
+    icon: https://raw.githubusercontent.com/OpsMx/enterprise-spinnaker/master/img/opsmx.png
+    keywords:
+    - OpsMx
+    - OES
+    - Autopilot
+    maintainers:
+    - email: srinivas@opsmx.io
+      name: ksrinimba
+    name: oes
+    urls:
+    - https://github.com/OpsMx/enterprise-spinnaker/releases/download/oes-3.12.7/oes-3.12.7.tgz
+    version: 3.12.7
   - apiVersion: v2
     appVersion: 3.12.4
     created: "2022-05-26T03:08:24.504189024Z"
