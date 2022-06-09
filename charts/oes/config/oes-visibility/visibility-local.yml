@@ -35,7 +35,7 @@ management:
 
 ui:
   approval:
-    url: {{ .Values.global.oesUI.protocol }}://{{ .Values.global.oesUI.host }}/ui/application/visibility/{applicationId}/{serviceId}/{approvalGateId}  
+    url: {{ .Values.global.oesUI.protocol }}://{{ .Values.global.oesUI.host }}/ui/plugin-isd/approval/{applicationId}/{serviceId}/{approvalGateId}
 
 gate:
   url: http://oes-gate:8084

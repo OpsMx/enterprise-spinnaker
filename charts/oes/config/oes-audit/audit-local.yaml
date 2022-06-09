@@ -6,6 +6,14 @@ spring:
 logging:
     level:
       com.opsmx.auditservice: INFO
+message-broker:
+  enabled: true
+  username: '{{ .Values.rabbitmq.username }}'
+  password: '{{ .Values.rabbitmq.password }}'
+  host: rabbitmq-service
+  port: {{ .Values.rabbitmq.port }}
+  endpoint:
+    name: rabbitmq
 standardErrorCodes:
   filePath: /opsmx/conf/standard-error-code.csv
 feign:
