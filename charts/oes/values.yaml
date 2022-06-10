@@ -68,7 +68,7 @@ global:
 
   gitea:
     enabled: true
-    standardrepoBranch: 4.0
+    standardrepoBranch: v4.0
     admin:
       existingSecret: gitea-secret
       username: opsmx
