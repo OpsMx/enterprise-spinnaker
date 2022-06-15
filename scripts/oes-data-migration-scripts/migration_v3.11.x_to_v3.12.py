@@ -238,6 +238,8 @@ def updateautopilotconstraints():
         cur.execute(" ALTER TABLE serviceriskanalysis  DROP CONSTRAINT IF EXISTS fkmef9blhpcxhcj431kcu52nm1e ")
         cur.execute(" ALTER TABLE servicegate  DROP CONSTRAINT IF EXISTS uk_lk3buh56ebai2gycw560j2oxm ")
         cur.execute(" ALTER TABLE canaryanalysis ALTER COLUMN metric_template_opsmx_id DROP not null ")
+        cur.execute(" ALTER TABLE userlogfeedback ALTER COLUMN logtemplate_id DROP not null ")
+        cur.execute(" ALTER TABLE loganalysis ALTER COLUMN log_template_opsmx_id DROP not null ")
     except Exception as e:
         print("Exception occured while  updating script : ", e)
         raise e
