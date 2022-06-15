@@ -5,5 +5,4 @@ Steps to migrate from v3.12.x to v4.0.x
 
   python3 <scriptfilename> <platform_db-name> <platform_host> <oes-db-name> <oes-db-host> <autopilot-db-name> <autopilot-db-host> <db-port> <user-name> <password>
 
-  ex: python3 migration_v3.12.x_to_v4.0.x.py platformdb oes-db oesdb oes-db autopilot opsmx 5432 postgres networks123
-
+  ex: python3 migration_v3.12.x_to_v4.0.x.py platformdb oes-db oesdb oes-db opsmx oes-db 5432 postgres networks123
