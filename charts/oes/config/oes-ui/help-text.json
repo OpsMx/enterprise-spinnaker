@@ -1,4 +1,3 @@
-
 {
   "POLICY_LISTING": {
     "HEADER": "Policies not found!",
@@ -42,12 +41,12 @@
     }
   },
   "CLOUDPROVIDER_LISTING": {
-    "HEADER": "No Cloud Providers found!",
-    "BODY": "<div><p>Providers are integrations to Cloud platforms you deploy your applications to.</p> <p>In this section, you’ll register credentials for your Cloud platforms. Those credentials are known as Accounts. Autopilot allows you to  create & manage Accounts for different Spinnaker Cloud Providers such as AWS, GCP, Kubernetes, etc.</p><p>When Spinnaker is configured for <b>Direct Sync</b>, <b>New Accounts</b> button will not be visible.</p><p><b>New Accounts</b> button will be enabled when Spinnaker is configured to use External Accounts in <b>Setup->Spinnaker</b>. Click on <b>New Accounts</b> button to create an account for your cloud provider.  You can create multiple accounts for the same provider.</p><p>Click on <b>Sync Spinnaker Accounts</b> button to sync Cloud Provider accounts with Spinnaker. </p></div>"
+    "HEADER": "No Cloud Targets found!",
+    "BODY": "<div><p>Providers are integrations to Cloud platforms you deploy your applications to.</p> <p>In this section, you’ll register credentials for your Cloud platforms. Those credentials are known as Accounts. Autopilot allows you to  create & manage Accounts for different Spinnaker Cloud Targets such as AWS, GCP, Kubernetes, etc.</p><p>When Spinnaker is configured for <b>Direct Sync</b>, <b>New Accounts</b> button will not be visible.</p><p><b>New Accounts</b> button will be enabled when Spinnaker is configured to use External Accounts in <b>Setup->Spinnaker</b>. Click on <b>New Accounts</b> button to create an account for your cloud provider.  You can create multiple accounts for the same provider.</p><p>Click on <b>Sync Spinnaker Accounts</b> button to sync Cloud Target accounts with Spinnaker. </p></div>"
   },
   "CLOUDPROVIDER_CREATION": {
-    "HEADER": "Cloud Provider",
-    "BODY": "<p>In this page, you can  create & manage Accounts for different Spinnaker Cloud Providers.</p>",
+    "HEADER": "Cloud Target",
+    "BODY": "<p>In this page, you can  create & manage Accounts for different Spinnaker Cloud Targets.</p>",
     "AGENT_NAME": {
       "TOOLTIP": "",
       "VALIDATION_MESSAGE": {
@@ -59,7 +58,7 @@
     "CLOUD_PROVIDER": {
       "TOOLTIP": "The cloud provider type for which you want to add the account",
       "VALIDATION_MESSAGE": {
-        "required": "Please select Cloud Provider"
+        "required": "Please select Cloud Target"
       }
     },
     "SPINNAKER": {
@@ -287,7 +286,7 @@
       }
     },
     "SYNC_ACCOUNTS": {
-      "TOOLTIP": "Select Mode of synchronisation of Cloud Providers between Autopilot & Spinnaker",
+      "TOOLTIP": "Select Mode of synchronisation of Cloud Targets between Autopilot & Spinnaker",
       "VALIDATION_MESSAGE": {
         "required": "Please select Sync Accounts type"
       }
@@ -383,23 +382,24 @@
   },
   "PIPELINE_EXECUTION_AUDIT_LISTING": {
     "HEADER": "Pipeline executions not found!",
-    "BODY": "<div>This page shows pipeline executions coming from a CD Tool such as Spinnaker in a list view. It also contains the summary view showing the total number of Pipeline Runs, Successful Runs, Failed Runs, Cancelled Runs.</div><br>    <div >Only important fields including Application, Service, Pipeline, Status, Start Time and End Time are shown by default. Additional fields can be enabled using the Hamburger menu towars the right corner.</div><br> <div>Ensure that the Spinnaker is already connected under <strong><a routerLink='/setup/spinnaker'>Setup -> Spinnaker</a></strong>. Pipeline executions will start appearing in this page after establishing connection to Spinnaker. </div>",
+    "BODY": "<div>This page shows pipeline executions coming from a CD Tool such as Spinnaker in a list view. It also contains the summary view showing the total number of Pipeline Runs, Successful Runs, Failed Runs, Cancelled Runs.</div><br>    <div >Only important fields including Application, Service, Pipeline, Status, Start Time and End Time are shown by default. Additional fields can be enabled using the Hamburger menu towars the right corner.</div><br> <div>Ensure that the Spinnaker is already connected under <strong><a routerLink='/setup/spinnaker'>Setup -> CD Integration</a></strong>. Pipeline executions will start appearing in this page after establishing connection to Spinnaker. </div>",
     "TOOLTIP": {
       "EXECUTION_DATA": "Pipeline is in Running State",
       "CONNECTOR_DATA": "Pipeline is in Running State",
       "STAGE_DURATION": "Pipeline is in Running State"
     },
     "VALIDATION_MESSAGE": {
-      "STAGE_DURATION": "No Data available to view Stage Duration"
+      "STAGE_DURATION": "No Data available to view Stage Duration",
+      "PIPELINE_NOT_EXISTS" : "Execution details not found. Pipeline associated with this execution is deleted"
     }
   },
   "PIPELINE_AUDIT_LISTING": {
     "HEADER": "Pipeline updates not found!",
-    "BODY": "<div>This page shows pipeline updates coming from a CD Tool such as Spinnaker in a list view. </div> <div >  Ensure that the Spinnaker is already connected under  <strong><a routerLink='/setup/spinnaker'>Setup -> Spinnaker</a></strong>. Pipeline updates will start appearing in this page after establishing connection to Spinnaker.</div>"
+    "BODY": "<div>This page shows pipeline updates coming from a CD Tool such as Spinnaker in a list view. </div> <div >  Ensure that the Spinnaker is already connected under  <strong><a routerLink='/setup/spinnaker'>Setup -> CD Integration</a></strong>. Pipeline updates will start appearing in this page after establishing connection to Spinnaker.</div>"
   },
   "POLICY_AUDIT_LISTING": {
     "HEADER": "Policy updates / executions not found!",
-    "BODY": "<div>This page shows policy updates and policy executions, along with allowed/denied information, in a list view. Possible uses, apart from audit and compliance, includes helping users understand the policies that they might be inadvertently trying to break.</div><br> <div>For policy updates, ensure that a policy is created/updated under <strong><a routerLink='/policymanagement'>Compliance -> Policy Management</a></strong>. For policy execution events, please add a policy in a pipeline and execute it.</div>"
+    "BODY": "<div>This page shows policy updates and policy executions, along with allowed/denied information, in a list view. Possible uses, apart from audit and compliance, includes helping users understand the policies that they might be inadvertently trying to break.</div><br> <div>For policy updates, ensure that a policy is created/updated under <strong><a routerLink='/policymanagement'>Setup -> Policies</a></strong>. For policy execution events, please add a policy in a pipeline and execute it.</div>"
   },
   "POLICY_CREATION": {
     "BODY": "<p>In this page, you can  define & manage policies.</p><p><strong>Fields</strong>:</p><ul class='helpTextUl'><li> <strong>Name:</strong> User defined name for the policy</li><li><strong>Policy Type:</strong> Static or Runtime Policy</li><li> <strong>Policy Engine:</strong> Policy Engine to be used; currently, only OPA is supported</li> <li><strong>Policy Engine Account:</strong> Policy Engine Account for the Credentials </li>        <li><strong>Policy File:</strong> File containing the Policy You can upload the file by clicking on <strong>Choose File</strong> button. This is optional. If not present, you can enter the policy directly in the <strong>Policy Details</strong> field</li><li> <strong>Policy Details:</strong> Policy definition</li>                                 <li><strong>Policy Permissions:</strong> Enable/disable access to the policy in Autopilot to specific usergroup</li></ul>",
@@ -825,7 +825,7 @@
       "VALIDATION_MESSAGE": ""
     },
     "CLOUD_PROVIDER_PERMISSIONS": {
-      "TOOLTIP": "Authorization definition for this Cloud Provider",
+      "TOOLTIP": "Authorization definition for this Cloud Target",
       "VALIDATION_MESSAGE": ""
     },
     "AGENT_PERMISSIONS": {
@@ -2781,7 +2781,7 @@
   },
   "ACCESS_MANAGEMENT": {
     "ADMINISTRATOR": {
-      "INFO": "Super Administrator Groups will not appear in the dropdown since their Access Permissions cannot be modified.<br> Administrators will have full Access to all Resources.",
+      "INFO": "Super Administrator Groups will not appear in the dropdown since their Access Permissions cannot be modified. Administrators will have full Access to all Resources.",
       "TOOLTIP": "Groups with Administration Permissions"
     },
     "USER_ROLE_LISTING": {
@@ -3033,4 +3033,3 @@
     }
   }
 }
-
