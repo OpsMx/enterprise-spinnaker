@@ -1,8 +1,8 @@
 apiVersion: v2
 name: oes
-version: 3.12.7
+version: 3.12.8
 appVersion: 3.12.5
-description: "ISD-3.12.5 - Enhanced the connection authentication messages fotr Integrators in ISD UI"
+description: "ISD-3.12.5 - Fixed the bugs related to Custom Metric templates"
 icon: https://raw.githubusercontent.com/OpsMx/enterprise-spinnaker/master/img/opsmx.png
 maintainers:
 - email: srinivas@opsmx.io
