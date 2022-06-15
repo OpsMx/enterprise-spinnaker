@@ -1,13 +1,15 @@
 import psycopg2
 import sys
 import datetime
+import json
 
 
 def perform_migration():
     try:
         getEnvironmentData()
-        # alterAppEnvironmentTable()
+        #alterAppEnvironmentTable()
         environmentUpdate()
+        updateRefId()
         platform_conn.commit()
         print("successfully migrated platform db")
         oesdb_conn.commit()
@@ -15,6 +17,7 @@ def perform_migration():
         update_autopilot_constraints()
         autopilot_conn.commit()
         print("successfully migrated autopilot db")
+
     except Exception as e:
         print("Exception occurred while migration : ", e)
         platform_conn.rollback()
@@ -77,6 +80,29 @@ def environmentUpdate():
         print("Exception occured in environmentUpdate while updating script : ", e)
         raise e
 
+def updateRefId():
+    try:
+        cur_platform.execute("select id, pipeline_json from pipeline where not pipeline_json::jsonb ->> 'stages' = '[]' limit 1")
+        pipelineDatas = cur_platform.fetchall()
+        for pipelineData in pipelineDatas:
+            strpipelineData = """{}""".format(pipelineData[1])
+            jsonpipelineData = json.loads(strpipelineData)
+            if len(jsonpipelineData["stages"]):
+                platScriptdataformGatePipelineMap= "select service_gate_id from gate_pipeline_map WHERE pipeline_id = '{}'".format(pipelineData[0])
+                cur_platform.execute(platScriptdataformGatePipelineMap)
+                serviceGateIds = cur_platform.fetchall()
+                if len(serviceGateIds):
+                    for serviceGateId in serviceGateIds:
+                        # print(serviceGateId[0])
+                        for stageData in jsonpipelineData["stages"]:
+                            platScript = "UPDATE service_gate SET ref_id = {} WHERE id = '{}' and gate_name = '{}' and gate_type = '{}' and ref_id is null".format(stageData["refId"], serviceGateId[0],stageData["name"], stageData["type"])
+                            cur_platform.execute(platScript)
+        print("Successfully updated the ref_id in service_gate")
+    except Exception as e:
+        print("Exception occured in updateRefId while updating script : ", e)
+        raise e
+
+
 
 if __name__ == '__main__':
     n = len(sys.argv)
@@ -103,9 +129,11 @@ if __name__ == '__main__':
     oesdb_conn = psycopg2.connect(database=oes_db, user=user_name, password=password,
                                   host=oes_host, port=port)
     print("Sapor database connection established successfully")
+
+    # Establishing the opsmx db connection
     autopilot_conn = psycopg2.connect(database=autopilot_db, user=user_name, password=password, host=autopilot_host
                                       , port=port)
-    print("Sapor database connection established successfully")
+    print("autopilot database connection established successfully")
     cur_platform = platform_conn.cursor()
     cur_oesdb = oesdb_conn.cursor()
     cur_autopilot = autopilot_conn.cursor()
