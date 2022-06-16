@@ -15,6 +15,8 @@ data:
     standardErrorCodesMapping.ISD-NotAdmin-401-03 = ISD-NotAdmin-401-03 : {0} - {1} is not an admin !
     standardErrorCodesMapping.ISD-Forbidden-403-01 = ISD-Forbidden-403-01 : {0} - {1} doesn't have {2} permission on this feature: {3}
     standardErrorCodesMapping.ISD-Forbidden-403-02 = ISD-Forbidden-403-02 : {0} - {1} is invalid.
+    standardErrorCodesMapping.ISD-Forbidden-403-03 = ISD-Forbidden-403-03 : {0} - {1} : {2}.
+    standardErrorCodesMapping.ISD-Forbidden-403-04 = ISD-Forbidden-403-04 : {0} - {1} namespace is not accessible for given kubeconfig account {2}.
     standardErrorCodesMapping.ISD-IsNotFound-404-01 = ISD-IsNotFound-404-01 : {0} - {1} not found : {2}
     standardErrorCodesMapping.ISD-NoData-404-02 = ISD-NoData-404-02 : {0} - No data found for {1}
     standardErrorCodesMapping.ISD-DoesNotExist-404-03 = ISD-DoesNotExist-404-03 : {0} - {1} does not exist {2}.
