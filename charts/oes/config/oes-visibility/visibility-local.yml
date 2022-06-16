@@ -47,9 +47,9 @@ jira:
     url: hosturl/browse/{issue_Id}
 
 git:
-  apiurl: /repos/{username}/{repo}/commits/{commitId}
+  apiurl: /repos/{account}/{repo}/commits/{commitId}
   userurl: /user
-  navigate.url: https://github.com/OpsMx/{repo_name}/commit/{commit_Id}
+  navigate.url: https://github.com/{account}/{repo_name}/commit/{commit_Id}
 
 jenkins:
   api:
