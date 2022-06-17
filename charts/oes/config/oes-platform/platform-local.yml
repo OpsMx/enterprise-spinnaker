@@ -25,7 +25,7 @@ fixedDelay:
     milliseconds: 120000
 initialDelay:
   in:
-    Milliseconds: 300000
+    milliseconds: 300000
 scheduler:
   workerThreads: 50
 user:
