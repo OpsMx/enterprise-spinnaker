@@ -8,7 +8,7 @@ import json
 
 def perform_migration():
     try:
-        for step in tqdm(range(19), desc="Migrating from v3.11 to v3.12..."):
+        for step in tqdm(range(20), desc="Migrating from v3.11 to v3.12..."):
             if step == 0:
                 drop_table_user_group_permission_3_11()
             elif step == 1:
@@ -54,6 +54,9 @@ def perform_migration():
             elif step == 18:
                 updateautopilotconstraints()
                 autopilot_conn.commit()
+            elif step == 19:
+                updateApprovalGateAUdit()
+                audit_conn.commit()
 
         print("Successfully migrated to v3.12")
     except Exception as e:
@@ -70,7 +73,7 @@ def perform_migration():
 def update_spinnaker_gate_url():
     try:
         cur = oesdb_conn.cursor()
-        cur.execute("UPDATE spinnaker set url = '"+str(spinnaker_gate_url)+"'")
+        cur.execute("UPDATE spinnaker set url = '" + str(spinnaker_gate_url) + "'")
     except Exception as e:
         print("Exception occurred while updating the spinnaker gate url : ", e)
         raise e
@@ -174,7 +177,6 @@ def update_gate(gate_response, pipeline_id, gate_id):
         except KeyError as e:
             gate_response["payloadConstraint"] = []
 
-
         req_payload = {
             "applicationId": gate_response["applicationId"],
             "approvalGatePolicies": gate_response["approvalGatePolicies"],
@@ -219,7 +221,6 @@ def update_gate(gate_response, pipeline_id, gate_id):
             req_payload["policyName"] = gate_response["policyName"]
         except KeyError as ke:
             pass
-
 
         url = host_url + "/dashboardservice/v4/pipelines/" + str(pipeline_id) + "/gates/" + str(gate_id)
         headers = {'Cookie': cookie,
@@ -307,6 +308,7 @@ def clear_policy_data():
     except Exception as e:
         print("Exception occurred while clearing the policy : ", e)
         raise e
+
 
 def migrate_policy(policies):
     try:
@@ -432,12 +434,73 @@ def migrate_user_group_permission(user_group_permissions):
         raise e
 
 
+def updateApprovalGateAUdit():
+    try:
+        cur_audit = audit_conn.cursor()
+        cur_platform = platform_conn.cursor()
+        cur_visibility = visibility_conn.cursor()
+        cur_audit.execute("select id,data from audit_events where data->>'eventType' = 'APPROVAL_GATE_AUDIT'")
+        approval_audit_details = cur_audit.fetchall()
+        for auditdata in approval_audit_details:
+            jsonData = json.loads(json.dumps(listData(auditdata)))
+            if 'gateId' in jsonData['auditData']['details']:
+                audit_events_table_id = auditdata[0]
+                gateId = jsonData['auditData']['details']['gateId']
+                cur_visibility.execute('select pipeline_id from approval_gate where id =' + str(gateId))
+                pipelineId = cur_visibility.fetchone()
+                if pipelineId is not None:
+                    pipelineId = str(pipelineId[0])
+                    cur_platform.execute(
+                        'select distinct(a.name) as applicationName from applications a left outer join service s on a.id=s.application_id left outer join service_pipeline_map sp on s.id=sp.service_id where sp.pipeline_id =' + str(
+                            pipelineId))
+                    applicationName = cur_platform.fetchone()
+                    if applicationName is not None:
+                        applicationName = str(applicationName[0])
+                        print("GateId: {},pipelineId: {} ,applicationName: {} ,audit_events_table_id :{}".format(gateId,
+                                                                                                                 pipelineId,
+                                                                                                                 applicationName,
+                                                                                                                 audit_events_table_id))
+                        fetchJsonAndUpdate(audit_events_table_id, applicationName, jsonData)
+    except Exception as e:
+        print("Exception occurred while  updating script : ", e)
+        raise e
+
+
+def listData(results):
+    resultData = {}
+    for result in results:
+        resultData = result
+    return resultData
+
+
+def fetchJsonAndUpdate(audit_events_table_id, applicationName, jsonData):
+    try:
+        oldAppName = jsonData['auditData']['details']['application']
+        if oldAppName is not applicationName:
+            updateJson = json.loads(json.dumps(jsonData).replace(oldAppName, applicationName))
+            updateApprovalAuditJson(audit_events_table_id, updateJson)
+    except Exception as e:
+        print("Exception occurred while mapping application name : ", e)
+        raise e
+
+
+def updateApprovalAuditJson(audit_events_table_id, updateJson):
+    try:
+        cur_audit = audit_conn.cursor()
+        updatedConfig = "'" + str(json.dumps(updateJson)) + "'"
+        cur_audit.execute(
+            'update audit_events set data =' + updatedConfig + ' where id ={}'.format(audit_events_table_id))
+    except Exception as e:
+        print("Exception occurred while updating update json : ", e)
+        raise e
+
+
 if __name__ == '__main__':
     n = len(sys.argv)
 
-    if n != 8:
+    if n != 12:
         print(
-            "Please pass valid 7 arguments <platform_db-name> <platform_host> <oes-db-name> <oes-db-host> <autopilot_db> <autopilot_host> <db-port>")
+            "Please pass valid 9 arguments <platform_db-name> <platform_host> <oes-db-name> <oes-db-host> <autopilot_db> <autopilot_host> <audit_db-name> <audit-db-host> <visibility_db-name> <visibility-db-host> <db-port>")
 
     platform_db = sys.argv[1]
     platform_host = sys.argv[2]
@@ -445,7 +508,11 @@ if __name__ == '__main__':
     oes_host = sys.argv[4]
     autopilot_db = sys.argv[5]
     autopilot_host = sys.argv[6]
-    port = sys.argv[7]
+    audit_db = sys.argv[7]
+    audit_host = sys.argv[8]
+    visibility_db = sys.argv[9]
+    visibility_host = sys.argv[10]
+    port = sys.argv[11]
 
     # Establishing the platform db connection
     platform_conn = psycopg2.connect(database=platform_db, user='postgres', password='networks123', host=platform_host,
@@ -463,7 +530,18 @@ if __name__ == '__main__':
                                       port=port)
     print("autopilot database connection established successfully")
 
-    host_url = input('''Please enter the unified gate url, 
+    # Establishing the audit db connection
+    audit_conn = psycopg2.connect(database=audit_db, user="postgres", password="networks123", host=audit_host,
+                                  port=port)
+    print('Opened audit database connection successfully')
+
+    # Establishing the visibility db connection
+    visibility_conn = psycopg2.connect(database=visibility_db, user="postgres", password="networks123",
+                                       host=visibility_host,
+                                       port=port)
+    print("Visibility database connection established successfully")
+
+    host_url = input('''Please enter the unified gate url,
     ex: https://sample-example.com/gate : ''')
 
     cookie = input('''Please enter the Cookie. Steps to retrieve the cookie are : 
@@ -471,6 +549,8 @@ if __name__ == '__main__':
     2. Open the browser network console.
     3. Under Headers tab -> Request Headers -> cookie :  ''')
 
-    spinnaker_gate_url = input('''Please enter the unified spinnaker gate url that has to be updated in the spinnaker setup : ''')
+    spinnaker_gate_url = input(
+        '''Please enter the unified spinnaker gate url that has to be updated in the spinnaker setup : ''')
 
     perform_migration()
+
