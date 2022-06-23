@@ -68,7 +68,7 @@ global:
 
   gitea:
     enabled: true
-    standardrepoBranch: 3.12
+    standardrepoBranch: v4.0
     admin:
       existingSecret: gitea-secret
       username: opsmx
@@ -78,7 +78,7 @@ global:
 
   # Spinnaker Deck URL configuration; url overwhich spinnaker deck will be accessed
   spinDeck:
-    protocol: https
+    protocol: http
     host: spin.example.ops.com
     #port: 31464
 
@@ -93,7 +93,7 @@ global:
 
   # Spinnaker Gate URL configuration; url overwhich spinnaker gate will be accessed
   spinGate:
-    protocol: https
+    protocol: http
     host: spin-gate.example.ops.com
     #port: 31465
 
@@ -120,7 +120,7 @@ global:
 
   ## OES-Gate url configuration
   oesGate:
-    protocol: https
+    protocol: http
     host: oes-gate.example.ops.com
     # Use below port when hostname above is an external IP instead of a hostname
     #port: 31467
@@ -135,6 +135,10 @@ global:
   # A trial LDAP is installed by default, with users: admin, user1,2,3 with user1password, user2pa...
   # Set it to false if own LDAP is to be configured
   installOpenLdap: true
+
+  auth:
+    saml: false
+    oauth2: false
 
   ## ldap configuration used in oes-gate, oes-platform and spinnaker gate for authentication and authorization
   ldap:
@@ -256,7 +260,7 @@ autopilot:
   ## Image specific details
   image:
     repository: ubi8-oes-autopilot
-    tag: v3.12.4
+    tag: v3.12.5
     pullPolicy: IfNotPresent
 
   annotations:
@@ -289,7 +293,7 @@ audit:
   ##
   image:
     repository: ubi8-oes-audit-service
-    tag: v3.12.4
+    tag: v3.12.5
     pullPolicy: IfNotPresent
 
   serviceAnnotations: {}
@@ -311,7 +315,7 @@ auditClient:
   ##
   image:
     repository: ubi8-oes-audit-client
-    tag: v3.12.4
+    tag: v3.12.5
     pullPolicy: IfNotPresent
 
   serviceAnnotations: {}
@@ -333,7 +337,7 @@ datascience:
   ##
   image:
     repository: ubi8-oes-datascience
-    tag: v3.12.4
+    tag: v3.12.5
     pullPolicy: IfNotPresent
 
   serviceAnnotations: {}
@@ -352,7 +356,7 @@ dashboard:
   ## Image specific details
   image:
     repository: ubi8-oes-dashboard
-    tag: v3.12.4
+    tag: v3.12.5
     pullPolicy: IfNotPresent
 
   annotations:
@@ -405,7 +409,7 @@ gate:
   ## Image specific details
   image:
     repository: ubi8-gate
-    tag: v3.12.4
+    tag: v3.12.5
     pullPolicy: IfNotPresent
 
   serviceAnnotations: {}
@@ -482,7 +486,7 @@ platform:
   ## Image specific details
   image:
     repository: ubi8-oes-platform
-    tag: v3.12.4
+    tag: v3.12.5
     pullPolicy: IfNotPresent
 
   annotations:
@@ -544,7 +548,7 @@ sapor:
   ## Image specific details
   image:
     repository: ubi8-oes-sapor
-    tag: v3.12.4
+    tag: v3.12.5
     pullPolicy: IfNotPresent
 
   annotations:
@@ -636,7 +640,7 @@ ui:
   ## Image specific details
   image:
     repository: ubi8-oes-ui
-    tag: v3.12.4
+    tag: v3.12.5
     pullPolicy: IfNotPresent
 
   annotations:
@@ -654,7 +658,7 @@ visibility:
   ## Image specific details
   image:
     repository: ubi8-oes-visibility
-    tag: v3.12.4
+    tag: v3.12.5
     pullPolicy: IfNotPresent
 
   annotations:
@@ -1145,7 +1149,8 @@ openldap:
 
 
   persistence:
-    enabled: false
+    enabled: true
+    size: 5Gi
   env:
     LDAP_REMOVE_CONFIG_AFTER_SETUP: "false"
 

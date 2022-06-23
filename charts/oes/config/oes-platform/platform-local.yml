@@ -20,15 +20,14 @@ supportedFeatures:
 {{ toYaml .Values.platform.config.supportedFeatures | indent 2 }}
 userGroup:
   superAdminGroups: {{ .Values.platform.config.adminGroups }}
-app:
- dashboard:
-   adminuser: {{ .Values.platform.config.app.dashboard.adminuser }} # mandatory to provide admin user name to run admin jobs that compute dashboard counts
 fixedDelay:
- in:
-   milliseconds: 120000
+  in:
+    milliseconds: 120000
 initialDelay:
- in:
-   milliseconds: 600000
+  in:
+    Milliseconds: 300000
+scheduler:
+  workerThreads: 50
 user:
   {{- if .Values.gate.config.saml.enabled }}
   source: {{ .Values.gate.config.saml.userSource }}
@@ -55,6 +54,12 @@ oes:
     url: http://oes-visibility:8096
   auditclient:
     url: http://oes-audit-client:8098
+  policyGate:
+    url: "{{ .Values.global.oesUI.protocol }}://{{ .Values.global.oesUI.host }}/gate"
+    path: /v1/data/
+  ui:
+  # Ex: "https://oes-poc.dev.opsmx.org/"
+    url: "{{ .Values.global.oesUI.protocol }}://{{ .Values.global.oesUI.host }}/ui"
   gate:
     url: http://oes-gate:8084
   approvalGate:

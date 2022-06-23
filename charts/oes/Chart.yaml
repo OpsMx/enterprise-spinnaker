@@ -1,8 +1,8 @@
 apiVersion: v2
 name: oes
-version: 3.12.6
-appVersion: 3.12.4
-description: "ISD-3.12.4 - Improvements in loading Application dashboard in ISD UI"
+version: 3.12.7
+appVersion: 3.12.5
+description: "ISD-3.12.5 - Enhanced the connection authentication messages fotr Integrators in ISD UI"
 icon: https://raw.githubusercontent.com/OpsMx/enterprise-spinnaker/master/img/opsmx.png
 maintainers:
 - email: srinivas@opsmx.io
@@ -37,6 +37,9 @@ dependencies:
   - name: prometheus
     version: 11.16.2
     condition: global.enableCentralMonitoring
+  - name: grafana
+    version: 6.31.0
+    condition: global.enableCentralMonitoring  
   - name: gitea
     version: 5.0.1
     condition: global.gitea.enabled
