@@ -1,0 +1,9 @@
+ Steps to migrate from v3.12.5 to v3.12.6
+
+1. Copy the file : steps_to_migrate_from_v3.12.5_to_v3.12.6.py file from: <script source path>
+2. Run the below command to execute the script.
+
+        python3 <scriptfilename> <audit_db-name> <audit-db-host> <visibility_db-name> <visibility-db-host> <platform-db-name> <platform-db-host> <db-port> <user-name> <password>
+
+    ex: python3 migration_v3.11_to_v3.12.py auditdb oes-db visibilitydb oes-db  platformdb oes-db 5432 postgres networks1232
+

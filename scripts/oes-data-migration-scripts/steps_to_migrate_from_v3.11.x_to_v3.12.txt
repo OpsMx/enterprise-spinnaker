@@ -3,6 +3,6 @@
 1. Copy the file : migration_v3.11.x_to_v3.12.py file from: <script source path>
 2. Run the below command to execute the script.
 
-        python3 <scriptfilename> <platform_db-name> <platform_host> <oes-db-name> <oes-db-host> <autopilot_db> <autopilot_host> <db-port>
+        python3 <scriptfilename> <platform_db-name> <platform_host> <oes-db-name> <oes-db-host> <autopilot_db> <autopilot_host> <audit_db-name> <audit-db-host> <visibility_db-name> <visibility-db-host> <db-port>
 
-    ex: python3 migration_v3.11_to_v3.12.py platformdb oes-db oesdb oes-db  opsmx oes-db 5432
+    ex: python3 migration_v3.11_to_v3.12.py platformdb oes-db oesdb oes-db  opsmx oes-db auditdb oes-db visibilitydb oes-db 5432
