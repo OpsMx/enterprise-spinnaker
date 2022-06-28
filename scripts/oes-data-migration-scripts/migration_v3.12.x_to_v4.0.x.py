@@ -7,9 +7,12 @@ import json
 def perform_migration():
     try:
         getEnvironmentData()
-        #alterAppEnvironmentTable()
+        # #alterAppEnvironmentTable()
         environmentUpdate()
         updateRefId()
+        update_sync_status()
+        pipeline_executions = fetch_pipeline_executions()
+        persist_cluster(pipeline_executions)
         platform_conn.commit()
         print("successfully migrated platform db")
         oesdb_conn.commit()
@@ -31,6 +34,62 @@ def perform_migration():
         oesdb_conn.close()
         autopilot_conn.close()
 
+
+def update_sync_status():
+    try:
+        cur_platform.execute("UPDATE service_deployments_current SET sync = 'OUT_OF_SYNC'")
+    except Exception as e:
+        print("Exception occurred while updating sync status : ", e)
+        raise e
+
+
+def persist_cluster(pipeline_executions):
+    try:
+        for pipeline_execution in pipeline_executions:
+            pipeline_execution_json = pipeline_execution[1]
+            try:
+                details = pipeline_execution_json['details']
+                app_name = details['application']
+                content = pipeline_execution_json['content']
+                execution = content['execution']
+                if execution['type'] == 'PIPELINE':
+                    pipeline_name = execution['name']
+                stages = execution['stages']
+                for stage in stages:
+                    if stage['type'] == 'deployManifest':
+                        context = stage['context']
+                        outputs_manifests = context['outputs.manifests']
+                        for outputs_manifest in outputs_manifests:
+                            if outputs_manifest['kind'] == 'Deployment':
+                                metadata = outputs_manifest['metadata']
+                                annotations = metadata['annotations']
+                                cluster = annotations['moniker.spinnaker.io/cluster']
+                                select_data = pipeline_name, app_name
+                                cur_platform.execute("select a.id as application_id, p.id as pipeline_id from applications a LEFT OUTER JOIN service s ON a.id = s.application_id LEFT OUTER JOIN service_pipeline_map spm ON spm.service_id = s.id LEFT OUTER JOIN pipeline p ON spm.pipeline_id = p.id where p.pipeline_name = %s and a.name = %s", select_data)
+                                records = cur_platform.fetchall()
+                                for record in records:
+                                    data = cluster, record[0] , record[1]
+                                    print("updating cluster for the app and pipeline : ", select_data)
+                                    print("data : ", data)
+                                    cur_platform.execute("UPDATE service_deployments_current SET cluster = %s WHERE application_id = %s and pipeline_id = %s" , data)
+            except KeyError as ke:
+                pass
+            except Exception as ex:
+                print("Exception in nested catch block : ", ex)
+                raise ex
+    except Exception as e:
+        print("Exception occurred while persisting the cluster name : ", e)
+        raise e
+
+
+
+def fetch_pipeline_executions():
+    try:
+        cur_audit.execute("select id, pipeline_execution_data from pipeline_execution_audit_events where pipeline_execution_data -> 'details' ->> 'type' IN ('orca:pipeline:complete', 'orca:pipeline:failed')")
+        return cur_audit.fetchall()
+    except Exception as e:
+        print("Exception occurred while fetching cluster : ", e)
+        raise e
 
 def update_autopilot_constraints():
     try:
