@@ -260,7 +260,7 @@ autopilot:
   ## Image specific details
   image:
     repository: ubi8-oes-autopilot
-    tag: v3.12.5
+    tag: v3.12.6
     pullPolicy: IfNotPresent
 
   annotations:
@@ -293,7 +293,7 @@ audit:
   ##
   image:
     repository: ubi8-oes-audit-service
-    tag: v3.12.5
+    tag: v3.12.6
     pullPolicy: IfNotPresent
 
   serviceAnnotations: {}
@@ -315,7 +315,7 @@ auditClient:
   ##
   image:
     repository: ubi8-oes-audit-client
-    tag: v3.12.5
+    tag: v3.12.6
     pullPolicy: IfNotPresent
 
   serviceAnnotations: {}
@@ -337,7 +337,7 @@ datascience:
   ##
   image:
     repository: ubi8-oes-datascience
-    tag: v3.12.5
+    tag: v3.12.6
     pullPolicy: IfNotPresent
 
   serviceAnnotations: {}
@@ -356,7 +356,7 @@ dashboard:
   ## Image specific details
   image:
     repository: ubi8-oes-dashboard
-    tag: v3.12.5
+    tag: v3.12.6
     pullPolicy: IfNotPresent
 
   annotations:
@@ -409,7 +409,7 @@ gate:
   ## Image specific details
   image:
     repository: ubi8-gate
-    tag: v3.12.5
+    tag: v3.12.6
     pullPolicy: IfNotPresent
 
   serviceAnnotations: {}
@@ -486,7 +486,7 @@ platform:
   ## Image specific details
   image:
     repository: ubi8-oes-platform
-    tag: v3.12.5
+    tag: v3.12.6
     pullPolicy: IfNotPresent
 
   annotations:
@@ -548,7 +548,7 @@ sapor:
   ## Image specific details
   image:
     repository: ubi8-oes-sapor
-    tag: v3.12.5
+    tag: v3.12.6
     pullPolicy: IfNotPresent
 
   annotations:
@@ -640,7 +640,7 @@ ui:
   ## Image specific details
   image:
     repository: ubi8-oes-ui
-    tag: v3.12.5
+    tag: v3.12.6
     pullPolicy: IfNotPresent
 
   annotations:
@@ -658,7 +658,7 @@ visibility:
   ## Image specific details
   image:
     repository: ubi8-oes-visibility
-    tag: v3.12.5
+    tag: v3.12.6
     pullPolicy: IfNotPresent
 
   annotations:

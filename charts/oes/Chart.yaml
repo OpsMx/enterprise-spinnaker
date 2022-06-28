@@ -1,8 +1,8 @@
 apiVersion: v2
 name: oes
-version: 3.12.9
-appVersion: 3.12.5
-description: "ISD-3.12.5 - Fixed the bugs related to Custom Metric templates"
+version: 3.12.10
+appVersion: 3.12.6
+description: "ISD-3.12.6 - Improvements in loading application, delivery insights page and fixed issues related to log and metric analysis"
 icon: https://raw.githubusercontent.com/OpsMx/enterprise-spinnaker/master/img/opsmx.png
 maintainers:
 - email: srinivas@opsmx.io
@@ -36,6 +36,9 @@ dependencies:
     condition: enableCentralLogging
   - name: prometheus
     version: 11.16.2
+    condition: global.enableCentralMonitoring
+  - name: grafana
+    version: 6.31.0
     condition: global.enableCentralMonitoring
   - name: gitea
     version: 5.0.1

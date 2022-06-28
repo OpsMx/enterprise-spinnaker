@@ -3,166 +3,198 @@ groups:
   rules:
   - alert: clouddriver-rw-is-down
     annotations:
-      description: 'Service {{$labels.service}} in namespace {{$labels.namespace}}
+      description: 'Service {{$labels.service}} with pod name {{$labels.pod}} in namespace {{$labels.namespace}}
         is not responding'
       summary: Clouddriver-rw Spinnaker service is down
-    expr: absent(up{service="spin-clouddriver-rw"}) == 1
+    expr: up{job="opsmx_spinnaker_metrics", service="spin-clouddriver-rw"} == 0
     labels:
       severity: critical
   - alert: clouddriver-ro-is-down
     annotations:
-      description: 'Service {{$labels.service}} in namespace {{$labels.namespace}}
+      description: 'Service {{$labels.service}} with pod name {{$labels.pod}} in namespace {{$labels.namespace}}
         is not responding'
       summary: Clouddriver-ro Spinnaker service is down
-    expr: absent(up{service="spin-clouddriver-ro"}) == 1
+    expr: up{job="opsmx_spinnaker_metrics", service="spin-clouddriver-ro"} == 0
     labels:
       severity: critical
   - alert: clouddriver-caching-is-down
     annotations:
-      description: 'Service {{$labels.service}} in namespace {{$labels.namespace}}
+      description: 'Service {{$labels.service}} with pod name {{$labels.pod}} in namespace {{$labels.namespace}}
         is not responding'
       summary: Clouddriver-caching Spinnaker service is down
-    expr: absent(up{service="spin-clouddriver-caching"}) == 1
+    expr: up{job="opsmx_spinnaker_metrics", service="spin-clouddriver-caching"} == 0
     labels:
       severity: critical
+  - alert: clouddriver-ro-deck-is-down
+    annotations:
+      description: 'Service {{$labels.service}} with pod name {{$labels.pod}} in namespace {{$labels.namespace}}
+        is not responding'
+      summary: Clouddriver-ro-deck Spinnaker service is down
+    expr: up{job="opsmx_spinnaker_metrics", service="spin-clouddriver-ro-deck"} == 0
+    labels:
+      severity: critical    
   - alert: gate-is-down
     annotations:
-      description: 'Service {{$labels.service}} in namespace {{$labels.namespace}}
+      description: 'Service {{$labels.service}} with pod name {{$labels.pod}} in namespace {{$labels.namespace}}
         is not responding'
       summary: Gate Spinnaker services is down
-    expr: absent(up{service="spin-gate"}) == 1
+    expr: up{job="opsmx_spinnaker_metrics", service="spin-gate"} == 0
     labels:
       severity: critical
   - alert: orca-is-down
     annotations:
-      description: 'Service {{$labels.service}} in namespace {{$labels.namespace}}
+      description: 'Service {{$labels.service}} with pod name {{$labels.pod}} in namespace {{$labels.namespace}}
         is not responding'
       summary: Orca Spinnaker service is down
-    expr: absent(up{job="opsmx_spinnaker_metrics", service="spin-orca"}) == 1
+    expr: up{job="opsmx_spinnaker_metrics", service="spin-orca"} == 0
     labels:
       severity: critical
   - alert: igor-is-down
     annotations:
-      description: 'Service {{$labels.service}} in namespace {{$labels.namespace}}
+      description: 'Service {{$labels.service}} with pod name {{$labels.pod}} in namespace {{$labels.namespace}}
         is not responding'
       summary: Igor Spinnaker service is down
-    expr: absent(up{service="spin-igor"}) == 1
+    expr: up{job="opsmx_spinnaker_metrics", service="spin-igor"} == 0
     labels:
       severity: critical
   - alert: echo-scheduler-is-down
     annotations:
-      description: 'Service {{$labels.service}} in namespace {{$labels.namespace}}
+      description: 'Service {{$labels.service}} with pod name {{$labels.pod}} in namespace {{$labels.namespace}}
         is not responding'
       summary: Echo-Scheduler Spinnaker service is down
-    expr: absent(up{service="spin-echo-scheduler" }) == 1
+    expr: up{job="opsmx_spinnaker_metrics", service="spin-echo-scheduler"} == 0
     labels:
       severity: critical
   - alert: echo-worker-is-down
     annotations:
-      description: 'Service {{$labels.service}} in namespace {{$labels.namespace}}
+      description: 'Service {{$labels.service}} with pod name {{$labels.pod}} in namespace {{$labels.namespace}}
         is not responding'
       summary: Echo-worker Spinnaker service is down
-    expr: absent(up{service="spin-echo-worker" }) == 1
+    expr: up{job="opsmx_spinnaker_metrics", service="spin-echo-worker"} == 0
     labels:
       severity: critical
   - alert: front50-is-down
     annotations:
-      description: 'Service {{$labels.service}} in namespace {{$labels.namespace}}
+      description: 'Service {{$labels.service}} with pod name {{$labels.pod}} in namespace {{$labels.namespace}}
         is not responding'
       summary: Front50 Spinnaker service is down
-    expr: absent(up{service="spin-front50" }) == 1
+    expr: up{job="opsmx_spinnaker_metrics", service="spin-front50"} == 0
     labels:
       severity: critical
+  - alert: fiat-is-down
+    annotations:
+      description: 'Service {{$labels.service}} with pod name {{$labels.pod}} in namespace {{$labels.namespace}}
+        is not responding'
+      summary: Fiat Spinnaker service is down
+    expr: up{job="opsmx_spinnaker_metrics", service="spin-fiat"} == 0
+    labels:
+      severity: critical
+  - alert: rosco-is-down
+    annotations:
+      description: 'Service {{$labels.service}} with pod name {{$labels.pod}} in namespace {{$labels.namespace}}
+        is not responding'
+      summary: Rosco Spinnaker service is down
+    expr: up{job="opsmx_spinnaker_metrics", service="spin-rosco"} == 0
+    labels:
+      severity: critical        
 - name: latency-too-high
   rules:
-  - alert: clouddriver-ro-latency-too-high-getAccount
-    expr: sum(rate(clouddriver_ro:controller:invocations__total{service="spin-clouddriver-ro",statusCode="200", method = "getAccount"}[5m])) by (instance, method)/ sum(rate(clouddriver_ro:controller:invocations__count_total{service="spin-clouddriver-ro",statusCode="200", method = "getAccount"}[5m])) by (instance, method) > 1
+  - alert: clouddriver-ro-latency-too-high
+    expr:  sum(rate(clouddriver_ro:controller:invocations__total{service="spin-clouddriver-ro"}[5m])) by (controller, instance, method, success, statusCode, service, namespace)/ sum(rate(clouddriver_ro:controller:invocations__count_total{service="spin-clouddriver-ro"}[5m])) by (controller, instance, method, success, statusCode, service, namespace) > 1
     for: 15m
     labels:
       severity: warning
     annotations:
-      description: "Service {{$labels.service}} is slow ({{$value}} per minute)"
-      summary: latency of clouddriver-ro is too high
-  - alert: clouddriver-ro-latency-too-high-others
-    expr: sum(rate(clouddriver_ro:controller:invocations__total{service="spin-clouddriver-ro",statusCode="200", method != "getAccount"}[5m])) by (instance, method)/ sum(rate(clouddriver_ro:controller:invocations__count_total{service="spin-clouddriver-ro",statusCode="200", method != "getAccount"}[5m])) by (instance, method) > 100
-    for: 15m
-    labels:
-      severity: warning
-    annotations:
-      description: "Service {{$labels.service}} is slow ({{$value}} per minute)"
-      summary: latency of clouddriver-ro is too high
+      description: "Latency of the Service {{$labels.service}} is {{$value}} seconds for {{ $labels }}"
+      summary: Latency of the service {{ $labels.service }} in namespace {{$labels.namespace}} is high
   - alert: clouddriver-rw-latency-too-high
-    expr: sum(rate(clouddriver_rw:controller:invocations__total{service="spin-clouddriver-rw",statusCode="200"}[5m])) by (instance, method)/ sum(rate(clouddriver_rw:controller:invocations__count_total{service="spin-clouddriver-rw",statusCode="200"}[5m])) by (instance, method) *1000 > 500
+    expr: sum(rate(clouddriver_rw:controller:invocations__total{service="spin-clouddriver-rw"}[5m])) by (controller, instance, method, success, statusCode, service, namespace)/ sum(rate(clouddriver_rw:controller:invocations__count_total{service="spin-clouddriver-rw"}[5m])) by (controller, instance, method, success, statusCode, service, namespace) > 0.5
     for: 15m
     labels:
       severity: warning
     annotations:
-      description: "Service {{$labels.service}} is slow ({{$value}} per minute)"
-      summary: latency of clouddriver-rw is too high
+      description: "Latency of the Service {{$labels.service}} is ({{$value}} seconds for {{ $labels }}"
+      summary:  Latency of the service {{ $labels.service }} in namespace {{$labels.namespace}} is high
   - alert: clouddriver-caching-latency-too-high
-    expr: sum(rate(clouddriver_caching:controller:invocations__total{service="spin-clouddriver-caching",statusCode="200", method != "getMetrics"}[5m])) by (instance, method)/ sum(rate(clouddriver_caching:controller:invocations__count_total{service="spin-clouddriver-caching",statusCode="200", method != "getMetrics"}[5m])) by (instance, method) * 1000 > 50
+    expr: sum(rate(clouddriver_caching:controller:invocations__total{service="spin-clouddriver-caching"}[5m])) by (controller, instance, method, success, statusCode, service, namespace)/ sum(rate(clouddriver_caching:controller:invocations__count_total{service="spin-clouddriver-caching"}[5m])) by (controller, instance, method, success, statusCode, service, namespace)  > 5
     for: 15m
     labels:
       severity: warning
     annotations:
-      description: "Service {{$labels.service}} is slow ({{$value}} per minute)"
-      summary: latency of clouddriver-caching is too high
-  - alert: gate-latency-too-high-savePipeline
-    expr: sum(rate(gate:controller:invocations__total{service="spin-gate",statusCode="200", method =~ "savePipeline|getManifest|getConsoleOutput"}[5m])) by (instance, method)/ sum(rate(gate:controller:invocations__count_total{service="spin-gate",statusCode="200", method =~ "savePipeline|getManifest|getConsoleOutput"}[5m])) by (instance, method) * 1000 > 3000
+      description: "Latency of the Service {{$labels.service}} is {{$value}} seconds for {{ $labels }}"
+      summary: Latency of the service {{ $labels.service }} in namespace {{$labels.namespace}} is high
+  - alert: clouddriver_ro_deck-latency-too-high
+    expr:  sum(rate(clouddriver_ro_deck:controller:invocations__total{service="spin-clouddriver-ro-deck"}[5m])) by (controller, instance, method, success, statusCode, service, namespace)/ sum(rate(clouddriver_ro_deck:controller:invocations__total{service="spin-clouddriver-ro-deck"}[5m])) by (controller, instance, method, success, statusCode, service, namespace) > 5
     for: 15m
     labels:
       severity: warning
     annotations:
-      description: "Service {{$labels.service}} is slow ({{$value}} per minute)"
-      summary: latency of gate is too high
-  - alert: gate-latency-too-high-others
-    expr: sum by(instance, method) (rate(gate:controller:invocations__total{method !~ "savePipeline|getManifest|getConsoleOutput",service="spin-gate",statusCode="200"}[5m])) / sum by(instance, method) (rate(gate:controller:invocations__count_total{method!="savePipeline|getManifest|getConsoleOutput",service="spin-gate",statusCode="200"}[5m])) * 1000 > 500
+      description: "Latency of the Service {{$labels.service}} is {{$value}} seconds for {{ $labels }}"
+      summary: Latency of the service {{ $labels.service }} in namespace {{$labels.namespace}} is high    
+  - alert: gate-latency-too-high
+    expr: sum(rate(gate:controller:invocations__total{service="spin-gate"}[5m])) by (controller, instance, method, success, statusCode, service, namespace)/ sum(rate(gate:controller:invocations__count_total{service="spin-gate"}[5m])) by (controller, instance, method, success, statusCode, service, namespace) > 0.5
     for: 15m
     labels:
       severity: warning
     annotations:
-      description: "Service {{$labels.service}} is slow ({{$value}} per minute)"
-      summary: latency of gate is too high
+      description: "Latency of the Service {{$labels.service}} is {{$value}} seconds for {{ $labels }}"
+      summary: Latency of the service {{ $labels.service }} in namespace {{$labels.namespace}} is high
   - alert: orca-latency-too-high
-    expr: sum(rate(orca:controller:invocations__total{service="spin-orca",statusCode="200"}[5m])) by (instance, method)/ sum(rate(orca:controller:invocations__count_total{service="spin-orca",statusCode="200"}[5m])) by (instance, method) * 1000 > 50
+    expr: sum(rate(orca:controller:invocations__total{service="spin-orca"}[5m])) by (controller, instance, method, success, statusCode, service, namespace)/ sum(rate(orca:controller:invocations__count_total{service="spin-orca"}[5m])) by (controller, instance, method, success, statusCode, service, namespace) > 0.5
     for: 15m
     labels:
       severity: warning
     annotations:
-      description: "Service {{$labels.service}} is slow ({{$value}} per minute)"
-      summary: latency of orca is too high
+      description: "Latency of the Service {{$labels.service}} is {{$value}} seconds for {{ $labels }}"
+      summary: Latency of the service {{ $labels.service }} in namespace {{$labels.namespace}} is high
   - alert: igor-latency-too-high
-    expr: sum(rate(igor:controller:invocations__total{service="spin-igor",statusCode="200"}[5m])) by (instance, method)/ sum(rate(igor:controller:invocations__count_total{service="spin-igor",statusCode="200"}[5m])) by (instance, method) * 1000 > 500
+    expr: sum(rate(igor:controller:invocations__total{service="spin-igor"}[5m])) by (controller, instance, method, success, statusCode, service, namespace)/ sum(rate(igor:controller:invocations__count_total{service="spin-igor"}[5m])) by (controller, instance, method, success, statusCode, service, namespace) > 0.5
     for: 15m
     labels:
       severity: warning
     annotations:
-      description: "Service {{$labels.service}} is slow ({{$value}} per minute)"
-      summary: latency of igor is too high
+      description: "Latency of the Service {{$labels.service}} is {{$value}} seconds for {{ $labels }}"
+      summary: Latency of the service {{ $labels.service }} in namespace {{$labels.namespace}} is high
   - alert: echo_scheduler-latency-too-high
-    expr: sum(rate(echo_scheduler:controller:invocations__total{service="spin-echo-scheduler",statusCode="200"}[5m])) by (instance, method)/ sum(rate(echo_scheduler:controller:invocations__count_total{service="spin-echo-scheduler",statusCode="200"}[5m])) by (instance, method) * 1000 > 5
+    expr: sum(rate(echo_scheduler:controller:invocations__total{service="spin-echo-scheduler"}[5m])) by (controller, instance, method, success, statusCode, service, namespace)/ sum(rate(echo_scheduler:controller:invocations__count_total{service="spin-echo-scheduler"}[5m])) by (controller, instance, method, success, statusCode, service, namespace) > 0.5
     for: 15m
     labels:
       severity: warning
     annotations:
-      description: "Service {{$labels.service}} is slow ({{$value}} per minute)"
-      summary: latency of echo-scheduler is too high
+      description: "Latency of the Service {{$labels.service}} is {{$value}} seconds for {{ $labels }}"
+      summary: Latency of the service {{ $labels.service }} in namespace {{$labels.namespace}} is high
   - alert: echo_worker-latency-too-high
-    expr: sum(rate(echo_worker:controller:invocations__total{service="spin-echo-worker",statusCode="200"}[5m])) by (instance, method)/ sum(rate(echo_worker:controller:invocations__count_total{service="spin-echo-worker",statusCode="200"}[5m])) by (instance, method) * 1000  > 5
+    expr:  sum(rate(echo_worker:controller:invocations__total{service="spin-echo-worker"}[5m])) by (controller, instance, method, success, statusCode, service, namespace)/ sum(rate(echo_worker:controller:invocations__count_total{service="spin-echo-worker"}[5m])) by (controller, instance, method, success, statusCode, service, namespace) > 0.5
     for: 15m
     labels:
       severity: warning
     annotations:
-      description: "Service {{$labels.service}} is slow ({{$value}} per minute)"
-      summary: latency of echo-worker is too high
+      description: "Latency of the Service {{$labels.service}} is {{$value}} seconds for {{ $labels }}"
+      summary: Latency of the service {{ $labels.service }} in namespace {{$labels.namespace}} is high
   - alert: front50-latency-too-high
-    expr: sum(rate(front50:controller:invocations__total{service="spin-front50",statusCode="200"}[5m])) by (instance, method)/ sum(rate(front50:controller:invocations__count_total{service="spin-front50",statusCode="200"}[5m])) by (instance, method) * 1000 > 500
+    expr: sum(rate(front50:controller:invocations__total{service="spin-front50"}[5m])) by (controller, instance, method, success, statusCode, service, namespace)/ sum(rate(front50:controller:invocations__count_total{service="spin-front50"}[5m])) by (controller, instance, method, success, statusCode, service, namespace) > 0.5
     for: 15m
     labels:
       severity: warning
     annotations:
-      description: "Service {{$labels.service}} is slow ({{$value}} per minute)"
-      summary: latency of front50 is too high
+      description: "Latency of the Service {{$labels.service}} is {{$value}} seconds for {{ $labels }}"
+      summary: Latency of the service {{ $labels.service }} in namespace {{$labels.namespace}} is high
+  - alert: fiat-latency-too-high
+    expr: sum(rate(fiat:controller:invocations__total{service="spin-fiat"}[5m])) by (controller, instance, method, success, statusCode, service, namespace)/ sum(rate(fiat:controller:invocations__count_total{service="spin-fiat"}[5m])) by (controller, instance, method, success, statusCode, service, namespace) > 0.5
+    for: 15m
+    labels:
+      severity: warning
+    annotations:
+      description: "Latency of the Service {{$labels.service}} is {{$value}} seconds for {{ $labels }}"
+      summary: Latency of the service {{ $labels.service }} in namespace {{$labels.namespace}} is high
+  - alert: rosco-latency-too-high
+    expr: sum(rate(rosco:controller:invocations__total{service="spin-rosco"}[5m])) by (controller, instance, method, success, statusCode, service, namespace)/ sum(rate(rosco:controller:invocations__count_total{service="spin-rosco"}[5m])) by (controller, instance, method, success, statusCode, service, namespace) > 0.5
+    for: 15m
+    labels:
+      severity: warning
+    annotations:
+      description: "Latency of the Service {{$labels.service}} is {{$value}} seconds for {{ $labels }}"
+      summary: Latency of the service {{ $labels.service }} in namespace {{$labels.namespace}} is high     
 - name: jvm-too-high
   rules:
   - alert: clouddriver-rw-pod-may-be-evicted-soon
@@ -240,9 +272,9 @@ groups:
   rules:
   - alert: "front50:storageServiceSupport:cacheAge__value"
     annotations:
-      description: value = {{$value}}
-      summary: "front50 cacheAge too high for objectType {{ $labels.objectType }} in {{ $labels.namespace }}"
-    expr: front50:storageServiceSupport:cacheAge__value > 350000
+      description: front50 cacheAge for {{$labels.pod}} in namespace {{$labels.namespace}} has value = {{$value}}
+      summary: "front50 cacheAge too high"
+    expr: front50:storageServiceSupport:cacheAge__value > 300000
     for: 2m
     labels:
       severity: warning
@@ -258,9 +290,9 @@ groups:
       severity: warning
   - alert: orca-queue-lag-high
     annotations:
-      description: Lag = {{$value}}
+      description: Service {{$labels.service}} in namespace {{$labels.namespace}} has Lag value of {{$value}}
       summary: Orca queue lag is high
-    expr: sum(rate (orca:controller:invocations__total[2m])) by (instance)  / sum(rate(orca:controller:invocations__count_total[2m])) by (instance) > 0.5
+    expr: sum(rate (orca:controller:invocations__total[2m])) by (instance, service, namespace)  / sum(rate(orca:controller:invocations__count_total[2m])) by (instance, service, namespace) > 0.5
     labels:
       severity: warning
 - name: igor-needs-attention
@@ -316,7 +348,7 @@ groups:
     expr: up{component="visibility"}==0
     labels:
       severity: critical
-- name: prometheus-job-down
+- name: prometheus-job-down 
   rules:
   - alert: prometheus-job-is-down
     expr: up{job="prometheus"} == 0
@@ -325,7 +357,7 @@ groups:
       severity: warning
     annotations:
       summary: The Default Prometheus Job is Down (job {{ $labels.job}})
-      description: "Default Prometheus Job is Down LABELS = {{ $labels }}"
+      description: "Default Prometheus Job is Down LABELS = {{ $labels }}" 
 - name: volume-is-almost-full (< 10% left)
   rules:
   - alert: pvc-storage-full
@@ -379,7 +411,7 @@ groups:
       severity: warning
     annotations:
       summary: Latency of the component {{ $labels.component }} in namespace {{$labels.kubernetes_namespace}} is high
-      description: "Latency of the component {{ $labels.component }} is {{ $value }} seconds for {{ $labels }}"
+      description: "Latency of the component {{ $labels.component }} is {{ $value }} seconds for {{ $labels }}" 
   - alert: oes-sapor-latency-too-high
     expr: sum(rate(http_server_requests_seconds_sum{component="sapor"}[2m])) by (kubernetes_pod_name, method, outcome, status, component, kubernetes_namespace, uri)/sum(rate(http_server_requests_seconds_count{component="sapor"}[2m])) by (kubernetes_pod_name, method, outcome, status, component, kubernetes_namespace, uri) > 0.5
     for: 2m
@@ -395,7 +427,7 @@ groups:
       severity: warning
     annotations:
       summary: Latency of the component {{ $labels.component }} in namespace {{$labels.kubernetes_namespace}} is high
-      description: "Latency of the component {{ $labels.component }} is {{ $value }} seconds for {{ $labels }}"
+      description: "Latency of the component {{ $labels.component }} is {{ $value }} seconds for {{ $labels }}"        
 - name: kube-api-server-is-down
   rules:
   - alert: kube-api-server-down
@@ -415,7 +447,7 @@ groups:
       severity: warning
     annotations:
       summary: JVM memory filling up for {{ $labels.component }} for pod {{ $labels.kubernetes_pod_name }} in namespace {{ $labels.kubernetes_namespace }})
-      description: "JVM memory is filling up for {{ $labels.kubernetes_pod_name }} in namespace {{ $labels.kubernetes_namespace }} (> 90%)\n  VALUE = {{ $value }}"
+      description: "JVM memory is filling up for {{ $labels.kubernetes_pod_name }} in namespace {{ $labels.kubernetes_namespace }} (> 80%)\n  VALUE = {{ $value }}"
   - alert: jvm-memory-filling-up-for-oes-autopilot
     expr: (sum by (instance, kubernetes_pod_name, component, kubernetes_namespace)(jvm_memory_used_bytes{app="oes", area="heap", component="autopilot"}) / sum by (instance, kubernetes_pod_name, component, kubernetes_namespace)(jvm_memory_max_bytes{app="oes", area="heap", component="autopilot"})) * 100 > 90
     for: 5m
@@ -423,7 +455,7 @@ groups:
       severity: warning
     annotations:
       summary: JVM memory filling up for {{ $labels.component }} for pod {{ $labels.kubernetes_pod_name }} in namespace {{ $labels.kubernetes_namespace }})
-      description: "JVM memory is filling up for {{ $labels.kubernetes_pod_name }} in namespace {{ $labels.kubernetes_namespace }} (> 90%)\n  VALUE = {{ $value }}"
+      description: "JVM memory is filling up for {{ $labels.kubernetes_pod_name }} in namespace {{ $labels.kubernetes_namespace }} (> 80%)\n  VALUE = {{ $value }}"
   - alert: jvm-memory-filling-up-for-oes-dashboard
     expr: (sum by (instance, kubernetes_pod_name, component, kubernetes_namespace)(jvm_memory_used_bytes{app="oes", area="heap", component="dashboard"}) / sum by (instance, kubernetes_pod_name, component, kubernetes_namespace)(jvm_memory_max_bytes{app="oes", area="heap", component="autopilot"})) * 100 > 90
     for: 5m
@@ -431,7 +463,7 @@ groups:
       severity: warning
     annotations:
       summary: JVM memory filling up for {{ $labels.component }} for pod {{ $labels.kubernetes_pod_name }} in namespace {{ $labels.kubernetes_namespace }})
-      description: "JVM memory is filling up for {{ $labels.kubernetes_pod_name }} in namespace {{ $labels.kubernetes_namespace }} (> 90%)\n  VALUE = {{ $value }}"
+      description: "JVM memory is filling up for {{ $labels.kubernetes_pod_name }} in namespace {{ $labels.kubernetes_namespace }} (> 80%)\n  VALUE = {{ $value }}"
   - alert: jvm-memory-filling-up-for-oes-platform
     expr: (sum by (instance, kubernetes_pod_name, component, kubernetes_namespace)(jvm_memory_used_bytes{app="oes", area="heap", component="platform"}) / sum by (instance, kubernetes_pod_name, component, kubernetes_namespace)(jvm_memory_max_bytes{app="oes", area="heap", component="platform"})) * 100 > 90
     for: 5m
@@ -439,7 +471,7 @@ groups:
       severity: warning
     annotations:
       summary: JVM memory filling up for {{ $labels.component }} for pod {{ $labels.kubernetes_pod_name }} in namespace {{ $labels.kubernetes_namespace }})
-      description: "JVM memory is filling up for {{ $labels.kubernetes_pod_name }} in namespace {{ $labels.kubernetes_namespace }} (> 90%)\n  VALUE = {{ $value }}"
+      description: "JVM memory is filling up for {{ $labels.kubernetes_pod_name }} in namespace {{ $labels.kubernetes_namespace }} (> 80%)\n  VALUE = {{ $value }}"
   - alert: jvm-memory-filling-up-for-oes-sapor
     expr: (sum by (instance, kubernetes_pod_name, component, kubernetes_namespace)(jvm_memory_used_bytes{app="oes", area="heap", component="sapor"}) / sum by (instance, kubernetes_pod_name, component, kubernetes_namespace)(jvm_memory_max_bytes{app="oes", area="heap", component="sapor"})) * 100 > 90
     for: 5m
@@ -447,7 +479,7 @@ groups:
       severity: warning
     annotations:
       summary: JVM memory filling up for {{ $labels.component }} for pod {{ $labels.kubernetes_pod_name }} in namespace {{ $labels.kubernetes_namespace }})
-      description: "JVM memory is filling up for {{ $labels.kubernetes_pod_name }} in namespace {{ $labels.kubernetes_namespace }} (> 90%)\n  VALUE = {{ $value }}"
+      description: "JVM memory is filling up for {{ $labels.kubernetes_pod_name }} in namespace {{ $labels.kubernetes_namespace }} (> 80%)\n  VALUE = {{ $value }}"
   - alert: jvm-memory-filling-up-for-oes-visibility
     expr: (sum by (instance, kubernetes_pod_name, component, kubernetes_namespace)(jvm_memory_used_bytes{app="oes", area="heap", component="visibility"}) / sum by (instance, kubernetes_pod_name, component, kubernetes_namespace)(jvm_memory_max_bytes{app="oes", area="heap", component="visibility"})) * 100 > 90
     for: 5m
@@ -455,4 +487,4 @@ groups:
       severity: warning
     annotations:
       summary: JVM memory filling up for {{ $labels.component }} for pod {{ $labels.kubernetes_pod_name }} in namespace {{ $labels.kubernetes_namespace }})
-      description: "JVM memory is filling up for {{ $labels.kubernetes_pod_name }} in namespace {{ $labels.kubernetes_namespace }} (> 90%)\n  VALUE = {{ $value }}"
+      description: "JVM memory is filling up for {{ $labels.kubernetes_pod_name }} in namespace {{ $labels.kubernetes_namespace }} (> 80%)\n  VALUE = {{ $value }}"
