@@ -1,9 +1,9 @@
-Steps to migrate from v3.12.x to v4.0.x
+Steps to migrate from v3.12.4 to v3.12.5
 
-1. Copy the file : migration_v3.12.x_to_v4.0.x.py file from: <script source path>
+1. Copy the file : migration_v3.12.4_to_v3.12.5.py file from: <script source path>
 2. Run the below command to execute the script.
 
   python3 <scriptfilename> <autopilot-db-name> <autopilot-db-host> <db-port> <user-name> <password>
 
-  ex: python3 migration_v3.12.x_to_v4.0.x.py autopilot-host opsmx 5432 postgres networks123
+  ex: python3 migration_v3.12.4_to_v3.12.5.py opsmx 10.68.241.31 5432 postgres networks123
 
