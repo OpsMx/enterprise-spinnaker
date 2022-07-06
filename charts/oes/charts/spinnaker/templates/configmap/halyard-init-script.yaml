@@ -179,6 +179,15 @@ data:
     sed -i s/false/true/ /tmp/spinnaker/.hal/default/profiles/settings-local.js
     yq e '.migrations.migrateToManagedServiceAccounts = "true"' /tmp/spinnaker/.hal/default/profiles/front50-local.yml > /tmp/spinnaker/.hal/default/profiles/front50-local1.yml
     mv /tmp/spinnaker/.hal/default/profiles/front50-local1.yml /tmp/spinnaker/.hal/default/profiles/front50-local.yml
+    {{- if .Values.global.auth.saml }}
+    touch /tmp/spinnaker/.hal/default/profiles/dummy.yml
+    yq w /tmp/spinnaker/.hal/default/profiles/dummy.yml 'fiat.admin.roles[+]' "{{ .Values.global.saporgate.config.adminGroups }}" > /tmp/spinnaker/.hal/default/profiles/fiat-local.yml
+    rm -rf /tmp/spinnaker/.hal/default/profiles/dummy.yml
+    {{- end }}
+    {{- if .Values.global.ldap.enabled }}
+    yq w /tmp/spinnaker/.hal/default/profiles/fiat-local.yml fiat.admin.roles[+] "{{ .Values.global.saporgate.config.adminGroups }}" > /tmp/spinnaker/.hal/default/profiles/fiat-local1.yml
+    mv /tmp/spinnaker/.hal/default/profiles/fiat-local1.yml /tmp/spinnaker/.hal/default/profiles/fiat-local.yml
+    {{- end }}
     {{- else }}
     yq e '.deploymentConfigurations.[].security.authz.enabled = "false"' /tmp/spinnaker/.hal/config > /tmp/spinnaker/.hal/config1
     mv /tmp/spinnaker/.hal/config1 /tmp/spinnaker/.hal/config

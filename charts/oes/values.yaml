@@ -75,7 +75,7 @@ global:
       password: opsmxadmin123
       email: "support@opsmx.com"
 
-
+  
   # Spinnaker Deck URL configuration; url overwhich spinnaker deck will be accessed
   spinDeck:
     protocol: http
@@ -139,6 +139,13 @@ global:
   auth:
     saml: false
     oauth2: false
+
+  ## Valid admin details for ISD authorization
+  saporgate:
+    config:
+      username: admin       #Name of the valid user in your service provider
+      adminGroups: admin    #Name of the valid admin group in your service provider  
+      password: saporadmin  #password for the saporgate
 
   ## ldap configuration used in oes-gate, oes-platform and spinnaker gate for authentication and authorization
   ldap:
@@ -505,7 +512,7 @@ platform:
 
   config:
     ##  groups defined here will have superAdmin priviledges in AP
-    adminGroups: admin
+    #adminGroups: admin
 
     ## Source of groups for authorization
     ## Supported sources:- ldap, file, gate. In general, use "gate" for SAML
@@ -630,10 +637,10 @@ saporgate:
   #    memory: 1500Mi
   #    cpu: 1500m
 
-  config:
-    username: admin      # User name with admin permissions and belonging to admin groups defined in platform service
-    password: saporadmin # Any generic String, need not be the real password
-    roles: admin # a valid admin group in the ldap
+  #config:
+   #username: admin      # User name with admin permissions and belonging to admin groups defined in platform service
+   #password: saporadmin # Any generic String, need not be the real password
+   #roles: admin # a valid admin group in the ldap
 ###############################################################################
 ## Values of OES UI
 ui:
@@ -1093,8 +1100,8 @@ spinnaker:
     auth:
       enabled: true
       basic:
-        username: admin          # Use credentials corresponding to saporgate.config.username
-        password: saporadmin     # Use credentials corresponding to saporgate.config.password
+        username: admin          # Use credentials corresponding to global.saporgate.config.username
+        password: saporadmin     # Use credentials corresponding to global.saporgate.config.password
 
 ###############################################################################################
 ###############################################################################################
