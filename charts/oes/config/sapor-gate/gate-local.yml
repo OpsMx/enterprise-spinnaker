@@ -8,9 +8,9 @@ security:
   basicform:
     enabled: true
   user:
-    name: {{ .Values.global.saporgate.config.username }}
-    password: {{ .Values.global.saporgate.config.password }}
-    roles: {{ .Values.global.saporgate.config.adminGroups }}
+    name: {{ .Values.saporgate.config.username }}
+    password: {{ .Values.saporgate.config.password }}
+    roles: {{ .Values.saporgate.config.roles }}
 {{- if not .Values.installRedis }}
 redis:
   configuration:
