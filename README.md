@@ -101,8 +101,8 @@ Parameter | Description | Default
 `global.spinGate.ingress.annotations` | Annotations for spinnaker gate ingress resource | ``
 `global.spinGate.ingress.tls.secretName` | Change this value if your own certificate is put into a specific secret | `gate-authtls`
 `global.saporgate.config.adminGroups` | Admin groups available | `admin, Administrators`
-`global.saporgate.config.username` | `Name of the valid user in your service provider`
-`global.saporgate.config.password` | `password for the saporgate`
+`global.saporgate.config.username` | Name of the valid user in your service provider
+`global.saporgate.config.password` | password for the saporgate
 `oesUI.protocol` | Change this to https if TLS is enabled for ingress endpoint | `https`
 `oesUI.host` | Host using which UI needs to be accessed | `oes.domain.com`
 `oesGate.protocol` | Change this to https if TLS is enabled for ingress endpoint | `https`
