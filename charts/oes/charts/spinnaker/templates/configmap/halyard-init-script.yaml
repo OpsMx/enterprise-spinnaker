@@ -181,7 +181,7 @@ data:
     mv /tmp/spinnaker/.hal/default/profiles/front50-local1.yml /tmp/spinnaker/.hal/default/profiles/front50-local.yml
     {{- if .Values.global.auth.saml }}
     touch /tmp/spinnaker/.hal/default/profiles/dummy.yml
-    echo "fiat:" /tmp/spinnaker/.hal/default/profiles/dummy.yml
+    echo "fiat:" > /tmp/spinnaker/.hal/default/profiles/dummy.yml
     yq e '.fiat.admin.roles += ["{{ .Values.global.saporgate.config.adminGroups }}"]' /tmp/spinnaker/.hal/default/profiles/dummy.yml > /tmp/spinnaker/.hal/default/profiles/fiat-local.yml
     rm -rf /tmp/spinnaker/.hal/default/profiles/dummy.yml
     {{- end }}
