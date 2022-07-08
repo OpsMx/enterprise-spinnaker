@@ -138,7 +138,22 @@ cors:
   allowed-origins-pattern: ^https?://(?:localhost|{{ .Values.global.oesUI.host }}|opsmx.com)(?::[1-9]\d*)?/?
   {{- end }}
 ldap:
+{{- if .Values.global.installOpenLdap }}
+  enabled: true
+  url: ldap://{{ .Release.Name }}-openldap:389
+  managerDn: cn=admin,dc=example,dc=org
+  managerPassword: opsmxadmin123
+  groupSearchBase: ou=groups,dc=example,dc=org
+  groupSearchFilter: member={0}
+  groupRoleAttributes: cn
+  userDnPattern: cn={0},dc=example,dc=org
+{{ else }}
+{{- if .Values.global.ldap.enabled }}
 {{ toYaml .Values.global.ldap | indent 2 }}
+{{ else }}
+  enabled: false
+{{- end }}
+{{- end }}
 {{- if .Values.gate.config.saml.enabled }}
 security:
   basic:
@@ -224,5 +239,3 @@ logging:
     #com.netflix.spinnaker.gate.security: DEBUG
     #org.springframework.security: DEBUG
     #org.springframework.web: DEBUG
-
-
