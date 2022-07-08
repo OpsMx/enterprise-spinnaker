@@ -100,6 +100,9 @@ Parameter | Description | Default
 `global.spinGate.host` | Host using which spinnaker gate needs to be accessed | `gate.spinnaker.example.org`
 `global.spinGate.ingress.annotations` | Annotations for spinnaker gate ingress resource | ``
 `global.spinGate.ingress.tls.secretName` | Change this value if your own certificate is put into a specific secret | `gate-authtls`
+`global.saporgate.config.adminGroups` | Admin groups available | `admin, Administrators`
+`global.saporgate.config.username` | Name of the valid user in your service provider
+`global.saporgate.config.password` | password for the saporgate
 `oesUI.protocol` | Change this to https if TLS is enabled for ingress endpoint | `https`
 `oesUI.host` | Host using which UI needs to be accessed | `oes.domain.com`
 `oesGate.protocol` | Change this to https if TLS is enabled for ingress endpoint | `https`
@@ -123,7 +126,6 @@ Parameter | Description | Default
 `gate.config.saml.jksSecretName` | Set this value to use an existing secret in which saml jks exists | `oes-saml-jks`
 `gate.config.saml.metadataSecretName` | Set this value to use an existing secret in which saml metadata exists | `metadata-xml`
 `gate.config.oauth2` | OAuth2 configuration for oes gate authn and authz | ``
-`platform.config.adminGroups` | Admin groups available | `admin, Administrators`
 `platform.config.userSource` | Source of Users for authorization | `ldap`
 `platform.config.supportedFeatures` | List of featues to be supported by OES | `[deployment_verification, sapor, visibility]`
 `sapor.config.spinnaker.authnEnabled` | Set it to true if authentication is enabled in Spinnaker | `false`
