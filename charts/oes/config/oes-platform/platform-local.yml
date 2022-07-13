@@ -19,13 +19,13 @@ rbacEnabled: {{ .Values.global.commonGate.spinnakerRBAC }}
 supportedFeatures:
 {{ toYaml .Values.platform.config.supportedFeatures | indent 2 }}
 userGroup:
-  superAdminGroups: {{ .Values.platform.config.adminGroups }}
+  superAdminGroups: {{ .Values.global.saporgate.config.adminGroups }}
 fixedDelay:
   in:
     milliseconds: 120000
 initialDelay:
   in:
-    Milliseconds: 300000
+    milliseconds: 300000
 scheduler:
   workerThreads: 50
 user:

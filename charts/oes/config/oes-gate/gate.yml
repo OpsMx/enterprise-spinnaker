@@ -138,14 +138,21 @@ cors:
   allowed-origins-pattern: ^https?://(?:localhost|{{ .Values.global.oesUI.host }}|opsmx.com)(?::[1-9]\d*)?/?
   {{- end }}
 ldap:
-  enabled: {{ .Values.global.ldap.enabled }}
-  managerDn: {{ .Values.global.ldap.managerDn }}
-  groupSearchBase: {{ .Values.global.ldap.groupSearchBase }}
-  groupSearchFilter: {{ .Values.global.ldap.groupSearchFilter }}
-  userDnPattern: {{ .Values.global.ldap.userDnPattern }}
-{{- if (eq .Values.secretStore "db") }}
-  url: {{ tpl .Values.global.ldap.url . }}
-  managerPassword: {{ .Values.global.ldap.managerPassword }}
+{{- if .Values.global.installOpenLdap }}
+  enabled: true
+  url: ldap://{{ .Release.Name }}-openldap:389
+  managerDn: cn=admin,dc=example,dc=org
+  managerPassword: opsmxadmin123
+  groupSearchBase: ou=groups,dc=example,dc=org
+  groupSearchFilter: member={0}
+  groupRoleAttributes: cn
+  userDnPattern: cn={0},dc=example,dc=org
+{{ else }}
+{{- if .Values.global.ldap.enabled }}
+{{ toYaml .Values.global.ldap | indent 2 }}
+{{ else }}
+  enabled: false
+{{- end }}
 {{- end }}
 {{- if .Values.gate.config.saml.enabled }}
 security:
@@ -232,5 +239,3 @@ logging:
     #com.netflix.spinnaker.gate.security: DEBUG
     #org.springframework.security: DEBUG
     #org.springframework.web: DEBUG
-
-
