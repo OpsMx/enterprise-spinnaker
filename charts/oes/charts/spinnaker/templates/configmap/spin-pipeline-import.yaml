@@ -33,13 +33,28 @@ data:
     {{- end }}
     then
         echo \"Spinnaker and OES is Installed and ready\"
+        echo "processing.........."
+        sleep 2m
         mkdir -p /tmp/config/git/
         git -c {{ .Values.gitopsHalyard.repo.configArgs }} clone https://github.com/OpsMx/sample-pipelines.git /tmp/config/git/
+        if [[ $? != 0 ]]; then
+        echo "ERROR: Failed while cloning the repo https://github.com/OpsMx/sample-pipelines.git"
+          exit 1
+        fi
         cd /tmp/config/git
         cp -p /tmp/config/spin/config .
         sed 's/$/ --config config/' create-app.sh >create-app1.sh
-        bash -xe create-app1.sh
-        break
+        sleep 10
+        spin application save --application-name spinapp --owner-email opsmx@opsmx.com --cloud-providers "kubernetes" --config config  > /dev/null 2>&1
+        if [[ $? != 0 ]]; then
+        echo "ERROR: Failed to list the Application using the spincli. Please check the spincli configuration in {{ .Release.Namespace }}-spinnaker-spin-config  secret"
+        exit 1
+        else
+           spin application delete spinapp --config config > /dev/null 2>&1
+           echo "Saving the applications and pipelines..."
+           bash -xe create-app1.sh
+           break
+        fi
     else
         if [ $wait_period -gt 1800 ];
         then
