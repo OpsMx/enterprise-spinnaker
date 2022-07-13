@@ -47,7 +47,7 @@ data:
         sleep 10
         spin application save --application-name spinapp --owner-email opsmx@opsmx.com --cloud-providers "kubernetes" --config config  > /dev/null 2>&1
         if [[ $? != 0 ]]; then
-        echo "ERROR: Failed to Save the Application using the spincli. Please check the spincli configuration in {{ .Release.Namespace }}-spinnaker-spin-config  secret"
+        echo "ERROR: Failed to Save the Application using the spincli. Please check the spincli configuration in {{ .Release.Name }}-spinnaker-spin-config  secret"
         exit 1
         else
            spin application delete spinapp --config config > /dev/null 2>&1
