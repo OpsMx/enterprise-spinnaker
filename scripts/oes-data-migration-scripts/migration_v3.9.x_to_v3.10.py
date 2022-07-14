@@ -81,9 +81,11 @@ def perform_migrate():
         if is_error_occurred == True:
             print(
                 f"{bcolors.FAIL} {bcolors.BOLD}FAILURE: {bcolors.ENDC}{bcolors.FAIL}Migration script execution failed. Please contact the support team{bcolors.ENDC}")
+            logging.critical("FAILURE: Migration script execution failed. Please contact the support team.")
             raise Exception("FAILURE: Migration script execution failed. Please contact the support team.")
         else:
             print(f"{bcolors.OKGREEN}{bcolors.BOLD}Successfully completed the migration.{bcolors.ENDC}")
+            logging.info("Successfully completed the migration.")
             commit_transactions()
 
     except Exception as e:
@@ -154,6 +156,7 @@ def commit_transactions():
 
 
 def perform_Audit_migration():
+    global is_error_occurred
     try:
         print("Checking spinnaker configuration in oes db")
         logging.info("Checking spinnaker configuration in oes db")
@@ -168,17 +171,59 @@ def perform_Audit_migration():
 
         for application in applications:
             try:
-                applicationPipelineDict = fetchSpinnakerPipelineExecutionByApp(application, spin_gate_url, session_id)
-                applicationPipelineConfigDict = fetchSpinnakerPipelineConfigExecution(application, spin_gate_url, session_id)
-                migratePipelineExecutions(applicationPipelineDict)
-                migratePipelineConfigExecutionS(applicationPipelineConfigDict)
+                if is_pipeline_execution_record_exist(application) == False or is_pipeline_config_record_exist(application) == False:
+                    print("Processing application : ", application)
+                    logging.info(f"Processing application : {application}")
+                    applicationPipelineDict = fetchSpinnakerPipelineExecutionByApp(application, spin_gate_url,
+                                                                                   session_id)
+                    migratePipelineExecutions(applicationPipelineDict)
+                    
+                    applicationPipelineConfigDict = fetchSpinnakerPipelineConfigExecution(application, spin_gate_url,
+                                                                                          session_id)
+                    migratePipelineConfigExecutionS(applicationPipelineConfigDict)
+                else:
+                    print(
+                        f"Ignoring the application : {application} as it was already processed")
+                    logging.info(f"Ignoring the application : {application} as it was already processed")
                 audit_conn.commit()
             except Exception as e:
                 print(f"Exception occurred while processing the application : {application} and the exception is : ", e)
                 logging.error(f"Exception occurred while processing the application : {application} and the exception is : ", exc_info=True)
+                is_error_occurred=True
+
     except Exception as e:
         print('Exception occurred during fetching spinnaker pipeline applications : ', e)
         logging.error("Exception occurred during fetching spinnaker pipeline applications", exc_info=True)
+        raise e
+
+
+def is_pipeline_execution_record_exist(app_name):
+    try:
+        query = f"select * from audit_events where data -> 'details' ->> 'application' @@ '{app_name}'"
+        audit_cursor.execute(query)
+        result = audit_cursor.fetchall()
+        if result is not None and len(result)>0:
+            return True
+        else:
+            return False
+    except Exception as e:
+        print("Exception occurred while checking is pipeline execution record exists : ", e)
+        logging.error("Exception occurred while checking is pipeline execution record exists : ", exc_info=True)
+        raise e
+
+
+def is_pipeline_config_record_exist(app_name):
+    try:
+        query = f"select * from audit_events where data -> 'content' -> 'context' ->> 'application' @@ '{app_name}'"
+        audit_cursor.execute(query)
+        result = audit_cursor.fetchall()
+        if result is not None and len(result)>0:
+            return True
+        else:
+            return False
+    except Exception as e:
+        print("Exception occurred while checking is pipeline config record exists : ", e)
+        logging.error("Exception occurred while checking is pipeline config record exists : ", exc_info=True)
         raise e
 
 
@@ -503,6 +548,7 @@ def modifyOpsmxdb():
         print("Exception occurred while fetching userservicetemplate data : ", e)
         logging.error("Exception occurred while fetching userservicetemplate data : ", exc_info=True)
         raise e
+
 
 def updateautopilotconstraints():
     try:
