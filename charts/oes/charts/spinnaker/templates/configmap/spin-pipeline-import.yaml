@@ -44,7 +44,7 @@ data:
         cd /tmp/config/git
         cp -p /tmp/config/spin/config .
         ### remove commected line in file
-        grep -o '^[^#]*' create-app.sh > removecomment.sh 
+        grep -v "#" create-app.sh > removecomment.sh 
         sed 's/$/ --config config/' removecomment.sh > create-app1.sh
         #### Loop begins to save the json if fails it tries for 3 times
         INPUT=$(sed -n '$=' create-app1.sh)
@@ -57,20 +57,20 @@ data:
           do
            echo Retrying.....
            $command > /dev/null 2>&1
-           if [[ "$n" == 3 ]]; then
             if [[ $? != 0 ]]; then
-              echo "ERROR: Failed to save the Application using the spincli. Please check the spincli configuration in {{ .Release.Name }}-spinnaker-spin-config  secret"
+              echo "ERROR: Failed to save the Application using the spincli. Please check the spincli configuration in {{ .Release.Name }}-spinnaker-spin-config  secret or check the pipelinejson"
+              #exit 1
+              if [[ "$i" == 3 ]]; then
+              echo "ERROR: Failed to save the Application using the spincli. Please check the spincli configuration in {{ .Release.Name }}-spinnaker-spin-config  secret or check the pipelinejson"
               exit 1
+              fi
             else
               echo "$command"
               echo "Saved successfully"
             fi
-           fi
            n=$((n+1))
-           sleep 2
+           sleep 10
          done
-         echo "ERROR: Failed to save the Application using the spincli. Please check the spincli configuration in {{ .Release.Name }}-spinnaker-spin-config  secret"
-         exit 1
         else
           echo "$command"
           echo "Saved successfully"
