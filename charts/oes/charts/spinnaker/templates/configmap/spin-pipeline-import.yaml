@@ -35,10 +35,47 @@ data:
         echo \"Spinnaker and OES is Installed and ready\"
         mkdir -p /tmp/config/git/
         git -c {{ .Values.gitopsHalyard.repo.configArgs }} clone https://github.com/OpsMx/sample-pipelines.git /tmp/config/git/
+        if [[ $? != 0 ]]; then
+        echo "ERROR: Failed while cloning the repo https://github.com/OpsMx/sample-pipelines.git"
+          exit 1
+        fi
+        echo "processing.........."
+        sleep 100
         cd /tmp/config/git
         cp -p /tmp/config/spin/config .
-        sed 's/$/ --config config/' create-app.sh >create-app1.sh
-        bash -xe create-app1.sh
+        ### remove commected line in file
+        grep -v "#" create-app.sh > removecomment.sh 
+        sed 's/$/ --config config/' removecomment.sh > create-app1.sh
+        #### Loop begins to save the json if fails it tries for 3 times
+        INPUT=$(sed -n '$=' create-app1.sh)
+        for i in $(seq 1 $INPUT); do
+        command=$(sed -n "$i"p create-app1.sh);
+        $command > /dev/null 2>&1
+        if [[ $? != 0 ]]; then
+          n=0
+          until [ "$n" -ge 3 ]
+          do
+           echo Retrying.....
+           $command > /dev/null 2>&1
+            if [[ $? != 0 ]]; then
+              echo "ERROR: Failed to save the Application using the spincli. Please check the spincli configuration in {{ .Release.Name }}-spinnaker-spin-config  secret or check the pipelinejson"
+              #exit 1
+              if [[ "$i" == 3 ]]; then
+              echo "ERROR: Failed to save the Application using the spincli. Please check the spincli configuration in {{ .Release.Name }}-spinnaker-spin-config  secret or check the pipelinejson"
+              exit 1
+              fi
+            else
+              echo "$command"
+              echo "Saved successfully"
+            fi
+           n=$((n+1))
+           sleep 5
+         done
+        else
+          echo "$command"
+          echo "Saved successfully"
+        fi
+        done
         break
     else
         if [ $wait_period -gt 1800 ];
