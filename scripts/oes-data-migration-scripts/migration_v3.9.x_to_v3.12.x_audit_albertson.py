@@ -37,6 +37,7 @@ def perform_migration():
         else:
             print(f"{bcolors.FAIL} {bcolors.BOLD}Spinnaker not connected and hence cannot proceed with the app sync{bcolors.ENDC}")
             logging.critical("Spinnaker not connected and hence cannot proceed with the app sync")
+            raise Exception("Spinnaker not connected and hence cannot proceed with the app sync")
 
 
         if is_error_occurred == True:
@@ -54,6 +55,7 @@ def perform_migration():
     finally:
         audit_conn.close()
         oesdb_conn.close()
+        platform_conn.close()
 
 
 def fetch_configured_spinnaker_details():
