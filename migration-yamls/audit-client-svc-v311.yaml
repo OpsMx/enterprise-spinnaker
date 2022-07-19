@@ -1,0 +1,20 @@
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    app: oes
+    component: auditclient-v311
+  name: oes-audit-client-v311
+spec:
+  ports:
+  - name: auditclient
+    port: 8098
+    protocol: TCP
+    targetPort: 8098
+  selector:
+    app: oes
+    component: auditclient-v311
+  sessionAffinity: None
+  type: ClusterIP
+status:
+  loadBalancer: {}
