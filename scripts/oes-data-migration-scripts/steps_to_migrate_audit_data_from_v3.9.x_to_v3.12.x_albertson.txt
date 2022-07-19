@@ -1,0 +1,8 @@
+Steps to migrate the audit data from v3.9.x to v3.12.x
+
+1. Copy the file : migration_v3.9.x_to_v3.12.x_audit_albertson.py file from: <script source path>
+2. Run the below command to execute the script.
+
+  python3 <scriptfilename> <audit-db-name> <audit-db-host> <oes-db-name> <oes-db-host> <platform-db-name> <platform-db-host> <db-port> <db-username> <db-password> <spinnaker-login-id> <spinnaker-password> <oes-audit-service-url> <oes-platform-service-url> <oes-admin-username>
+
+  ex: python3 migration_v3.9.x_to_v3.12.x_audit_albertson.py auditdb oes-db oesdb oes-db platformdb oes-db 5432 postgres networks123 spinnaker-user spinnaker-password http://localhost:8097 http://localhost:8095 oes-admin-user
