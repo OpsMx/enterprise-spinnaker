@@ -1,0 +1,9 @@
+Steps to migrate from v3.12.x to v4.0.x
+
+1. Copy the file : migration_v3.12.x_to_v4.0.x.py file from: <script source path>
+2. Run the below command to execute the script.
+
+  python3 <scriptfilename> <platform_db-name> <platform_host> <oes-db-name> <oes-db-host> <autopilot-db-name> <autopilot-db-host> <audit_db-name> <audit-db-host> <visibility_db-name> <visibility-db-host> <db-port> <user-name> <password> <url>(spinnaker gate url) <session_id>(configured spinnaker active session Id) <oes-user_id> <sapor_url>
+
+  ex: python3 migration_v3.12.x_to_v4.0.x.py platformdb oes-db oesdb oes-db opsmx oes-db auditdb oes-db visibilitydb oes-db  5432 postgres networks123 https://gitops-test-spin-gate.dev.opsmx.net SESSION=OTY0ZDYwMmMtOTBkNC00ZTdmLWE2ODgtMDlmMGQ4NmVhZDBk user2 http://oes-sapor:8085
+
