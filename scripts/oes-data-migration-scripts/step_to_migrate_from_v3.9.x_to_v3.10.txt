@@ -7,7 +7,7 @@ Steps to migrate from v3.9.x to v3.10
             <oes-db-name> <oes-db-host> <audit-db-name> <audit-db-host> <db-port> <spinnaker-login-id> <spinnaker-password>
 
 	Replace  <scriptfilename>  <visibility-db-name> <visibility-db-host> <platform_db-name> <platform_host> <opsmx-db-name> <opsmx-db-host> 
-            <oes-db-name> <oes-db-host> <audit-db-name> <audit-db-host> <db-port> <spinnaker-login-id> <spinnaker-password>   with valid values
+            <oes-db-name> <oes-db-host> <audit-db-name> <audit-db-host> <db-port> <db-username> <db-password> <spinnaker-login-id> <spinnaker-password>   with valid values
 
-	Ex: 	 python3 migration_v3.9.x_to_v3.10.py visibilitydb localhost platformdb localhost opsmx localhost oesdb localhost auditdb localhost 5432 spin-user-name spin-user-password
+	Ex: 	 python3 migration_v3.9.x_to_v3.10.py visibilitydb localhost platformdb localhost opsmx localhost oesdb localhost auditdb localhost 5432 db-username db-password spin-user-name spin-user-password
 

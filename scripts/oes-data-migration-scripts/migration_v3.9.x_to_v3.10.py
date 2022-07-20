@@ -245,6 +245,7 @@ def login_to_spinnaker(url):
         cookie = ""
         cmd = "curl -vvv -X POST '"+ url + "/login?username="+spinnaker_login_id+"&password="+spinnaker_password+"&submit=Login'"
         output = subprocess.getoutput(cmd=cmd)
+        output = output.replace(spinnaker_login_id, "***").replace(spinnaker_password, "***")
         logging.info(f"Output for spinnaker login : {output}")
         components = output.split("<")
         for comp in components:
@@ -697,10 +698,10 @@ def fetch_policy_audit():
 
 if __name__ == '__main__':
     n = len(sys.argv)
-    if n != 14:
+    if n != 16:
         print(
-            'Please pass valid 13 arguments <visibility-db-name> <visibility-db-host> <platform_db-name> <platform_host> <opsmx-db-name> <opsmx-db-host> '
-            '<oes-db-name> <oes-db-host> <audit-db-name> <audit-db-host> <db-port> <spinnaker-login-id> <spinnaker-password>')
+            'Please pass valid 15 arguments <visibility-db-name> <visibility-db-host> <platform_db-name> <platform_host> <opsmx-db-name> <opsmx-db-host> '
+            '<oes-db-name> <oes-db-host> <audit-db-name> <audit-db-host> <db-port> <db-username> <db-password> <spinnaker-login-id> <spinnaker-password>')
         exit(1)
 
     global is_error_occurred
@@ -721,42 +722,45 @@ if __name__ == '__main__':
     audit_db = sys.argv[9]
     audit_db_host = sys.argv[10]
     port = sys.argv[11]
-    spinnaker_login_id = sys.argv[12]
-    spinnaker_password = sys.argv[13]
+    db_username = sys.argv[12]
+    db_password = sys.argv[13]
+    spinnaker_login_id = sys.argv[14]
+    spinnaker_password = sys.argv[15]
 
 
 
     logging.info("Using default host url ex:http://github.com")
 
     # Establishing the visibility db connection
-    visibility_conn = psycopg2.connect(database=visibility_db, user='postgres', password='networks123',
+    visibility_conn = psycopg2.connect(database=visibility_db, user=db_username, password=db_password,
                                        host=visibility_host, port=port)
     logging.info("Visibility database connection established successfully")
     visibility_cursor = visibility_conn.cursor()
 
     # Establishing the platform db connection
-    platform_conn = psycopg2.connect(database=platform_db, user='postgres', password='networks123', host=platform_host,
+    platform_conn = psycopg2.connect(database=platform_db, user=db_username, password=db_password, host=platform_host,
                                      port=port)
     logging.info('Opened platform database connection successfully')
     platform_cursor = platform_conn.cursor()
 
     # Establishing the opsmx db connection
-    opsmxdb_conn = psycopg2.connect(database=opsmx_db, user='postgres', password='networks123', host=opsmx_host,
+    opsmxdb_conn = psycopg2.connect(database=opsmx_db, user=db_username, password=db_password, host=opsmx_host,
                                     port=port)
     logging.info("opsmx database connection established successfully")
     opsmxdb_cursor = opsmxdb_conn.cursor()
 
 
     # Establishing the opsmx db connection
-    oesdb_conn = psycopg2.connect(database=oes_db, user='postgres', password='networks123',
+    oesdb_conn = psycopg2.connect(database=oes_db, user=db_username, password=db_password,
                                   host=oes_host, port=port)
     logging.info("oes(sapor) database connection established successfully")
     oesdb_cursor = oesdb_conn.cursor()
 
     # Establishing the audit db connection
 
-    audit_conn = psycopg2.connect(database=audit_db, user='postgres', password='networks123',
+    audit_conn = psycopg2.connect(database=audit_db, user=db_username, password=db_password,
                                   host=audit_db_host, port=port)
+    logging.info("auditdb database connection established successfully")
 
     audit_cursor = audit_conn.cursor()
 
