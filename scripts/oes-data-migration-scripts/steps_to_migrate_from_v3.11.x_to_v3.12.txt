@@ -1,0 +1,20 @@
+Steps to migrate from v3.11.x to v3.12
+
+1. Copy the file : migration_v3.11.x_to_v3.12.py file from: <script source path>
+2. Run the below command to execute the script.
+
+        python3 <scriptfilename> <platform_db-name> <platform_host> <oes-db-name> <oes-db-host> <autopilot_db> <autopilot_host> <audit_db-name> <audit-db-host> <visibility_db-name> <visibility-db-host> <db-port> <isd-host-url> <spinnaker-gate-url> <unified-host-url> <cookie> <db-username> <db-password>
+
+    ex: python3 migration_v3.11_to_v3.12.py platformdb oes-db oesdb oes-db  opsmx oes-db auditdb oes-db visibilitydb oes-db 5432  https://isd-gate.dev.opsmx.net http://sapor-gate:8084 https://upgrade-ui.isd-dev.opsmx.net/gate SESSION=YjI5ZjFiZTAtMTdjOS00NGNjLWFkZDgtOTlkNTA5ZDg5NzY2 postgres password123
+
+Parameters
+
+<isd-host-url> (3.11 url for invoking ISD api)
+<spinnaker-gate-url> (Spinnaker unified URL)
+<unified-host-url> (Unified ISD host URL which will be configured for 3.12)
+<cookie> (ISD application cookie)
+
+Steps to retrieve the cookie are :
+1. Login to ISD using admin credential.
+2. Open the browser network console.
+3. Under Headers tab -> Request Headers -> cookie
