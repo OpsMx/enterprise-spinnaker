@@ -116,10 +116,10 @@ def perform_migration():
 
     except Exception as e:
         print("Exception occurred while migration : ", e)
+        logging.error("Exception occurred during migration from v3.12.x to v4.0:", e)
         logging.critical(e.__str__(), exc_info=True)
         rollback_transactions()
         exit(1)
-        logging.error("Exception occurred during migration from v3.12.x to v4.0:", e)
     finally:
         close_connections()
 
@@ -396,7 +396,9 @@ def updateApprovalAuditJson(audit_events_table_id, updateJson):
 def processPipelineJsonForExistingGates():
     try:
         cur_platform.execute(
-            "select s.application_id, sp.service_id, g.id, g.gate_name, g.gate_type, g.payload_constraint, gp.pipeline_id, a.name from service_gate g left outer join gate_pipeline_map gp on g.id = gp.service_gate_id left outer join service_pipeline_map sp on gp.pipeline_id = sp.pipeline_id left outer join service s on sp.service_id=s.id left outer join applications a on s.application_id = a.id;")
+            "select s.application_id, sp.service_id, g.id, g.gate_name, g.gate_type, g.payload_constraint, gp.pipeline_id, a.name from "
+            "service_gate g left outer join gate_pipeline_map gp on g.id = gp.service_gate_id left outer join service_pipeline_map sp on gp.pipeline_id = sp.pipeline_id "
+            "left outer join service s on sp.service_id=s.id left outer join applications a on s.application_id = a.id where a.source = 'Spinnaker';")
         records = cur_platform.fetchall()
         for record in records:
             applicationId = record[0]
@@ -408,18 +410,19 @@ def processPipelineJsonForExistingGates():
             appName = record[7]
             env_json = formEnvJson(gateId)
             payloadConstraint = formPayloadConstraint()
-            pipelineJson = "";
+            stageJson = ""
             if gateType.__eq__("policy"):
-                pipelineJson = policyGateProcess(applicationId, serviceId, gateId, gateName, gateType,
+                stageJson = policyGateProcess(applicationId, serviceId, gateId, gateName, gateType,
                                                  payloadConstraint, pipelineId, env_json)
             elif gateType.__eq__("verification"):
-                pipelineJson = verificationGateProcess(applicationId, serviceId, gateId, gateName, gateType,
+                stageJson = verificationGateProcess(applicationId, serviceId, gateId, gateName, gateType,
                                                        payloadConstraint, pipelineId, env_json)
             elif gateType.__eq__("approval"):
-                pipelineJson = approvalGateProcess(applicationId, serviceId, gateId, gateName, gateType,
+                stageJson = approvalGateProcess(applicationId, serviceId, gateId, gateName, gateType,
                                                    payloadConstraint, pipelineId, env_json)
-            pipelineJson["application"] = appName
-            print("pipelineJson is : ", pipelineJson)
+            stageJson["application"] = appName
+            logging.info("StageJson is : ", stageJson)
+            pipelineJson = updatePipelineJson(pipelineId,stageJson)
             postingGateJson(pipelineJson)
     except Exception as e:
         print("Exception occurred while processing the pipeline json for existing gates : ", e)
@@ -487,7 +490,9 @@ def policyGateProcess(applicationId, serviceId, gateId, gateName, gateType, payl
             "parameters": parameters,
             "pipelineId": pipelineId,
             "serviceId": serviceId,
-            "type": str(gateType)
+            "type": str(gateType),
+            "refId": "$refId",
+            "requisiteStageRefIds": []
         }
         return policy_pipeline_json
     except Exception as e:
@@ -600,7 +605,9 @@ def verificationGateProcess(applicationId, serviceId, gateId, gateName, gateType
             "parameters": parameters,
             "pipelineId": pipelineId,
             "serviceId": serviceId,
-            "type": str(gateType)
+            "type": str(gateType),
+            "refId": "$refId",
+            "requisiteStageRefIds": []
         }
         return verification_pipeline_json
     except Exception as e:
@@ -620,7 +627,9 @@ def approvalGateProcess(applicationId, serviceId, gateId, gateName, gateType, pa
             "parameters": parameters,
             "pipelineId": pipelineId,
             "serviceId": serviceId,
-            "type": str(gateType)
+            "type": str(gateType),
+            "refId": "$refId",
+            "requisiteStageRefIds": []
         }
         return approval_pipeline_json
     except Exception as e:
@@ -826,13 +835,66 @@ def verifySpinnakerConfigurationAndGetURL():
         logging.error("Exception occurred while fetching spinnaker configuration from oes db", exc_info=True)
         raise e
 
+def updatePipelineJson(pipelineId,stageJson):
+    try:
+        logging.info("updating pipeline Json for pipelineId: "+str(pipelineId))
+        if stageJson is not None and len(stageJson) > 0:
+            cur_platform.execute("SELECT id, pipeline_json from pipeline where id ="+str(pipelineId))
+            result = cur_platform.fetchall()
+            if result is not None:
+                pipelineJson = formPipelineJson(pipelineId,json.loads(result[0][1]),stageJson)
+                if pipelineJson is not None:
+                    updatePipelineJsonInPlatformDb(pipelineJson,pipelineId)
+                return pipelineJson
+    except Exception as e:
+        print("Exception occurred while updating pipeline Json: ", e)
+        logging.error("Exception occurred while updating pipeline Json", exc_info=True)
+        raise e
+
+def updatePipelineJsonInPlatformDb(pipelineJson,pipelineId):
+    try:
+        update_data = json.dumps(pipelineJson), pipelineId
+        logging.info("Updated pipeline data to update unified url : \n" + ''.join(str(update_data)) + '\n')
+        cur_platform.execute("UPDATE pipeline SET pipeline_json = %s WHERE id = %s", update_data)
+    except Exception as e:
+        print("Exception occurred while updating pipeline Json in platform db: ", e)
+        logging.error("Exception occurred while updating pipeline Json in platform db ", exc_info=True)
+        raise e
+
+
+def formPipelineJson(pipelineId,dbPipelineJson,stageJson):
+    try:
+        if dbPipelineJson is not None and len(dbPipelineJson) > 0:
+            stages = dbPipelineJson["stages"]
+            updated_stages = []
+            for stage in stages:
+                try:
+                    dbPipelineGateName = stage["name"]
+                    newsPipelineGateName = stageJson["name"]
+                    dbPipelineGateType = stage["type"]
+                    newsPipelineGateType = stage["type"]
+                    if dbPipelineGateName.__eq__(newsPipelineGateName) and dbPipelineGateType.__eq__(newsPipelineGateType):
+                        stageJson["refId"] = stage["refId"]
+                        stageJson["requisiteStageRefIds"] = stage["requisiteStageRefIds"]
+                        stage = stageJson
+                except KeyError as ke:
+                    logging.error("Exception occurred while formatting pipeline Json to update in db: "+ke, exc_info=True)
+                    pass
+                updated_stages.append(stage)
+
+            dbPipelineJson["stages"] = updated_stages
+            return dbPipelineJson
+    except Exception as e:
+        print("Exception occurred while formatting pipeline Json to update in db: ", e)
+        logging.error("Exception occurred while formatting pipeline Json to update in db", exc_info=True)
+        raise e
 
 def postingGateJson(pipelineJson):
     try:
-        api_url = sapor_url +  "/oes/appOnboarding/spinnaker/pipeline/stage"
+        api_url = sapor_url + "/oes/appOnboarding/spinnaker/pipeline/stage"
         logging.info(api_url)
         headers = {'Content-Type': 'application/json', 'cookie': session_id, 'x-user-cookie': session_id,  'x-spinnaker-user' : user_id}
-        request = requests.post(url=api_url, headers=headers, data=json.dumps(pipelineJson, iterable_as_array=True))
+        request = requests.post(url=api_url, headers=headers, data=json.dumps(pipelineJson))
         print("The response status is: ", request.status_code)
         if( request.status_code == 201):
             print("Successfully added stage!")
