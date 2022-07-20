@@ -2,7 +2,8 @@ import datetime
 import json
 import logging
 import sys
-
+import shlex
+import subprocess
 import psycopg2
 import requests
 from psycopg2.extras import execute_values
@@ -138,11 +139,13 @@ def perform_migration():
             is_error_occurred = True
 
         try:
+
             gate_pipeline_maps = get_gate_pipeline_map()
-            pipelines = get_pipelines(gate_pipeline_maps)
-            update_pipeline_json_with_unified_url(pipelines)
-            print("Successfully updated pipeline json in pipeline table of platform db")
-            logging.info("Successfully updated pipeline json in pipeline table of platform db")
+            if gate_pipeline_maps is not None and len(gate_pipeline_maps) > 0:
+                pipelines = get_pipelines(gate_pipeline_maps)
+                update_pipeline_json_with_unified_url(pipelines)
+                print("Successfully updated pipeline json in pipeline table of platform db")
+                logging.info("Successfully updated pipeline json in pipeline table of platform db")
         except Exception as e:
             print(
                 "Exception occurred while updating pipeline json with unified url in pipeline table of platform db : ",
@@ -189,7 +192,8 @@ def perform_migration():
 
         try:
             if gate_pipeline_maps is not None and len(gate_pipeline_maps) > 0:
-                update_pipeline_with_unified_url(gate_pipeline_maps)
+                cookie = login_to_isd()
+                update_pipeline_with_unified_url(gate_pipeline_maps, cookie)
                 print("Successfully updated pipeline with unified url")
                 logging.info("Successfully updated pipeline with unified url")
             else:
@@ -330,7 +334,7 @@ def update_pipeline_json_with_unified_url(pipelines):
         raise e
 
 
-def update_pipeline_with_unified_url(gate_pipeline_maps):
+def update_pipeline_with_unified_url(gate_pipeline_maps, cookie):
     try:
         for gate_pipeline_map in gate_pipeline_maps:
             pipeline_id = gate_pipeline_map[0]
@@ -340,12 +344,12 @@ def update_pipeline_with_unified_url(gate_pipeline_maps):
             response = requests.get(url=url, headers=headers)
             gate_response = json.loads(response.content)
             logging.info("Gate data from dashboard api : \n" + str(gate_response) + '\n')
-            update_gate(gate_response, pipeline_id, gate_id)
+            update_gate(gate_response, pipeline_id, gate_id, cookie)
     except Exception as e:
         raise e
 
 
-def update_gate(gate_response, pipeline_id, gate_id):
+def update_gate(gate_response, pipeline_id, gate_id, cookie):
     try:
         platform_cursor.execute("SELECT service_id FROM service_pipeline_map where pipeline_id = " + str(pipeline_id))
         service_id = platform_cursor.fetchone()[0]
@@ -714,20 +718,33 @@ def drop_constraints_feature_permission():
         raise e
 
 
+def login_to_isd():
+    try:
+        cookie = ""
+        cmd = "curl -vvv -X POST '" + host_url + "/login?username=" + isd_admin_username + "&password=" + isd_admin_password + "&submit=Login'"
+        output = subprocess.getoutput(cmd=cmd)
+        output = output.replace(isd_admin_username, "***").replace(isd_admin_password, "***")
+        logging.info(f"Output for ISD login : {output}")
+        components = output.split("<")
+        for comp in components:
+            if comp.__contains__("set-cookie") or comp.__contains__("Set-Cookie"):
+                cookie = comp.split(":")[1].strip()
+        return cookie
+    except Exception as e:
+        print("Exception occurred while logging in to ISD : ", e)
+        logging.error("Exception occurred while logging in to ISD : ", exc_info=True)
+        raise e
+
+
+
 if __name__ == '__main__':
     n = len(sys.argv)
 
-    if n != 18:
+    if n != 19:
         print(
-            "Please pass valid 17 arguments <platform_db-name> <platform_host> <oes-db-name> <oes-db-host> "
+            "Please pass valid 18 arguments <platform_db-name> <platform_host> <oes-db-name> <oes-db-host> "
             "<autopilot_db> <autopilot_host> <audit_db-name> <audit-db-host> <visibility_db-name> <visibility-db-host> "
-            "<db-port> <isd-host-url> <spinnaker-gate-url> <unified-host-url> <cookie> <db-username> <db-password>")
-        print()
-        print("Steps to retrieve the cookie are :")
-        print("1. Login to ISD using admin credential.")
-        print("2. Open the browser network console.")
-        print("3. Under Headers tab -> Request Headers -> cookie")
-
+            "<db-port> <isd-host-url> <spinnaker-gate-url> <unified-host-url> <isd-admin-username> <isd-admin-password> <db-username> <db-password>")
         exit(1)
 
     global is_error_occurred
@@ -751,9 +768,10 @@ if __name__ == '__main__':
     host_url = sys.argv[12]
     spinnaker_gate_url = sys.argv[13]
     unified_host_url = sys.argv[14]
-    cookie = sys.argv[15]
-    db_username = sys.argv[16]
-    db_password = sys.argv[17]
+    isd_admin_username = sys.argv[15]
+    isd_admin_password = sys.argv[16]
+    db_username = sys.argv[17]
+    db_password = sys.argv[18]
 
     # Establishing the platform db connection
     platform_conn = psycopg2.connect(database=platform_db, user=db_username, password=db_password, host=platform_host,
