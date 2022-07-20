@@ -1,0 +1,7 @@
+1. Goto location /opsmx/workdir/datamigration in platform container
+2. You will find a file named : migration_v3.10.x_to_v3.11.py
+3. Run the below command to execute the script.
+
+	python3 <scriptfilename>  <audit_db-name> <audit-db-host> <autopilot-db-name> <autopilot-db-host> <oes-audit-service-url> <db-port> <user-name> <password>
+
+    ex: python3 migration_v3.10.x_to_v3.11.py auditdb localhost opsmx localhost http://oes-audit-service:8097 5432 postgres networks123
