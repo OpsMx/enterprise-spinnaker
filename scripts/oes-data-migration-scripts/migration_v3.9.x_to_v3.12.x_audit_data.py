@@ -186,6 +186,7 @@ def login_to_spinnaker(url):
         cookie = ""
         cmd = "curl -vvv -X POST '" + url + "/login?username=" + spinnaker_login_id + "&password=" + spinnaker_password + "&submit=Login'"
         output = subprocess.getoutput(cmd=cmd)
+        output = output.replace(spinnaker_login_id, "***").replace(spinnaker_password, "***")
         logging.info(f"Output for spinnaker login : {output}")
         components = output.split("<")
         for comp in components:
