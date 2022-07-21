@@ -1,6 +1,6 @@
 import psycopg2
 import sys
-import datetime
+import subprocess
 import json
 import logging
 import requests
@@ -99,7 +99,8 @@ def perform_migration():
         try:
             logging.info("Update Spinnaker existing gate Json in spinnaker")
             print("Update Spinnaker existing gate Json in spinnaker")
-            processPipelineJsonForExistingGates()
+            cookie = login_to_isd()
+            processPipelineJsonForExistingGates(cookie)
         except Exception as e:
             logging.error("Failure at step 10", exc_info=True)
             is_error_occurred = True
@@ -393,12 +394,12 @@ def updateApprovalAuditJson(audit_events_table_id, updateJson):
         print("Exception occurred while updating update json : ", e)
         raise e
 
-def processPipelineJsonForExistingGates():
+def processPipelineJsonForExistingGates(cookie):
     try:
         cur_platform.execute(
             "select s.application_id, sp.service_id, g.id, g.gate_name, g.gate_type, g.payload_constraint, gp.pipeline_id, a.name from "
             "service_gate g left outer join gate_pipeline_map gp on g.id = gp.service_gate_id left outer join service_pipeline_map sp on gp.pipeline_id = sp.pipeline_id "
-            "left outer join service s on sp.service_id=s.id left outer join applications a on s.application_id = a.id where a.source = 'Spinnaker';")
+            "left outer join service s on sp.service_id=s.id left outer join applications a on s.application_id = a.id where a.source = 'Spinnaker' ;")
         records = cur_platform.fetchall()
         for record in records:
             applicationId = record[0]
@@ -419,11 +420,11 @@ def processPipelineJsonForExistingGates():
                                                        payloadConstraint, pipelineId, env_json)
             elif gateType.__eq__("approval"):
                 stageJson = approvalGateProcess(applicationId, serviceId, gateId, gateName, gateType,
-                                                   payloadConstraint, pipelineId, env_json)
+                                                   payloadConstraint, pipelineId, env_json,cookie)
             stageJson["application"] = appName
             logging.info("StageJson is : ", stageJson)
             pipelineJson = updatePipelineJson(pipelineId,stageJson)
-            postingGateJson(pipelineJson)
+            postingGateJson(pipelineJson,cookie)
     except Exception as e:
         print("Exception occurred while processing the pipeline json for existing gates : ", e)
         logging.error("Exception occurred while processing the pipeline json for existing gates :", exc_info=True)
@@ -616,10 +617,10 @@ def verificationGateProcess(applicationId, serviceId, gateId, gateName, gateType
         raise e
 
 
-def approvalGateProcess(applicationId, serviceId, gateId, gateName, gateType, payloadConstraint, pipelineId, env_json):
+def approvalGateProcess(applicationId, serviceId, gateId, gateName, gateType, payloadConstraint, pipelineId, env_json,cookie):
     try:
         logging.info("process approval gate json for application Id: "+str(applicationId) + " ,serviceId: "+str(serviceId)+" ,gateId: "+str(gateId))
-        parameters = approvalParametersDataFilter(gateId, env_json,payloadConstraint)
+        parameters = approvalParametersDataFilter(gateId, env_json,payloadConstraint,cookie)
         approval_pipeline_json = {
             "applicationId": applicationId,
             "isNew": bool(True),
@@ -638,12 +639,12 @@ def approvalGateProcess(applicationId, serviceId, gateId, gateName, gateType, pa
         raise e
 
 
-def approvalParametersDataFilter(gateId, env_json_formatted,payloadConstraint):
+def approvalParametersDataFilter(gateId, env_json_formatted,payloadConstraint,cookie):
     try:
-        approvalGroupsData = getApprovalGroupsDataFilter(gateId)
-        automatedApproval = getAutomatedApproval(gateId)
-        connectors = getConnectorsDataFilter(gateId)
-        selectedConnectors = getSelectedConnectors(gateId)
+        approvalGroupsData = getApprovalGroupsDataFilter(gateId,cookie)
+        automatedApproval = getAutomatedApproval(gateId,cookie)
+        connectors = getConnectorsDataFilter(gateId,cookie)
+        selectedConnectors = getSelectedConnectors(gateId,cookie)
         approval_pipeline_json = {
             "approvalGroups": approvalGroupsData,
             "automatedApproval": automatedApproval,
@@ -660,12 +661,12 @@ def approvalParametersDataFilter(gateId, env_json_formatted,payloadConstraint):
         raise e
 
 
-def getApprovalGroupsName(gateId):
+def getApprovalGroupsName(gateId,cookie):
     try:
-        URL = url + "/platformservice/v6/usergroups/permissions/resources/{}".format(gateId)
+        URL = isd_gate_url + "/platformservice/v6/usergroups/permissions/resources/{}".format(gateId)
         logging.info(URL)
         PARAMS = {'featureType': 'APPROVAL_GATE'}
-        headers = {'cookie': session_id, 'x-spinnaker-user' : user_id}
+        headers = {'cookie': cookie, 'x-spinnaker-user' : isd_admin_username}
         request = requests.get(url=URL, headers=headers, params=PARAMS)
         return request.json()
     except Exception as e:
@@ -674,11 +675,11 @@ def getApprovalGroupsName(gateId):
         raise e
 
 
-def getApprovalGroupsDataJson():
+def getApprovalGroupsDataJson(cookie):
     try:
-        URL = url + "/platformservice/v2/usergroups"
+        URL = isd_gate_url + "/platformservice/v2/usergroups"
         logging.info(URL)
-        headers = {'cookie': session_id}
+        headers = {'cookie': cookie}
         request = requests.get(url=URL, headers=headers)
         return request.json()
     except Exception as e:
@@ -687,10 +688,10 @@ def getApprovalGroupsDataJson():
         raise e
 
 
-def getApprovalGroupsDataFilter(gateId):
+def getApprovalGroupsDataFilter(gateId,cookie):
     dataList = []
-    getApprovalGroupsNamesData = getApprovalGroupsName(gateId)
-    getApprovalGroupsData = getApprovalGroupsDataJson()
+    getApprovalGroupsNamesData = getApprovalGroupsName(gateId,cookie)
+    getApprovalGroupsData = getApprovalGroupsDataJson(cookie)
     if('userGroupName' in getApprovalGroupsNamesData):
        getUserGroupsName = getApprovalGroupsNamesData['userGroupName']
     else:
@@ -731,14 +732,14 @@ def getAutomatedApproval(gateId):
         raise e
 
 
-def getConnectorsDataFilter(gateId):
+def getConnectorsDataFilter(gateId,cookie):
     try:
         logging.info("Fetching connector data for gateId: "+str(gateId))
         dataList = []
-        getConnectorsNames = getConnectorsConfiguredNames(gateId)
+        getConnectorsNames = getConnectorsConfiguredNames(gateId,cookie)
         if('error' in getConnectorsNames):
             return dataList
-        getConnectorsNameDatas = getAllConnectorsNameData()
+        getConnectorsNameDatas = getAllConnectorsNameData(cookie)
         for getConnectorsName in getConnectorsNames:
             connectorType = getConnectorsName['connectorType']
             accountName = getConnectorsName['accountName']
@@ -759,11 +760,11 @@ def getConnectorsDataFilter(gateId):
         raise e
 
 
-def getConnectorsConfiguredNames(gateId):
+def getConnectorsConfiguredNames(gateId,cookie):
     try:
-        URL = url + "/visibilityservice/v1/approvalGates/{}/toolConnectors".format(gateId)
+        URL = isd_gate_url + "/visibilityservice/v1/approvalGates/{}/toolConnectors".format(gateId)
         logging.info(URL)
-        headers = {'cookie': session_id}
+        headers = {'cookie': cookie}
         request = requests.get(url=URL, headers=headers)
         return request.json()
     except Exception as e:
@@ -772,11 +773,11 @@ def getConnectorsConfiguredNames(gateId):
         raise e
 
 
-def getAllConnectorsNameData():
+def getAllConnectorsNameData(cookie):
     try:
-        URL = url + "/visibilityservice/v6/getAllConnectorFields"
+        URL = isd_gate_url + "/visibilityservice/v6/getAllConnectorFields"
         logging.info(URL)
-        headers = {'cookie': session_id}
+        headers = {'cookie': cookie}
         request = requests.get(url=URL, headers=headers)
         return request.json()
     except Exception as e:
@@ -889,29 +890,46 @@ def formPipelineJson(pipelineId,dbPipelineJson,stageJson):
         logging.error("Exception occurred while formatting pipeline Json to update in db", exc_info=True)
         raise e
 
-def postingGateJson(pipelineJson):
+def postingGateJson(pipelineJson,cookie):
     try:
-        api_url = sapor_url + "/oes/appOnboarding/spinnaker/pipeline/stage"
+        api_url = isd_gate_url + "/oes/appOnboarding/spinnaker/pipeline/stage"
         logging.info(api_url)
-        headers = {'Content-Type': 'application/json', 'cookie': session_id, 'x-user-cookie': session_id,  'x-spinnaker-user' : user_id}
-        request = requests.post(url=api_url, headers=headers, data=json.dumps(pipelineJson))
-        print("The response status is: ", request.status_code)
-        if( request.status_code == 201):
-            print("Successfully added stage!")
+        headers = {'Content-Type': 'application/json', 'cookie': cookie, 'x-user-cookie': cookie,  'x-spinnaker-user' : isd_admin_username}
+        response = requests.post(url=api_url, headers=headers, data=json.dumps(pipelineJson))
+        logging.info("The response status is: "+str(response.status_code))
+        if (response.status_code == 200 | response.status_code == 201):
+            response.info("Successfully added stage! The response is:\n" + str(response.content) + '\n')
         else:
-            print("Failed to add stage; The response is: " , json.dumps(request.json()))
+            logging.info("Failed to add stage; The response is:\n" + str(response.content) + '\n')
     except Exception as e:
         print("Exception occurred while posting gate: ", e)
         logging.error("Exception occurred while posting gate", exc_info=True)
         raise e
 
+def login_to_isd():
+    try:
+        cookie = ""
+        cmd = "curl -vvv -X POST '" + isd_gate_url + "/login?username=" + isd_admin_username + "&password=" + isd_admin_password + "&submit=Login'"
+        output = subprocess.getoutput(cmd=cmd)
+        output = output.replace(isd_admin_username, "***").replace(isd_admin_password, "***")
+        logging.info(f"Output for ISD login : {output}")
+        components = output.split("<")
+        for comp in components:
+            if comp.__contains__("set-cookie") or comp.__contains__("Set-Cookie"):
+                cookie = comp.split(":")[1].strip()
+        return cookie
+    except Exception as e:
+        print("Exception occurred while logging in to ISD : ", e)
+        logging.error("Exception occurred while logging in to ISD : ", exc_info=True)
+        raise e
+
 if __name__ == '__main__':
     n = len(sys.argv)
 
-    if n != 18:
+    if n != 17:
         print(
-            "Please pass valid 17 arguments <platform_db-name> <platform_host> <oes-db-name> <oes-db-host> <autopilot-db-name> <autopilot-db-host> <audit_db-name> <audit-db-host> <visibility_db-name> <visibility-db-host> "
-            "<db-port> <user-name> <password> <url>(spinnaker gate url) <session_id>(configured spinnaker active session Id) <user_id> <sapor_url>")
+            "Please pass valid 16 arguments <platform_db-name> <platform_host> <oes-db-name> <oes-db-host> <autopilot-db-name> <autopilot-db-host> <audit_db-name> <audit-db-host> <visibility_db-name> <visibility-db-host> "
+            "<db-port> <user-name> <password> <isd-gate-url> <isd-admin-username> <isd-admin-password> ")
         exit(1)
 
     global is_error_occurred
@@ -934,10 +952,9 @@ if __name__ == '__main__':
     port = sys.argv[11]
     user_name = sys.argv[12]
     password = sys.argv[13]
-    url = sys.argv[14]
-    session_id = sys.argv[15]
-    user_id = sys.argv[16]
-    sapor_url = sys.argv[17]
+    isd_gate_url = sys.argv[14]
+    isd_admin_username = sys.argv[15]
+    isd_admin_password = sys.argv[16]
 
     # Establishing the platform db connection
     platform_conn = psycopg2.connect(database=platform_db, user=user_name, password=password, host=platform_host,
