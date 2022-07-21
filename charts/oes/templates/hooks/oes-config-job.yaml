@@ -1,4 +1,4 @@
-{{- if or (eq .Values.installationMode "OES-AP")  (eq .Values.installationMode "EASY") -}}
+{{- if (.Values.installSpinnaker) }}
 {{- if and  .Values.oesAutoConfiguration .Release.IsInstall -}}
 apiVersion: batch/v1
 kind: Job
