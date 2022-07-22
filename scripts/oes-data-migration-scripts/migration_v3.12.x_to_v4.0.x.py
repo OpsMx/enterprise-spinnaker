@@ -6,7 +6,6 @@ import logging
 import requests
 
 
-
 class bcolors:
     HEADER = '\033[95m'
     OKBLUE = '\033[94m'
@@ -17,6 +16,7 @@ class bcolors:
     ENDC = '\033[0m'
     BOLD = '\033[1m'
     UNDERLINE = '\033[4m'
+
 
 def perform_migration():
     try:
@@ -78,7 +78,6 @@ def perform_migration():
             logging.error("Failure at step 7", exc_info=True)
             is_error_occurred = True
 
-
         try:
             logging.info("Update service_deployments_current table sync column data in platform db")
             print("Update service_deployments_current table sync column data in platform db")
@@ -97,14 +96,13 @@ def perform_migration():
             is_error_occurred = True
 
         try:
-            logging.info("Update Spinnaker existing gate Json in spinnaker")
-            print("Update Spinnaker existing gate Json in spinnaker")
+            logging.info("Updating Spinnaker existing gate Json in spinnaker")
+            print("Updating Spinnaker existing gate Json in spinnaker")
             cookie = login_to_isd()
             processPipelineJsonForExistingGates(cookie)
         except Exception as e:
             logging.error("Failure at step 10", exc_info=True)
             is_error_occurred = True
-
 
         if is_error_occurred == True:
             logging.info(
@@ -117,7 +115,7 @@ def perform_migration():
 
     except Exception as e:
         print("Exception occurred while migration : ", e)
-        logging.error("Exception occurred during migration from v3.12.x to v4.0:", e)
+        logging.error("Exception occurred during migration from v3.12.x to v4.0:", exc_info=True)
         logging.critical(e.__str__(), exc_info=True)
         rollback_transactions()
         exit(1)
@@ -136,6 +134,7 @@ def commit_transactions():
     except Exception as e:
         logging.critical("Exception occurred while committing transactions : ", exc_info=True)
         raise e
+
 
 def close_connections():
     global audit_conn
@@ -165,11 +164,15 @@ def rollback_transactions():
 
 def add_columns_in_service_deployment_current():
     try:
-        cur_platform.execute("ALTER TABLE service_deployments_current ADD COLUMN IF NOT EXISTS cluster character varying DEFAULT NULL")
-        cur_platform.execute("ALTER TABLE service_deployments_current ADD COLUMN IF NOT EXISTS sync character varying DEFAULT NULL")
+        cur_platform.execute(
+            "ALTER TABLE service_deployments_current ADD COLUMN IF NOT EXISTS cluster character varying DEFAULT NULL")
+        cur_platform.execute(
+            "ALTER TABLE service_deployments_current ADD COLUMN IF NOT EXISTS sync character varying DEFAULT NULL")
     except Exception as e:
-        logging.critical("Exception occurred while adding columns to service_deployments_current table : ", exc_info=True)
+        logging.critical("Exception occurred while adding columns to service_deployments_current table : ",
+                         exc_info=True)
         raise e
+
 
 def update_sync_status():
     try:
@@ -184,7 +187,7 @@ def update_sync_status():
 
 def persist_cluster(pipeline_executions):
     try:
-        logging("Migration to update the cluster name")
+        logging.info("Migration to update the cluster name")
         print("Migration to update the cluster name")
         for pipeline_execution in pipeline_executions:
             pipeline_execution_json = pipeline_execution[1]
@@ -394,6 +397,7 @@ def updateApprovalAuditJson(audit_events_table_id, updateJson):
         print("Exception occurred while updating update json : ", e)
         raise e
 
+
 def processPipelineJsonForExistingGates(cookie):
     try:
         cur_platform.execute(
@@ -414,17 +418,18 @@ def processPipelineJsonForExistingGates(cookie):
             stageJson = ""
             if gateType.__eq__("policy"):
                 stageJson = policyGateProcess(applicationId, serviceId, gateId, gateName, gateType,
-                                                 payloadConstraint, pipelineId, env_json)
+                                              payloadConstraint, pipelineId, env_json)
             elif gateType.__eq__("verification"):
                 stageJson = verificationGateProcess(applicationId, serviceId, gateId, gateName, gateType,
-                                                       payloadConstraint, pipelineId, env_json)
+                                                    payloadConstraint, pipelineId, env_json, cookie)
             elif gateType.__eq__("approval"):
                 stageJson = approvalGateProcess(applicationId, serviceId, gateId, gateName, gateType,
-                                                   payloadConstraint, pipelineId, env_json,cookie)
-            stageJson["application"] = appName
-            logging.info("StageJson is : ", stageJson)
-            pipelineJson = updatePipelineJson(pipelineId,stageJson)
-            postingGateJson(pipelineJson,cookie)
+                                                payloadConstraint, pipelineId, env_json, cookie)
+            if stageJson is not None:
+                stageJson["application"] = appName
+                logging.info("StageJson is : ", stageJson)
+                pipelineJson = updatePipelineJson(pipelineId, stageJson)
+                postingGateJson(pipelineJson, cookie)
     except Exception as e:
         print("Exception occurred while processing the pipeline json for existing gates : ", e)
         logging.error("Exception occurred while processing the pipeline json for existing gates :", exc_info=True)
@@ -434,7 +439,8 @@ def processPipelineJsonForExistingGates(cookie):
 def formEnvJson(gateId):
     try:
         cur_platform.execute(
-            "select ae.spinnaker_environment_id , ae.environment from app_environment ae left outer join service_gate sg on ae.id=sg.app_environment_id where sg.id=" + str(gateId))
+            "select ae.spinnaker_environment_id , ae.environment from app_environment ae left outer join service_gate sg on ae.id=sg.app_environment_id where sg.id=" + str(
+                gateId))
         spinnakerEnvironments = cur_platform.fetchone()
         spinnakerEnvironmentId = spinnakerEnvironments[0]
         spinnakerEnvironmentName = spinnakerEnvironments[1]
@@ -442,7 +448,7 @@ def formEnvJson(gateId):
             "id": spinnakerEnvironmentId,
             "spinnakerEnvironment": str(spinnakerEnvironmentName)
         }
-        logging.info("Fetched environment information for GateId :"+str(gateId)+ "  :"+str(env_json))
+        logging.info("Fetched environment information for GateId :" + str(gateId) + "  :" + str(env_json))
         return env_json
     except Exception as e:
         print("Exception occurred while forming environment json for existing gates : ", e)
@@ -453,37 +459,39 @@ def formEnvJson(gateId):
 def formPayloadConstraint():
     try:
         payloadConstraint = [{
-                "connectorType": "PayloadConstraints",
-                "helpText": "Payload Constraints",
-                "isMultiSupported": bool(True),
-                "label": "Payload Constraints",
-                "selectInput": bool(False),
-                "supportedParams": [{
-                    "helpText": "Key",
-                    "label": "Key",
-                    "name": "label",
-                    "type": "string"
-                }, {
-                    "helpText": "Value",
-                    "label": "Value",
-                    "name": "value",
-                    "type": "string"
-                }],
-                "values": []
-            }]
-        logging.info("Payload Json :"+str(payloadConstraint))
+            "connectorType": "PayloadConstraints",
+            "helpText": "Payload Constraints",
+            "isMultiSupported": bool(True),
+            "label": "Payload Constraints",
+            "selectInput": bool(False),
+            "supportedParams": [{
+                "helpText": "Key",
+                "label": "Key",
+                "name": "label",
+                "type": "string"
+            }, {
+                "helpText": "Value",
+                "label": "Value",
+                "name": "value",
+                "type": "string"
+            }],
+            "values": []
+        }]
+        logging.info("Payload Json :" + str(payloadConstraint))
         return payloadConstraint
     except Exception as e:
         print("Exception occurred while processing the payload constraint json for existing gates : ", e)
-        logging.error("Exception occurred while processing the payload constraint json for existing gates :", exc_info=True)
+        logging.error("Exception occurred while processing the payload constraint json for existing gates :",
+                      exc_info=True)
         raise e
 
 
 def policyGateProcess(applicationId, serviceId, gateId, gateName, gateType, payloadConstraint, pipelineId,
                       env_json_formatted):
     try:
-        logging.info("process policy gate json for application Id: "+str(applicationId) + " ,serviceId: "+str(serviceId)+" ,gateId: "+str(gateId))
-        parameters = policyParametersDataFilter(gateId, env_json_formatted,payloadConstraint)
+        logging.info("process policy gate json for application Id: " + str(applicationId) + " ,serviceId: " + str(
+            serviceId) + " ,gateId: " + str(gateId))
+        parameters = policyParametersDataFilter(gateId, env_json_formatted, payloadConstraint)
         policy_pipeline_json = {
             "applicationId": applicationId,
             "isNew": bool(True),
@@ -492,17 +500,18 @@ def policyGateProcess(applicationId, serviceId, gateId, gateName, gateType, payl
             "pipelineId": pipelineId,
             "serviceId": serviceId,
             "type": str(gateType),
-            "refId": "$refId",
+            "refId": "",
             "requisiteStageRefIds": []
         }
         return policy_pipeline_json
     except Exception as e:
         print("Exception occurred while formatting the policy pipeline json for existing gates : ", e)
-        logging.error("Exception occurred while formatting the policy pipeline json for existing gates :", exc_info=True)
+        logging.error("Exception occurred while formatting the policy pipeline json for existing gates :",
+                      exc_info=True)
         raise e
 
 
-def policyParametersDataFilter(gateId, env_json_formatted,gateSecurity):
+def policyParametersDataFilter(gateId, env_json_formatted, gateSecurity):
     try:
         cur_oesdb.execute(
             "select policy_id,policy_name from policy_gate where gate_id=" + str(gateId))
@@ -518,50 +527,21 @@ def policyParametersDataFilter(gateId, env_json_formatted,gateSecurity):
         }
         return approval_pipeline_json
     except Exception as e:
-        print("Exception occurred while processing the policy parameter json: ", e )
+        print("Exception occurred while processing the policy parameter json: ", e)
         logging.error("Exception occurred while processing the policy parameter json:", exc_info=True)
         raise e
 
 
-def verificationParametersDataFilter(gateId, env_json_formatted):
+def verificationParametersDataFilter(applicationId, gateId, env_json_formatted, cookie):
     try:
-        cur_autopilot.execute(
-            "select ra.lifetime_minutes, ra.result_score,ra.minimum_result_score,sra.loganalysis_id,sra.canaryanalysis_id from riskanalysis ra left join serviceriskanalysis sra ON sra.riskanalysis_id = ra.opsmx_id  where sra.gate_id =" + str(
-                gateId))
-        verification = cur_autopilot.fetchone()
-        lifetime = verification[0]
-        canaryResultScore = verification[1]
-        miniCanaryResult = verification[2]
-        loganalysis_id = verification[3]
-        canaryanalysis_id = verification[4]
-        baselinestarttime = ""
-        canarystarttime = ""
-        logTemplate = ""
-        metricTemplate = ""
-        if (loganalysis_id is not None):
-            cur_autopilot.execute(
-                "select v1starttime,v2starttime,templatename as logtempalteName from loganalysis where opsmx_id =" + str(
-                    loganalysis_id))
-            verificationDateDetails = cur_autopilot.fetchone()
-            baselinestarttime = verificationDateDetails[0]
-            canarystarttime = verificationDateDetails[1]
-            logTemplate = verification[2]
-        if (canaryanalysis_id is not None):
-            cur_autopilot.execute(
-                "select  starttime,version2starttime,templatename as metricTemplateName from canaryanalysis where opsmx_id=" + str(
-                    canaryanalysis_id))
-            verificationDateDetails = cur_autopilot.fetchone()
-            baselinestarttime = verificationDateDetails[0]
-            canarystarttime = verificationDateDetails[1]
-            metricTemplate = verification[2]
-
+        logAndMetricInfoRes = getLogAndMetricName(applicationId, gateId, cookie)
         verification_pipeline_json = {
             "baselineRealTime": bool(False),
-            "baselinestarttime": baselinestarttime,
+            "baselinestarttime": "",
             "canaryRealTime": bool(False),
-            "canaryresultscore": canaryResultScore,
-            "canarystarttime": canarystarttime,
-            "customEnvironment": "{customEnvironment}",
+            "canaryresultscore": "",
+            "canarystarttime": "",
+            "customEnvironment": "",
             "environment": env_json_formatted,
             "gateSecurity": [{
                 "connectorType": "PayloadConstraints",
@@ -582,45 +562,64 @@ def verificationParametersDataFilter(gateId, env_json_formatted):
                 }],
                 "values": []
             }],
-            "lifetime": lifetime,
-            "logTemplate": logTemplate,
-            "metricTemplate": metricTemplate,
-            "miniCanaryResult": miniCanaryResult
+            "lifetime": "",
+            "logTemplate": logAndMetricInfoRes["logTemplateName"],
+            "metricTemplate": logAndMetricInfoRes["metricTemplateName"],
+            "minicanaryresult": ""
         }
         return verification_pipeline_json
     except Exception as e:
         print("Exception occurred while processing the verification pipeline json for existing gates : ", e)
-        logging.error("Exception occurred while processing the verification pipeline json for existing gates :", exc_info=True)
+        logging.error("Exception occurred while processing the verification pipeline json for existing gates :",
+                      exc_info=True)
+        raise e
+
+
+def getLogAndMetricName(applicationId, gateId, cookie):
+    try:
+        URL = isd_gate_url + "/autopilot/api/v3/applications/{}/gates/{}".format(applicationId, gateId)
+        logging.info(URL)
+        headers = {'cookie': cookie, 'x-spinnaker-user': isd_admin_username}
+        request = requests.get(url=URL, headers=headers)
+        return request.json()
+    except Exception as e:
+        print("Exception occurred while fetching log and metric template name: ", e)
+        logging.error("Exception occurred while fetching log and metric template name:", exc_info=True)
         raise e
 
 
 def verificationGateProcess(applicationId, serviceId, gateId, gateName, gateType, payloadConstraint, pipelineId,
-                            env_json_formatted):
+                            env_json_formatted, cookie):
     try:
-        logging.info("process verification gate json for application Id: "+str(applicationId) + " ,serviceId: "+str(serviceId)+" ,gateId: "+str(gateId))
-        parameters = verificationParametersDataFilter(gateId, env_json_formatted)
-        verification_pipeline_json = {
-            "applicationId": applicationId,
-            "isNew": bool(True),
-            "name": str(gateName),
-            "parameters": parameters,
-            "pipelineId": pipelineId,
-            "serviceId": serviceId,
-            "type": str(gateType),
-            "refId": "$refId",
-            "requisiteStageRefIds": []
-        }
-        return verification_pipeline_json
+        logging.info("process verification gate json for application Id: " + str(applicationId) + " ,serviceId: " + str(
+            serviceId) + " ,gateId: " + str(gateId))
+        parameters = verificationParametersDataFilter(applicationId, gateId, env_json_formatted, cookie)
+        if (parameters is not None):
+            verification_pipeline_json = {
+                "applicationId": applicationId,
+                "isNew": bool(True),
+                "name": str(gateName),
+                "parameters": parameters,
+                "pipelineId": pipelineId,
+                "serviceId": serviceId,
+                "type": str(gateType),
+                "refId": "",
+                "requisiteStageRefIds": []
+            }
+            return verification_pipeline_json
     except Exception as e:
         print("Exception occurred while formatting the verification pipeline json for existing gates : ", e)
-        logging.error("Exception occurred while formatting the verification pipeline json for existing gates :", exc_info=True)
+        logging.error("Exception occurred while formatting the verification pipeline json for existing gates :",
+                      exc_info=True)
         raise e
 
 
-def approvalGateProcess(applicationId, serviceId, gateId, gateName, gateType, payloadConstraint, pipelineId, env_json,cookie):
+def approvalGateProcess(applicationId, serviceId, gateId, gateName, gateType, payloadConstraint, pipelineId, env_json,
+                        cookie):
     try:
-        logging.info("process approval gate json for application Id: "+str(applicationId) + " ,serviceId: "+str(serviceId)+" ,gateId: "+str(gateId))
-        parameters = approvalParametersDataFilter(gateId, env_json,payloadConstraint,cookie)
+        logging.info("process approval gate json for application Id: " + str(applicationId) + " ,serviceId: " + str(
+            serviceId) + " ,gateId: " + str(gateId))
+        parameters = approvalParametersDataFilter(gateId, env_json, payloadConstraint, cookie)
         approval_pipeline_json = {
             "applicationId": applicationId,
             "isNew": bool(True),
@@ -629,7 +628,7 @@ def approvalGateProcess(applicationId, serviceId, gateId, gateName, gateType, pa
             "pipelineId": pipelineId,
             "serviceId": serviceId,
             "type": str(gateType),
-            "refId": "$refId",
+            "refId": "",
             "requisiteStageRefIds": []
         }
         return approval_pipeline_json
@@ -639,34 +638,35 @@ def approvalGateProcess(applicationId, serviceId, gateId, gateName, gateType, pa
         raise e
 
 
-def approvalParametersDataFilter(gateId, env_json_formatted,payloadConstraint,cookie):
+def approvalParametersDataFilter(gateId, env_json_formatted, payloadConstraint, cookie):
     try:
-        approvalGroupsData = getApprovalGroupsDataFilter(gateId,cookie)
-        automatedApproval = getAutomatedApproval(gateId,cookie)
-        connectors = getConnectorsDataFilter(gateId,cookie)
-        selectedConnectors = getSelectedConnectors(gateId,cookie)
+        approvalGroupsData = getApprovalGroupsDataFilter(gateId, cookie)
+        automatedApproval = getAutomatedApproval(gateId)
+        connectors = getConnectorsDataFilter(gateId, cookie)
+        selectedConnectors = getSelectedConnectors(gateId, cookie)
         approval_pipeline_json = {
             "approvalGroups": approvalGroupsData,
             "automatedApproval": automatedApproval,
             "connectors": connectors,
             "customEnvironment": "",
             "environment": env_json_formatted,
-            "gateSecurity":payloadConstraint,
+            "gateSecurity": payloadConstraint,
             "selectedConnectors": selectedConnectors
         }
         return approval_pipeline_json
     except Exception as e:
         print("Exception occurred while processing the approval pipeline json for existing gates : ", e)
-        logging.error("Exception occurred while processing the approval pipeline json for existing gates :", exc_info=True)
+        logging.error("Exception occurred while processing the approval pipeline json for existing gates :",
+                      exc_info=True)
         raise e
 
 
-def getApprovalGroupsName(gateId,cookie):
+def getApprovalGroupsName(gateId, cookie):
     try:
         URL = isd_gate_url + "/platformservice/v6/usergroups/permissions/resources/{}".format(gateId)
         logging.info(URL)
         PARAMS = {'featureType': 'APPROVAL_GATE'}
-        headers = {'cookie': cookie, 'x-spinnaker-user' : isd_admin_username}
+        headers = {'cookie': cookie, 'x-spinnaker-user': isd_admin_username}
         request = requests.get(url=URL, headers=headers, params=PARAMS)
         return request.json()
     except Exception as e:
@@ -688,20 +688,20 @@ def getApprovalGroupsDataJson(cookie):
         raise e
 
 
-def getApprovalGroupsDataFilter(gateId,cookie):
+def getApprovalGroupsDataFilter(gateId, cookie):
     dataList = []
-    getApprovalGroupsNamesData = getApprovalGroupsName(gateId,cookie)
+    getApprovalGroupsNamesData = getApprovalGroupsName(gateId, cookie)
     getApprovalGroupsData = getApprovalGroupsDataJson(cookie)
-    if('userGroupName' in getApprovalGroupsNamesData):
-       getUserGroupsName = getApprovalGroupsNamesData['userGroupName']
+    if ('userGroupName' in getApprovalGroupsNamesData):
+        getUserGroupsName = getApprovalGroupsNamesData['userGroupName']
     else:
         return dataList
-    if('approvalGroups' in getApprovalGroupsData):
-       getApprovalGroupsData = getApprovalGroupsData['approvalGroups']
+    if ('approvalGroups' in getApprovalGroupsData):
+        getApprovalGroupsData = getApprovalGroupsData['approvalGroups']
     for getApprovalGroupData in getApprovalGroupsData:
         if getUserGroupsName == getApprovalGroupData['userGroupName']:
             dataList.append(getApprovalGroupData)
-    logging.info("Fetched approval groups data for gateId- "+str(gateId) + dataList)
+    logging.info("Fetched approval groups data for gateId- " + str(gateId) + str(dataList))
     return dataList
 
 
@@ -710,7 +710,8 @@ def getAutomatedApproval(gateId):
         dataList = []
         data = gateId
         cur_visibility.execute(
-            "select policy_id,policy_name from approval_gate_policy ap left outer join approval_service_gate_map sm on ap.approval_gate_id=sm.approval_gate_id where sm.service_gate_id=%s", [data] )
+            "select policy_id,policy_name from approval_gate_policy ap left outer join approval_service_gate_map sm on ap.approval_gate_id=sm.approval_gate_id where sm.service_gate_id=%s",
+            [data])
         policyDatas = cur_visibility.fetchall()
         if policyDatas is not None:
             for policyData in policyDatas:
@@ -732,20 +733,22 @@ def getAutomatedApproval(gateId):
         raise e
 
 
-def getConnectorsDataFilter(gateId,cookie):
+def getConnectorsDataFilter(gateId, cookie):
     try:
-        logging.info("Fetching connector data for gateId: "+str(gateId))
+        logging.info("Fetching connector data for gateId: " + str(gateId))
         dataList = []
-        getConnectorsNames = getConnectorsConfiguredNames(gateId,cookie)
-        if('error' in getConnectorsNames):
+        getConnectorsNames = getConnectorsConfiguredNames(gateId, cookie)
+        if ('error' in getConnectorsNames):
             return dataList
         getConnectorsNameDatas = getAllConnectorsNameData(cookie)
         for getConnectorsName in getConnectorsNames:
             connectorType = getConnectorsName['connectorType']
             accountName = getConnectorsName['accountName']
             for getConnectorsNameData in getConnectorsNameDatas:
-                if 'connectorType' in getConnectorsNameData and getConnectorsNameData['connectorType'] == connectorType and 'accountName' in getConnectorsNameData and getConnectorsNameData[
-                    'accountName'] == accountName:
+                if 'connectorType' in getConnectorsNameData and getConnectorsNameData[
+                    'connectorType'] == connectorType and 'accountName' in getConnectorsNameData and \
+                        getConnectorsNameData[
+                            'accountName'] == accountName:
                     data = gateId
                     cur_visibility.execute(
                         "select key,value,connector_type from approval_gate_parameter where approval_gate_instance_id=(select id from approval_gate_instance where approval_gate_id=%s order by id desc limit 1);",
@@ -760,7 +763,7 @@ def getConnectorsDataFilter(gateId,cookie):
         raise e
 
 
-def getConnectorsConfiguredNames(gateId,cookie):
+def getConnectorsConfiguredNames(gateId, cookie):
     try:
         URL = isd_gate_url + "/visibilityservice/v1/approvalGates/{}/toolConnectors".format(gateId)
         logging.info(URL)
@@ -786,10 +789,10 @@ def getAllConnectorsNameData(cookie):
         raise e
 
 
-def getSelectedConnectors(gateId):
+def getSelectedConnectors(gateId, cookie):
     try:
-        logging.info("Formatting selected connectors for gateId: "+str(gateId))
-        getConnectorsNames = getConnectorsConfiguredNames(gateId)
+        logging.info("Formatting selected connectors for gateId: " + str(gateId))
+        getConnectorsNames = getConnectorsConfiguredNames(gateId, cookie)
         defaultData = {
             "connectorType": "Connectors *",
             "helpText": "List of Connectors Configured",
@@ -812,9 +815,9 @@ def getSelectedConnectors(gateId):
             ]}
         mainData = []
         for getConnectorsName in getConnectorsNames:
-            if('connectorType' in  getConnectorsName and 'accountName' in getConnectorsName):
+            if ('connectorType' in getConnectorsName and 'accountName' in getConnectorsName):
                 tempData = {"connector": getConnectorsName['connectorType'],
-                        "account": getConnectorsName['accountName']}
+                            "account": getConnectorsName['accountName']}
                 mainData.append(tempData)
         defaultData["values"] = mainData
         return defaultData
@@ -836,23 +839,25 @@ def verifySpinnakerConfigurationAndGetURL():
         logging.error("Exception occurred while fetching spinnaker configuration from oes db", exc_info=True)
         raise e
 
-def updatePipelineJson(pipelineId,stageJson):
+
+def updatePipelineJson(pipelineId, stageJson):
     try:
-        logging.info("updating pipeline Json for pipelineId: "+str(pipelineId))
+        logging.info("updating pipeline Json for pipelineId: " + str(pipelineId))
         if stageJson is not None and len(stageJson) > 0:
-            cur_platform.execute("SELECT id, pipeline_json from pipeline where id ="+str(pipelineId))
+            cur_platform.execute("SELECT id, pipeline_json from pipeline where id =" + str(pipelineId))
             result = cur_platform.fetchall()
             if result is not None:
-                pipelineJson = formPipelineJson(pipelineId,json.loads(result[0][1]),stageJson)
+                pipelineJson = formPipelineJson(pipelineId, json.loads(result[0][1]), stageJson)
                 if pipelineJson is not None:
-                    updatePipelineJsonInPlatformDb(pipelineJson,pipelineId)
+                    updatePipelineJsonInPlatformDb(pipelineJson, pipelineId)
                 return pipelineJson
     except Exception as e:
         print("Exception occurred while updating pipeline Json: ", e)
         logging.error("Exception occurred while updating pipeline Json", exc_info=True)
         raise e
 
-def updatePipelineJsonInPlatformDb(pipelineJson,pipelineId):
+
+def updatePipelineJsonInPlatformDb(pipelineJson, pipelineId):
     try:
         update_data = json.dumps(pipelineJson), pipelineId
         logging.info("Updated pipeline data to update unified url : \n" + ''.join(str(update_data)) + '\n')
@@ -863,7 +868,7 @@ def updatePipelineJsonInPlatformDb(pipelineJson,pipelineId):
         raise e
 
 
-def formPipelineJson(pipelineId,dbPipelineJson,stageJson):
+def formPipelineJson(pipelineId, dbPipelineJson, stageJson):
     try:
         if dbPipelineJson is not None and len(dbPipelineJson) > 0:
             stages = dbPipelineJson["stages"]
@@ -874,13 +879,21 @@ def formPipelineJson(pipelineId,dbPipelineJson,stageJson):
                     newsPipelineGateName = stageJson["name"]
                     dbPipelineGateType = stage["type"]
                     newsPipelineGateType = stage["type"]
-                    if dbPipelineGateName.__eq__(newsPipelineGateName) and dbPipelineGateType.__eq__(newsPipelineGateType):
+                    if dbPipelineGateName.__eq__(newsPipelineGateName) and dbPipelineGateType.__eq__(
+                            newsPipelineGateType):
                         stageJson["refId"] = stage["refId"]
                         stageJson["requisiteStageRefIds"] = stage["requisiteStageRefIds"]
+                        if newsPipelineGateType.__eq__("verification"):
+                            stageJson["parameters"]["baselinestarttime"] = stage["parameters"]["baselinestarttime"]
+                            stageJson["parameters"]["canaryresultscore"] = stage["parameters"]["canaryresultscore"]
+                            stageJson["parameters"]["canarystarttime"] = stage["parameters"]["canarystarttime"]
+                            stageJson["parameters"]["lifetime"] = stage["parameters"]["lifetime"]
+                            stageJson["parameters"]["minicanaryresult"] = stage["parameters"]["minicanaryresult"]
                         stage = stageJson
                 except KeyError as ke:
-                    logging.error("Exception occurred while formatting pipeline Json to update in db: "+ke, exc_info=True)
-                    pass
+                    print("Exception occurred while formatting pipeline Json to update in db: ")
+                    logging.error("Exception occurred while formatting pipeline Json to update in db: ", exc_info=True)
+                    raise ke
                 updated_stages.append(stage)
 
             dbPipelineJson["stages"] = updated_stages
@@ -890,13 +903,15 @@ def formPipelineJson(pipelineId,dbPipelineJson,stageJson):
         logging.error("Exception occurred while formatting pipeline Json to update in db", exc_info=True)
         raise e
 
-def postingGateJson(pipelineJson,cookie):
+
+def postingGateJson(pipelineJson, cookie):
     try:
         api_url = isd_gate_url + "/oes/appOnboarding/spinnaker/pipeline/stage"
         logging.info(api_url)
-        headers = {'Content-Type': 'application/json', 'cookie': cookie, 'x-user-cookie': cookie,  'x-spinnaker-user' : isd_admin_username}
+        headers = {'Content-Type': 'application/json', 'cookie': cookie, 'x-user-cookie': cookie,
+                   'x-spinnaker-user': isd_admin_username}
         response = requests.post(url=api_url, headers=headers, data=json.dumps(pipelineJson))
-        logging.info("The response status is: "+str(response.status_code))
+        logging.info("The response status is: " + str(response.status_code))
         if (response.status_code == 200 | response.status_code == 201):
             response.info("Successfully added stage! The response is:\n" + str(response.content) + '\n')
         else:
@@ -905,6 +920,7 @@ def postingGateJson(pipelineJson,cookie):
         print("Exception occurred while posting gate: ", e)
         logging.error("Exception occurred while posting gate", exc_info=True)
         raise e
+
 
 def login_to_isd():
     try:
@@ -922,6 +938,7 @@ def login_to_isd():
         print("Exception occurred while logging in to ISD : ", e)
         logging.error("Exception occurred while logging in to ISD : ", exc_info=True)
         raise e
+
 
 if __name__ == '__main__':
     n = len(sys.argv)
@@ -987,6 +1004,4 @@ if __name__ == '__main__':
     cur_visibility = visibility_conn.cursor()
 
     perform_migration()
-
-
 
