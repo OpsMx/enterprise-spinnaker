@@ -7,14 +7,15 @@ def delete_unused_audit_data():
     audit_ids_to_be_retained = []
     step = audit_cursor.itersize
 
-    print('Fetching audit data started')
-    logging.info('Fetching audit data started')
+    print('Fetching audit data started.')
+    logging.info('Fetching audit data started.')
     try:
         audit_cursor.execute('select id, data from audit_events;')
         i = 0
 
         for row in audit_cursor:
             audit_data_dict = row[1]
+            i += 1
 
             if 'eventType' in audit_data_dict:
                 audit_ids_to_be_retained.append(row[0])
@@ -40,19 +41,17 @@ def delete_unused_audit_data():
                                     audit_ids_to_be_retained.append(row[0])
                                     break
 
-            if i != 0 and i % step == 0:
+            if i % step == 0:
                 print('Number of rows Processed ', str(i))
                 logging.info('Number of rows Processed ' + str(i))
-            i += 1
 
-        print('Successfully fetched and identified the unused rows for deletion')
-        logging.info('Successfully fetched and identified the unused rows for deletion')
+        print('Successfully fetched and identified the unused rows for deletion.')
+        logging.info('Successfully fetched and identified the unused rows for deletion.')
 
         logging.info('Audit events ids which are to be retained ' + '\n' + ''.join(str(audit_ids_to_be_retained)))
-        logging.info('Number of ids to be retained ' + str(len(audit_ids_to_be_retained)))
 
-        print('Cleaning unused audit data started')
-        logging.info('Cleaning unused audit data started')
+        print('Removing unused audit data started.')
+        logging.info('Removing unused audit data started.')
 
         audit_del_cursor = audit_conn.cursor()
         query = 'DELETE FROM audit_events WHERE NOT (id = ANY(%s)) RETURNING id;'
@@ -60,9 +59,12 @@ def delete_unused_audit_data():
         result = audit_del_cursor.fetchall()
 
         logging.info('Audit event ids which got deleted ' + '\n' + ''.join(str(result)))
-        logging.info('Number of ids which got deleted ' + str(len(result)))
+
+        logging.info('The number of ids that are to be retained is ' + str(len(audit_ids_to_be_retained)))
+        logging.info('The number of ids that got deleted is ' + str(len(result)))
 
         audit_conn.commit()
+        print('The number of records deleted is ', str(len(result)))
         print('*********** Successfully cleaned unused audit data ******************')
         logging.info('*********** Successfully cleaned unused audit data ******************')
 
