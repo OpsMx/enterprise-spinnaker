@@ -1,0 +1,9 @@
+Steps to clean unused audit data
+
+1. Copy the file : clean_unused_audit_data.py to some path in platform pod.
+
+2. Run the below command to execute the script.
+
+python3 <scriptfilename>  <audit_db-name> <db-username> <db-password> <audit-db-host> <db-port>
+
+Ex: python3 clean_unused_audit_data.py auditdb postgres password oes-db 5432
