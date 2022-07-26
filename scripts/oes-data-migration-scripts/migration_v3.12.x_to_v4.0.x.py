@@ -22,12 +22,29 @@ def perform_migration():
     try:
         global is_error_occurred
         logging.info('Migrating from v3.12.x to v4.0')
+
+        try:
+            logging.info("Drop audit db table delivery_insights_chart_counts")
+            print("Drop audit db table delivery_insights_chart_counts")
+            dropDeliveryInsights()
+        except Exception as e:
+            logging.error("Failure at step 1", exc_info=True)
+            is_error_occurred = True
+
+        try:
+            logging.info("Drop audit db table area_chart_counts")
+            print("Drop audit db table area_chart_counts")
+            dropAreaCharts()
+        except Exception as e:
+            logging.error("Failure at step 2", exc_info=True)
+            is_error_occurred = True
+
         try:
             logging.info("Alter platform db table app_environment")
             print("Alter platform db table app_environment")
             alterAppEnvironmentTable()
         except Exception as e:
-            logging.error("Failure at step 1", exc_info=True)
+            logging.error("Failure at step 3", exc_info=True)
             is_error_occurred = True
 
         try:
@@ -35,7 +52,7 @@ def perform_migration():
             print("Fetch spinnaker environments details from sapor db")
             getEnvironmentData()
         except Exception as e:
-            logging.error("Failure at step 2", exc_info=True)
+            logging.error("Failure at step 4", exc_info=True)
             is_error_occurred = True
 
         try:
@@ -43,7 +60,7 @@ def perform_migration():
             print("Update spinnaker environments Id details in app_environment table")
             environmentUpdate()
         except Exception as e:
-            logging.error("Failure at step 3", exc_info=True)
+            logging.error("Failure at step 5", exc_info=True)
             is_error_occurred = True
 
         try:
@@ -51,7 +68,7 @@ def perform_migration():
             print("Alter platform db table service_gate")
             alterServiceGateTable()
         except Exception as e:
-            logging.error("Failure at step 4", exc_info=True)
+            logging.error("Failure at step 6", exc_info=True)
             is_error_occurred = True
 
         try:
@@ -59,7 +76,7 @@ def perform_migration():
             print("Update spinnaker environments Id details in app_environment table")
             updateRefId()
         except Exception as e:
-            logging.error("Failure at step 5", exc_info=True)
+            logging.error("Failure at step 7", exc_info=True)
             is_error_occurred = True
 
         try:
@@ -67,7 +84,7 @@ def perform_migration():
             print("Alter platform db table service_deployments_current")
             add_columns_in_service_deployment_current()
         except Exception as e:
-            logging.error("Failure at step 6", exc_info=True)
+            logging.error("Failure at step 8", exc_info=True)
             is_error_occurred = True
 
         try:
@@ -75,7 +92,7 @@ def perform_migration():
             print("Alter autopilot db table userlogfeedback and loganalysis")
             update_autopilot_constraints()
         except Exception as e:
-            logging.error("Failure at step 7", exc_info=True)
+            logging.error("Failure at step 9", exc_info=True)
             is_error_occurred = True
 
         try:
@@ -83,7 +100,7 @@ def perform_migration():
             print("Update service_deployments_current table sync column data in platform db")
             update_sync_status()
         except Exception as e:
-            logging.error("Failure at step 8", exc_info=True)
+            logging.error("Failure at step 10", exc_info=True)
             is_error_occurred = True
 
         try:
@@ -92,7 +109,7 @@ def perform_migration():
             pipeline_executions = fetch_pipeline_executions()
             persist_cluster(pipeline_executions)
         except Exception as e:
-            logging.error("Failure at step 9", exc_info=True)
+            logging.error("Failure at step 11", exc_info=True)
             is_error_occurred = True
 
         try:
@@ -101,7 +118,7 @@ def perform_migration():
             cookie = login_to_isd()
             processPipelineJsonForExistingGates(cookie)
         except Exception as e:
-            logging.error("Failure at step 10", exc_info=True)
+            logging.error("Failure at step 12", exc_info=True)
             is_error_occurred = True
 
         if is_error_occurred == True:
@@ -264,6 +281,26 @@ def alterAppEnvironmentTable():
         logging.error("Exception occurred in alterAppEnvironmentTable while updating script: ", exc_info=True)
         raise e
 
+
+def dropDeliveryInsights():
+    try:
+        cur_audit.execute("drop TABLE delivery_insights_chart_counts")
+        logging.info("Successfully dropped delivery_insights_chart_counts table")
+        print("Successfully dropped delivery_insights_chart_counts table")
+    except Exception as e:
+        print("Exception occurred in dropping delivery_insights_chart_counts while updating script : ", e)
+        logging.error("Exception occurred in delivery_insights_chart_counts while updating script: ", exc_info=True)
+        raise e
+
+def dropAreaCharts():
+    try:
+        cur_audit.execute("drop TABLE area_chart_counts")
+        logging.info("Successfully dropped area_chart_counts table")
+        print("Successfully dropped area_chart_counts table")
+    except Exception as e:
+        print("Exception occurred in dropping area_chart_counts table while updating script : ", e)
+        logging.error("Exception occurred in dropping area_chart_counts table while updating script: ", exc_info=True)
+        raise e
 
 def alterServiceGateTable():
     try:
