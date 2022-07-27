@@ -309,7 +309,12 @@ def update_pipeline_json_with_unified_url(pipelines):
                         except KeyError as ke:
                             gate_url = parameters["gateurl"]
 
-                        domain_name = unified_host_url.split("/")[2] + "/" + unified_host_url.split("/")[3]
+                        host_url_comps = unified_host_url.split("/")
+                        if len(host_url_comps) == 3:
+                            domain_name = host_url_comps[2]
+                        else:
+                            domain_name = host_url_comps[2] + "/" + host_url_comps[3]
+                            
                         url_comps = str(gate_url).split("/")
                         url_comps[2] = domain_name
                         gate_url = "/"
