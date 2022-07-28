@@ -1,8 +1,8 @@
 apiVersion: v2
 name: oes
-version: 3.12.10
-appVersion: 3.12.6
-description: "ISD-3.12.6 - Improvements in loading application, delivery insights page and fixed issues related to log and metric analysis"
+version: 3.12.11
+appVersion: 3.12.6.1
+description: "ISD-3.12.6.1 - Improvements in loading App Dashboard page and fixed counts mismatch in Delivery Insights,Usage Insights Page"
 icon: https://raw.githubusercontent.com/OpsMx/enterprise-spinnaker/master/img/opsmx.png
 maintainers:
 - email: srinivas@opsmx.io

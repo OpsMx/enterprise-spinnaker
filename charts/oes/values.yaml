@@ -300,7 +300,7 @@ audit:
   ##
   image:
     repository: ubi8-oes-audit-service
-    tag: v3.12.6
+    tag: v3.12.6.1
     pullPolicy: IfNotPresent
 
   serviceAnnotations: {}
@@ -322,7 +322,7 @@ auditClient:
   ##
   image:
     repository: ubi8-oes-audit-client
-    tag: v3.12.6
+    tag: v3.12.6.1
     pullPolicy: IfNotPresent
 
   serviceAnnotations: {}
@@ -493,7 +493,7 @@ platform:
   ## Image specific details
   image:
     repository: ubi8-oes-platform
-    tag: v3.12.6
+    tag: v3.12.6.1
     pullPolicy: IfNotPresent
 
   annotations:
@@ -555,7 +555,7 @@ sapor:
   ## Image specific details
   image:
     repository: ubi8-oes-sapor
-    tag: v3.12.6
+    tag: v3.12.6.1
     pullPolicy: IfNotPresent
 
   annotations:
@@ -647,7 +647,7 @@ ui:
   ## Image specific details
   image:
     repository: ubi8-oes-ui
-    tag: v3.12.6
+    tag: v3.12.6.1
     pullPolicy: IfNotPresent
 
   annotations:
