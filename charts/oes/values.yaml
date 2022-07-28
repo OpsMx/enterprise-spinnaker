@@ -647,7 +647,7 @@ ui:
   ## Image specific details
   image:
     repository: ubi8-oes-ui
-    tag: v3.12.6
+    tag: v3.12.6.1
     pullPolicy: IfNotPresent
 
   annotations:
