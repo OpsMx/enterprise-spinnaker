@@ -104,10 +104,11 @@ def perform_migration():
             is_error_occurred = True
 
         try:
-            logging.info("Update cluster name in service_deployments_current table")
-            print("Update cluster name in service_deployments_current table")
+            logging.info("Update cluster and location in service_deployments_current table")
+            print("Update cluster and location in service_deployments_current table")
             pipeline_executions = fetch_pipeline_executions()
             persist_cluster(pipeline_executions)
+            persist_location(pipeline_executions)
         except Exception as e:
             logging.error("Failure at step 11", exc_info=True)
             is_error_occurred = True
@@ -185,6 +186,7 @@ def add_columns_in_service_deployment_current():
             "ALTER TABLE service_deployments_current ADD COLUMN IF NOT EXISTS cluster character varying DEFAULT NULL")
         cur_platform.execute(
             "ALTER TABLE service_deployments_current ADD COLUMN IF NOT EXISTS sync character varying DEFAULT NULL")
+        cur_platform.execute("ALTER TABLE service_deployments_current ADD COLUMN IF NOT EXISTS location character varying DEFAULT NULL")
     except Exception as e:
         logging.critical("Exception occurred while adding columns to service_deployments_current table : ",
                          exc_info=True)
@@ -219,24 +221,24 @@ def persist_cluster(pipeline_executions):
                 for stage in stages:
                     if stage['type'] == 'deployManifest':
                         context = stage['context']
+                        image = get_image(context)
                         outputs_manifests = context['outputs.manifests']
                         for outputs_manifest in outputs_manifests:
-                            if outputs_manifest['kind'] == 'Deployment':
-                                metadata = outputs_manifest['metadata']
-                                annotations = metadata['annotations']
-                                cluster = annotations['moniker.spinnaker.io/cluster']
-                                select_data = pipeline_name, app_name
+                            metadata = outputs_manifest['metadata']
+                            annotations = metadata['annotations']
+                            cluster = annotations['moniker.spinnaker.io/cluster']
+                            select_data = pipeline_name, app_name
+                            cur_platform.execute(
+                                "select a.id as application_id, p.id as pipeline_id from applications a LEFT OUTER JOIN service s ON a.id = s.application_id LEFT OUTER JOIN service_pipeline_map spm ON spm.service_id = s.id LEFT OUTER JOIN pipeline p ON spm.pipeline_id = p.id where p.pipeline_name = %s and a.name = %s",
+                                select_data)
+                            records = cur_platform.fetchall()
+                            for record in records:
+                                data = cluster, record[0], record[1], image
+                                logging.info(f"updating cluster for the app and pipeline : {select_data}")
+                                logging.info(f"data :  {data}")
                                 cur_platform.execute(
-                                    "select a.id as application_id, p.id as pipeline_id from applications a LEFT OUTER JOIN service s ON a.id = s.application_id LEFT OUTER JOIN service_pipeline_map spm ON spm.service_id = s.id LEFT OUTER JOIN pipeline p ON spm.pipeline_id = p.id where p.pipeline_name = %s and a.name = %s",
-                                    select_data)
-                                records = cur_platform.fetchall()
-                                for record in records:
-                                    data = cluster, record[0], record[1]
-                                    print("updating cluster for the app and pipeline : ", select_data)
-                                    print("data : ", data)
-                                    cur_platform.execute(
-                                        "UPDATE service_deployments_current SET cluster = %s WHERE application_id = %s and pipeline_id = %s",
-                                        data)
+                                    "UPDATE service_deployments_current SET cluster = %s WHERE application_id = %s and pipeline_id = %s and image = %s",
+                                    data)
             except KeyError as ke:
                 pass
             except Exception as ex:
@@ -248,6 +250,75 @@ def persist_cluster(pipeline_executions):
         logging.error("Exception occurred while persisting the cluster name:", exc_info=True)
         raise e
 
+
+def persist_location(pipeline_executions):
+    try:
+        logging.info("Migration to update the location name")
+        print("Migration to update the location name")
+        for pipeline_execution in pipeline_executions:
+            pipeline_execution_json = pipeline_execution[1]
+            try:
+                details = pipeline_execution_json['details']
+                app_name = details['application']
+                content = pipeline_execution_json['content']
+                execution = content['execution']
+                if execution['type'] == 'PIPELINE':
+                    pipeline_name = execution['name']
+                stages = execution['stages']
+                for stage in stages:
+                    if stage['type'] == 'deployManifest':
+                        context = stage['context']
+                        image = get_image(context)
+                        outputs_manifests = context['outputs.manifests']
+                        for outputs_manifest in outputs_manifests:
+                            metadata = outputs_manifest['metadata']
+                            annotations = metadata['annotations']
+                            location = annotations['artifact.spinnaker.io/location']
+                            select_data = pipeline_name, app_name
+                            cur_platform.execute(
+                                "select a.id as application_id, p.id as pipeline_id from applications a LEFT OUTER JOIN service s ON a.id = s.application_id LEFT OUTER JOIN service_pipeline_map spm ON spm.service_id = s.id LEFT OUTER JOIN pipeline p ON spm.pipeline_id = p.id where p.pipeline_name = %s and a.name = %s",
+                                select_data)
+                            records = cur_platform.fetchall()
+                            for record in records:
+                                data = location, record[0], record[1], image
+                                logging.info(f"updating location for the app and pipeline :  {select_data}")
+                                logging.info(f"data : {data}")
+                                cur_platform.execute(
+                                    "UPDATE service_deployments_current SET location = %s WHERE application_id = %s and pipeline_id = %s and image = %s",
+                                    data)
+            except KeyError as ke:
+                pass
+            except Exception as ex:
+                print("Exception in nested catch block : ", ex)
+                logging.error("Exception in nested catch block:", exc_info=True)
+                raise ex
+    except Exception as e:
+        print("Exception occurred while persisting the location name: ", e)
+        logging.error("Exception occurred while persisting the location name:", exc_info=True)
+        raise e
+
+
+def get_image(context):
+    image = ""
+    try:
+        manifests = context['manifests']
+        for manifest in manifests:
+            kind_name = manifest['kind']
+            if kind_name == 'Pod':
+                spec = manifest['spec']
+                containers = spec['containers']
+                for container in containers:
+                    image = container['image']
+            else:
+                spec = manifest['spec']
+                template = spec['template']
+                template_spec = template['spec']
+                containers = template_spec['containers']
+                for container in containers:
+                    image = container['image']
+    except KeyError as ke:
+        pass
+    return image
 
 def fetch_pipeline_executions():
     try:
