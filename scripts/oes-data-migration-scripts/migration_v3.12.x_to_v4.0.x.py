@@ -641,7 +641,7 @@ def policyParametersDataFilter(gateId, env_json_formatted, gateSecurity):
         raise e
 
 
-def verificationParametersDataFilter(applicationId, gateId, env_json_formatted, cookie):
+def verificationParametersDataFilter(gateId, env_json_formatted, cookie,applicationId):
     try:
         logAndMetricInfoRes = getLogAndMetricName(applicationId, gateId, cookie)
         verification_pipeline_json = {
@@ -702,7 +702,7 @@ def verificationGateProcess(applicationId, serviceId, gateId, gateName, gateType
     try:
         logging.info("process verification gate json for application Id: " + str(applicationId) + " ,serviceId: " + str(
             serviceId) + " ,gateId: " + str(gateId))
-        parameters = verificationParametersDataFilter(applicationId, gateId, env_json_formatted, cookie)
+        parameters = verificationParametersDataFilter(gateId, env_json_formatted, cookie,applicationId)
         if (parameters is not None):
             verification_pipeline_json = {
                 "applicationId": applicationId,
@@ -752,12 +752,11 @@ def approvalParametersDataFilter(gateId, env_json_formatted, payloadConstraint, 
         approvalGroupsData = getApprovalGroupsDataFilter(gateId, cookie)
         automatedApproval = getAutomatedApproval(gateId)
         approvalGateId = getApprovalGateId(gateId)
-        connectors = getConnectorsDataFilter(approvalGateId, cookie)
         selectedConnectors = getSelectedConnectors(approvalGateId, cookie)
         approval_pipeline_json = {
             "approvalGroups": approvalGroupsData,
             "automatedApproval": automatedApproval,
-            "connectors": connectors,
+            "connectors": "",
             "customEnvironment": "",
             "environment": env_json_formatted,
             "gateSecurity": payloadConstraint,
@@ -1310,6 +1309,9 @@ def formPipelineJson(pipelineId, dbPipelineJson, stageJson):
                             stageJson["parameters"]["canarystarttime"] = stage["parameters"]["canarystarttime"]
                             stageJson["parameters"]["lifetime"] = stage["parameters"]["lifetime"]
                             stageJson["parameters"]["minicanaryresult"] = stage["parameters"]["minicanaryresult"]
+
+                        if newsPipelineGateType.__eq__("approval"):
+                            stageJson["parameters"]["connectors"] = stage["parameters"]["connectors"]
                         stage = stageJson
                 except KeyError as ke:
                     print("Exception occurred while formatting pipeline Json to update in db: ")
