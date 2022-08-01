@@ -514,6 +514,7 @@ def processPipelineJsonForExistingGates(cookie):
             "left outer join gate_pipeline_map gp on sp.pipeline_id=gp.pipeline_id left outer join service_gate g on gp.service_gate_id=g.id where a.source = 'Spinnaker' and g.id is not null")
         records = cur_platform.fetchall()
         for record in records:
+            logging.info("Record:"+str(record))
             applicationId = record[0]
             appName = record[1]
             serviceId = record[2]
@@ -552,10 +553,10 @@ def formEnvJson(gateId):
         spinnakerEnvironments = cur_platform.fetchone()
         spinnakerEnvironmentId = spinnakerEnvironments[0]
         spinnakerEnvironmentName = spinnakerEnvironments[1]
-        env_json = {
+        env_json = [{
             "id": spinnakerEnvironmentId,
             "spinnakerEnvironment": str(spinnakerEnvironmentName)
-        }
+        }]
         logging.info("Fetched environment information for GateId :" + str(gateId) + "  :" + str(env_json))
         return env_json
     except Exception as e:
@@ -750,8 +751,9 @@ def approvalParametersDataFilter(gateId, env_json_formatted, payloadConstraint, 
     try:
         approvalGroupsData = getApprovalGroupsDataFilter(gateId, cookie)
         automatedApproval = getAutomatedApproval(gateId)
-        connectors = getConnectorsDataFilter(gateId, cookie)
-        selectedConnectors = getSelectedConnectors(gateId, cookie)
+        approvalGateId = getApprovalGateId(gateId)
+        connectors = getConnectorsDataFilter(approvalGateId, cookie)
+        selectedConnectors = getSelectedConnectors(approvalGateId, cookie)
         approval_pipeline_json = {
             "approvalGroups": approvalGroupsData,
             "automatedApproval": automatedApproval,
@@ -768,6 +770,17 @@ def approvalParametersDataFilter(gateId, env_json_formatted, payloadConstraint, 
                       exc_info=True)
         raise e
 
+
+def getApprovalGateId(gateId):
+    try:
+        cur_visibility.execute("select approval_gate_id From approval_service_gate_map where service_gate_id =" + str(gateId))
+        result = cur_visibility.fetchone()
+        if result is not None:
+            return result[0]
+    except Exception as e:
+        print("Exception occurred while fetching approval gate Id by service gate Id: ", e)
+        logging.error("Exception occurred while fetching approval gate Id by service gate Id", exc_info=True)
+        raise e
 
 def getApprovalGroupsName(gateId, cookie):
     try:
@@ -800,15 +813,14 @@ def getApprovalGroupsDataFilter(gateId, cookie):
     dataList = []
     getApprovalGroupsNamesData = getApprovalGroupsName(gateId, cookie)
     getApprovalGroupsData = getApprovalGroupsDataJson(cookie)
-    if ('userGroupName' in getApprovalGroupsNamesData):
-        getUserGroupsName = getApprovalGroupsNamesData['userGroupName']
+    if 'userGroups' in getApprovalGroupsNamesData:
+        getUserGroupsName = getApprovalGroupsNamesData['userGroups'][0]['userGroupNames']
     else:
         return dataList
-    if ('approvalGroups' in getApprovalGroupsData):
-        getApprovalGroupsData = getApprovalGroupsData['approvalGroups']
-    for getApprovalGroupData in getApprovalGroupsData:
-        if getUserGroupsName == getApprovalGroupData['userGroupName']:
-            dataList.append(getApprovalGroupData)
+    for userGroupDetails in getUserGroupsName:
+        userGroup = [x for x in getApprovalGroupsData if x['userGroupName'] == userGroupDetails['userGroupName']]
+        if userGroup is not None:
+            dataList.append(userGroup[0])
     logging.info("Fetched approval groups data for gateId- " + str(gateId) + str(dataList))
     return dataList
 
@@ -841,39 +853,335 @@ def getAutomatedApproval(gateId):
         raise e
 
 
-def getConnectorsDataFilter(gateId, cookie):
+def getConnectorsDataFilter(approvalGateId, cookie):
+
     try:
-        logging.info("Fetching connector data for gateId: " + str(gateId))
+        logging.info("Fetching connector data for gateId: " + str(approvalGateId))
         dataList = []
-        getConnectorsNames = getConnectorsConfiguredNames(gateId, cookie)
+        getConnectorsNames = getConnectorsConfiguredNames(approvalGateId, cookie)
         if ('error' in getConnectorsNames):
             return dataList
-        getConnectorsNameDatas = getAllConnectorsNameData(cookie)
+        getConnectorsNameDatas = getAllConfiguredConnector()
         for getConnectorsName in getConnectorsNames:
             connectorType = getConnectorsName['connectorType']
-            accountName = getConnectorsName['accountName']
-            for getConnectorsNameData in getConnectorsNameDatas:
-                if 'connectorType' in getConnectorsNameData and getConnectorsNameData[
-                    'connectorType'] == connectorType and 'accountName' in getConnectorsNameData and \
-                        getConnectorsNameData[
-                            'accountName'] == accountName:
-                    data = gateId
-                    cur_visibility.execute(
-                        "select key,value,connector_type from approval_gate_parameter where approval_gate_instance_id=(select id from approval_gate_instance where approval_gate_id=%s order by id desc limit 1);",
-                        data)
-                    visibilityDatas = cur_visibility.fetchall()
-                    getConnectorsNameData["values"] = visibilityDatas
-                    dataList.append(getConnectorsNameData)
+            connectorDetail = [x for x in getConnectorsNameDatas if x['connectorType']==connectorType][0]
+            if 'connectorType' in connectorDetail and connectorDetail['connectorType'] == connectorType:
+                cur_visibility.execute(
+                    "select key,value,param_group_id from approval_gate_parameter where connector_type ='" + str(
+                        connectorType) + "' and approval_gate_instance_id= (select ai.id from approval_gate_instance ai where ai.approval_gate_id={} order by id desc limit 1)".format(
+                        approvalGateId))
+                visibilityDatas = cur_visibility.fetchall()
+                data = convertTupleToDictonary(visibilityDatas)
+                if data is not None:
+                    connectorDetail["values"] = data
+        dataList.append(connectorDetail)
         return dataList
     except Exception as e:
         print("Exception occurred while processing the connector data : ", e)
         logging.error("Exception occurred while processing the connector data :", exc_info=True)
         raise e
 
+def getAllConfiguredConnector():
+    return  [
+    {
+        "connectorType": "JIRA",
+        "supportedParams": [
+            {
+                "name": "jira_ticket_no",
+                "label": "Jira Id",
+                "helpText": "Jira Id",
+                "type": "array"
+            }
+        ],
+        "label": "Jira",
+        "helpText": "Jira",
+        "isMultiSupported": bool(False)
+    },
+    {
+        "connectorType": "GIT",
+        "supportedParams": [
+            {
+                "name": "repo",
+                "label": "Repository",
+                "helpText": "Repository",
+                "type": "string"
+            },
+            {
+                "name": "commitId",
+                "label": "Commit Id",
+                "helpText": "Commit Id",
+                "type": "array"
+            }
+        ],
+        "label": "Git",
+        "helpText": "Git",
+        "isMultiSupported": bool(True)
+    },
+    {
+        "connectorType": "GITHUB",
+        "supportedParams": [
+            {
+                "name": "account",
+                "label": "Organization/Username",
+                "helpText": "Organization/Username",
+                "type": "string"
+            },
+            {
+                "name": "repo",
+                "label": "Repository",
+                "helpText": "Repository",
+                "type": "string"
+            },
+            {
+                "name": "commitId",
+                "label": "Commit Id",
+                "helpText": "Commit Id",
+                "type": "array"
+            }
+        ],
+        "label": "Git",
+        "helpText": "Git",
+        "isMultiSupported": bool(True)
+    },
+    {
+        "connectorType": "AUTOPILOT",
+        "supportedParams": [
+            {
+                "name": "canaryId",
+                "label": "Canary ID",
+                "helpText": "Canary ID",
+                "type": "array"
+            }
+        ],
+        "label": "Autopilot",
+        "helpText": "Autopilot",
+        "isMultiSupported": bool(False)
+    },
+    {
+        "connectorType": "SONARQUBE",
+        "supportedParams": [
+            {
+                "name": "projectKey",
+                "label": "Project Key",
+                "helpText": "Project Key",
+                "type": "array"
+            },
+            {
+                "name": "branch",
+                "label": "Branch Name",
+                "helpText": "Branch Name",
+                "type": "string"
+            }
+        ],
+        "label": "Sonarqube",
+        "helpText": "Sonarqube",
+        "isMultiSupported": bool(True)
+    },
+    {
+        "connectorType": "JENKINS",
+        "supportedParams": [
+            {
+                "name": "job",
+                "label": "Job Name",
+                "helpText": "Job Name",
+                "type": "string"
+            },
+            {
+                "name": "buildId",
+                "label": "Build",
+                "helpText": "Build",
+                "type": "string"
+            },
+            {
+                "name": "artifact",
+                "label": "Artifact",
+                "helpText": "Artifact",
+                "type": "string"
+            }
+        ],
+        "label": "Jenkins",
+        "helpText": "Jenkins",
+        "isMultiSupported": bool(True)
+    },
+    {
+        "connectorType": "AQUAWAVE",
+        "supportedParams": [
+            {
+                "name": "imageId",
+                "label": "Image ID",
+                "helpText": "Image ID",
+                "type": "array"
+            }
+        ],
+        "label": "Aquawave",
+        "helpText": "Aquawave",
+        "isMultiSupported": bool(False)
+    },
+    {
+        "connectorType": "APPSCAN",
+        "supportedParams": [
+            {
+                "name": "id",
+                "label": "Project ID",
+                "helpText": "Project ID",
+                "type": "array"
+            }
+        ],
+        "label": "Appscan",
+        "helpText": "Appscan",
+        "isMultiSupported": bool(False)
+    },
+    {
+        "connectorType": "BAMBOO",
+        "supportedParams": [
+            {
+                "name": "projectName",
+                "label": "Project",
+                "helpText": "Project",
+                "type": "string"
+            },
+            {
+                "name": "planName",
+                "label": "Plan",
+                "helpText": "Plan",
+                "type": "string"
+            },
+            {
+                "name": "buildNumber",
+                "label": "Build",
+                "helpText": "Build",
+                "type": "string"
+            }
+        ],
+        "label": "Bamboo",
+        "helpText": "Bamboo",
+        "isMultiSupported": bool(True)
+    },
+    {
+        "connectorType": "BITBUCKET_SERVER",
+        "supportedParams": [
+            {
+                "name": "projectKey",
+                "label": "ProjectKey",
+                "helpText": "ProjectKey",
+                "type": "string"
+            },
+            {
+                "name": "repositoryName",
+                "label": "Repository",
+                "helpText": "Repository",
+                "type": "string"
+            },
+            {
+                "name": "commitId",
+                "label": "Commit",
+                "helpText": "Commit",
+                "type": "string"
+            }
+        ],
+        "label": "Bitbucket Server",
+        "helpText": "Bitbucket Server",
+        "isMultiSupported": bool(True)
+    },
+    {
+        "connectorType": "ARTIFACTORY",
+        "supportedParams": [
+            {
+                "name": "repositoryPath",
+                "label": "RepositoryPath",
+                "helpText": "Repository path",
+                "type": "string"
+            }
+        ],
+        "label": "Artifactory",
+        "helpText": "Artifactory",
+        "isMultiSupported": bool(False)
+    },
+    {
+        "connectorType": "SERVICENOW",
+        "supportedParams": [
+            {
+                "name": "number",
+                "label": "Number",
+                "helpText": "Number",
+                "type": "array"
+            }
+        ],
+        "label": "ServiceNow",
+        "helpText": "ServiceNow",
+        "isMultiSupported": bool(False)
+    },
+    {
+        "connectorType": "PRISMACLOUD",
+        "supportedParams": [
+            {
+                "name": "imageId",
+                "label": "ID",
+                "helpText": "ImageID",
+                "type": "array"
+            }
+        ],
+        "label": "PrismaCloud",
+        "helpText": "PrismaCloud",
+        "isMultiSupported": bool(False)
+    },
+    {
+        "connectorType": "JFROG",
+        "supportedParams": [
+            {
+                "name": "watch_name",
+                "label": "Watch",
+                "helpText": "Watch",
+                "type": "array"
+            }
+        ],
+        "label": "Jfrog",
+        "helpText": "Jfrog",
+        "isMultiSupported": bool(False)
+    },
+    {
+        "connectorType": "BITBUCKET",
+        "supportedParams": [
+            {
+                "name": "repositoryName",
+                "label": "Repository",
+                "helpText": "Repository",
+                "type": "string"
+            },
+            {
+                "name": "commitId",
+                "label": "Commit",
+                "helpText": "Commit",
+                "type": "string"
+            }
+        ],
+        "label": "Bitbucket Cloud",
+        "helpText": "Bitbucket Cloud",
+        "isMultiSupported": bool(True)
+    }
+]
 
-def getConnectorsConfiguredNames(gateId, cookie):
+def convertTupleToDictonary(visibilityDatas):
     try:
-        URL = isd_gate_url + "/visibilityservice/v1/approvalGates/{}/toolConnectors".format(gateId)
+        dict_1 = []
+        if visibilityDatas is not None:
+            paramIds = list(zip(*visibilityDatas))[2]
+            uniqueParamIds = set(paramIds)
+            for paramId in uniqueParamIds:
+                dict_2 = dict()
+                data = [x for x in visibilityDatas if x[2] == paramId]
+                for key, value, param in data:
+                    dict_2.setdefault(key,value)
+                dict_1.append(dict_2)
+        return dict_1
+    except Exception as e:
+        print("Exception occurred while converting tuple to dictionary approval configured data: ", e)
+        logging.error("Exception occurred while converting tuple to dictionary approval configured data", exc_info=True)
+        raise e
+
+def getConnectorsConfiguredNames(approvalGateId, cookie):
+    try:
+        URL = isd_gate_url + "/visibilityservice/v1/approvalGates/{}/toolConnectors".format(approvalGateId)
         logging.info(URL)
         headers = {'cookie': cookie}
         request = requests.get(url=URL, headers=headers)
@@ -897,11 +1205,11 @@ def getAllConnectorsNameData(cookie):
         raise e
 
 
-def getSelectedConnectors(gateId, cookie):
+def getSelectedConnectors(approvalGateId, cookie):
     try:
-        logging.info("Formatting selected connectors for gateId: " + str(gateId))
-        getConnectorsNames = getConnectorsConfiguredNames(gateId, cookie)
-        defaultData = {
+        logging.info("Formatting selected connectors for gateId: " + str(approvalGateId))
+        getConnectorsNames = getConnectorsConfiguredNames(approvalGateId, cookie)
+        defaultData = [{
             "connectorType": "Connectors *",
             "helpText": "List of Connectors Configured",
             "isMultiSupported": bool(True),
@@ -920,20 +1228,25 @@ def getSelectedConnectors(gateId, cookie):
                     "name": "account",
                     "type": "string"
                 }
-            ]}
+            ],
+            "values": []
+        }]
         mainData = []
         for getConnectorsName in getConnectorsNames:
             if ('connectorType' in getConnectorsName and 'accountName' in getConnectorsName):
                 tempData = {"connector": getConnectorsName['connectorType'],
                             "account": getConnectorsName['accountName']}
                 mainData.append(tempData)
-        defaultData["values"] = mainData
+            defaultData[0]["values"] = mainData
         return defaultData
     except Exception as e:
-        print("Exception occurred while processing the pipeline json for existing gates : ", e)
-        logging.error("Exception occurred while processing the pipeline json for existing gates ", exc_info=True)
+        print(
+            "Exception occurred while processing the approval supported parameter pipeline json for existing gates : ",
+            e)
+        logging.error(
+            "Exception occurred while processing the approval supported parameter pipeline json for existing gates ",
+            exc_info=True)
         raise e
-
 
 def verifySpinnakerConfigurationAndGetURL():
     try:
