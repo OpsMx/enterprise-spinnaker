@@ -509,18 +509,18 @@ def updateApprovalAuditJson(audit_events_table_id, updateJson):
 def processPipelineJsonForExistingGates(cookie):
     try:
         cur_platform.execute(
-            "select s.application_id, sp.service_id, g.id, g.gate_name, g.gate_type, g.payload_constraint, gp.pipeline_id, a.name from "
-            "service_gate g left outer join gate_pipeline_map gp on g.id = gp.service_gate_id left outer join service_pipeline_map sp on gp.pipeline_id = sp.pipeline_id "
-            "left outer join service s on sp.service_id=s.id left outer join applications a on s.application_id = a.id where a.source = 'Spinnaker' ;")
+            "select a.id as application_id , a.name as application_name , sp.service_id, g.id as gate_id, g.gate_name, g.gate_type, gp.pipeline_id "
+            "from applications a left outer join service s on a.id = s.application_id left outer join service_pipeline_map sp on s.id=sp.service_id "
+            "left outer join gate_pipeline_map gp on sp.pipeline_id=gp.pipeline_id left outer join service_gate g on gp.service_gate_id=g.id where a.source = 'Spinnaker' and g.id is not null")
         records = cur_platform.fetchall()
         for record in records:
             applicationId = record[0]
-            serviceId = record[1]
-            gateId = record[2]
-            gateName = record[3]
-            gateType = record[4]
+            appName = record[1]
+            serviceId = record[2]
+            gateId = record[3]
+            gateName = record[4]
+            gateType = record[5]
             pipelineId = record[6]
-            appName = record[7]
             env_json = formEnvJson(gateId)
             payloadConstraint = formPayloadConstraint()
             stageJson = ""
@@ -1014,15 +1014,16 @@ def formPipelineJson(pipelineId, dbPipelineJson, stageJson):
 
 def postingGateJson(pipelineJson, cookie):
     try:
-        api_url = isd_gate_url + "/oes/appOnboarding/spinnaker/pipeline/stage"
+        api_url = sapor_host_url+"/oes/appOnboarding/spinnaker/pipeline/stage"
         logging.info(api_url)
-        headers = {'Content-Type': 'application/json', 'cookie': cookie, 'x-user-cookie': cookie,
+        headers = {'Content-Type': 'application/json', 'x-user-cookie' : cookie,
                    'x-spinnaker-user': isd_admin_username}
         response = requests.post(url=api_url, headers=headers, data=json.dumps(pipelineJson))
         logging.info("The response status is: " + str(response.status_code))
         if (response.status_code == 200 | response.status_code == 201):
-            response.info("Successfully added stage! The response is:\n" + str(response.content) + '\n')
+            logging.info("Successfully added stage! The response is:\n" + str(response.content) + '\n')
         else:
+            print("Failed to add stage; The response is: "+str(response.content))
             logging.info("Failed to add stage; The response is:\n" + str(response.content) + '\n')
     except Exception as e:
         print("Exception occurred while posting gate: ", e)
@@ -1051,10 +1052,10 @@ def login_to_isd():
 if __name__ == '__main__':
     n = len(sys.argv)
 
-    if n != 17:
+    if n != 18:
         print(
-            "Please pass valid 16 arguments <platform_db-name> <platform_host> <oes-db-name> <oes-db-host> <autopilot-db-name> <autopilot-db-host> <audit_db-name> <audit-db-host> <visibility_db-name> <visibility-db-host> "
-            "<db-port> <user-name> <password> <isd-gate-url> <isd-admin-username> <isd-admin-password> ")
+            "Please pass valid 17 arguments <platform_db-name> <platform_host> <oes-db-name> <oes-db-host> <autopilot-db-name> <autopilot-db-host> <audit_db-name> <audit-db-host> <visibility_db-name> <visibility-db-host> "
+            "<db-port> <user-name> <password> <isd-gate-url> <isd-admin-username> <isd-admin-password> <sapor-host-url>")
         exit(1)
 
     global is_error_occurred
@@ -1080,6 +1081,7 @@ if __name__ == '__main__':
     isd_gate_url = sys.argv[14]
     isd_admin_username = sys.argv[15]
     isd_admin_password = sys.argv[16]
+    sapor_host_url = sys.argv[17]
 
     # Establishing the platform db connection
     platform_conn = psycopg2.connect(database=platform_db, user=user_name, password=password, host=platform_host,
