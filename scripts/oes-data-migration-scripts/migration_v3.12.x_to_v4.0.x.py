@@ -861,7 +861,7 @@ def getConnectorsDataFilter(approvalGateId, cookie):
         getConnectorsNames = getConnectorsConfiguredNames(approvalGateId, cookie)
         if ('error' in getConnectorsNames):
             return dataList
-        getConnectorsNameDatas = getAllConnectorsNameData(cookie)
+        getConnectorsNameDatas = getAllConfiguredConnector()
         for getConnectorsName in getConnectorsNames:
             connectorType = getConnectorsName['connectorType']
             connectorDetail = [x for x in getConnectorsNameDatas if x['connectorType']==connectorType][0]
@@ -880,6 +880,286 @@ def getConnectorsDataFilter(approvalGateId, cookie):
         print("Exception occurred while processing the connector data : ", e)
         logging.error("Exception occurred while processing the connector data :", exc_info=True)
         raise e
+
+def getAllConfiguredConnector():
+    return  [
+    {
+        "connectorType": "JIRA",
+        "supportedParams": [
+            {
+                "name": "jira_ticket_no",
+                "label": "Jira Id",
+                "helpText": "Jira Id",
+                "type": "array"
+            }
+        ],
+        "label": "Jira",
+        "helpText": "Jira",
+        "isMultiSupported": bool(False)
+    },
+    {
+        "connectorType": "GIT",
+        "supportedParams": [
+            {
+                "name": "repo",
+                "label": "Repository",
+                "helpText": "Repository",
+                "type": "string"
+            },
+            {
+                "name": "commitId",
+                "label": "Commit Id",
+                "helpText": "Commit Id",
+                "type": "array"
+            }
+        ],
+        "label": "Git",
+        "helpText": "Git",
+        "isMultiSupported": bool(True)
+    },
+    {
+        "connectorType": "GITHUB",
+        "supportedParams": [
+            {
+                "name": "account",
+                "label": "Organization/Username",
+                "helpText": "Organization/Username",
+                "type": "string"
+            },
+            {
+                "name": "repo",
+                "label": "Repository",
+                "helpText": "Repository",
+                "type": "string"
+            },
+            {
+                "name": "commitId",
+                "label": "Commit Id",
+                "helpText": "Commit Id",
+                "type": "array"
+            }
+        ],
+        "label": "Git",
+        "helpText": "Git",
+        "isMultiSupported": bool(True)
+    },
+    {
+        "connectorType": "AUTOPILOT",
+        "supportedParams": [
+            {
+                "name": "canaryId",
+                "label": "Canary ID",
+                "helpText": "Canary ID",
+                "type": "array"
+            }
+        ],
+        "label": "Autopilot",
+        "helpText": "Autopilot",
+        "isMultiSupported": bool(False)
+    },
+    {
+        "connectorType": "SONARQUBE",
+        "supportedParams": [
+            {
+                "name": "projectKey",
+                "label": "Project Key",
+                "helpText": "Project Key",
+                "type": "array"
+            },
+            {
+                "name": "branch",
+                "label": "Branch Name",
+                "helpText": "Branch Name",
+                "type": "string"
+            }
+        ],
+        "label": "Sonarqube",
+        "helpText": "Sonarqube",
+        "isMultiSupported": bool(True)
+    },
+    {
+        "connectorType": "JENKINS",
+        "supportedParams": [
+            {
+                "name": "job",
+                "label": "Job Name",
+                "helpText": "Job Name",
+                "type": "string"
+            },
+            {
+                "name": "buildId",
+                "label": "Build",
+                "helpText": "Build",
+                "type": "string"
+            },
+            {
+                "name": "artifact",
+                "label": "Artifact",
+                "helpText": "Artifact",
+                "type": "string"
+            }
+        ],
+        "label": "Jenkins",
+        "helpText": "Jenkins",
+        "isMultiSupported": bool(True)
+    },
+    {
+        "connectorType": "AQUAWAVE",
+        "supportedParams": [
+            {
+                "name": "imageId",
+                "label": "Image ID",
+                "helpText": "Image ID",
+                "type": "array"
+            }
+        ],
+        "label": "Aquawave",
+        "helpText": "Aquawave",
+        "isMultiSupported": bool(False)
+    },
+    {
+        "connectorType": "APPSCAN",
+        "supportedParams": [
+            {
+                "name": "id",
+                "label": "Project ID",
+                "helpText": "Project ID",
+                "type": "array"
+            }
+        ],
+        "label": "Appscan",
+        "helpText": "Appscan",
+        "isMultiSupported": bool(False)
+    },
+    {
+        "connectorType": "BAMBOO",
+        "supportedParams": [
+            {
+                "name": "projectName",
+                "label": "Project",
+                "helpText": "Project",
+                "type": "string"
+            },
+            {
+                "name": "planName",
+                "label": "Plan",
+                "helpText": "Plan",
+                "type": "string"
+            },
+            {
+                "name": "buildNumber",
+                "label": "Build",
+                "helpText": "Build",
+                "type": "string"
+            }
+        ],
+        "label": "Bamboo",
+        "helpText": "Bamboo",
+        "isMultiSupported": bool(True)
+    },
+    {
+        "connectorType": "BITBUCKET_SERVER",
+        "supportedParams": [
+            {
+                "name": "projectKey",
+                "label": "ProjectKey",
+                "helpText": "ProjectKey",
+                "type": "string"
+            },
+            {
+                "name": "repositoryName",
+                "label": "Repository",
+                "helpText": "Repository",
+                "type": "string"
+            },
+            {
+                "name": "commitId",
+                "label": "Commit",
+                "helpText": "Commit",
+                "type": "string"
+            }
+        ],
+        "label": "Bitbucket Server",
+        "helpText": "Bitbucket Server",
+        "isMultiSupported": bool(True)
+    },
+    {
+        "connectorType": "ARTIFACTORY",
+        "supportedParams": [
+            {
+                "name": "repositoryPath",
+                "label": "RepositoryPath",
+                "helpText": "Repository path",
+                "type": "string"
+            }
+        ],
+        "label": "Artifactory",
+        "helpText": "Artifactory",
+        "isMultiSupported": bool(False)
+    },
+    {
+        "connectorType": "SERVICENOW",
+        "supportedParams": [
+            {
+                "name": "number",
+                "label": "Number",
+                "helpText": "Number",
+                "type": "array"
+            }
+        ],
+        "label": "ServiceNow",
+        "helpText": "ServiceNow",
+        "isMultiSupported": bool(False)
+    },
+    {
+        "connectorType": "PRISMACLOUD",
+        "supportedParams": [
+            {
+                "name": "imageId",
+                "label": "ID",
+                "helpText": "ImageID",
+                "type": "array"
+            }
+        ],
+        "label": "PrismaCloud",
+        "helpText": "PrismaCloud",
+        "isMultiSupported": bool(False)
+    },
+    {
+        "connectorType": "JFROG",
+        "supportedParams": [
+            {
+                "name": "watch_name",
+                "label": "Watch",
+                "helpText": "Watch",
+                "type": "array"
+            }
+        ],
+        "label": "Jfrog",
+        "helpText": "Jfrog",
+        "isMultiSupported": bool(False)
+    },
+    {
+        "connectorType": "BITBUCKET",
+        "supportedParams": [
+            {
+                "name": "repositoryName",
+                "label": "Repository",
+                "helpText": "Repository",
+                "type": "string"
+            },
+            {
+                "name": "commitId",
+                "label": "Commit",
+                "helpText": "Commit",
+                "type": "string"
+            }
+        ],
+        "label": "Bitbucket Cloud",
+        "helpText": "Bitbucket Cloud",
+        "isMultiSupported": bool(True)
+    }
+]
 
 def convertTupleToDictonary(visibilityDatas):
     try:
