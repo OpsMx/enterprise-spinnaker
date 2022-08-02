@@ -40,11 +40,27 @@ def perform_migration():
             is_error_occurred = True
 
         try:
+            logging.info("Create audit db table delivery_insights_chart_counts")
+            print("Create audit db table delivery_insights_chart_counts")
+            createDeliveryInsights()
+        except Exception as e:
+            logging.error("Failure at step 3", exc_info=True)
+            is_error_occurred = True
+
+        try:
+            logging.info("Create audit db table area_chart_counts")
+            print("Create audit db table area_chart_counts")
+            createAreaCharts()
+        except Exception as e:
+            logging.error("Failure at step 4", exc_info=True)
+            is_error_occurred = True
+
+        try:
             logging.info("Alter platform db table app_environment")
             print("Alter platform db table app_environment")
             alterAppEnvironmentTable()
         except Exception as e:
-            logging.error("Failure at step 3", exc_info=True)
+            logging.error("Failure at step 5", exc_info=True)
             is_error_occurred = True
 
         try:
@@ -52,7 +68,7 @@ def perform_migration():
             print("Fetch spinnaker environments details from sapor db")
             getEnvironmentData()
         except Exception as e:
-            logging.error("Failure at step 4", exc_info=True)
+            logging.error("Failure at step 6", exc_info=True)
             is_error_occurred = True
 
         try:
@@ -60,7 +76,7 @@ def perform_migration():
             print("Update spinnaker environments Id details in app_environment table")
             environmentUpdate()
         except Exception as e:
-            logging.error("Failure at step 5", exc_info=True)
+            logging.error("Failure at step 7", exc_info=True)
             is_error_occurred = True
 
         try:
@@ -68,7 +84,7 @@ def perform_migration():
             print("Alter platform db table service_gate")
             alterServiceGateTable()
         except Exception as e:
-            logging.error("Failure at step 6", exc_info=True)
+            logging.error("Failure at step 8", exc_info=True)
             is_error_occurred = True
 
         try:
@@ -76,7 +92,7 @@ def perform_migration():
             print("Update spinnaker environments Id details in app_environment table")
             updateRefId()
         except Exception as e:
-            logging.error("Failure at step 7", exc_info=True)
+            logging.error("Failure at step 9", exc_info=True)
             is_error_occurred = True
 
         try:
@@ -84,7 +100,7 @@ def perform_migration():
             print("Alter platform db table service_deployments_current")
             add_columns_in_service_deployment_current()
         except Exception as e:
-            logging.error("Failure at step 8", exc_info=True)
+            logging.error("Failure at step 10", exc_info=True)
             is_error_occurred = True
 
         try:
@@ -92,7 +108,7 @@ def perform_migration():
             print("Alter autopilot db table userlogfeedback and loganalysis")
             update_autopilot_constraints()
         except Exception as e:
-            logging.error("Failure at step 9", exc_info=True)
+            logging.error("Failure at step 11", exc_info=True)
             is_error_occurred = True
 
         try:
@@ -100,7 +116,7 @@ def perform_migration():
             print("Update service_deployments_current table sync column data in platform db")
             update_sync_status()
         except Exception as e:
-            logging.error("Failure at step 10", exc_info=True)
+            logging.error("Failure at step 12", exc_info=True)
             is_error_occurred = True
 
         try:
@@ -110,7 +126,7 @@ def perform_migration():
             persist_cluster(pipeline_executions)
             persist_location(pipeline_executions)
         except Exception as e:
-            logging.error("Failure at step 11", exc_info=True)
+            logging.error("Failure at step 13", exc_info=True)
             is_error_occurred = True
 
         try:
@@ -119,7 +135,7 @@ def perform_migration():
             cookie = login_to_isd()
             processPipelineJsonForExistingGates(cookie)
         except Exception as e:
-            logging.error("Failure at step 12", exc_info=True)
+            logging.error("Failure at step 14", exc_info=True)
             is_error_occurred = True
 
         if is_error_occurred == True:
@@ -373,6 +389,41 @@ def dropAreaCharts():
         logging.error("Exception occurred in dropping area_chart_counts table while updating script: ", exc_info=True)
         raise e
 
+def createDeliveryInsights():
+    try:
+        cur_audit.execute("CREATE TABLE public.delivery_insights_chart_counts (app_pipeline_name character varying(255) NOT NULL,"
+                          "days integer NOT NULL,"
+                          "source_id integer NOT NULL,"
+                          "app_name character varying(255) NOT NULL,"
+                          "avg_execution_duration bigint,"
+                          "failed_counts bigint,"
+                          "last_run_duration bigint,"
+                          "passed_counts bigint,"
+                          "PRIMARY KEY (app_pipeline_name, days, source_id))")
+        logging.info("Successfully created delivery_insights_chart_counts table")
+        print("Successfully created delivery_insights_chart_counts table")
+    except Exception as e:
+        print("Exception occurred in creating delivery_insights_chart_counts while updating script : ", e)
+        logging.error("Exception occurred in creating delivery_insights_chart_counts while updating script: ", exc_info=True)
+        raise e
+
+def createAreaCharts():
+    try:
+        cur_audit.execute("CREATE TABLE public.area_chart_counts (application_name character varying(255) NOT NULL,"
+                          "days integer NOT NULL,"
+                          "pipeline_name character varying(255) NOT NULL,"
+                          "source_id integer NOT NULL,"
+                          "status character varying(255) NOT NULL,"
+                          "end_dates text NOT NULL, "
+                          "PRIMARY KEY (application_name, days, pipeline_name, source_id, status))")
+        logging.info("Successfully dropped area_chart_counts table")
+        print("Successfully created area_chart_counts table")
+    except Exception as e:
+        print("Exception occurred in creating area_chart_counts table while updating script : ", e)
+        logging.error("Exception occurred in creating area_chart_counts table while updating script: ", exc_info=True)
+        raise e
+
+
 def alterServiceGateTable():
     try:
         cur_platform.execute("ALTER TABLE service_gate ADD COLUMN IF NOT EXISTS ref_id int")
@@ -511,7 +562,7 @@ def processPipelineJsonForExistingGates(cookie):
         cur_platform.execute(
             "select a.id as application_id , a.name as application_name , sp.service_id, g.id as gate_id, g.gate_name, g.gate_type, gp.pipeline_id "
             "from applications a left outer join service s on a.id = s.application_id left outer join service_pipeline_map sp on s.id=sp.service_id "
-            "left outer join gate_pipeline_map gp on sp.pipeline_id=gp.pipeline_id left outer join service_gate g on gp.service_gate_id=g.id where a.source = 'Spinnaker' and g.id is not null")
+            "left outer join gate_pipeline_map gp on sp.pipeline_id=gp.pipeline_id left outer join service_gate g on gp.service_gate_id=g.id where a.source = 'Spinnaker' and a.id = 37 and g.gate_type='approval' and g.id is not null")
         records = cur_platform.fetchall()
         for record in records:
             logging.info("Record:"+str(record))
@@ -751,11 +802,13 @@ def approvalParametersDataFilter(gateId, env_json_formatted, payloadConstraint, 
     try:
         approvalGroupsData = getApprovalGroupsDataFilter(gateId, cookie)
         automatedApproval = getAutomatedApproval(gateId)
+        isAutomatedApproval = len(automatedApproval) > 0
         approvalGateId = getApprovalGateId(gateId)
         selectedConnectors = getSelectedConnectors(approvalGateId, cookie)
         approval_pipeline_json = {
             "approvalGroups": approvalGroupsData,
             "automatedApproval": automatedApproval,
+            "isAutomatedApproval":isAutomatedApproval,
             "connectors": "",
             "customEnvironment": "",
             "environment": env_json_formatted,
@@ -852,335 +905,9 @@ def getAutomatedApproval(gateId):
         raise e
 
 
-def getConnectorsDataFilter(approvalGateId, cookie):
-
-    try:
-        logging.info("Fetching connector data for gateId: " + str(approvalGateId))
-        dataList = []
-        getConnectorsNames = getConnectorsConfiguredNames(approvalGateId, cookie)
-        if ('error' in getConnectorsNames):
-            return dataList
-        getConnectorsNameDatas = getAllConfiguredConnector()
-        for getConnectorsName in getConnectorsNames:
-            connectorType = getConnectorsName['connectorType']
-            connectorDetail = [x for x in getConnectorsNameDatas if x['connectorType']==connectorType][0]
-            if 'connectorType' in connectorDetail and connectorDetail['connectorType'] == connectorType:
-                cur_visibility.execute(
-                    "select key,value,param_group_id from approval_gate_parameter where connector_type ='" + str(
-                        connectorType) + "' and approval_gate_instance_id= (select ai.id from approval_gate_instance ai where ai.approval_gate_id={} order by id desc limit 1)".format(
-                        approvalGateId))
-                visibilityDatas = cur_visibility.fetchall()
-                data = convertTupleToDictonary(visibilityDatas)
-                if data is not None:
-                    connectorDetail["values"] = data
-        dataList.append(connectorDetail)
-        return dataList
-    except Exception as e:
-        print("Exception occurred while processing the connector data : ", e)
-        logging.error("Exception occurred while processing the connector data :", exc_info=True)
-        raise e
-
-def getAllConfiguredConnector():
-    return  [
-    {
-        "connectorType": "JIRA",
-        "supportedParams": [
-            {
-                "name": "jira_ticket_no",
-                "label": "Jira Id",
-                "helpText": "Jira Id",
-                "type": "array"
-            }
-        ],
-        "label": "Jira",
-        "helpText": "Jira",
-        "isMultiSupported": bool(False)
-    },
-    {
-        "connectorType": "GIT",
-        "supportedParams": [
-            {
-                "name": "repo",
-                "label": "Repository",
-                "helpText": "Repository",
-                "type": "string"
-            },
-            {
-                "name": "commitId",
-                "label": "Commit Id",
-                "helpText": "Commit Id",
-                "type": "array"
-            }
-        ],
-        "label": "Git",
-        "helpText": "Git",
-        "isMultiSupported": bool(True)
-    },
-    {
-        "connectorType": "GITHUB",
-        "supportedParams": [
-            {
-                "name": "account",
-                "label": "Organization/Username",
-                "helpText": "Organization/Username",
-                "type": "string"
-            },
-            {
-                "name": "repo",
-                "label": "Repository",
-                "helpText": "Repository",
-                "type": "string"
-            },
-            {
-                "name": "commitId",
-                "label": "Commit Id",
-                "helpText": "Commit Id",
-                "type": "array"
-            }
-        ],
-        "label": "Git",
-        "helpText": "Git",
-        "isMultiSupported": bool(True)
-    },
-    {
-        "connectorType": "AUTOPILOT",
-        "supportedParams": [
-            {
-                "name": "canaryId",
-                "label": "Canary ID",
-                "helpText": "Canary ID",
-                "type": "array"
-            }
-        ],
-        "label": "Autopilot",
-        "helpText": "Autopilot",
-        "isMultiSupported": bool(False)
-    },
-    {
-        "connectorType": "SONARQUBE",
-        "supportedParams": [
-            {
-                "name": "projectKey",
-                "label": "Project Key",
-                "helpText": "Project Key",
-                "type": "array"
-            },
-            {
-                "name": "branch",
-                "label": "Branch Name",
-                "helpText": "Branch Name",
-                "type": "string"
-            }
-        ],
-        "label": "Sonarqube",
-        "helpText": "Sonarqube",
-        "isMultiSupported": bool(True)
-    },
-    {
-        "connectorType": "JENKINS",
-        "supportedParams": [
-            {
-                "name": "job",
-                "label": "Job Name",
-                "helpText": "Job Name",
-                "type": "string"
-            },
-            {
-                "name": "buildId",
-                "label": "Build",
-                "helpText": "Build",
-                "type": "string"
-            },
-            {
-                "name": "artifact",
-                "label": "Artifact",
-                "helpText": "Artifact",
-                "type": "string"
-            }
-        ],
-        "label": "Jenkins",
-        "helpText": "Jenkins",
-        "isMultiSupported": bool(True)
-    },
-    {
-        "connectorType": "AQUAWAVE",
-        "supportedParams": [
-            {
-                "name": "imageId",
-                "label": "Image ID",
-                "helpText": "Image ID",
-                "type": "array"
-            }
-        ],
-        "label": "Aquawave",
-        "helpText": "Aquawave",
-        "isMultiSupported": bool(False)
-    },
-    {
-        "connectorType": "APPSCAN",
-        "supportedParams": [
-            {
-                "name": "id",
-                "label": "Project ID",
-                "helpText": "Project ID",
-                "type": "array"
-            }
-        ],
-        "label": "Appscan",
-        "helpText": "Appscan",
-        "isMultiSupported": bool(False)
-    },
-    {
-        "connectorType": "BAMBOO",
-        "supportedParams": [
-            {
-                "name": "projectName",
-                "label": "Project",
-                "helpText": "Project",
-                "type": "string"
-            },
-            {
-                "name": "planName",
-                "label": "Plan",
-                "helpText": "Plan",
-                "type": "string"
-            },
-            {
-                "name": "buildNumber",
-                "label": "Build",
-                "helpText": "Build",
-                "type": "string"
-            }
-        ],
-        "label": "Bamboo",
-        "helpText": "Bamboo",
-        "isMultiSupported": bool(True)
-    },
-    {
-        "connectorType": "BITBUCKET_SERVER",
-        "supportedParams": [
-            {
-                "name": "projectKey",
-                "label": "ProjectKey",
-                "helpText": "ProjectKey",
-                "type": "string"
-            },
-            {
-                "name": "repositoryName",
-                "label": "Repository",
-                "helpText": "Repository",
-                "type": "string"
-            },
-            {
-                "name": "commitId",
-                "label": "Commit",
-                "helpText": "Commit",
-                "type": "string"
-            }
-        ],
-        "label": "Bitbucket Server",
-        "helpText": "Bitbucket Server",
-        "isMultiSupported": bool(True)
-    },
-    {
-        "connectorType": "ARTIFACTORY",
-        "supportedParams": [
-            {
-                "name": "repositoryPath",
-                "label": "RepositoryPath",
-                "helpText": "Repository path",
-                "type": "string"
-            }
-        ],
-        "label": "Artifactory",
-        "helpText": "Artifactory",
-        "isMultiSupported": bool(False)
-    },
-    {
-        "connectorType": "SERVICENOW",
-        "supportedParams": [
-            {
-                "name": "number",
-                "label": "Number",
-                "helpText": "Number",
-                "type": "array"
-            }
-        ],
-        "label": "ServiceNow",
-        "helpText": "ServiceNow",
-        "isMultiSupported": bool(False)
-    },
-    {
-        "connectorType": "PRISMACLOUD",
-        "supportedParams": [
-            {
-                "name": "imageId",
-                "label": "ID",
-                "helpText": "ImageID",
-                "type": "array"
-            }
-        ],
-        "label": "PrismaCloud",
-        "helpText": "PrismaCloud",
-        "isMultiSupported": bool(False)
-    },
-    {
-        "connectorType": "JFROG",
-        "supportedParams": [
-            {
-                "name": "watch_name",
-                "label": "Watch",
-                "helpText": "Watch",
-                "type": "array"
-            }
-        ],
-        "label": "Jfrog",
-        "helpText": "Jfrog",
-        "isMultiSupported": bool(False)
-    },
-    {
-        "connectorType": "BITBUCKET",
-        "supportedParams": [
-            {
-                "name": "repositoryName",
-                "label": "Repository",
-                "helpText": "Repository",
-                "type": "string"
-            },
-            {
-                "name": "commitId",
-                "label": "Commit",
-                "helpText": "Commit",
-                "type": "string"
-            }
-        ],
-        "label": "Bitbucket Cloud",
-        "helpText": "Bitbucket Cloud",
-        "isMultiSupported": bool(True)
-    }
-]
-
-def convertTupleToDictonary(visibilityDatas):
-    try:
-        dict_1 = []
-        if visibilityDatas is not None:
-            paramIds = list(zip(*visibilityDatas))[2]
-            uniqueParamIds = set(paramIds)
-            for paramId in uniqueParamIds:
-                dict_2 = dict()
-                data = [x for x in visibilityDatas if x[2] == paramId]
-                for key, value, param in data:
-                    dict_2.setdefault(key,value)
-                dict_1.append(dict_2)
-        return dict_1
-    except Exception as e:
-        print("Exception occurred while converting tuple to dictionary approval configured data: ", e)
-        logging.error("Exception occurred while converting tuple to dictionary approval configured data", exc_info=True)
-        raise e
-
 def getConnectorsConfiguredNames(approvalGateId, cookie):
     try:
-        URL = isd_gate_url + "/visibilityservice/v1/approvalGates/{}/toolConnectors".format(approvalGateId)
+        URL = isd_gate_url +"/visibilityservice/v1/approvalGates/{}/toolConnectors".format(approvalGateId)
         logging.info(URL)
         headers = {'cookie': cookie}
         request = requests.get(url=URL, headers=headers)
