@@ -57,11 +57,15 @@ spec:
       priorityClassName: "{{ .Values.priorityClassName }}"
   {{- end }}
       serviceAccountName: {{ include "minio.serviceAccountName" . | quote }}
-{{- if and .Values.securityContext.enabled .Values.persistence.enabled }}
+      {{- if .Values.global.openshift }}
+      securityContext: {}
+      {{- else }}
+{{- if and (not .Values.global.openshift) (.Values.securityContext.enabled) (.Values.persistence.enabled) }}
       securityContext:
         runAsUser: {{ .Values.securityContext.runAsUser }}
         runAsGroup: {{ .Values.securityContext.runAsGroup }}
         fsGroup: {{ .Values.securityContext.fsGroup }}
+{{- end }}
 {{- end }}
       containers:
         - name: {{ .Chart.Name }}

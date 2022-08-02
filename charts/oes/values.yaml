@@ -64,6 +64,9 @@ global:
   nodeSelector: {}
   affinity: {}
   tolerations: []
+  openshift: true
+  #securityContext:
+  #  runAsuser: 1000
   ## Set to false only if user uses gitops style and user dont want the repo to be created automatically in github.com
   githubcreationHook: true
 
@@ -553,6 +556,9 @@ rabbitmq:
 
   serviceAnnotations: {}
 
+  securityContext:
+    fsGroup: 1000
+
 ###############################################################################
 ## Values of OES Sapor (Security Audit Policy Onboarding & Release)
 sapor:
@@ -708,6 +714,9 @@ redis:
   password: password
   cluster:
     enabled: false
+  securityContext:
+    enabled: false
+
 
   # External Redis option will be enabled if in-cluster redis is disabled
   external:
@@ -983,9 +992,9 @@ spinnaker:
       #   cpu: "200m"
 
     ## Uncomment if you want to set environment variables on the Halyard pod.
-    # env:
-    #   - name: JAVA_OPTS
-    #     value: -Dhttp.proxyHost=proxy.example.com
+    env:
+      - name: HOME
+        value: /home/spinnaker
     customCerts:
       ## Enable to override the default cacerts with your own one
       enabled: false

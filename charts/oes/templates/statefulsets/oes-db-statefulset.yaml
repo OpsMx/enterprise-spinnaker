@@ -53,8 +53,14 @@ spec:
             port: 5432
           initialDelaySeconds: 10
           periodSeconds: 5
+      {{- if .Values.global.openshift }}
+      securityContext: {}
+      {{- else }}
+      {{- if and (not .Values.global.openshift) (.Values.db.securityContext) }}
       securityContext:
 {{ toYaml .Values.db.securityContext | indent 8 }}
+      {{- end }}
+      {{- end }}
       {{- if .Values.global.affinity }}
       affinity:
 {{ toYaml .Values.global.affinity | indent 8 }}

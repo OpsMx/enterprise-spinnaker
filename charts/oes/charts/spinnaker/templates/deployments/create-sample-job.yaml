@@ -7,9 +7,14 @@ spec:
   template:
     spec:
       serviceAccountName: {{ .Release.Name }}-spinnaker-halyard
+      {{- if .Values.global.openshift }}
+      securityContext: {}
+      {{- else }}
+      {{- if and (not .Values.global.openshift) (.Values.securityContext) }}
       securityContext:
-        fsGroup: 1000
-        runAsUser: 1000
+{{ toYaml .Values.securityContext | indent 8 }}
+      {{- end }}
+      {{- end }}
       restartPolicy: OnFailure
       {{- if .Values.nodeSelector }}
       nodeSelector:

@@ -49,11 +49,15 @@ spec:
       tolerations:
 {{ toYaml . | indent 8 }}
 {{- end }}
-{{- if .Values.updatePrometheusJob.securityContext.enabled }}
+{{- if .Values.global.openshift }}
+      securityContext: {}
+{{- else }}
+{{- if and (not .Values.global.openshift) (.Values.updatePrometheusJob.securityContext.enabled) }}
       securityContext:
         runAsUser: {{ .Values.updatePrometheusJob.securityContext.runAsUser }}
         runAsGroup: {{ .Values.updatePrometheusJob.securityContext.runAsGroup }}
         fsGroup: {{ .Values.updatePrometheusJob.securityContext.fsGroup }}
+{{- end }}
 {{- end }}
       volumes:
         - name: workdir

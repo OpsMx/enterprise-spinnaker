@@ -29,8 +29,14 @@ spec:
       {{- else }}
       serviceAccountName: {{ template "spinnaker.fullname" . }}-halyard
       {{- end }}
+      {{- if .Values.global.openshift }}
+      securityContext: {}
+      {{- else }}
+      {{- if and (not .Values.global.openshift) (.Values.securityContext) }}
       securityContext:
 {{ toYaml .Values.securityContext | indent 8 }}
+      {{- end }}
+      {{- end }}
     {{- if .Values.nodeSelector }}
       nodeSelector:
 {{ toYaml .Values.nodeSelector | indent 8 }}
@@ -407,9 +413,15 @@ spec:
           subPath: tls.key
           name: sslcerts
         {{- end }}
+        {{- if .Values.global.openshift }}
+        env:
+        - name: HOME
+          value: /home/spinnaker
+        {{- else }}
         {{- if .Values.halyard.env }}
         env:
 {{ toYaml .Values.halyard.env | indent 8 }}
+        {{- end }}
         {{- end }}
 {{- if and (not .Values.gitopsHalyard.enabled) .Values.halyard.persistence.enabled }}
   volumeClaimTemplates:
