@@ -42,11 +42,15 @@ spec:
       tolerations:
 {{ toYaml . | indent 8 }}
 {{- end }}
-{{- if .Values.makeBucketJob.securityContext.enabled }}
+{{- if .Values.global.openshift }}
+      securityContext: {}
+{{- else }}
+{{- if and (not .Values.global.openshift) (.Values.makeBucketJob.securityContext.enabled) }}
       securityContext:
         runAsUser: {{ .Values.makeBucketJob.securityContext.runAsUser }}
         runAsGroup: {{ .Values.makeBucketJob.securityContext.runAsGroup }}
         fsGroup: {{ .Values.makeBucketJob.securityContext.fsGroup }}
+{{- end }}
 {{- end }}
       volumes:
         - name: minio-configuration
