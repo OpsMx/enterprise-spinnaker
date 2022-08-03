@@ -562,7 +562,7 @@ def processPipelineJsonForExistingGates(cookie):
         cur_platform.execute(
             "select a.id as application_id , a.name as application_name , sp.service_id, g.id as gate_id, g.gate_name, g.gate_type, gp.pipeline_id "
             "from applications a left outer join service s on a.id = s.application_id left outer join service_pipeline_map sp on s.id=sp.service_id "
-            "left outer join gate_pipeline_map gp on sp.pipeline_id=gp.pipeline_id left outer join service_gate g on gp.service_gate_id=g.id where a.source = 'Spinnaker' and a.id = 37 and g.gate_type='approval' and g.id is not null")
+            "left outer join gate_pipeline_map gp on sp.pipeline_id=gp.pipeline_id left outer join service_gate g on gp.service_gate_id=g.id where a.source = 'Spinnaker' and g.id is not null")
         records = cur_platform.fetchall()
         for record in records:
             logging.info("Record:"+str(record))
