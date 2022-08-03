@@ -64,9 +64,14 @@ global:
   nodeSelector: {}
   affinity: {}
   tolerations: []
-  openshift: true
+
+  ## Set to false only if user want to Install ISD in Openshift Env
+  openshift: false
+
+  ## Uncomment only if any explict permissions are need to set for halyard,minio,rabbitmq,oesdb components for OpenShift installation of ISD by default securityContext is disabled in for Openshift Installation
   #securityContext:
-  #  runAsuser: 1000
+  #  fsGroup: 1000
+
   ## Set to false only if user uses gitops style and user dont want the repo to be created automatically in github.com
   githubcreationHook: true
 
@@ -145,10 +150,10 @@ global:
     oauth2: false
 
   ## Valid admin details for ISD authorization	
-  saporgate:	
-    config:	
-      username: admin       #Name of the valid user in your service provider	
-      adminGroups: admin    #Name of the valid admin group in your service provider  	
+  saporgate:
+    config:
+      username: admin       #Name of the valid user in your service provider
+      adminGroups: admin    #Name of the valid admin group in your service provider
       password: saporadmin  #password for the saporgate
 
   ## ldap configuration used in oes-gate, oes-platform and spinnaker gate for authentication and authorization
@@ -180,6 +185,7 @@ global:
     accessKey: spinnakeradmin
     secretKey: spinnakeradmin
     region: us-east-1
+    #Below is the securityContext block for only for K8S
     securityContext:
       enabled: true
       runAsUser: 1000
@@ -254,9 +260,10 @@ db:
   ## Strategy to rollout statefulset pods
   podManagementPolicy: OrderedReady
 
-  ## Default group to which the default user of a pod belongs
+  ## Default group to which the default user of a pod belongs and it applies only to K8S
   securityContext:
     fsGroup: 1000
+    runAsUser: 1000
 
   ## storageMountSize is the size with which a PVC is to be created
   storageMountSize: 8Gi
@@ -556,6 +563,7 @@ rabbitmq:
 
   serviceAnnotations: {}
 
+  #Blow block is for only for K8S
   securityContext:
     fsGroup: 1000
 
@@ -714,8 +722,12 @@ redis:
   password: password
   cluster:
     enabled: false
+ #The flag is set to true by default.Mandatory change to false only if global.openshift is true and change fsGroups and runAsUser if required
   securityContext:
-    enabled: false
+    enabled: true
+    fsGroup: 1001
+    runAsUser: 1001
+
 
 
   # External Redis option will be enabled if in-cluster redis is disabled
@@ -992,9 +1004,9 @@ spinnaker:
       #   cpu: "200m"
 
     ## Uncomment if you want to set environment variables on the Halyard pod.
-    env:
-      - name: HOME
-        value: /home/spinnaker
+    # env:
+    #   - name: JAVA_OPTS
+    #     value: -Dhttp.proxyHost=proxy.example.com
     customCerts:
       ## Enable to override the default cacerts with your own one
       enabled: false
@@ -1097,6 +1109,7 @@ spinnaker:
     # If left blank it is auto-generated from the fullname of the release
     halyardName:
     spinnakerName:
+  # below is the securityContext for halyard,install-using-hal job
   securityContext:
     # Specifies permissions to write for user/group
     runAsUser: 1000
