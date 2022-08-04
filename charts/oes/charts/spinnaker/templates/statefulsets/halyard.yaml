@@ -418,15 +418,9 @@ spec:
           subPath: tls.key
           name: sslcerts
         {{- end }}
-        {{- if .Values.global.openshift }}
-        env:
-        - name: HOME
-          value: /home/spinnaker
-        {{- else }}
         {{- if .Values.halyard.env }}
         env:
 {{ toYaml .Values.halyard.env | indent 8 }}
-        {{- end }}
         {{- end }}
 {{- if and (not .Values.gitopsHalyard.enabled) .Values.halyard.persistence.enabled }}
   volumeClaimTemplates:
