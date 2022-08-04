@@ -999,8 +999,10 @@ spinnaker:
       #   memory: "2Gi"
       #   cpu: "200m"
 
-    ## Uncomment if you want to set environment variables on the Halyard pod.
+    ## Uncomment if you want to set environment variables on the Halyard pod and HOME env is mandatory if global.openshift is set to true
     # env:
+    #   - name: HOME
+    #     value: /home/spinnaker
     #   - name: JAVA_OPTS
     #     value: -Dhttp.proxyHost=proxy.example.com
     customCerts:
