@@ -10,6 +10,8 @@ data:
     standardErrorCodesMapping.ISD-EmptyKeyOrValueInJson-400-07 = ISD-EmptyKeyOrValueInJson-400-07 : {0} - {1} is missing in json !
     standardErrorCodesMapping.ISD-UnableToParseJSON-400-08 = ISD-UnableToParseJSON-400-08 : {0} - Unable to parse Json. Please provide a valid json with required data !
     standardErrorCodesMapping.ISD-MustBeANumber-400-09 = ISD-MustBeANumber-400-09 : {0} - {1} must be a number : {2}
+    standardErrorCodesMapping.ISD-InvalidURL-400-10 = ISD-InvalidURL-400-10 : {0} - {1} is invalid - {2}
+    standardErrorCodesMapping.ISD-BadRequest-400-11 = ISD-BadRequest-400-11 : {0} - {1} {2}
     standardErrorCodesMapping.ISD-Unauthorized-401-01 = ISD-Unauthorized-401-01 : {0} - {1} not authorized. {2}.
     standardErrorCodesMapping.ISD-Unauthorized-401-02 = ISD-Unauthorized-401-02 : {0} - User group not found for user : {1}.
     standardErrorCodesMapping.ISD-NotAdmin-401-03 = ISD-NotAdmin-401-03 : {0} - {1} is not an admin !
@@ -59,6 +61,7 @@ data:
     standardErrorCodesMapping.ISD-UnableToValidate-500-07 = ISD-UnableToValidate-500-07 : {0} - Unable to validate {1} !
     standardErrorCodesMapping.ISD-ServiceUnavailable-503-01 = ISD-ServiceUnavailable-503-01 : {0} - {1} : {2}
     standardErrorCodesMapping.ISD-ServiceUnavailable-503-02 = ISD-ServiceUnavailable-503-02 : {0} - {1}
+    standardErrorCodesMapping.ISD-UnKnowHostException-503-03 = ISD-UnKnowHostException-503-03 : {0} - {1}
 kind: ConfigMap
 metadata:
   labels:

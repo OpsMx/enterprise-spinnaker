@@ -396,13 +396,13 @@ forwarder:
   externalName: controller.exampleopsmx.net    # This hostname should reach agent-grpc service from the agent
   enabled: true
   agent:
-    image: quay.io/opsmxpublic/forwarder-agent:v3.12.0
+    image: quay.io/opsmxpublic/forwarder-agent:v4.0.0-alpha
     serviceType: LoadBalancer
     # Value is also used in sapor configuration for kubernetes.agent.serverHostName
     host: opsmx-controller-controller1
   image:
     repository: quay.io/opsmxpublic/forwarder-controller
-    tag: v3.12.0
+    tag: v4.0.0-alpha
     pullPolicy: IfNotPresent
   annotations:
     moniker.spinnaker.io/application: isd
@@ -820,7 +820,7 @@ spinnaker:
     spinnakerVersion: 1.26.6
     image:
       repository: quay.io/opsmxpublic/ubi8-spin-halyard
-      tag: opsmx-1.40.0
+      tag: 1.27.0-v4.0-alpha
     # Set to false to disable persistence data volume for halyard
     persistence:
       enabled: true
