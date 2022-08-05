@@ -38,8 +38,19 @@ spec:
       - name: {{ .Values.imagePullSecret}}
       {{- end }}
       restartPolicy: Always
+      {{- if and (.Values.global.openshift) (not .Values.global.securityContext) }}
+      securityContext: {{ default "{}" }}
+      {{- else }}
+      {{- if and (.Values.global.openshift) (.Values.global.securityContext) }}
       securityContext:
-        fsGroup: 1000
+{{ toYaml .Values.global.securityContext | indent 8 }}
+      {{- else }}
+      {{- if and (not .Values.global.openshift) (.Values.rabbitmq.securityContext) }}
+      securityContext:
+{{ toYaml .Values.rabbitmq.securityContext | indent 8 }}
+      {{- end }}
+      {{- end }}
+      {{- end }}
       {{- if .Values.global.affinity }}
       affinity:
 {{ toYaml .Values.global.affinity | indent 8 }}
