@@ -65,7 +65,7 @@ global:
   affinity: {}
   tolerations: []
 
-  ## Set to false only if user want to Install ISD in Openshift Env
+  ## Set to true only if user want to Install ISD in Openshift Env
   openshift: false
 
   ## Uncomment only if any explict permissions are need to set for halyard,minio,rabbitmq,oesdb components for OpenShift installation of ISD by default securityContext is disabled in for Openshift Installation
