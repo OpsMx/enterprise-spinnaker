@@ -5,7 +5,6 @@ metadata:
     app: oes
     component: sapor-gate1
   name: sapor-gate1
-  namespace: v3102-v311
 spec:
   progressDeadlineSeconds: 600
   replicas: 1
