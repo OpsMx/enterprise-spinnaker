@@ -9,9 +9,9 @@ data:
     #!/bin/bash
 
     # Wait for the Hal daemon to be ready
-    export DAEMON_ENDPOINT=http://{{ template "spinnaker.fullname" . }}-halyard:8064
-    export HAL_COMMAND="hal --daemon-endpoint $DAEMON_ENDPOINT"
-    until $HAL_COMMAND --ready; do sleep 10 ; done
+    export DAEMON_ENDPOINT='curl http://{{ .Release.Name }}-spinnaker-halyard:8064/health'
+    export HAL_COMMAND="$DAEMON_ENDPOINT"
+    until $HAL_COMMAND ; do sleep 10 ; done
 
     {{- if not .Values.gitopsHalyard.enabled }}
 
