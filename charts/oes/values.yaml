@@ -262,7 +262,6 @@ db:
   ## Default group to which the default user of a pod belongs and it applies only to K8S
   securityContext:
     fsGroup: 1000
-    runAsUser: 1000
 
   ## storageMountSize is the size with which a PVC is to be created
   storageMountSize: 8Gi
