@@ -280,6 +280,14 @@ def get_gate_pipeline_map():
         platform_conn.rollback()
         raise e
 
+def get_service_pipeline_data():
+    try:
+        platform_cursor.execute("SELECT service_id,pipeline_id FROM service_pipeline_map ")
+        return platform_cursor.fetchall()
+    except Exception as e:
+        platform_conn.rollback()
+        raise e
+
 
 def get_pipelines(gate_pipeline_maps):
     try:
@@ -345,13 +353,15 @@ def update_pipeline_json_with_unified_url(pipelines):
 
 def update_pipeline_with_unified_url(gate_pipeline_maps, cookie):
     try:
+        serviceIds_pipeline_data = get_service_pipeline_data();
+        serviceIds_pipeline_map = dict((y, x) for x, y in serviceIds_pipeline_data)
         with ThreadPoolExecutor(max_workers = thread_pool_size) as executor:
-            executor.map(update_gate_information,repeat(cookie), gate_pipeline_maps)
+            executor.map(update_gate_information,repeat(cookie),repeat(serviceIds_pipeline_map),gate_pipeline_maps)
     except Exception as e:
         raise e
 
 
-def update_gate_information(cookie, gate_pipeline_map):
+def update_gate_information(cookie,serviceIds_pipeline_map,gate_pipeline_map):
     try:
         pipeline_id = gate_pipeline_map[0]
         gate_id = gate_pipeline_map[1]
@@ -360,16 +370,16 @@ def update_gate_information(cookie, gate_pipeline_map):
         response = requests.get(url=url, headers=headers)
         gate_response = json.loads(response.content)
         logging.info("Gate data from dashboard api : \n" + str(gate_response) + '\n')
-        update_gate(gate_response, pipeline_id, gate_id, cookie)
+        update_gate(gate_response, pipeline_id, gate_id, cookie,serviceIds_pipeline_map)
     except Exception as e:
         logging.error("Exception occurred while updating gate information : ", exc_info=True)
         raise e
 
 
-def update_gate(gate_response, pipeline_id, gate_id, cookie):
+def update_gate(gate_response, pipeline_id, gate_id, cookie,serviceIds_pipeline_map):
     try:
-        platform_cursor.execute("SELECT service_id FROM service_pipeline_map where pipeline_id = " + str(pipeline_id))
-        service_id = platform_cursor.fetchone()[0]
+        if list(serviceIds_pipeline_map.keys())[list(serviceIds_pipeline_map.values()).index(pipeline_id)] is not None:
+            service_id = list(serviceIds_pipeline_map.keys())[list(serviceIds_pipeline_map.values()).index(pipeline_id)]
         try:
             if gate_response["dependsOn"] is None:
                 gate_response["dependsOn"] = []
@@ -435,7 +445,7 @@ def update_gate(gate_response, pipeline_id, gate_id, cookie):
         requests.put(url=url, data=req_payload, headers=headers)
         logging.info("Updated the gate data : \n" + str(req_payload) + '\n')
     except Exception as e:
-        platform_conn.rollback()
+        logging.error("Exception occurred while updating gate information with dashboard api : ", exc_info=True)
         raise e
 
 
@@ -790,7 +800,7 @@ if __name__ == '__main__':
     isd_admin_password = sys.argv[16]
     db_username = sys.argv[17]
     db_password = sys.argv[18]
-    thread_pool_size = sys.argv[19]
+    thread_pool_size = int(sys.argv[19])
 
     # Establishing the platform db connection
     platform_conn = psycopg2.connect(database=platform_db, user=db_username, password=db_password, host=platform_host,
