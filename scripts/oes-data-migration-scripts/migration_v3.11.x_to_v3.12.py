@@ -4,9 +4,15 @@ import logging
 import sys
 import shlex
 import subprocess
+from itertools import repeat
+
 import psycopg2
 import requests
 from psycopg2.extras import execute_values
+from concurrent.futures import ThreadPoolExecutor
+from time import sleep
+
+
 
 
 class bcolors:
@@ -23,9 +29,7 @@ class bcolors:
 
 def perform_migration():
     global is_error_occurred
-
     gate_pipeline_maps = None
-
     try:
         try:
             drop_table_user_group_permission_3_11()
@@ -270,7 +274,7 @@ def update_spinnaker_gate_url():
 
 def get_gate_pipeline_map():
     try:
-        platform_cursor.execute("SELECT pipeline_id, service_gate_id FROM gate_pipeline_map")
+        platform_cursor.execute("SELECT pipeline_id, service_gate_id FROM gate_pipeline_map ")
         return platform_cursor.fetchall()
     except Exception as e:
         platform_conn.rollback()
@@ -314,7 +318,7 @@ def update_pipeline_json_with_unified_url(pipelines):
                             domain_name = host_url_comps[2]
                         else:
                             domain_name = host_url_comps[2] + "/" + host_url_comps[3]
-                            
+
                         url_comps = str(gate_url).split("/")
                         url_comps[2] = domain_name
                         gate_url = "/"
@@ -341,16 +345,25 @@ def update_pipeline_json_with_unified_url(pipelines):
 
 def update_pipeline_with_unified_url(gate_pipeline_maps, cookie):
     try:
-        for gate_pipeline_map in gate_pipeline_maps:
-            pipeline_id = gate_pipeline_map[0]
-            gate_id = gate_pipeline_map[1]
-            url = host_url + "/dashboardservice/v4/pipelines/" + str(pipeline_id) + "/gates/" + str(gate_id)
-            headers = {'Cookie': cookie}
-            response = requests.get(url=url, headers=headers)
-            gate_response = json.loads(response.content)
-            logging.info("Gate data from dashboard api : \n" + str(gate_response) + '\n')
-            update_gate(gate_response, pipeline_id, gate_id, cookie)
+        with ThreadPoolExecutor(max_workers = thread_pool_size) as executor:
+            executor.map(update_gate_information,repeat(cookie), gate_pipeline_maps)
     except Exception as e:
+        raise e
+
+
+def update_gate_information(cookie, gate_pipeline_map):
+    try:
+        sleep(2)
+        pipeline_id = gate_pipeline_map[0]
+        gate_id = gate_pipeline_map[1]
+        url = host_url + "/dashboardservice/v4/pipelines/" + str(pipeline_id) + "/gates/" + str(gate_id)
+        headers = {'Cookie': cookie}
+        response = requests.get(url=url, headers=headers)
+        gate_response = json.loads(response.content)
+        logging.info("Gate data from dashboard api : \n" + str(gate_response) + '\n')
+        update_gate(gate_response, pipeline_id, gate_id, cookie)
+    except Exception as e:
+        logging.error("Exception occurred while updating gate information : ", exc_info=True)
         raise e
 
 
@@ -716,8 +729,10 @@ def updateApprovalAuditJson(audit_events_table_id, updateJson):
 
 def drop_constraints_feature_permission():
     try:
-        platform_cursor.execute(" ALTER TABLE feature_permission DROP CONSTRAINT IF EXISTS fkdap3k7dwyp8yq5sn0kjf6eo42 ")
-        platform_cursor.execute(" ALTER TABLE feature_permission DROP CONSTRAINT IF EXISTS fklantt6pc0wjwueula2lt5vmt8 ")
+        platform_cursor.execute(
+            " ALTER TABLE feature_permission DROP CONSTRAINT IF EXISTS fkdap3k7dwyp8yq5sn0kjf6eo42 ")
+        platform_cursor.execute(
+            " ALTER TABLE feature_permission DROP CONSTRAINT IF EXISTS fklantt6pc0wjwueula2lt5vmt8 ")
     except Exception as e:
         platform_conn.rollback()
         raise e
@@ -741,15 +756,14 @@ def login_to_isd():
         raise e
 
 
-
 if __name__ == '__main__':
     n = len(sys.argv)
 
-    if n != 19:
+    if n != 20:
         print(
-            "Please pass valid 18 arguments <platform_db-name> <platform_host> <oes-db-name> <oes-db-host> "
+            "Please pass valid 19 arguments <platform_db-name> <platform_host> <oes-db-name> <oes-db-host> "
             "<autopilot_db> <autopilot_host> <audit_db-name> <audit-db-host> <visibility_db-name> <visibility-db-host> "
-            "<db-port> <isd-host-url> <spinnaker-gate-url> <unified-host-url> <isd-admin-username> <isd-admin-password> <db-username> <db-password>")
+            "<db-port> <isd-host-url> <spinnaker-gate-url> <unified-host-url> <isd-admin-username> <isd-admin-password> <db-username> <db-password> <thread-pool-size>")
         exit(1)
 
     global is_error_occurred
@@ -777,6 +791,7 @@ if __name__ == '__main__':
     isd_admin_password = sys.argv[16]
     db_username = sys.argv[17]
     db_password = sys.argv[18]
+    thread_pool_size = sys.argv[19]
 
     # Establishing the platform db connection
     platform_conn = psycopg2.connect(database=platform_db, user=db_username, password=db_password, host=platform_host,
