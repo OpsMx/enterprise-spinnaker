@@ -353,7 +353,6 @@ def update_pipeline_with_unified_url(gate_pipeline_maps, cookie):
 
 def update_gate_information(cookie, gate_pipeline_map):
     try:
-        sleep(2)
         pipeline_id = gate_pipeline_map[0]
         gate_id = gate_pipeline_map[1]
         url = host_url + "/dashboardservice/v4/pipelines/" + str(pipeline_id) + "/gates/" + str(gate_id)
