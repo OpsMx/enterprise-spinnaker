@@ -139,7 +139,7 @@ data:
           {{- end }}
 
           {{- if .Values.global.commonGate.enabled }}
-          sed -i 's,OVERRIDE_API_URL,{{ tpl .Values.global.oesGate.host . }},g' /tmp/spinnaker/.hal/config
+          sed -i 's,OVERRIDE_API_URL,{{ tpl .Values.global.oesUI.host . }}/gate,g' /tmp/spinnaker/.hal/config
           {{- else }}
           sed -i 's,OVERRIDE_API_URL,{{ tpl .Values.global.spinGate.host . }},g' /tmp/spinnaker/.hal/config
           {{- end }}
@@ -147,7 +147,7 @@ data:
       spin-deck-overrideurl-gitops)
         ## Configured ingress host url as override url
           echo "Substituting deck url"
-          sed -i 's,OVERRIDE_DECK_URL,{{ tpl .Values.global.spinDeck.host . }},g' /tmp/spinnaker/.hal/config
+          sed -i 's,OVERRIDE_DECK_URL,{{ tpl .Values.global.oesUI.host . }}/deck,g' /tmp/spinnaker/.hal/config
         ;;
       *)
         echo  COMP=$COMPONENT
