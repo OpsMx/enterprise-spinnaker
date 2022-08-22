@@ -216,8 +216,8 @@ def migrate_oes_audits():
                                          updated_at=date,
                                          name="isd-application",
                                          type="OES",
-                                         host_url="http://oes-audit-service:8097",
-                                         description="isd-application-http://oes-audit-service:8097")
+                                         host_url=audit_service_url,
+                                         description="isd-application-"+audit_service_url)
     source_details_id = insert_source_details(source_details)
     update_source_details_id(source_details_id, "OES")
 
@@ -1257,10 +1257,10 @@ def login_to_isd():
 if __name__ == '__main__':
     n = len(sys.argv)
 
-    if n != 18:
+    if n != 19:
         print(
-            "Please pass valid 17 arguments <platform_db-name> <platform_host> <oes-db-name> <oes-db-host> <autopilot-db-name> <autopilot-db-host> <audit_db-name> <audit-db-host> <visibility_db-name> <visibility-db-host> "
-            "<db-port> <user-name> <password> <isd-gate-url> <isd-admin-username> <isd-admin-password> <sapor-host-url>")
+            "Please pass valid 18 arguments <platform_db-name> <platform_host> <oes-db-name> <oes-db-host> <autopilot-db-name> <autopilot-db-host> <audit_db-name> <audit-db-host> <visibility_db-name> <visibility-db-host> "
+            "<db-port> <user-name> <password> <isd-gate-url> <isd-admin-username> <isd-admin-password> <sapor-host-url> <audit-service-url>")
         exit(1)
 
     global is_error_occurred
@@ -1287,6 +1287,7 @@ if __name__ == '__main__':
     isd_admin_username = sys.argv[15]
     isd_admin_password = sys.argv[16]
     sapor_host_url = sys.argv[17]
+    audit_service_url = sys.argv[18]
 
     # Establishing the platform db connection
     platform_conn = psycopg2.connect(database=platform_db, user=user_name, password=password, host=platform_host,
