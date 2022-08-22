@@ -166,27 +166,9 @@ def perform_migration():
             for source in sources:
                 source = source[0]
                 if source == 'OES':
-                    date = datetime.datetime.now()
-                    source_details = SourceDetailsEntity(created_at=date,
-                                                         updated_at=date,
-                                                         name="isd-application",
-                                                         type="OES",
-                                                         host_url="http://oes-audit-service:8097",
-                                                         description="isd-application-http://oes-audit-service:8097")
-
-                    source_details_id = insert_source_details(source_details)
-                    update_source_details_id(source_details_id, "OES")
+                    migrate_oes_audits()
                 elif source == 'spinnaker':
-                    spinnaker = get_spinnaker()
-                    date = datetime.datetime.now()
-                    source_details = SourceDetailsEntity(created_at=date,
-                                                         updated_at=date,
-                                                         name=spinnaker[0],
-                                                         type="spinnaker",
-                                                         host_url=spinnaker[1],
-                                                         description=spinnaker[0]+"-"+spinnaker[1])
-                    source_details_id = insert_source_details(source_details)
-                    update_source_details_id(source_details_id, "spinnaker")
+                    migrate_spinnaker_audits()
 
             relate_audit_events_and_source_details()
             add_not_null_constraint_to_source_details_id()
@@ -213,6 +195,31 @@ def perform_migration():
         exit(1)
     finally:
         close_connections()
+
+
+def migrate_spinnaker_audits():
+    spinnaker = get_spinnaker()
+    date = datetime.datetime.now()
+    source_details = SourceDetailsEntity(created_at=date,
+                                         updated_at=date,
+                                         name=spinnaker[0],
+                                         type="spinnaker",
+                                         host_url=spinnaker[1],
+                                         description=spinnaker[0] + "-" + spinnaker[1])
+    source_details_id = insert_source_details(source_details)
+    update_source_details_id(source_details_id, "spinnaker")
+
+
+def migrate_oes_audits():
+    date = datetime.datetime.now()
+    source_details = SourceDetailsEntity(created_at=date,
+                                         updated_at=date,
+                                         name="isd-application",
+                                         type="OES",
+                                         host_url="http://oes-audit-service:8097",
+                                         description="isd-application-http://oes-audit-service:8097")
+    source_details_id = insert_source_details(source_details)
+    update_source_details_id(source_details_id, "OES")
 
 
 def commit_transactions():
