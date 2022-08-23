@@ -202,6 +202,10 @@ rbac:
   feature:
     application:
       enabled: {{ .Values.global.commonGate.spinnakerRBAC }}
+
+security:
+  contentSecurityPolicy: "object-src 'none'; script-src 'unsafe-eval' 'unsafe-inline' https: http:;"
+
 {{- if .Values.global.commonGate.enabled }}
 spinnaker:
   extensibility:
