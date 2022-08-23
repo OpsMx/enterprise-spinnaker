@@ -4,6 +4,7 @@ import subprocess
 import json
 import logging
 import requests
+import datetime
 
 
 class bcolors:
@@ -16,6 +17,22 @@ class bcolors:
     ENDC = '\033[0m'
     BOLD = '\033[1m'
     UNDERLINE = '\033[4m'
+
+class SourceDetailsEntity:
+    created_at = None
+    updated_at = None
+    description = None
+    host_url = None
+    name = None
+    type = None
+
+    def __init__(self, created_at, updated_at, description, host_url, name, type):
+        self.created_at = created_at
+        self.updated_at = updated_at
+        self.description = description
+        self.host_url = host_url
+        self.name = name
+        self.type = type
 
 
 def perform_migration():
@@ -138,6 +155,29 @@ def perform_migration():
             logging.error("Failure at step 14", exc_info=True)
             is_error_occurred = True
 
+        try:
+            print("Migrating audit source details")
+            logging.info("Migrating audit source details")
+            delete_records_with_source_null()
+            create_table_source_details()
+            add_column_source_details_id()
+            sources = get_distinct_source()
+            print("sources", sources)
+            for source in sources:
+                source = source[0]
+                if source == 'OES':
+                    migrate_oes_audits()
+                elif source == 'spinnaker':
+                    migrate_spinnaker_audits()
+
+            relate_audit_events_and_source_details()
+            add_not_null_constraint_to_source_details_id()
+            drop_column_source()
+        except Exception as e:
+            logging.critical("Failure at step 15 : ", exc_info=True)
+            is_error_occurred = True
+
+
         if is_error_occurred == True:
             logging.info(
                 f"{bcolors.FAIL} {bcolors.BOLD}FAILURE: {bcolors.ENDC}{bcolors.FAIL}Migration script execution failed. Please contact the support team{bcolors.ENDC}")
@@ -157,8 +197,32 @@ def perform_migration():
         close_connections()
 
 
+def migrate_spinnaker_audits():
+    spinnaker = get_spinnaker()
+    date = datetime.datetime.now()
+    source_details = SourceDetailsEntity(created_at=date,
+                                         updated_at=date,
+                                         name=spinnaker[0],
+                                         type="spinnaker",
+                                         host_url=spinnaker[1],
+                                         description=spinnaker[0] + "-" + spinnaker[1])
+    source_details_id = insert_source_details(source_details)
+    update_source_details_id(source_details_id, "spinnaker")
+
+
+def migrate_oes_audits():
+    date = datetime.datetime.now()
+    source_details = SourceDetailsEntity(created_at=date,
+                                         updated_at=date,
+                                         name="isd-application",
+                                         type="OES",
+                                         host_url=audit_service_url,
+                                         description="isd-application-"+audit_service_url)
+    source_details_id = insert_source_details(source_details)
+    update_source_details_id(source_details_id, "OES")
+
+
 def commit_transactions():
-    global audit_conn
     try:
         platform_conn.commit()
         oesdb_conn.commit()
@@ -171,7 +235,6 @@ def commit_transactions():
 
 
 def close_connections():
-    global audit_conn
     try:
         platform_conn.close()
         oesdb_conn.close()
@@ -184,7 +247,6 @@ def close_connections():
 
 
 def rollback_transactions():
-    global audit_conn
     try:
         platform_conn.rollback()
         oesdb_conn.rollback()
@@ -193,6 +255,106 @@ def rollback_transactions():
             audit_conn.rollback()
     except Exception as e:
         logging.critical("Exception occurred while rolling back the transactions : ", exc_info=True)
+        raise e
+
+
+def get_distinct_source():
+    try:
+        cur_audit.execute("select distinct(source) from audit_events")
+        return cur_audit.fetchall()
+    except Exception as e:
+        print("Exception occurred while getting distinct source : ", e)
+        logging.critical("Exception occurred while getting distinct source : ", exc_info=True)
+        raise e
+
+
+def get_spinnaker():
+    try:
+        cur_oesdb.execute("select name, url from spinnaker order by created_at desc limit 1")
+        return cur_oesdb.fetchone()
+    except Exception as e:
+        print("Exception occurred while getting spinnaker : ", e)
+        logging.error("Exception occurred while getting spinnaker : ", exc_info=True)
+        raise e
+
+
+def insert_source_details(source_details):
+    try:
+        data = source_details.created_at, source_details.updated_at, source_details.description, source_details.host_url, source_details.name, source_details.type
+        cur_audit.execute("INSERT INTO source_details (created_at, updated_at, description, host_url, name, type) VALUES (%s, %s, %s, %s, %s, %s) RETURNING id", data)
+        return cur_audit.fetchone()[0]
+    except Exception as e:
+        print("Exception occurred while inserting source details : ", e)
+        logging.error("Exception occurred while inserting source details : ", exc_info=True)
+        raise e
+
+
+def update_source_details_id(source_details_id, source):
+    try:
+        cur_audit.execute(f"update audit_events set source_details_id = {source_details_id} where source = '{source}'")
+    except Exception as e:
+        print("Exception occurred while updating source_details_id : ", source_details_id)
+        logging.error("Exception occurred while updating source_details_id : ", exc_info=True)
+        raise e
+
+
+def delete_records_with_source_null():
+    try:
+        cur_audit.execute("delete from pipeline_execution_audit_events where audit_events_id IN (select id from audit_events where source IS NULL)")
+        cur_audit.execute("delete from audit_events where source IS NULL")
+    except Exception as e:
+        print("Exception occurred while deleting records by source : ", e)
+        logging.error("Exception occurred while deleting records by source : ", e)
+        raise e
+
+
+def add_column_source_details_id():
+    try:
+        cur_audit.execute("ALTER TABLE audit_events ADD COLUMN IF NOT EXISTS source_details_id int4 default null")
+    except Exception as e:
+        print("Exception occurred while adding the source_details_id column : ", e)
+        logging.error("Exception occurred while adding the source_details_id column : ", exc_info=True)
+        raise e
+
+
+def create_table_source_details():
+    try:
+        cur_audit.execute("CREATE TABLE source_details (id serial PRIMARY KEY,"
+                          "created_at TIMESTAMPTZ,"
+                          "updated_at TIMESTAMPTZ,"
+                          "description character varying(255),"
+                          "host_url character varying(255) NOT NULL,"
+                          "name character varying(255) NOT NULL,"
+                          "type character varying(255) NOT NULL)")
+    except Exception as e:
+        print("Exception occurred while creating source details table : ", e)
+        logging.error("Exception occurred while creating source details table : ", exc_info=True)
+        raise e
+
+
+def add_not_null_constraint_to_source_details_id():
+    try:
+        cur_audit.execute("ALTER TABLE audit_events ALTER COLUMN source_details_id SET NOT NULL")
+    except Exception as e:
+        print("Exception occured while adding the not null constraint to source details id : ", e)
+        logging.error("Exception occured while adding the not null constraint to source details id : ", exc_info=True)
+        raise e
+
+def relate_audit_events_and_source_details():
+    try:
+        cur_audit.execute("ALTER TABLE audit_events ADD CONSTRAINT fk_source_details_audit FOREIGN KEY (source_details_id) REFERENCES source_details(id)")
+    except Exception as e:
+        print("Exception occurred while add foreign key constraint to source_details table : ", e)
+        logging.error("Exception occurred while add foreign key constraint to source_details table : ", exc_info=True)
+        raise e
+
+
+def drop_column_source():
+    try:
+        cur_audit.execute("ALTER TABLE audit_events DROP COLUMN IF EXISTS source")
+    except Exception as e:
+        print("Exception occurred while dropping the column source : ", e)
+        logging.error("Exception occurred while dropping the column source : ", exc_info=True)
         raise e
 
 
@@ -335,6 +497,7 @@ def get_image(context):
     except KeyError as ke:
         pass
     return image
+
 
 def fetch_pipeline_executions():
     try:
@@ -1094,10 +1257,10 @@ def login_to_isd():
 if __name__ == '__main__':
     n = len(sys.argv)
 
-    if n != 18:
+    if n != 19:
         print(
-            "Please pass valid 17 arguments <platform_db-name> <platform_host> <oes-db-name> <oes-db-host> <autopilot-db-name> <autopilot-db-host> <audit_db-name> <audit-db-host> <visibility_db-name> <visibility-db-host> "
-            "<db-port> <user-name> <password> <isd-gate-url> <isd-admin-username> <isd-admin-password> <sapor-host-url>")
+            "Please pass valid 18 arguments <platform_db-name> <platform_host> <oes-db-name> <oes-db-host> <autopilot-db-name> <autopilot-db-host> <audit_db-name> <audit-db-host> <visibility_db-name> <visibility-db-host> "
+            "<db-port> <user-name> <password> <isd-gate-url> <isd-admin-username> <isd-admin-password> <sapor-host-url> <audit-service-url>")
         exit(1)
 
     global is_error_occurred
@@ -1124,6 +1287,7 @@ if __name__ == '__main__':
     isd_admin_username = sys.argv[15]
     isd_admin_password = sys.argv[16]
     sapor_host_url = sys.argv[17]
+    audit_service_url = sys.argv[18]
 
     # Establishing the platform db connection
     platform_conn = psycopg2.connect(database=platform_db, user=user_name, password=password, host=platform_host,
