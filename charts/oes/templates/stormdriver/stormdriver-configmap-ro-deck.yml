@@ -7,8 +7,8 @@ data:
         url: http://go-clouddriver:7002
         disableArtifactAccounts: true
         priority: 90
-      - name: spin-clouddriver-ro
-        url: http://spin-clouddriver-ro:7002
+      - name: spin-clouddriver-ro-deck
+        url: http://spin-clouddriver-ro-deck:7002
         priority: 100
 kind: ConfigMap
 metadata:
