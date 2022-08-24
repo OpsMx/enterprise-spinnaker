@@ -234,11 +234,9 @@ data:
     mv /tmp/spinnaker/.hal/config1 /tmp/spinnaker/.hal/config
     {{- end }}
     sed -i 's/PROTOCOL/{{ .Values.global.oesUI.protocol }}/g' /tmp/spinnaker/.hal/default/profiles/orca-local.yml
-    cat /tmp/spinnaker/.hal/default/profiles/orca-local.yml
     sed -i 's,OVERRIDE_API_URL,{{ tpl .Values.global.oesUI.host . }}/gate,g' /tmp/spinnaker/.hal/default/profiles/orca-local.yml
     {{- if .Values.global.stormdriver }}
     yq e '.services.deck.baseUrl = "{{ .Values.global.oesUI.protocol }}://{{ .Values.global.oesUI.host }}/deck"' /tmp/spinnaker/.hal/default/profiles/spinnaker.yml > /tmp/spinnaker/.hal/default/profiles/spinnaker1.yml
-    cat /tmp/spinnaker/.hal/default/profiles/spinnaker1.yml
     mv /tmp/spinnaker/.hal/default/profiles/spinnaker1.yml /tmp/spinnaker/.hal/default/profiles/spinnaker.yml
     yq e '.services.gate.baseUrl = "{{ .Values.global.oesUI.protocol }}://{{ .Values.global.oesUI.host }}/gate"' /tmp/spinnaker/.hal/default/profiles/spinnaker.yml > /tmp/spinnaker/.hal/default/profiles/spinnaker1.yml
     mv /tmp/spinnaker/.hal/default/profiles/spinnaker1.yml /tmp/spinnaker/.hal/default/profiles/spinnaker.yml
