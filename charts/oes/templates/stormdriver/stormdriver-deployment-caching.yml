@@ -27,7 +27,7 @@ spec:
               path: /health
               port: 8090
             initialDelaySeconds: 3
-           eriodSeconds: 3
+            periodSeconds: 3
           name: stormdriver-container
           resources:
             limits:
