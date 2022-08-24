@@ -244,7 +244,8 @@ data:
     mv /tmp/spinnaker/.hal/default/profiles/spinnaker1.yml /tmp/spinnaker/.hal/default/profiles/spinnaker.yml
     sed -i  s/RELEASE_NAME/{{ .Release.Name }}/g /tmp/spinnaker/.hal/default/profiles/spinnaker.yml
     {{- if .Values.global.commonGate.spinnakerRBAC }}
-    yq e '.services.fiat.enabled = true' /tmp/spinnaker/.hal/default/profiles/spinnaker.yml
+    yq e '.services.fiat.enabled = true' /tmp/spinnaker/.hal/default/profiles/spinnaker.yml > /tmp/spinnaker/.hal/default/profiles/spinnaker1.yml
+    mv /tmp/spinnaker/.hal/default/profiles/spinnaker1.yml /tmp/spinnaker/.hal/default/profiles/spinnaker.yml
     {{- end }}
     {{- else }}
     rm -rf /tmp/spinnaker/.hal/default/profiles/orca-overrides.yml
