@@ -738,7 +738,7 @@ def processPipelineJsonForExistingGates(cookie):
             pipelineId = record[6]
             env_json = formEnvJson(gateId)
             payloadConstraint = formPayloadConstraint()
-            stageJson = ""
+            stageJson = None
             if gateType.__eq__("policy"):
                 stageJson = policyGateProcess(applicationId, serviceId, gateId, gateName, gateType,
                                               payloadConstraint, pipelineId, env_json)
