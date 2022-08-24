@@ -750,7 +750,7 @@ def processPipelineJsonForExistingGates(cookie):
                                                 payloadConstraint, pipelineId, env_json, cookie)
             if stageJson is not None:
                 stageJson["application"] = appName
-                logging.info("StageJson is : ", stageJson)
+                logging.info(f"StageJson is :  {stageJson}")
                 pipelineJson = updatePipelineJson(pipelineId, stageJson)
                 postingGateJson(pipelineJson, cookie)
     except Exception as e:
@@ -904,6 +904,7 @@ def getLogAndMetricName(applicationId, gateId, cookie):
         logging.info(URL)
         headers = {'cookie': cookie, 'x-spinnaker-user': isd_admin_username}
         request = requests.get(url=URL, headers=headers)
+        logging.info(f"getLogAndMetricName response : {request}")
         return request.json()
     except Exception as e:
         print("Exception occurred while fetching log and metric template name: ", e)
@@ -1210,6 +1211,10 @@ def formPipelineJson(pipelineId, dbPipelineJson, stageJson):
                 updated_stages.append(stage)
 
             dbPipelineJson["stages"] = updated_stages
+            try:
+                dbPipelineJson["index"] = int(dbPipelineJson["index"])
+            except KeyError as ke:
+                pass
             return dbPipelineJson
     except Exception as e:
         print("Exception occurred while formatting pipeline Json to update in db: ", e)
