@@ -233,6 +233,24 @@ data:
     yq e '.deploymentConfigurations.[].security.authn.saml.enabled = "false"' /tmp/spinnaker/.hal/config > /tmp/spinnaker/.hal/config1
     mv /tmp/spinnaker/.hal/config1 /tmp/spinnaker/.hal/config
     {{- end }}
+    sed -i 's/PROTOCOL/{{ .Values.global.oesUI.protocol }}/g' /tmp/spinnaker/.hal/default/profiles/orca-local.yml
+    sed -i 's,OVERRIDE_API_URL,{{ tpl .Values.global.oesUI.host . }}/gate,g' /tmp/spinnaker/.hal/default/profiles/orca-local.yml
+    {{- if .Values.global.stormdriver }}
+    yq e '.services.deck.baseUrl = "{{ .Values.global.oesUI.protocol }}://{{ .Values.global.oesUI.host }}/deck"' /tmp/spinnaker/.hal/default/profiles/spinnaker.yml > /tmp/spinnaker/.hal/default/profiles/spinnaker1.yml
+    mv /tmp/spinnaker/.hal/default/profiles/spinnaker1.yml /tmp/spinnaker/.hal/default/profiles/spinnaker.yml
+    yq e '.services.gate.baseUrl = "{{ .Values.global.oesUI.protocol }}://{{ .Values.global.oesUI.host }}/gate"' /tmp/spinnaker/.hal/default/profiles/spinnaker.yml > /tmp/spinnaker/.hal/default/profiles/spinnaker1.yml
+    mv /tmp/spinnaker/.hal/default/profiles/spinnaker1.yml /tmp/spinnaker/.hal/default/profiles/spinnaker.yml
+    sed -i  s/RELEASE_NAME/{{ .Release.Name }}/g /tmp/spinnaker/.hal/default/profiles/spinnaker.yml
+    {{- if .Values.global.commonGate.spinnakerRBAC }}
+    yq e '.services.fiat.enabled = true' /tmp/spinnaker/.hal/default/profiles/spinnaker.yml > /tmp/spinnaker/.hal/default/profiles/spinnaker1.yml
+    mv /tmp/spinnaker/.hal/default/profiles/spinnaker1.yml /tmp/spinnaker/.hal/default/profiles/spinnaker.yml
+    {{- end }}
+    {{- else }}
+    rm -rf /tmp/spinnaker/.hal/default/profiles/orca-overrides.yml
+    rm -rf /tmp/spinnaker/.hal/default/profiles/fiat-overrides.yml
+    rm -rf /tmp/spinnaker/.hal/default/profiles/gate-overrides.yml
+    rm -rf /tmp/spinnaker/.hal/default/profiles/spinnaker.yml
+    {{- end }}
     {{- end }}  # git or stash
     {{- end }}  # Enabled
 

@@ -1,0 +1,21 @@
+{{- if .Values.global.stormdriver }}
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    app: stormdriver-ro-deck
+  name: stormdriver-ro-deck
+spec:
+  ipFamilies:
+    - IPv4
+  ipFamilyPolicy: SingleStack
+  ports:
+    - name: http
+      port: 8090
+      protocol: TCP
+      targetPort: 8090
+  selector:
+    app: stormdriver-ro-deck
+  sessionAffinity: None
+  type: ClusterIP
+{{- end }}

@@ -41,6 +41,7 @@ global:
   ssl:
     enabled: false
 
+  stormdriver: false
   # If cert-manager is installed, TLS secrets will created automatically, as an 'Issuer' will be created
   # Else, the TLS secrets will need to created manually
   certManager:

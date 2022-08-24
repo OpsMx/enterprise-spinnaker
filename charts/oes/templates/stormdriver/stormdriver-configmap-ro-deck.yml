@@ -1,0 +1,16 @@
+{{- if .Values.global.stormdriver }}
+apiVersion: v1
+data:
+  stormdriver.yaml: |
+    clouddrivers:
+      - name: go-clouddriver:7002
+        url: http://go-clouddriver:7002
+        disableArtifactAccounts: true
+        priority: 90
+      - name: spin-clouddriver-ro-deck
+        url: http://spin-clouddriver-ro-deck:7002
+        priority: 100
+kind: ConfigMap
+metadata:
+  name: stormdriver-config-ro-deck
+{{- end }}
