@@ -7,40 +7,40 @@ imagePullSecret: "opsmx11-secret"
 autopilot:
   image:
     repository: oes-autopilot
-    tag: v4.0.0-alpha
+    tag: v4.0.0-beta
 audit:
   image:
     repository: oes-audit-service
-    tag: v4.0.0-alpha
+    tag: v4.0.0-beta
 auditClient:
   image:
     repository: oes-audit-client
-    tag: v4.0.0-alpha
+    tag: v4.0.0-beta
 datascience:
   image:
     repository: oes-datascience
-    tag: v4.0.0-alpha
+    tag: v4.0.0-beta
 dashboard:
   image:
     repository: oes-dashboard
-    tag: v4.0.0-alpha
+    tag: v4.0.0-beta
 gate:
   image:
     repository: gate
-    tag: v4.0.0-alpha
+    tag: v4.0.0-beta
 platform:
   image:
     repository: oes-platform
-    tag: v4.0.0-alpha
+    tag: v4.0.0-beta
 sapor:
   image:
     repository: oes-sapor
-    tag: v4.0.0-alpha
+    tag: v4.0.0-beta
 ui:
   image:
     repository: oes-ui
-    tag: v4.0.0-alpha
+    tag: v4.0.0-beta
 visibility:
   image:
     repository: oes-visibility
-    tag: v4.0.0-alpha
+    tag: v4.0.0-beta
