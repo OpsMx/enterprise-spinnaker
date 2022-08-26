@@ -639,7 +639,7 @@ def environmentUpdate():
 def updateRefId():
     try:
         cur_platform.execute(
-            "select id, pipeline_json from pipeline where not pipeline_json::jsonb ->> 'stages' = '[]' limit 1")
+            "select id, pipeline_json from pipeline where not pipeline_json::jsonb ->> 'stages' = '[]'")
         pipelineDatas = cur_platform.fetchall()
         for pipelineData in pipelineDatas:
             strpipelineData = """{}""".format(pipelineData[1])
