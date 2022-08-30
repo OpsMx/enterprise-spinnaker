@@ -23,8 +23,11 @@ dependencies:
 - name: prometheus
   repository: ""
   version: 11.16.2
+- name: grafana
+  repository: ""
+  version: 6.31.0
 - name: gitea
   repository: ""
   version: 5.0.1
-digest: sha256:8c9ec25ea2523f931f8ce483220fc0bca0cddc6f2bac823758d96eb30395953c
-generated: "2022-03-28T11:50:28.759306316+05:30"
+digest: sha256:673f5637aaea43189db1daba48399b82d61add60acdf8fa7d68ea3a7f769c347
+generated: "2022-08-30T14:58:35.332742395+05:30"
