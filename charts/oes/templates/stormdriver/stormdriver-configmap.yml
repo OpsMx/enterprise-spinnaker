@@ -1,0 +1,16 @@
+{{- if .Values.global.stormdriver }}
+apiVersion: v1
+data:
+  stormdriver.yaml: |
+    clouddrivers:
+      - name: agent-clouddriver:7002
+        url: http://opsmx-controller-controller1:7002
+        disableArtifactAccounts: true
+        priority: 90
+      - name: spin-clouddriver
+        url: http://spin-clouddriver:7002
+        priority: 100
+kind: ConfigMap
+metadata:
+  name: stormdriver-config
+{{- end }}
