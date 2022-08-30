@@ -11,9 +11,9 @@ spec:
   ipFamilyPolicy: SingleStack
   ports:
     - name: http
-      port: 8090
+      port: 7002
       protocol: TCP
-      targetPort: 8090
+      targetPort: 7002
   selector:
     app: stormdriver
   sessionAffinity: None
