@@ -3,8 +3,8 @@ apiVersion: v1
 data:
   stormdriver.yaml: |
     clouddrivers:
-      - name: agent-clouddriver:7002
-        url: http://opsmx-controller-controller1:7002
+      - name: agent-clouddriver
+        url: https://opsmx-controller-controller1:7002
         disableArtifactAccounts: true
         priority: 90
       - name: spin-clouddriver

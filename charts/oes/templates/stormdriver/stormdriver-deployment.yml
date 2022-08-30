@@ -25,9 +25,9 @@ spec:
           livenessProbe:
             httpGet:
               path: /health
-              port: 8090
-            initialDelaySeconds: 3
-            periodSeconds: 3
+              port: 7002
+            initialDelaySeconds: 5
+            periodSeconds: 5
           name: stormdriver-container
           resources:
             limits:
@@ -43,9 +43,16 @@ spec:
               name: stormdriver-config
               readOnly: true
               subPath: stormdriver.yaml
+            - mountPath: /local/ca-certificates/opsmx-controller-ca.crt
+              name: ca-secret
+              readOnly: true
+              subPath: tls.crt
       volumes:
         - configMap:
             defaultMode: 420
             name: stormdriver-config
           name: stormdriver-config
+        - secret:
+            secretName: ca-secret
+          name: ca-secret
 {{- end }}
