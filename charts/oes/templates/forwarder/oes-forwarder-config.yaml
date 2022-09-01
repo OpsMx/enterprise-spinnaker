@@ -17,4 +17,24 @@ data:
     serviceAuth:
       currentKeyName: "public.pem"
       headerMutationKeyName: "public.pem"
+    services:
+      outgoingServices:
+        - name: front50
+          type: front50
+          enabled: true
+          config:
+            url: http://spin-front50:8080
+        - name: fiat
+          type: fiat
+          enabled: true
+          config:
+            url: http://spin-fiat:7003
+      incomingServices:  # This part is to be automated in the next version. For now, the agent MUST be called opsmx-agent
+        - name: agent-clouddriver
+          serviceType: clouddriver
+          port: 7002
+          useHTTP: true
+          destination: opsmx-agent
+          destinationService: agent-clouddriver
+
 {{- end -}}

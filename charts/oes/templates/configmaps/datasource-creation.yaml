@@ -14,6 +14,10 @@ data:
     while true
     do
     kubectl get po -n {{ .Release.Namespace }} -o jsonpath='{range .items[*]}{..metadata.name}{"\t"}{..containerStatuses..ready}{"\n"}{end}' > /tmp/inst.status
+    ## NON-HA
+    CLOUDDRIVER=$(grep spin-clouddriver /tmp/inst.status |grep -v deck | awk '{print $2}')
+    ECHO=$(grep spin-echo /tmp/inst.status | awk '{print $2}')
+    ## HA
     CLOUDRO=$(grep spin-clouddriver-ro /tmp/inst.status |grep -v deck | awk '{print $2}')
     CLOUDRODECK=$(grep spin-clouddriver-ro-deck /tmp/inst.status | awk '{print $2}')
     CLOUDRW=$(grep spin-clouddriver-rw /tmp/inst.status | awk '{print $2}')
@@ -25,18 +29,31 @@ data:
     GATE=$(grep spin-gate /tmp/inst.status | awk '{print $2}')
     IGOR=$(grep spin-igor /tmp/inst.status | awk '{print $2}')
     ORCA=$(grep spin-orca /tmp/inst.status | awk '{print $2}')
+    FIAT=$(grep spin-fiat /tmp/inst.status | awk '{print $2}')
     #ROSCO=$(grep spin-rosco /tmp/inst.status | awk '{print $2}')
+    ## AUTOPILOT
     SAPOR=$(grep oes-sapor /tmp/inst.status | awk '{print $2}')
     PLATFORM=$(grep oes-platform /tmp/inst.status | awk '{print $2}')
     AUTOPILOT=$(grep oes-autopilot /tmp/inst.status | awk '{print $2}')
-    FIAT=$(grep spin-fiat /tmp/inst.status | awk '{print $2}')
+
 
     wait_period=$(($wait_period+10))
-    {{- if .Values.global.commonGate.spinnakerRBAC }}
-    if [ "$DECK" == "true" ] && [ "$CLOUDCACHING" == "true" ] && [ "$CLOUDRO" == "true" ] && [ "$CLOUDRW" == "true" ] && [ "$CLOUDRODECK" == "true" ] && [ "$FRONT" == "true" ] && [ "$GATE" == "true" ] && [ "$ORCA" == "true" ] && [ "$ECHOWORKER" == "true" ] && [ "$ECHOSCHEDULER" == "true" ] && [ "$FIAT" == "true" ] && [ "$SAPOR" == "true" ] && [ "$IGOR" == "true" ] && [ "$PLATFORM" == "true" ] && [ "$AUTOPILOT" == "true" ];
+
+
+    {{- if .Values.global.stormdriver }}
+    READYBASIC=$([ "$DECK" == "true" ] && [ "$CLOUDDRIVER" == "true" ] && [ "$FRONT" == "true" ] && [ "$GATE" == "true" ] && [ "$ORCA" == "true" ] && [ "$ECHO" == "true" ] && [ "$SAPOR" == "true" ] && [ "$IGOR" == "true" ] && [ "$PLATFORM" == "true" ] && [ "$AUTOPILOT" == "true" ]; echo $(($? == 0)) )
     {{- else }}
-    if [ "$DECK" == "true" ] && [ "$CLOUDCACHING" == "true" ] && [ "$CLOUDRO" == "true" ] && [ "$CLOUDRW" == "true" ] && [ "$CLOUDRODECK" == "true" ] && [ "$FRONT" == "true" ] && [ "$ORCA" == "true" ]  && [ "$ECHOWORKER" == "true" ] && [ "$ECHOSCHEDULER" == "true" ] && [ "$SAPOR" == "true" ] && [ "$PLATFORM" == "true" ] && [ "$AUTOPILOT" == "true" ] && [ "$GATE" == "true" ] && [ "$IGOR" == "true" ];
+    READYBASIC=$([ "$DECK" == "true" ] && [ "$CLOUDCACHING" == "true" ] && [ "$CLOUDRO" == "true" ] && [ "$CLOUDRW" == "true" ] && [ "$CLOUDRODECK" == "true" ] && [ "$FRONT" == "true" ] && [ "$ORCA" == "true" ]  && [ "$ECHOWORKER" == "true" ] && [ "$ECHOSCHEDULER" == "true" ] && [ "$SAPOR" == "true" ] && [ "$PLATFORM" == "true" ] && [ "$AUTOPILOT" == "true" ] && [ "$GATE" == "true" ] && [ "$IGOR" == "true" ]; echo $(($? == 0)) )
     {{- end }}
+
+    {{- if .Values.global.commonGate.spinnakerRBAC }}
+    READY=$( [ $READYBASIC == 1 ] && [ "$FIAT" == "true" ] ; echo $(($? == 0)) )
+    {{- else }}
+    READY=$READYBASIC
+    {{- end }}
+
+
+    if [ $READY == 1 ] ;
         then
             echo \"Spinnaker and OES services are Up and Ready..\"
             sleep 5

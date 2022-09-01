@@ -20,7 +20,7 @@ spec:
         app: stormdriver
     spec:
       containers:
-        - image: quay.io/opsmxpublic/stormdriver:v1
+        - image: {{ .Values.stormdriver.image.repository }}:{{ .Values.stormdriver.image.tag }}
           imagePullPolicy: Always
           livenessProbe:
             httpGet:

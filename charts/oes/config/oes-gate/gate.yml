@@ -35,28 +35,49 @@ services:
   clouddriver:
     host: 0.0.0.0
     port: 7002
-    baseUrl: http://spin-clouddriver-rw:7002
+    {{- if .Values.global.stormdriver }}    
+    baseUrl: http://stormdriver:7002
     enabled: true
+    {{- else }}
+    baseUrl: http://spin-clouddriver:7002
+    enabled: false
+    {{- end }}
   clouddriverCaching:
     host: 0.0.0.0
     port: 7002
     baseUrl: http://spin-clouddriver-caching:7002
+    {{- if .Values.global.stormdriver }}    
+    enabled: false
+    {{- else }}
     enabled: true
+    {{- end }}
   clouddriverRo:
     host: 0.0.0.0
     port: 7002
     baseUrl: http://spin-clouddriver-ro:7002
+    {{- if .Values.global.stormdriver }}    
+    enabled: false
+    {{- else }}
     enabled: true
+    {{- end }}
   clouddriverRoDeck:
     host: 0.0.0.0
     port: 7002
     baseUrl: http://spin-clouddriver-ro-deck:7002
+    {{- if .Values.global.stormdriver }}    
+    enabled: false
+    {{- else }}
     enabled: true
+    {{- end }}
   clouddriverRw:
     host: 0.0.0.0
     port: 7002
     baseUrl: http://spin-clouddriver-rw:7002
+    {{- if .Values.global.stormdriver }}    
+    enabled: false
+    {{- else }}
     enabled: true
+    {{- end }}
   deck:
     host: 0.0.0.0
     port: 9000
@@ -65,18 +86,30 @@ services:
   echo:
     host: 0.0.0.0
     port: 8089
-    baseUrl: http://spin-echo-worker:8089
+    baseUrl: http://spin-echo:8089
+    {{- if .Values.global.stormdriver }}    
     enabled: true
+    {{- else }}
+    enabled: false
+    {{- end }}
   echoScheduler:
     host: 0.0.0.0
     port: 8089
     baseUrl: http://spin-echo-scheduler:8089
+    {{- if .Values.global.stormdriver }}    
+    enabled: false
+    {{- else }}
     enabled: true
+    {{- end }}
   echoWorker:
     host: 0.0.0.0
     port: 8089
     baseUrl: http://spin-echo-worker:8089
+    {{- if .Values.global.stormdriver }}    
+    enabled: false
+    {{- else }}
     enabled: true
+    {{- end }}
   fiat:
     host: 0.0.0.0
     port: 7003
