@@ -43,7 +43,7 @@ spec:
               name: stormdriver-config
               readOnly: true
               subPath: stormdriver.yaml
-            - mountPath: /local/ca-certificates/opsmx-controller-ca.crt
+            - mountPath: /app/secrets/controller-ca.crt
               name: ca-secret
               readOnly: true
               subPath: tls.crt
