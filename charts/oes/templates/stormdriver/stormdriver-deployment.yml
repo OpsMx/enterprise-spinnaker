@@ -1,14 +1,14 @@
-{{- if .Values.global.HAstormdriver }}
+{{- if .Values.global.stormdriver }}
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: stormdriver-rw
+  name: stormdriver
 spec:
   progressDeadlineSeconds: 600
   replicas: 1
   selector:
     matchLabels:
-      app: stormdriver-rw
+      app: stormdriver
   strategy:
     rollingUpdate:
       maxSurge: 25%
@@ -17,17 +17,17 @@ spec:
   template:
     metadata:
       labels:
-        app: stormdriver-rw
+        app: stormdriver
     spec:
       containers:
-        - image: quay.io/opsmxpublic/stormdriver:v1
+        - image: {{ .Values.stormdriver.image.repository }}:{{ .Values.stormdriver.image.tag }}
           imagePullPolicy: Always
           livenessProbe:
             httpGet:
               path: /health
-              port: 8090
-            initialDelaySeconds: 3
-            periodSeconds: 3
+              port: 7002
+            initialDelaySeconds: 5
+            periodSeconds: 5
           name: stormdriver-container
           resources:
             limits:
@@ -40,12 +40,19 @@ spec:
           terminationMessagePolicy: File
           volumeMounts:
             - mountPath: /app/config/stormdriver.yaml
-              name: stormdriver-config-rw
+              name: stormdriver-config
               readOnly: true
               subPath: stormdriver.yaml
+            - mountPath: /local/ca-certificates/opsmx-controller-ca.crt
+              name: ca-secret
+              readOnly: true
+              subPath: tls.crt
       volumes:
         - configMap:
             defaultMode: 420
-            name: stormdriver-config-rw
-          name: stormdriver-config-rw
+            name: stormdriver-config
+          name: stormdriver-config
+        - secret:
+            secretName: ca-secret
+          name: ca-secret
 {{- end }}

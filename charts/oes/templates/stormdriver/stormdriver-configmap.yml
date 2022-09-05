@@ -1,0 +1,16 @@
+{{- if .Values.global.stormdriver }}
+apiVersion: v1
+data:
+  stormdriver.yaml: |
+    clouddrivers:  # To be automated in the next version. For now, agent MUST be called opsmx-agent and service must be called agent-clouddriver for this to work. Else regenerate this url.
+      - name: agent-clouddriver
+        url: https://agent-clouddriver.opsmx-agent:eyJhbGciOiJIUzI1NiIsImtpZCI6InB1YmxpYy5wZW0iLCJ0eXAiOiJKV1QifQ.eyJhIjoib3BzbXgtYWdlbnQiLCJpc3MiOiJvcHNteCIsIm4iOiJhZ2VudC1jbG91ZGRyaXZlciIsInQiOiJjbG91ZGRyaXZlciJ9.eKkoXmWEB4q7_pcqOmOumfM4GMBrw89L0_meIf3HXqk@opsmx-controller-controller1:9002
+        #disableArtifactAccounts: true  # Uncomment for go-clouddriver as it does not support artifiacts
+        priority: 100
+      #- name: spin-clouddriver
+      #  url: http://spin-clouddriver:7002
+      #  priority: 100
+kind: ConfigMap
+metadata:
+  name: stormdriver-config
+{{- end }}

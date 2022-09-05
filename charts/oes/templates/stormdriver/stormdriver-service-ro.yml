@@ -1,4 +1,4 @@
-{{- if .Values.global.stormdriver }}
+{{- if .Values.global.HAstormdriver }}
 apiVersion: v1
 kind: Service
 metadata:
