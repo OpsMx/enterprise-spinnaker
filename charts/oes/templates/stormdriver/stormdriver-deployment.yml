@@ -43,10 +43,13 @@ spec:
               name: stormdriver-config
               readOnly: true
               subPath: stormdriver.yaml
-            - mountPath: /local/ca-certificates/opsmx-controller-ca.crt
+            - mountPath: /app/secrets/controller-ca.crt
               name: ca-secret
               readOnly: true
               subPath: tls.crt
+            - mountPath: /app/secrets/controller-control
+              name: control-secret
+              readOnly: true
       volumes:
         - configMap:
             defaultMode: 420
@@ -55,4 +58,8 @@ spec:
         - secret:
             secretName: ca-secret
           name: ca-secret
+        - name: control-secret
+          secret:
+            defaultMode: 420
+            secretName: oes-control-secret          
 {{- end }}
