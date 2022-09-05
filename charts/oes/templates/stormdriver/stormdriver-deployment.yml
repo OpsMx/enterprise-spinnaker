@@ -47,6 +47,14 @@ spec:
               name: ca-secret
               readOnly: true
               subPath: tls.crt
+            - mountPath: /app/secrets/controller-control/tls.crt
+              name: control-secret
+              readOnly: true
+              subPath: tls.crt
+            - mountPath: /app/secrets/controller-control/tls.key
+              name: control-secret
+              readOnly: true
+              subPath: tls.key              
       volumes:
         - configMap:
             defaultMode: 420
@@ -55,4 +63,8 @@ spec:
         - secret:
             secretName: ca-secret
           name: ca-secret
+        - name: control-secret
+          secret:
+            defaultMode: 420
+            secretName: oes-control-secret          
 {{- end }}
