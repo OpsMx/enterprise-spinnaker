@@ -5,6 +5,7 @@ import json
 import logging
 import requests
 import datetime
+import redis
 
 
 class bcolors:
@@ -177,6 +178,12 @@ def perform_migration():
             logging.critical("Failure at step 15 : ", exc_info=True)
             is_error_occurred = True
 
+        try:
+            print("")
+        except Exception as e:
+            logging.critical("Failure at step 16 : ", exc_info=True)
+            is_error_occurred = True
+
 
         if is_error_occurred == True:
             logging.info(
@@ -195,6 +202,37 @@ def perform_migration():
         exit(1)
     finally:
         close_connections()
+
+
+def get_list_of_applications():
+    try:
+        print("Fetching the list of application keys from redis")
+        return redis_conn.keys("pipeline:app:*")
+    except Exception as e:
+        print("Exception occurred while getting the list of applications keys from redis : ", e)
+        logging.error("Exception occurred while getting the list of applications keys from redis : ", exc_info=True)
+        raise e
+
+
+def get_list_of_pipeline_executions(application_key):
+    try:
+        print("Fetching the list of pipeline executions for an application : ", application_key)
+        return redis_conn.smembers(application_key)
+    except Exception as e:
+        print("Exception occurred while getting the list of applications : ", e)
+        logging.error("Exception occurred while getting list of pipeline executions : ", exc_info=True)
+        raise e
+
+
+def get_list_of_stage_index(pipeline_execution_id):
+    try:
+        print("Fetching the list of stage index")
+        decoded_execution_id = str(pipeline_execution_id.decode("utf-8"))
+        return redis_conn.lrange("pipeline:"+decoded_execution_id+":stageIndex", 0, -1)
+    except Exception as e:
+        print("Exception occurred while getting the list of stage index : ", e)
+        logging.error("Exception occurred while getting the list of stage index : ", exc_info=True)
+        raise e
 
 
 def migrate_spinnaker_audits():
@@ -1262,10 +1300,10 @@ def login_to_isd():
 if __name__ == '__main__':
     n = len(sys.argv)
 
-    if n != 19:
+    if n != 22:
         print(
-            "Please pass valid 18 arguments <platform_db-name> <platform_host> <oes-db-name> <oes-db-host> <autopilot-db-name> <autopilot-db-host> <audit_db-name> <audit-db-host> <visibility_db-name> <visibility-db-host> "
-            "<db-port> <user-name> <password> <isd-gate-url> <isd-admin-username> <isd-admin-password> <sapor-host-url> <audit-service-url>")
+            "Please pass valid 21 arguments <platform_db-name> <platform_host> <oes-db-name> <oes-db-host> <autopilot-db-name> <autopilot-db-host> <audit_db-name> <audit-db-host> <visibility_db-name> <visibility-db-host> "
+            "<db-port> <user-name> <password> <isd-gate-url> <isd-admin-username> <isd-admin-password> <sapor-host-url> <audit-service-url> <redis-host> <redis-port> <redis-password>")
         exit(1)
 
     global is_error_occurred
@@ -1293,6 +1331,9 @@ if __name__ == '__main__':
     isd_admin_password = sys.argv[16]
     sapor_host_url = sys.argv[17]
     audit_service_url = sys.argv[18]
+    redis_host = sys.argv[19]
+    redis_port = sys.argv[20]
+    redis_password = sys.argv[21]
 
     # Establishing the platform db connection
     platform_conn = psycopg2.connect(database=platform_db, user=user_name, password=password, host=platform_host,
@@ -1317,6 +1358,10 @@ if __name__ == '__main__':
     visibility_conn = psycopg2.connect(database=visibility_db, user=user_name, password=password, host=visibility_host,
                                        port=port)
     print("Visibility database connection established successfully")
+
+    #Establishing the redis connection
+    redis_conn = redis.Redis(host=redis_host, port=redis_port, password=redis_password)
+    print("Redis connection established successfully")
 
     cur_platform = platform_conn.cursor()
     cur_oesdb = oesdb_conn.cursor()
