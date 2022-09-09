@@ -5,6 +5,7 @@ import json
 import logging
 import requests
 import datetime
+import redis
 
 
 class bcolors:
@@ -177,6 +178,15 @@ def perform_migration():
             logging.critical("Failure at step 15 : ", exc_info=True)
             is_error_occurred = True
 
+        try:
+            print("Migrating the navigation Url fromat of the pipeline executions")
+            logging.info("Migrating the navigation Url fromat of the pipeline executions")
+            plKeyExecDict = get_pipeline_execution_key_dict()
+            update_custom_gates_navigation_url(plKeyExecDict)
+        except Exception as e:
+            logging.critical("Failure at step 16 : ", exc_info=True)
+            is_error_occurred = True
+
 
         if is_error_occurred == True:
             logging.info(
@@ -195,6 +205,133 @@ def perform_migration():
         exit(1)
     finally:
         close_connections()
+ 
+ 
+def get_pipeline_execution_key_dict():
+    try:
+        keys = redis_conn.keys("pipeline:*:stageIndex")
+        plKeyExecDict = {}
+        for key in keys:
+            executions = redis_conn.lrange(key, 0, -1)
+            plKey = key[:35]
+            plKeyExecDict[plKey] = executions
+        logging.info(f"The plKeyExecDict is: {plKeyExecDict}")
+        return plKeyExecDict
+    except Exception as e:
+        print("Exception occurred while getting the pipeline execution key dict : ", e)
+        logging.error("Exception occurred while getting the pipeline execution key dict : ", exc_info=True)
+        raise e
+        
+
+def update_custom_gates_navigation_url(plKeyExecDict):
+    try:
+        for plKey, executions in plKeyExecDict.items():
+            for execution in executions:
+                exec_str = str(execution.decode("utf-8"))
+                field = "stage." + exec_str + ".outputs"
+                type = "stage."+exec_str+".type"
+                print("The pl key is: ", plKey)
+                print("The field is: ", field)
+                output = redis_conn.hget(plKey, field)
+                stage_type = redis_conn.hget(plKey, type)
+                print("The output is: ", output)
+                output_str = str(output.decode("utf-8"))
+                output_json = json.loads(output_str)
+                if b'approval' == stage_type:
+                    update_approval_gate_url(output_json, plKey, exec_str)
+
+                elif b'verification' == stage_type or b'testverification' == stage_type:
+                    update_verification_gate_url(output_json, plKey, exec_str)
+
+                elif b'policy' == stage_type:
+                    update_policy_gate_url(output_json, plKey, exec_str)
+
+    except Exception as e:
+        logging.error("Exception occurred while updating custom gates : ", exc_info=True)
+        print("Exception occurred while updating custom gates : ", e)
+        raise e
+
+
+def update_approval_gate_url(json_data, pl_key, execution_str):
+    try:
+        navigational_url = json_data['navigationalURL']
+        if navigational_url.find('fromPlugin?instanceId') < 0:
+            location = json_data['location']
+            words = location.split('/')
+            instance_id = words[len(words) - 2]
+            logging.info(f"the instance id is:  {instance_id}")
+            json_data['navigationalURL'] = navigational_url + '/fromPlugin?instanceId=' + instance_id
+            dump = json.dumps(json_data)
+            redis_conn.hset(pl_key, "stage." + execution_str + ".outputs", dump)
+            logging.info(f"The output after updating approval url is:  {json_data}")
+    except Exception as e:
+        print("Exception occurred while updating approval gate navigation url : ", e)
+        logging.error("Exception occurred while updating approval gate navigation url : ", exc_info=True)
+        raise e
+
+
+def update_verification_gate_url(json_data, pl_key, execution_str):
+    try:
+        if 'verificationURL' in json_data:
+            json_data['canaryReportURL'] = json_data['verificationURL']
+            dump = json.dumps(json_data)
+            redis_conn.hset(pl_key, "stage." + execution_str + ".outputs", dump)
+            logging.info(f"The output after updating verification gate url is: {json_data}")
+            return
+
+        application_name = redis_conn.hget(pl_key, 'application')
+        pipeline_name = redis_conn.hget(pl_key, 'name')
+        service_id = get_service_id(application_name, pipeline_name)
+        canary_report_url = json_data['canaryReportURL']
+        json_data['canaryReportURL'] = canary_report_url + '/fromPlugin/' + service_id
+        dump = json.dumps(json_data)
+        redis_conn.hset(pl_key, "stage." + execution_str + ".outputs", dump)
+        logging.info(f"The output after updating verification gate url is: {json_data}")
+    except Exception as e:
+        print("Exception occurred while updating verification gate : ", e)
+        logging.error("Exception occurred while updating verification gate : ", exc_info=True)
+        raise e
+
+
+def get_service_id(application_name, pipeline_name):
+    try:
+        data = application_name, pipeline_name
+        cur_platform.execute("select s.id as service_id from service s LEFT OUTER JOIN applications a ON s.application_id = a.id LEFT OUTER JOIN service_pipeline_map spm ON spm.service_id = s.id left outer join pipeline p on spm.pipeline_id = p.id where a.name = %s and p.pipeline_name = %s", data)
+        return cur_platform.fetchone()[0]
+    except Exception as e:
+        print("Exception occurred while getting service id : ", e)
+        logging.error("Exception occurred while getting service id : ", exc_info=True)
+        raise e
+
+
+def get_policy_name(application_name, pipeline_name, gate_name):
+    try:
+        data = application_name, pipeline_name, gate_name
+        cur_oesdb.execute("select policy_name from policy_gate where application_name = %s and pipeline_name = %s and gate_name = %s", data)
+        return cur_oesdb.fetchone()[0]
+    except Exception as e:
+        print("Exception occurred while getting the policy name : ", e)
+        logging.error("Exception occurred while getting the policy name : ", exc_info=True)
+        raise e
+
+
+def update_policy_gate_url(json_data, pl_key, execution_str):
+    try:
+        if 'policyName' in json_data:
+            return
+        application_name = redis_conn.hget(pl_key, 'application')
+        pipeline_name = redis_conn.hget(pl_key, 'name')
+        gate_name = redis_conn.hget(pl_key, 'stage.' + execution_str + '.name')
+        policy_name = get_policy_name(application_name, pipeline_name, gate_name)
+        json_data['policyName'] = policy_name
+        json_data['policyLink'] = '/policy/' + policy_name
+        dump = json.dumps(json_data)
+        redis_conn.hset(pl_key, "stage." + execution_str + ".outputs", dump)
+        logging.info(f"The output after updating policy gate url is: {json_data}")
+    except Exception as e:
+        print("Exception occurred while updating policy gate url : ", e)
+        logging.error("Exception occurred while updating policy gate url : ", exc_info=True)
+        raise e
 
 
 def migrate_spinnaker_audits():
@@ -1262,10 +1399,10 @@ def login_to_isd():
 if __name__ == '__main__':
     n = len(sys.argv)
 
-    if n != 19:
+    if n != 22:
         print(
-            "Please pass valid 18 arguments <platform_db-name> <platform_host> <oes-db-name> <oes-db-host> <autopilot-db-name> <autopilot-db-host> <audit_db-name> <audit-db-host> <visibility_db-name> <visibility-db-host> "
-            "<db-port> <user-name> <password> <isd-gate-url> <isd-admin-username> <isd-admin-password> <sapor-host-url> <audit-service-url>")
+            "Please pass valid 21 arguments <platform_db-name> <platform_host> <oes-db-name> <oes-db-host> <autopilot-db-name> <autopilot-db-host> <audit_db-name> <audit-db-host> <visibility_db-name> <visibility-db-host> "
+            "<db-port> <user-name> <password> <isd-gate-url> <isd-admin-username> <isd-admin-password> <sapor-host-url> <audit-service-url> <redis-host> <redis-port> <redis-password>")
         exit(1)
 
     global is_error_occurred
@@ -1293,6 +1430,9 @@ if __name__ == '__main__':
     isd_admin_password = sys.argv[16]
     sapor_host_url = sys.argv[17]
     audit_service_url = sys.argv[18]
+    redis_host = sys.argv[19]
+    redis_port = sys.argv[20]
+    redis_password = sys.argv[21]
 
     # Establishing the platform db connection
     platform_conn = psycopg2.connect(database=platform_db, user=user_name, password=password, host=platform_host,
@@ -1317,6 +1457,10 @@ if __name__ == '__main__':
     visibility_conn = psycopg2.connect(database=visibility_db, user=user_name, password=password, host=visibility_host,
                                        port=port)
     print("Visibility database connection established successfully")
+
+    #Establishing the redis connection
+    redis_conn = redis.Redis(host=redis_host, port=redis_port, password=redis_password)
+    print("Redis connection established successfully")
 
     cur_platform = platform_conn.cursor()
     cur_oesdb = oesdb_conn.cursor()
