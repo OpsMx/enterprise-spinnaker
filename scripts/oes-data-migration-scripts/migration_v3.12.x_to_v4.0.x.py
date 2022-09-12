@@ -295,7 +295,7 @@ def update_verification_gate_url(json_data, pl_key, execution_str):
 
 def get_service_id(application_name, pipeline_name):
     try:
-        data = application_name, pipeline_name
+        data = str(application_name.decode("utf-8")), str(pipeline_name.decode("utf-8"))
         cur_platform.execute("select s.id as service_id from service s LEFT OUTER JOIN applications a ON s.application_id = a.id LEFT OUTER JOIN service_pipeline_map spm ON spm.service_id = s.id left outer join pipeline p on spm.pipeline_id = p.id where a.name = %s and p.pipeline_name = %s", data)
         return cur_platform.fetchone()[0]
     except Exception as e:
@@ -306,7 +306,7 @@ def get_service_id(application_name, pipeline_name):
 
 def get_policy_name(application_name, pipeline_name, gate_name):
     try:
-        data = application_name, pipeline_name, gate_name
+        data = str(application_name.decode("utf-8")), str(pipeline_name.decode("utf-8")), str(gate_name.decode("utf-8"))
         cur_oesdb.execute("select policy_name from policy_gate where application_name = %s and pipeline_name = %s and gate_name = %s", data)
         return cur_oesdb.fetchone()[0]
     except Exception as e:
