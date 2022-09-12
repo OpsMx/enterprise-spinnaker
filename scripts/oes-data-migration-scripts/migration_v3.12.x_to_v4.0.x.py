@@ -260,7 +260,7 @@ def update_approval_gate_url(json_data, pl_key, execution_str):
             words = location.split('/')
             instance_id = words[len(words) - 2]
             logging.info(f"the instance id is:  {instance_id}")
-            json_data['navigationalURL'] = navigational_url + '/fromPlugin?instanceId=' + instance_id
+            json_data['navigationalURL'] = navigational_url + '/fromPlugin?instanceId=' + str(instance_id)
             dump = json.dumps(json_data)
             redis_conn.hset(pl_key, "stage." + execution_str + ".outputs", dump)
             logging.info(f"The output after updating approval url is:  {json_data}")
@@ -283,7 +283,7 @@ def update_verification_gate_url(json_data, pl_key, execution_str):
         pipeline_name = redis_conn.hget(pl_key, 'name')
         service_id = get_service_id(application_name, pipeline_name)
         canary_report_url = json_data['canaryReportURL']
-        json_data['canaryReportURL'] = canary_report_url + '/fromPlugin/' + service_id
+        json_data['canaryReportURL'] = canary_report_url + '/fromPlugin/' + str(service_id)
         dump = json.dumps(json_data)
         redis_conn.hset(pl_key, "stage." + execution_str + ".outputs", dump)
         logging.info(f"The output after updating verification gate url is: {json_data}")
