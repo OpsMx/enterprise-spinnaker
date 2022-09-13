@@ -64,6 +64,14 @@ global:
   nodeSelector: {}
   affinity: {}
   tolerations: []
+
+  ## Set to true only if user want to Install ISD in Openshift Env
+  openshift: false
+
+  ## Uncomment only if any explict permissions are need to set for halyard,minio,rabbitmq,oesdb components for OpenShift installation of ISD by default securityContext is disabled in for Openshift Installation
+  #securityContext:
+  #  fsGroup: 1000
+
   ## Set to false only if user uses gitops style and user dont want the repo to be created automatically in github.com
   githubcreationHook: true
 
@@ -142,10 +150,10 @@ global:
     oauth2: false
 
   ## Valid admin details for ISD authorization	
-  saporgate:	
-    config:	
-      username: admin       #Name of the valid user in your service provider	
-      adminGroups: admin    #Name of the valid admin group in your service provider  	
+  saporgate:
+    config:
+      username: admin       #Name of the valid user in your service provider
+      adminGroups: admin    #Name of the valid admin group in your service provider
       password: saporadmin  #password for the saporgate
 
   ## ldap configuration used in oes-gate, oes-platform and spinnaker gate for authentication and authorization
@@ -177,6 +185,7 @@ global:
     accessKey: spinnakeradmin
     secretKey: spinnakeradmin
     region: us-east-1
+    #Below is the securityContext block for only for K8S
     securityContext:
       enabled: true
       runAsUser: 1000
@@ -251,7 +260,7 @@ db:
   ## Strategy to rollout statefulset pods
   podManagementPolicy: OrderedReady
 
-  ## Default group to which the default user of a pod belongs
+  ## Default group to which the default user of a pod belongs and it applies only to K8S
   securityContext:
     fsGroup: 1000
 
@@ -268,7 +277,7 @@ autopilot:
   ## Image specific details
   image:
     repository: ubi8-oes-autopilot
-    tag: v4.0.0-beta
+    tag: v4.0.0-ga
     pullPolicy: IfNotPresent
 
   annotations:
@@ -301,7 +310,7 @@ audit:
   ##
   image:
     repository: ubi8-oes-audit-service
-    tag: v4.0.0-beta
+    tag: v4.0.0-ga
     pullPolicy: IfNotPresent
 
   serviceAnnotations: {}
@@ -323,7 +332,7 @@ auditClient:
   ##
   image:
     repository: ubi8-oes-audit-client
-    tag: v4.0.0-beta
+    tag: v4.0.0-ga
     pullPolicy: IfNotPresent
 
   serviceAnnotations: {}
@@ -345,7 +354,7 @@ datascience:
   ##
   image:
     repository: ubi8-oes-datascience
-    tag: v4.0.0-beta
+    tag: v4.0.0-ga
     pullPolicy: IfNotPresent
 
   serviceAnnotations: {}
@@ -364,7 +373,7 @@ dashboard:
   ## Image specific details
   image:
     repository: ubi8-oes-dashboard
-    tag: v4.0.0-beta
+    tag: v4.0.0-ga
     pullPolicy: IfNotPresent
 
   annotations:
@@ -397,13 +406,13 @@ forwarder:
   externalName: controller.exampleopsmx.net    # This hostname should reach agent-grpc service from the agent
   enabled: true
   agent:
-    image: quay.io/opsmxpublic/forwarder-agent:v3.5.5
+    image: quay.io/opsmxpublic/forwarder-agent:v3.5.6
     serviceType: LoadBalancer
     # Value is also used in sapor configuration for kubernetes.agent.serverHostName
     host: opsmx-controller-controller1
   image:
     repository: quay.io/opsmxpublic/forwarder-controller
-    tag: v3.5.5
+    tag: v3.5.6
     pullPolicy: IfNotPresent
   annotations:
     moniker.spinnaker.io/application: isd
@@ -420,7 +429,7 @@ gate:
   ## Image specific details
   image:
     repository: ubi8-gate
-    tag: v4.0.0-beta
+    tag: v4.0.0-ga
     pullPolicy: IfNotPresent
 
   serviceAnnotations: {}
@@ -497,7 +506,7 @@ platform:
   ## Image specific details
   image:
     repository: ubi8-oes-platform
-    tag: v4.0.0-beta
+    tag: v4.0.0-ga
     pullPolicy: IfNotPresent
 
   annotations:
@@ -553,13 +562,17 @@ rabbitmq:
 
   serviceAnnotations: {}
 
+  #Blow block is for only for K8S
+  securityContext:
+    fsGroup: 1000
+
 ###############################################################################
 ## Values of OES Sapor (Security Audit Policy Onboarding & Release)
 sapor:
   ## Image specific details
   image:
     repository: ubi8-oes-sapor
-    tag: v4.0.0-beta
+    tag: v4.0.0-ga
     pullPolicy: IfNotPresent
 
   annotations:
@@ -651,7 +664,7 @@ ui:
   ## Image specific details
   image:
     repository: ubi8-oes-ui
-    tag: v4.0.0-beta
+    tag: v4.0.0-ga
     pullPolicy: IfNotPresent
 
   annotations:
@@ -669,7 +682,7 @@ visibility:
   ## Image specific details
   image:
     repository: ubi8-oes-visibility
-    tag: v4.0.0-beta
+    tag: v4.0.0-ga
     pullPolicy: IfNotPresent
 
   annotations:
@@ -708,6 +721,13 @@ redis:
   password: password
   cluster:
     enabled: false
+ #The flag is set to true by default.Mandatory change to false only if global.openshift is true and change fsGroups and runAsUser if required
+  securityContext:
+    enabled: true
+    fsGroup: 1001
+    runAsUser: 1001
+
+
 
   # External Redis option will be enabled if in-cluster redis is disabled
   external:
@@ -824,7 +844,7 @@ spinnaker:
     spinnakerVersion: 1.26.6
     image:
       repository: quay.io/opsmxpublic/ubi8-spin-halyard
-      tag: 1.27.0-v4.0-alpha
+      tag: 1.27.0-v4.0-ga
     # Set to false to disable persistence data volume for halyard
     persistence:
       enabled: true
@@ -982,8 +1002,10 @@ spinnaker:
       #   memory: "2Gi"
       #   cpu: "200m"
 
-    ## Uncomment if you want to set environment variables on the Halyard pod.
+    ## Uncomment if you want to set environment variables on the Halyard pod and HOME env is mandatory if global.openshift is set to true
     # env:
+    #   - name: HOME
+    #     value: /home/spinnaker
     #   - name: JAVA_OPTS
     #     value: -Dhttp.proxyHost=proxy.example.com
     customCerts:
@@ -1088,6 +1110,7 @@ spinnaker:
     # If left blank it is auto-generated from the fullname of the release
     halyardName:
     spinnakerName:
+  # below is the securityContext for halyard,install-using-hal job
   securityContext:
     # Specifies permissions to write for user/group
     runAsUser: 1000
