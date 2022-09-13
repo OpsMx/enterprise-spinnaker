@@ -844,7 +844,7 @@ spinnaker:
     spinnakerVersion: 1.26.6
     image:
       repository: quay.io/opsmxpublic/ubi8-spin-halyard
-      tag: 1.27.0-v4.0-alpha
+      tag: 1.27.0-v4.0-ga
     # Set to false to disable persistence data volume for halyard
     persistence:
       enabled: true
