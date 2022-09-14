@@ -86,11 +86,12 @@ services:
   echo:
     host: 0.0.0.0
     port: 8089
-    baseUrl: http://spin-echo:8089
     {{- if .Values.global.stormdriver }}    
+    baseUrl: http://spin-echo:8089
     enabled: true
     {{- else }}
-    enabled: false
+    baseUrl: http://spin-echo-worker:8089
+    enabled: true
     {{- end }}
   echoScheduler:
     host: 0.0.0.0
