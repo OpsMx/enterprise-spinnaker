@@ -40,7 +40,7 @@ services:
     enabled: true
     {{- else }}
     baseUrl: http://spin-clouddriver-ro:7002
-    enabled: trye
+    enabled: true
     {{- end }}
   clouddriverCaching:
     host: 0.0.0.0
