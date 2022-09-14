@@ -39,8 +39,8 @@ services:
     baseUrl: http://stormdriver:7002
     enabled: true
     {{- else }}
-    baseUrl: http://spin-clouddriver:7002
-    enabled: false
+    baseUrl: http://spin-clouddriver-ro:7002
+    enabled: trye
     {{- end }}
   clouddriverCaching:
     host: 0.0.0.0
