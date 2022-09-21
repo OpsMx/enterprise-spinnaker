@@ -190,6 +190,7 @@ ldap:
 {{- end }}
 {{- if .Values.gate.config.saml.enabled }}
 security:
+  contentSecurityPolicy: "object-src 'none'; script-src 'unsafe-eval' 'unsafe-inline' https: http:;"
   basic:
     enabled: true
   user: {}
@@ -199,6 +200,7 @@ saml:
 {{- end }}
 {{- if .Values.gate.config.oauth2.enabled }}
 security:
+  contentSecurityPolicy: "object-src 'none'; script-src 'unsafe-eval' 'unsafe-inline' https: http:;"
   basic:
     enabled: true
   user: {}
@@ -237,8 +239,10 @@ rbac:
     application:
       enabled: {{ .Values.global.commonGate.spinnakerRBAC }}
 
+{{- if or (.Values.global.installOpenLdap) (.Values.global.ldap.enabled) }}
 security:
   contentSecurityPolicy: "object-src 'none'; script-src 'unsafe-eval' 'unsafe-inline' https: http:;"
+{{- end }}
 
 {{- if .Values.global.commonGate.enabled }}
 spinnaker:
