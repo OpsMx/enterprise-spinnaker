@@ -1,6 +1,6 @@
 apiVersion: v2
 name: oes
-version: 4.0.1
+version: 4.0.2
 appVersion: 4.0.0
 description: "ISD-4.0 - Integrated UI, major usability features and more"
 icon: https://raw.githubusercontent.com/OpsMx/enterprise-spinnaker/master/img/opsmx.png
