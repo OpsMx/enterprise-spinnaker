@@ -1,8 +1,8 @@
 apiVersion: v2
 name: oes
-version: 4.0.2
+version: 4.0.3
 appVersion: 4.0.0
-description: "ISD-4.0 - Integrated UI, major usability features and more"
+description: "ISD-4.0 - Integrated UI, major usability features and Qucik Install Fixes"
 icon: https://raw.githubusercontent.com/OpsMx/enterprise-spinnaker/master/img/opsmx.png
 maintainers:
 - email: srinivas@opsmx.io
