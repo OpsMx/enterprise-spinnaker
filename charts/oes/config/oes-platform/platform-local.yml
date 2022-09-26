@@ -55,7 +55,7 @@ oes:
   auditclient:
     url: http://oes-audit-client:8098
   policyGate:
-    url: "{{ .Values.global.oesUI.protocol }}://{{ .Values.global.oesUI.host }}/gate"
+    url: http://oes-gate:8084
     path: /v1/data/
   ui:
   # Ex: "https://oes-poc.dev.opsmx.org/"
@@ -63,10 +63,10 @@ oes:
   gate:
     url: http://oes-gate:8084
   approvalGate:
-    apiUrl: {{ .Values.global.oesUI.protocol }}://{{ .Values.global.oesUI.host }}/gate/visibilityservice/v5/approvalGates/{id}/trigger
+    apiUrl: http://oes-gate:8084/visibilityservice/v5/approvalGates/{id}/trigger
 
   verificationGate:
-    apiUrl: {{ .Values.global.oesUI.protocol }}://{{ .Values.global.oesUI.host }}/gate/autopilot/api/v3/registerCanary
+    apiUrl: http://oes-gate:8084/autopilot/api/v3/registerCanary
 
 logging:
   level:

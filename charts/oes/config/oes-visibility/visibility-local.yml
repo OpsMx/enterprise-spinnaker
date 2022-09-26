@@ -35,10 +35,10 @@ management:
 
 ui:
   approval:
-    url: {{ .Values.global.oesUI.protocol }}://{{ .Values.global.oesUI.host }}/ui/plugin-isd/approval/{applicationId}/{serviceId}/{approvalGateId}
+    url: /ui/plugin-isd/approval/{applicationId}/{serviceId}/{approvalGateId}
 
 gate:
-  url: {{ .Values.global.oesUI.protocol }}://{{ .Values.global.oesUI.host }}/gate
+  url: http://oes-gate:8084
 
 jira:
   api:
