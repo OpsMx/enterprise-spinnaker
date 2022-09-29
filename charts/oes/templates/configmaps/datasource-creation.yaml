@@ -26,7 +26,7 @@ data:
     ECHOWORKER=$(grep spin-echo-worker /tmp/inst.status | awk '{print $2}')
     ECHOSCHEDULER=$(grep spin-echo-scheduler  /tmp/inst.status | awk '{print $2}')
     FRONT=$(grep spin-front /tmp/inst.status  | awk '{print $2}')
-    GATE=$(grep spin-gate /tmp/inst.status | awk '{print $2}')
+    #GATE=$(grep spin-gate /tmp/inst.status | awk '{print $2}')
     IGOR=$(grep spin-igor /tmp/inst.status | awk '{print $2}')
     ORCA=$(grep spin-orca /tmp/inst.status | awk '{print $2}')
     FIAT=$(grep spin-fiat /tmp/inst.status | awk '{print $2}')
@@ -41,9 +41,9 @@ data:
 
 
     {{- if .Values.global.stormdriver }}
-    READYBASIC=$([ "$DECK" == "true" ] && [ "$CLOUDDRIVER" == "true" ] && [ "$FRONT" == "true" ] && [ "$GATE" == "true" ] && [ "$ORCA" == "true" ] && [ "$ECHO" == "true" ] && [ "$SAPOR" == "true" ] && [ "$IGOR" == "true" ] && [ "$PLATFORM" == "true" ] && [ "$AUTOPILOT" == "true" ]; echo $(($? == 0)) )
+    READYBASIC=$([ "$DECK" == "true" ] && [ "$CLOUDDRIVER" == "true" ] && [ "$FRONT" == "true" ] && [ "$ORCA" == "true" ] && [ "$ECHO" == "true" ] && [ "$SAPOR" == "true" ] && [ "$IGOR" == "true" ] && [ "$PLATFORM" == "true" ] && [ "$AUTOPILOT" == "true" ]; echo $(($? == 0)) )
     {{- else }}
-    READYBASIC=$([ "$DECK" == "true" ] && [ "$CLOUDCACHING" == "true" ] && [ "$CLOUDRO" == "true" ] && [ "$CLOUDRW" == "true" ] && [ "$CLOUDRODECK" == "true" ] && [ "$FRONT" == "true" ] && [ "$ORCA" == "true" ]  && [ "$ECHOWORKER" == "true" ] && [ "$ECHOSCHEDULER" == "true" ] && [ "$SAPOR" == "true" ] && [ "$PLATFORM" == "true" ] && [ "$AUTOPILOT" == "true" ] && [ "$GATE" == "true" ] && [ "$IGOR" == "true" ]; echo $(($? == 0)) )
+    READYBASIC=$([ "$DECK" == "true" ] && [ "$CLOUDCACHING" == "true" ] && [ "$CLOUDRO" == "true" ] && [ "$CLOUDRW" == "true" ] && [ "$CLOUDRODECK" == "true" ] && [ "$FRONT" == "true" ] && [ "$ORCA" == "true" ]  && [ "$ECHOWORKER" == "true" ] && [ "$ECHOSCHEDULER" == "true" ] && [ "$SAPOR" == "true" ] && [ "$PLATFORM" == "true" ] && [ "$AUTOPILOT" == "true" ] && [ "$IGOR" == "true" ]; echo $(($? == 0)) )
     {{- end }}
 
     {{- if .Values.global.commonGate.spinnakerRBAC }}
