@@ -1,0 +1,5 @@
+1.export your kubeconfig file
+2.wget
+3.chmod +x get-all-pod-logs.sh
+4.Run the script file using command: ./get-all-pod-logs.sh <namespace>
+5.This script populate a tar.gz file in the /tmp directory. Please forward the file to opsmx.
