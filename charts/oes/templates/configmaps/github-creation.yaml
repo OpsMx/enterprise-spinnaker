@@ -48,11 +48,11 @@ data:
 
                 cp -pr standard-gitops-repo/* $repo_name/
                 cd $repo_name/
-                git checkout -b master
+                git checkout -b {{ .Values.spinnaker.gitopsHalyard.repo.halConfigBranch }}
                 git status
                 git add .
                 git commit -m "cloned standard-gitops-repo content"
-                git push origin master
+                git push origin {{ .Values.spinnaker.gitopsHalyard.repo.halConfigBranch }}
         fi
 {{- end }}
 {{- end }}
