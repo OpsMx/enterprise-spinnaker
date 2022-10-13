@@ -150,6 +150,9 @@ data:
     DYNAMIC_ACCOUNTS_REPO=`echo $DYNAMIC_ACCOUNTS_REPO | sed 's/ *$//g'`
     sed -i  s/SPINNAKER_NAMESPACE/${SPINNAKER_NAMESPACE}/ /tmp/spinnaker/.hal/config
     sed -i  s/RELEASE_NAME/{{ .Release.Name }}/g /tmp/spinnaker/.hal/config
+    BRANCH={{ .Values.gitopsHalyard.repo.halConfigBranch }}
+    echo $BRANCH
+    sed -i s/BRANCH/${BRANCH}/ /tmp/spinnaker/.hal/default/profiles/spinnakerconfig.yml
     {{- if .Values.gitopsHalyard.environment }}
     sed -i  s/ENVIRONMENT/{{ .Values.gitopsHalyard.environment }}/g /tmp/spinnaker/.hal/config
     {{- end }}

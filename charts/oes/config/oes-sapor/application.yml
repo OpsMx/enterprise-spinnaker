@@ -51,12 +51,12 @@ pipeline-promotion:
     {{- if .Values.global.gitea.enabled }}
     username:  {{ .Values.global.gitea.admin.username }}
     token: {{ .Values.global.gitea.admin.password }}
-    branch: master
+    branch: {{ .Values.spinnaker.gitopsHalyard.repo.halConfigBranch }}
     cloneUrl: http://{{ .Values.global.gitea.admin.username }}:{{ .Values.global.gitea.admin.password }}@{{ .Release.Name }}-gitea-http.{{ .Release.Namespace }}:3000/{{ .Values.global.gitea.admin.username }}/gitea-standard-repo
     {{- else }}
     username:  {{ .Values.spinnaker.gitopsHalyard.repo.username }}
     token: {{ .Values.spinnaker.gitopsHalyard.repo.token }}
-    branch: master
+    branch: {{ .Values.spinnaker.gitopsHalyard.repo.halConfigBranch }}
     cloneUrl: https://{{ .Values.spinnaker.gitopsHalyard.repo.username }}:{{ .Values.spinnaker.gitopsHalyard.repo.token }}@{{ .Values.spinnaker.gitopsHalyard.repo.baseUrlHostName }}/{{ .Values.spinnaker.gitopsHalyard.repo.organization }}/{{ .Values.spinnaker.gitopsHalyard.repo.repository }}
     {{- end }}
   bitbucket:
@@ -67,7 +67,7 @@ pipeline-promotion:
     {{ end }}
     username:  {{ .Values.spinnaker.gitopsHalyard.repo.username }}
     token: {{ .Values.spinnaker.gitopsHalyard.repo.token }}
-    branch: master
+    branch: {{ .Values.spinnaker.gitopsHalyard.repo.halConfigBranch }}
     cloneUrl: https://{{ .Values.spinnaker.gitopsHalyard.repo.username }}:{{ .Values.spinnaker.gitopsHalyard.repo.token }}@{{ .Values.spinnaker.gitopsHalyard.repo.baseUrlHostName }}/{{ .Values.spinnaker.gitopsHalyard.repo.organization }}/{{ .Values.spinnaker.gitopsHalyard.repo.projectName }}/{{ .Values.spinnaker.gitopsHalyard.repo.repository }}
   amazonS3:
     {{ if eq .Values.spinnaker.gitopsHalyard.repo.type "s3" }}
