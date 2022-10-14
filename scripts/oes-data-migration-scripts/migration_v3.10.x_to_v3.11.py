@@ -3,7 +3,6 @@ import psycopg2
 import sys
 import requests
 import logging
-import psycopg2.extras
 
 
 class bcolors:
@@ -179,14 +178,15 @@ def postingPipelineExecutionAuditEvents(auditData):
 def getexecutionIdWithTime(pipeline_executions):
     try:
         cur = audit_conn.cursor()
-        values = []
         for pipeline_execution in pipeline_executions:
             executionId = pipeline_execution[1]
             dateDetails = str(pipeline_execution[2])
             updatedTime_date_time = str(datetime.datetime.utcfromtimestamp(int(dateDetails) / 1000))
-            data = updatedTime_date_time, updatedTime_date_time, executionId
-            values.append(data)
-        psycopg2.extras.execute_batch(cur, "UPDATE pipeline_execution_audit_events SET created_at = %s, updated_at = %s WHERE audit_data ->> 'executionId' = %s", values)
+            logging.info(f"Updating execution : {executionId}")
+            val = """UPDATE pipeline_execution_audit_events SET created_at ={}, updated_at ={} WHERE audit_data ->> 'executionId' = {}""".format(
+                '\'' + updatedTime_date_time + '\'', '\'' + updatedTime_date_time + '\'',
+                '\'' + executionId + '\'')
+            cur.execute(val)
         print("Successfully updated pipeline_execution_audit_events with execution time")
         logging.info("Successfully updated pipeline_execution_audit_events with execution time")
     except Exception as e:
