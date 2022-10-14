@@ -3,6 +3,7 @@ import psycopg2
 import sys
 import requests
 import logging
+import psycopg2.extras
 
 
 class bcolors:
@@ -42,12 +43,11 @@ def perform_migration():
             logging.error("Failure at step 3", exc_info=True)
             is_error_occurred = True
 
-
         try:
             logging.info("Migrating audit details from v3.10.x to v3.11...")
             print("Migrating audit details from v3.10.x to v3.11...")
-            addingDataToPipelineExecutionAuditEvents()
-            getexecutionIdWithTime()
+            pipeline_executions = addingDataToPipelineExecutionAuditEvents()
+            getexecutionIdWithTime(pipeline_executions)
         except Exception as e:
             logging.error("Failure at step 4", exc_info=True)
             is_error_occurred = True
@@ -145,10 +145,10 @@ def updatescriptformetricdetails():
 
 def addingDataToPipelineExecutionAuditEvents():
     try:
-        count = 0;
+        count = 0
         cur = audit_conn.cursor()
         cur.execute(
-            "select id, data -> 'content' ->> 'executionId' as executionId,data from audit_events where source='spinnaker' "
+            "select id, data -> 'content' ->> 'executionId' as executionId, data -> 'details' ->>'created' as executionTime from audit_events where source='spinnaker' "
             "and (data -> 'details' ->> 'type' = 'orca:pipeline:complete' or data -> 'details' ->> 'type'='orca:pipeline:failed');")
         result = cur.fetchall()
         if result != None:
@@ -157,6 +157,7 @@ def addingDataToPipelineExecutionAuditEvents():
                 postingPipelineExecutionAuditEvents(auditData)
         logging.info("Data received from audit events table :" + str(count))
         print("Data received from audit events table :" + str(count))
+        return result
     except Exception as e:
         print("Exception occurred while fetching audit_events data : ", e)
         logging.error("Exception occurred while fetching audit_events data ", exc_info=True)
@@ -175,31 +176,23 @@ def postingPipelineExecutionAuditEvents(auditData):
         raise e
 
 
-def getexecutionIdWithTime():
+def getexecutionIdWithTime(pipeline_executions):
     try:
         cur = audit_conn.cursor()
-        cur.execute("select audit_data -> 'executionId' as executionId from pipeline_execution_audit_events")
-        executionIdList = [item[0] for item in cur.fetchall()]
-        count = 0
-        if executionIdList != None:
-            for executionId in executionIdList:
-                logging.info("Updating pipeline execution time for execution Id: "+ str(executionId))
-                cur.execute(
-                    "select data -> 'details' ->>'created' as executionTime from audit_events where data -> 'content' ->> 'executionId' ='" + executionId + "'")
-                dateDetails = [executionTime[0] for executionTime in cur.fetchall()]
-                if dateDetails != None:
-                    count += 1
-                    dateDetails = str(dateDetails[0])
-                    updatedTime_date_time = datetime.datetime.utcfromtimestamp(int(dateDetails) / 1000)
-                    val = """UPDATE pipeline_execution_audit_events SET created_at ={}, updated_at ={} WHERE audit_data ->> 'executionId' = {}""".format(
-                        '\'' + str(updatedTime_date_time) + '\'', '\'' + str(updatedTime_date_time) + '\'',
-                        '\'' + executionId + '\'')
-                    cur.execute(val)
-        logging.info("Total updated created time for pipeline execution Data: " + str(count))
-        print("Total updated created time for pipeline execution Data: " + str(count))
+        values = []
+        for pipeline_execution in pipeline_executions:
+            executionId = pipeline_execution[1]
+            dateDetails = str(pipeline_execution[2])
+            updatedTime_date_time = str(datetime.datetime.utcfromtimestamp(int(dateDetails) / 1000))
+            data = updatedTime_date_time, updatedTime_date_time, executionId
+            values.append(data)
+        psycopg2.extras.execute_batch(cur, "UPDATE pipeline_execution_audit_events SET created_at = %s, updated_at = %s WHERE audit_data ->> 'executionId' = %s", values)
+        print("Successfully updated pipeline_execution_audit_events with execution time")
+        logging.info("Successfully updated pipeline_execution_audit_events with execution time")
     except Exception as e:
         print("Exception occurred while fetching and update time for pipeline_execution_audit_events data : ", e)
-        logging.error("Exception occurred while fetching and update time for pipeline_execution_audit_events data", exc_info=True)
+        logging.error("Exception occurred while fetching and update time for pipeline_execution_audit_events data",
+                      exc_info=True)
         raise e
 
 
