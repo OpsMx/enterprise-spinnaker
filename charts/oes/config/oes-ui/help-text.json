@@ -43,7 +43,7 @@
   "CLOUDPROVIDER_LISTING": {
   "HEADER": "No Cloud Targets found!",
   "BODY": "<div><p>Cloud Targets are integrations to Cloud platforms you deploy your applications to.</p> <p>In this section, you’ll register credentials for your Cloud platforms. Those credentials are known as Accounts. ISD allows you to create & manage Accounts for different Cloud Providers such as AWS, GCP, Kubernetes, etc.</p> <p>When CD instance (Spinnaker) is configured for <b>Direct Sync</b>, <b>New Accounts</b> button will not be visible.</p> <p><b>New Accounts</b> button will be enabled when CD instance (Spinnaker) is configured to use External Accounts in <b>Setup->CD Integration</b>.Click on <b>New Accounts</b> button to create an account for your cloud provider. You can create multiple accounts for the same provider.</p> <p>Click on <b>Sync Accounts</b> button to sync Cloud target accounts with CD Tool</p></div>"
-   },
+  },
     "CLOUDPROVIDER_CREATION": {
       "HEADER": "Cloud Target",
       "BODY": "<p>In this page, you can create & manage Cloud Target Accounts</p>",
@@ -228,6 +228,8 @@
   "SPINNAKER_SETUP": {
     "HEADER": "Spinnaker",
     "BODY": "<p>In this page you can add / update information about your CD instance.</p> <p><strong>Fields:</strong></p> <ul class='helpTextUI'> <li><strong>CD Name</strong>: User defined name for CD instance.<br><span> Example: opsmx-spinnaker</span></li> <li><strong>CD URL</strong>: Gate URL of the CD instance.<br> <span>Example: https://spinnaker-gate.xyz.com or http://oes-gate:8084</span></li> <li><strong>Authentication Type:</strong>: Can be LDAP or X509; for AD, use LDAP</li> <li><strong>Token: </strong> This is used when Authentication Type is LDAP; username & password to LDAP server separated by <b>:</b> in base64 format; Output of 'echo -ne 'username:password' | base64 -w0'</li> <li><strong>Password: </strong>This is used when Authentication Type is X509; Password for P12 File</li> <li><strong>P12 File:</strong> This is used when Authentication Type is X509; P12 File needed for X509 Authentication</li></ul><p>GitOps style Spinnaker is suported where in all configuration is maintained in a repository such as git. These optional sections help configure gitOps style Spinnaker:</p><ul class='helpTextUI'><li><strong>Source Control for Accounts: </strong>You can specify the repository for External configuration in Spinnaker</li> <li><strong>Source Control for Pipeline: </strong>You can specify the repository for pipeline gitOps that allows you to save and restore pipelines from a git repository</li></ul>",
+    "ACCOUNT_CREATION_INFO": "The CD name should be the same as the Spinnaker name configured in echo-local.yml",
+    "ACCOUNT_CREATION_ADDITIONAL_INFO": "<p></p><p>Adding a Spinnaker instance with CD Name different than the Spinnaker name configured in <i>echo-local.yml</i> will require a manual update to the <i>echo-local.yml</i> and a <i>hal deploy apply</i>. This change is required to allow publishing Spinnaker events to RabbitMQ.</p>",
     "SPINNAKER_NAME": {
       "TOOLTIP": "Name of the Spinnaker instance",
       "VALIDATION_MESSAGE": {
@@ -821,7 +823,7 @@
       }
     },
     "INTEGRATORS_PERMISSIONS": {
-      "TOOLTIP": "Authorization definition for this Integration",
+      "TOOLTIP": "Configure specific user group’s access to this integration.",
       "VALIDATION_MESSAGE": ""
     },
     "CLOUD_PROVIDER_PERMISSIONS": {
@@ -1023,12 +1025,12 @@
       "TOOLTIP": "When the cluster deployment matches with the latest pipeline execution it is 'In Sync'; if not, it is 'Out of Sync'"
     }
   },
-          "INTEGRATION": {
+"INTEGRATION": {
 "AMAZONS3":{
   "HEADER": "Amazon S3",
-  "BODY":"<span><p>Amazon S3 integration can be used to configure Spinnaker for Amazon S3.</p><p><strong>Fields</strong>:</p><ul class='helpTextUl'><li><strong>Account Name</strong>: User defined name for the Amazon S3 Account <span class='noBr'>(Example: opsmx-s3)</span></li><li><strong>Access Key Id</strong>: AWS Access Key Id</li><li><strong>Secret Access Key</strong>: AWS Secret Access Key</li><li><strong>Connect to Spinnaker</strong>: Toggle to configure Spinnaker for Amazon S3</li><li><strong>Permissions</strong>: Enable/disable access to the Amazon S3 account in Autopilot to specific usergroups</li></ul></span>",
+  "BODY":"<span><p>Spinnaker can be configured to use AWS S3 bucket as Spinnaker's persistent storage or Artifact source</p><p><strong>Fields</strong>:</p><ul class='helpTextUl'><li><strong>Account Name</strong>: User-defined account name for your AWS S3 access. The account name appears in Spinnaker as an input source for artifact selection.<span class='noBr'></span></li><li><strong>Access Key Id</strong>: AWS IAM user access key who has access to the identified S3 bucket. Not required, If Spinnaker is running in EC2 or EKS with an associated IAM role. In that case, the IAM instance role is used for S3 connectivity.</li><li><strong>Secret Access Key</strong>: AWS IAM user Secret Key. Not required, If Spinnaker is running in EC2 or EKS with an associated IAM role. In that case, the IAM instance role is used for S3 connectivity.</li><li><strong>Region</strong>: AWS region where the AWS S3 bucket is located</li><li><strong>API Region</strong>: AWS S3 API region, only required when using an S3 clone such as Minio</li><li><strong>API Endpoint</strong>: AWS S3 API endpoint, only required when using an S3 clone such as Minio</li><li><strong>Connect to CD</strong>: Toggle on to propagate the change into the CD Tool.</li><li><strong>Permissions</strong>: Enable/disable access to the Amazon S3 account in Autopilot to specific user groups</li></ul></span>",
   "ACCOUNTNAME":{
-    "TOOLTIP":"The name of the account to operate on",
+    "TOOLTIP":"User-defined account name for your AWS S3 access. The account name appears in Spinnaker as an input source for artifact selection.",
     "VALIDATION_MESSAGE":{
       "noSpecialCharacters": "Account Name cannot contain special characters other than -",
       "cannotContainSpace":"Account Name cannot contain space",
@@ -1037,30 +1039,30 @@
     }
   },
   "ACCESS_ID":{
-    "TOOLTIP":"AWS Access Key Id",
+    "TOOLTIP":"AWS IAM user's access key who has access to the identified S3 bucket. Not required, If Spinnaker is running in EC2 or EKS with an associated IAM role. In that case, the IAM instance role is used for S3 connectivity.",
     "VALIDATION_MESSAGE":{
       "required":"Access Key Id cannot be empty"
     }
   },
   "SECRET_KEY":{
-    "TOOLTIP":"AWS Secret Access Key",
+    "TOOLTIP":"AWS IAM user Secret Key. Not required, If Spinnaker is running in EC2 or EKS with an associated IAM role. In that case, the IAM instance role is used for S3 connectivity.",
     "VALIDATION_MESSAGE":{
       "required":"Secret Access Key cannot be empty"
     }
   },
   "REGION":{
-    "TOOLTIP":"S3 region",
+    "TOOLTIP":"AWS region where the AWS S3 bucket is located",
     "VALIDATION_MESSAGE":{
       "required":"S3 region cannot be empty"
     }
   },
   "APIENDPOINT":{
-    "TOOLTIP":"S3 api endpoint",
+    "TOOLTIP":"AWS S3 API endpoint, only required when using an S3 clone such as Minio",
     "VALIDATION_MESSAGE":{
     }
   },
   "APIREGION":{
-    "TOOLTIP":"S3 api region",
+    "TOOLTIP":"AWS S3 API region, only required when using an S3 clone such as Minio",
     "VALIDATION_MESSAGE":{
     }
   },
@@ -1071,9 +1073,9 @@
 },
 "ARTIFACTORY":{
   "HEADER": "Artifactory",
-  "BODY":"<span><p>Artifactory integration can be used as a datasource for Approval Gate as well as to configure Spinnaker for Artifactory.</p><p><strong>Fields</strong>:</p><ul class='helpTextUl'><li><strong>Account Name</strong>: User defined name for the Artifactory Account <span class='noBr'>(Example: opsmx-artifactory)</span></li><li><strong>Endpoint</strong>: Artifactory URL <span class='noBr'>(Example: https://xyz.myjfrog.com)</span></li><li><strong>Token</strong>: Artifactory personal access token. You can find <a href='https://www.jfrog.com/confluence/display/JFROG/Access+Tokens' target='_blank'>here</a> how to generate personal access tokens. <span class='autolinebreak'>(Example: ZlQDAwMFwvdXNlcnNcL21hZGh1a2FyIiwic2NwIjoiYXBwbGllZC1wZXJtaXNzaW9uc1wvYWRtaW4gYXBpOioiLCJhdWQiOlsiamZydEAqIiwiamZhY0AqIiwiamZldnmbWRAKiJdLCJpc3MiOiJqZmZlQDAAzNzY3MiwiaWF0IjoxNjI5ODY0ODcyLCJqdGkiOiI1ZWFiNjlhYi1hZDY0LTRjOGItOTMyZC0wMDAxMWZiZWU5YWIifQ.tzBgL3fQgZ1dwlLLS2UAT7G)</span></li><li><strong>Connect to Spinnaker</strong>: Toggle to configure Spinnaker for Artifactory</li><li><strong>Permissions</strong>: Enable/disable access to the Artifactory account in Autopilot to specific usergroups</li></ul></span>",
+  "BODY":"<span><p>JFrog Artifactory integration can be used as an Artifact source in Spinnaker and also a Data source for Approval-Gate.</p><p><strong>Fields</strong>:</p><ul class='helpTextUl'><li><strong>Account Name</strong>: User-defined account name for your Jfrog Artifactory access. The account name appears in Spinnaker as an Artifactory trigger type input. <span class='noBr'>(Example: opsmx-artifactory)</span></li><li><strong>Endpoint</strong>: The base URL of your Artifactory search is reachable at. <span class='noBr'>(Example: https://xyz.myjfrog.com)</span></li><li><strong>Repo</strong>: The Artifactory repo which needs to be searched</li><li><strong>Repo Type</strong>: The package type of repo in your Artifactory is to be searched. Default is Maven.</li><li><strong>Group Id</strong>: The group id in your Artifactory is to be searched</li><li><strong>Username</strong>: The Artifactory user's username for authentication</li><li><strong>Password</strong>: The Artifactory user's password for authentication</li><li><strong>Token</strong>: Artifactory personal access token. You can find <a href='https://www.jfrog.com/confluence/display/JFROG/Access+Tokens' target='_blank'>here</a> how to generate personal access tokens. <span class='autolinebreak'>(Example: ZlQDAwMFwvdXNlcnNcL21hZGh1a2FyIiwic2NwIjoiYXBwbGllZC1wZXJtaXNzaW9uc1wvYWRtaW4gYXBpOioiLCJhdWQiOlsiamZydEAqIiwiamZhY0AqIiwiamZldnmbWRAKiJdLCJpc3MiOiJqZmZlQDAAzNzY3MiwiaWF0IjoxNjI5ODY0ODcyLCJqdGkiOiI1ZWFiNjlhYi1hZDY0LTRjOGItOTMyZC0wMDAxMWZiZWU5YWIifQ.tzBgL3fQgZ1dwlLLS2UAT7G)</span></li><li><strong>Connect to Spinnaker</strong>: Toggle on to propagate the change into the CD Tool.</li><li><strong>Permissions</strong>: Enable or disable specific user groups' access to the Artifactory account in ISD.</li></ul></span>",
   "ACCOUNTNAME":{
-    "TOOLTIP":"The name of the account to operate on",
+    "TOOLTIP":"User-defined account name for your Jfrog Artifactory access. The account name appears in Spinnaker as an Artifactory trigger type input.",
     "VALIDATION_MESSAGE":{
       "noSpecialCharacters": "Account Name cannot contain special characters other than -",
       "cannotContainSpace":"Account Name cannot contain space",
@@ -1082,7 +1084,7 @@
     }
   },
   "ENDPOINT":{ 
-    "TOOLTIP":"The base url your artifactory search is reachable at",
+    "TOOLTIP":"The base URL of your Artifactory search is reachable at",
     "VALIDATION_MESSAGE":{
       "required":"Endpoint cannot be empty",
       "invalidUrl": "URL is invalid"
@@ -1095,12 +1097,12 @@
     }
   },
   "REPOTYPE":{ 
-    "TOOLTIP":"The package type of repo in your artifactory to be searched",
+    "TOOLTIP":"The package type of repo in your Artifactory is to be searched. Default is Maven.",
     "VALIDATION_MESSAGE":{
     }
   },
   "GROUPID":{ 
-    "TOOLTIP":"The group id in your artifactory to be searched",
+    "TOOLTIP":"The group id in your Artifactory is to be searched.",
     "VALIDATION_MESSAGE":{
     }
   },
@@ -1117,27 +1119,27 @@
     }
   },
   "USERNAME":{
-    "TOOLTIP":"The username of the artifactory user to authenticate as",
+    "TOOLTIP":"The Artifactory user's username for authentication",
     "VALIDATION_MESSAGE":{
       "required":"Username cannot be empty"
     }
   },
   "PASSWORD":{
-    "TOOLTIP":"The password of the artifactory user to authenticate as",
+    "TOOLTIP":"The Artifactory user's password for authentication",
     "VALIDATION_MESSAGE":{
       "required":"Password cannot be empty"
     }
   },
   "SPINNAKERTOGGLE":{
-    "TOOLTIP":"Switch On this toggle to configure the resource in a gitops enabled Spinnaker instance",
+    "TOOLTIP":"The Token of the artifactory user to authenticate as",
     "VALIDATION_MESSAGE":{}
   }
 },
 "BITBUCKET":{
   "HEADER": "Bitbucket Cloud",
-  "BODY":"<span><p>BitBucket Cloud integration can be used as a datasource for Approval Gate as well as to configure Spinnaker for BitBucket Cloud.</p><p><strong>Fields</strong>:</p><ul class='helpTextUl'><li><strong>Name</strong>: User defined name for the Bitbucket Cloud Account <span class='noBr'>(Example: opsmx-bitbucket)</span></li><li><strong>Host URL</strong>: BitBucket Cloud URL <span class='noBr'>(Example: https://bitbucket.org)</span></li><li><strong>API URL</strong>: This is needed by Autopilot to access Bitbucket Cloud resources such as accounts & repositories through API calls <span class='noBr'>(Example: https://api.bitbucket.org/2.0/repositories)</span></li><li><strong>Authentication Type</strong>: can be Token or User Name/Password</li><li><strong>User Name</strong>: Bitbucket Cloud User Name</li><li><strong>Token</strong>: BitBucket personal access token <span class='noBr'>(Example: xCPkVZfxaE9iULmfYYkK)</span></li> <li><strong>Password</strong>: Bitbucket Cloud Password</li><li><strong>Connect to Spinnaker</strong>: Toggle to configure Spinnaker for Bitbucket Cloud</li><li><strong>Permissions</strong>: Enable/disable access to the Bitbucket Account in Autopilot to specific usergroups</li></ul></span>",
+  "BODY":"<span><p>BitBucket Cloud integration can be used as a datasource for Approval Gate as well as to configure Spinnaker for BitBucket Cloud.</p><p><strong>Fields</strong>:</p><ul class='helpTextUl'><li><strong>Account Name</strong>: User-defined account name for your BitBucket Cloud access. <span class='noBr'>(Example: opsmx-bitbucket)</span></li><li><strong>Host URL</strong>: BitBucket Cloud (SaaS) Web URL. <span class='noBr'>It is usually https://bitbucket.org </span></li><li><strong>API URL</strong>: This is needed by Autopilot to access Bitbucket Cloud resources such as accounts & repositories through API calls <span class='noBr'>(Example: https://api.bitbucket.org/2.0/repositories)</span></li><li><strong>Authentication Type</strong>: Select one of the available options. If you are unsure, consult your BitBucket administrator to determine which authentication mechanism is used.</li><li><strong>Anonymous</strong>: No username or password is used. Access identity is anonymous.</li><li><strong>User Name</strong>: The BitBucket Cloud Service username </li><li><strong>Token</strong>: The user's username and access token This token is obtained from the Bitbucket user profile page here. <span class='noBr'>(Example: xCPkVZfxaE9iULmfYYkK)</span></li> <li><strong>Password</strong>: The BitBucket Cloud Service password</li><li><strong>Connect to Spinnaker</strong>: Toggle on to propagate the change into the CD Tool.</li><li><strong>Permissions</strong>: Enable/disable access to the Bitbucket Account in Autopilot to specific user groups</li></ul></span>",
   "ACCOUNTNAME":{
-    "TOOLTIP":"The name of the account to operate on",
+    "TOOLTIP":"User-defined account name for your BitBucket Cloud access.",
     "VALIDATION_MESSAGE":{
       "noSpecialCharacters": "Account Name cannot contain special characters other than -",
       "cannotContainSpace":"Account Name cannot contain space",
@@ -1146,7 +1148,7 @@
     }
   },
   "HOSTURL":{
-    "TOOLTIP":"BitBucket Cloud URL",
+    "TOOLTIP":"BitBucket Cloud (SaaS) Web URL. It is usually https://bitbucket.org",
     "VALIDATION_MESSAGE":{
       "required":"Host URL cannot be empty",
       "invalidUrl": "URL is invalid"
@@ -1160,17 +1162,17 @@
     }
   },
   "AUTHENTICATIONTYPE":{
-    "TOOLTIP":"Select how the external resource confirms the user credentials",
+    "TOOLTIP":"Select one of the available options. If you are unsure, consult your BitBucket administrator to determine which authentication mechanism is used.",
     "VALIDATION_MESSAGE":{}
   },
   "TOKEN":{
-    "TOOLTIP":"The Token of the Bitbucket user to authenticate as",
+    "TOOLTIP":"The user's access token. This token is obtained from the Bitbucket user profile page.",
     "VALIDATION_MESSAGE":{
       "required":"Token cannot be empty"
     }
   },
   "USERNAME":{
-    "TOOLTIP":"The username of the Bitbucket user to authenticate as",
+    "TOOLTIP":"The BitBucket Cloud Service username",
     "VALIDATION_MESSAGE":{
       "noSpecialCharacters": "User Name cannot contain special characters other than - and _",
       "cannotContainSpace":"User Name cannot contain space",
@@ -1179,7 +1181,7 @@
     }
   },
   "PASSWORD":{
-    "TOOLTIP":"The password of the Bitbucket user to authenticate as",
+    "TOOLTIP":"The BitBucket Cloud Service password",
     "VALIDATION_MESSAGE":{
       "required":"Password cannot be empty"
     }
@@ -1191,9 +1193,9 @@
 },
 "BITBUCKET_SERVER":{
   "HEADER": "Bitbucket Server",
-  "BODY":"<span><p>BitBucket Server integration can be used as a datasource for Approval Gate as well as to configure Spinnaker for BitBucket Server.</p><p><strong>Fields</strong>:</p><ul class='helpTextUl'><li><strong>Account Name</strong>: User defined name for the Bitbucket Server Account <span class='noBr'>(Example: opsmx-bitbucket)</span></li><li><strong>Host URL</strong>: BitBucket Server URL <span class='noBr'>(Example: https://xyz.mybitbucket.com)</span></li><li><strong>Authentication Type</strong>: can be Token or User Name/Password</li><li><strong>User Name</strong>: Bitbucket Server User Name</li><li><strong>Token</strong>: BitBucket Server personal access token. You can find <a href='https://confluence.atlassian.com/bitbucketserver/personal-access-tokens-939515499.html' target='_blank'>here</a> how to generate personal access tokens. <span class='noBr'>(Example: DjpMgHmwqUnIvvmljFgqGQ)</span></li><li><strong>Password</strong>: Bitbucket Server Password</li><li><strong>Connect to Spinnaker</strong>: Toggle to configure Spinnaker for Bitbucket Server</li><li><strong>Permissions</strong>: Enable/disable access to the Bitbucket Server account in Autopilot to specific usergroups</li></ul></span>",
+  "BODY":"<span><p>BitBucket Server integration can be used as a datasource for Approval Gate as well as to configure Spinnaker for BitBucket Server.</p><p><strong>Fields</strong>:</p><ul class='helpTextUl'><li><strong>Account Name</strong>: User-defined account name for your BitBucket Cloud access. <span class='noBr'>(Example: opsmx-bitbucket)</span></li><li><strong>Host URL</strong>: BitBucket Cloud (SaaS) Web URL. <span class='noBr'> It is usually https://bitbucket.org</span></li><li><strong>Authentication Type</strong>: Select one of the available options. If you are unsure, consult your BitBucket administrator to determine which authentication mechanism is used.</li><li><strong>Anonymous</strong>: No username or password is used. Access identity is anonymous.</li><li><strong>User Name</strong>: Bitbucket Server User Name</li><li><strong>Token</strong>: The user's username and access token This token is obtained from the Bitbucket user profile page. You can find <a href='https://confluence.atlassian.com/bitbucketserver/personal-access-tokens-939515499.html' target='_blank'>here</a> how to generate personal access tokens. <span class='noBr'>(Example: DjpMgHmwqUnIvvmljFgqGQ)</span></li><li><strong>Password</strong>: Bitbucket Server Password</li><li><strong>Connect to Spinnaker</strong>: Toggle on to propagate the change into the CD Tool.</li><li><strong>Permissions</strong>: Enable/disable access to the Bitbucket Server account in Autopilot to specific user groups</li></ul></span>",
   "ACCOUNTNAME":{
-    "TOOLTIP":"The name of the account to operate on",
+    "TOOLTIP":"User-defined account name for your BitBucket Cloud access.",
     "VALIDATION_MESSAGE":{
       "noSpecialCharacters": "Account Name cannot contain special characters other than -",
       "cannotContainSpace":"Account Name cannot contain space",
@@ -1202,24 +1204,24 @@
     }
   },
   "HOSTURL":{
-    "TOOLTIP":"Bitbucket Cloud URL",
+    "TOOLTIP":"BitBucket Cloud (SaaS) Web URL. It is usually https://bitbucket.org",
     "VALIDATION_MESSAGE":{
       "required":"Host URL cannot be empty",
       "invalidUrl": "URL is invalid"
     }
   },
   "AUTHENTICATIONTYPE":{
-    "TOOLTIP":"Select how the external resource confirms the user credentials",
+    "TOOLTIP":"Select one of the available options. If you are unsure, consult your BitBucket administrator to determine which authentication mechanism is used.",
     "VALIDATION_MESSAGE":{}
   },
   "TOKEN":{
-    "TOOLTIP":"The Token of the Bitbucket user to authenticate as",
+    "TOOLTIP":"The user's access token. This token is obtained from the Bitbucket user profile page.",
     "VALIDATION_MESSAGE":{
       "required":"Token cannot be empty"
     }
   },
   "USERNAME":{
-    "TOOLTIP":"The username of the Bitbucket user to authenticate as",
+    "TOOLTIP":"The BitBucket Server username",
     "VALIDATION_MESSAGE":{
       "noSpecialCharacters": "User Name cannot contain special characters other than - and _",
       "cannotContainSpace":"User Name cannot contain space",
@@ -1228,7 +1230,7 @@
     }
   },
   "PASSWORD":{
-    "TOOLTIP":"The password of the Bitbucket user to authenticate as",
+    "TOOLTIP":"The BitBucket server password",
     "VALIDATION_MESSAGE":{
       "required":"Password cannot be empty"
     }
@@ -1240,9 +1242,9 @@
 },
 "DOCKERHUB":{
   "HEADER": "Docker Registry",
-  "BODY":"",
+  "BODY":"<span><p><strong>Fields</strong>:</p><ul class='helpTextUl'><li><strong>Account Name</strong>: User-defined account name for your Docker registry access.</li><li><strong>Registry URL</strong>: The registry URL from which you want to pull and deploy images. <span class='noBr'> DockerHub example: https://hub.docker.com</span></li><li><strong>Email</strong>: Users docker registry email. If no value is specified, the default value of fake.email@spinnaker.io will be used.</li><li><strong>Repositories</strong>: An optional list of repositories to cache images from. If not provided, Spinnaker will try to read the list of accessible repositories from the registries _catalog endpoint. <span class='noBr'> Example: library/ubuntu (Public repositories are prefixed with library/)</span></li><li><strong>Group Membership</strong>: Select an authentication type that corresponds to the connection credential parameter.</li><li><strong>Connect to Spinnaker</strong>: Toggle on to propagate the change into the CD Tool.</li></ul></span>",
   "ACCOUNTNAME":{
-    "TOOLTIP":"The name of the account to operate on",
+    "TOOLTIP":"User-defined account name for your Docker registry access.",
     "VALIDATION_MESSAGE":{
       "noSpecialCharacters": "Account Name cannot contain special characters other than -",
       "cannotContainSpace":"Account Name cannot contain space",
@@ -1251,7 +1253,7 @@
     }
   },
   "AUTHENTICATIONTYPE":{
-    "TOOLTIP":"Select how the external resource confirms the user credentials",
+    "TOOLTIP":"Select an authentication type that corresponds to the connection credential parameter.",
     "VALIDATION_MESSAGE":{}
   },
   "TOKEN":{
@@ -1285,13 +1287,25 @@
   "SPINNAKERTOGGLE":{
     "TOOLTIP":"Switch On this toggle to configure the resource in a gitops enabled Spinnaker instance",
     "VALIDATION_MESSAGE":{}
+  },
+  "REGISTRYURL":{
+    "TOOLTIP":"The registry URL from which you want to pull and deploy images. DockerHub example: https://hub.docker.com"
+  },
+  "EMAIL":{
+  "TOOLTIP":"Users docker registry email. If no value is specified, the default value of fake.email@spinnaker.io will be used."
+  },
+  "REPOSITORIES":{
+  "TOOLTIP":"An optional list of repositories to cache images from. If not provided, Spinnaker will try to read the list of accessible repositories from the registries _catalog endpoint. Example: library/ubuntu (Public repositories are prefixed with library/)"
+  },
+  "GROUPMEMBERSHIP":{
+    "TOOLTIP":""
   }
 },
 "OCR":{
   "HEADER": "Generic Docker Registries (ACR, Quay, JFrog)",
-  "BODY":"",
+  "BODY":"<span><p><strong>Fields</strong>:</p><ul class='helpTextUl'><li><strong>Account Name</strong>: User-defined account name for your GCR Docker registry access.</li><li><strong>Registry URL</strong>: The registry URL from which you want to pull and deploy images. <span class='noBr'> For example: https://quay.io - RedHat quay.io</span></li><li><strong>Email</strong>: Users docker registry email. If no value is specified, the default value of fake.email@spinnaker.io will be used.</li><li><strong>Repositories</strong>: An optional list of repositories to cache images from. If not provided, Spinnaker will try to read the list of accessible repositories from the registries _catalog endpoint. <span class='noBr'> Example: library/ubuntu (Public repositories are prefixed with library/)</span></li><li><strong>Authentication Type</strong>: Select an authentication type that corresponds to the connection credential parameter.</li><li><strong>Connect to Spinnaker</strong>: Toggle on to propagate the change into the CD Tool.</li></ul></span>",
   "ACCOUNTNAME":{
-    "TOOLTIP":"The name of the account to operate on",
+    "TOOLTIP":"User-defined account name for your GCR Docker registry access.",
     "VALIDATION_MESSAGE":{
       "noSpecialCharacters": "Account Name cannot contain special characters other than -",
       "cannotContainSpace":"Account Name cannot contain space",
@@ -1300,17 +1314,20 @@
     }
   },
   "REPOSITORIES":{
-    "TOOLTIP":"An optional list of repositories to cache images from",
+    "TOOLTIP":"An optional list of repositories to cache images from. If not provided, Spinnaker will try to read the list of accessible repositories from the registries _catalog endpoint. Example: library/ubuntu (Public repositories are prefixed with library/)",
     "VALIDATION_MESSAGE":{
       "cannotContainSpace":"Repository cannot contain space",
       "startingFromNumber": "Repository cannot start with numbers"
     }
   },
   "REGISTRYURL":{
-    "TOOLTIP":"The registry address you want to pull and deploy images from. For example:quay.io - Quay",
+    "TOOLTIP":"The registry URL from which you want to pull and deploy images. For example: https://quay.io - RedHat quay.io",
     "VALIDATION_MESSAGE":{
       "required":"Registry URL cannot be empty"
     }
+  },
+  "EMAIL":{
+    "TOOLTIP":"Users docker registry email. If no value is specified, the default value of fake.email@spinnaker.io will be used."
   },
   "GROUPMEMBERSHIP":{
     "TOOLTIP":"A user must be a member of at least one specified group in order to make changes to this account’s cloud resources",
@@ -1319,7 +1336,7 @@
     }
   },
   "AUTHENTICATIONTYPE":{
-    "TOOLTIP":"Select how the external resource confirms the user credentials",
+    "TOOLTIP":"Select an authentication type that corresponds to the connection credential parameter.",
     "VALIDATION_MESSAGE":{}
   },
   "TOKEN":{
@@ -1349,13 +1366,16 @@
       "required":"Host URL cannot be empty",
       "invalidUrl": "URL is invalid"
     }
+  },
+  "SPINNAKERTOGGLE":{
+    "TOOLTIP":"Toggle on to propagate the change into the CD Tool."
   }
 },
 "GITHUB":{
   "HEADER": "GitHub",
-  "BODY":"<span><p>GIT HUB integration can be used as a datasource for Approval Gate as well as to configure Spinnaker for GitHub.</p><p><strong>Fields</strong>:</p><ul class='helpTextUl'><li><strong>Account Name</strong>: User defined name for the GitHub Account<span class='noBr'>(Example: opsmx-github)</span></li><li><strong>Token</strong>: GitHub personal access token. You can find <a href='https://docs.github.com/en/authentication/keeping-your-account-and-data-secure/creating-a-personal-access-token' target='_blank'>here</a> how to generate personal access tokens. <span class='noBr'>(Example: ghp_ln1eJK4yuomnY6JREp72IDJC4Hq6Sm)</span></li><li><strong>User Name</strong>: GitHub User Name</li><li><strong>Connect to Spinnaker</strong>: Toggle to configure Spinnaker for GitHub</li><li><strong>Permissions</strong>: Enable/disable access to the GIT HUB account in Autopilot to specific usergroups</li></ul></span>",
+  "BODY":"<span><p>GITHUB integration can be used as a datasource for Approval Gate as well as to configure Spinnaker for GitHub.</p><p><strong>Fields</strong>:</p><ul class='helpTextUl'><li><strong>Account Name</strong>: User-defined account name for your GitHub access.<span class='noBr'>(Example: opsmx-github)</span></li><li><strong>URL</strong>: Github's host address, such as https://github.com</li><li><strong>API URL</strong>: Github's API endpoint host address, <span class='noBr'>such as https://api.github.com</span></li><li><strong>Token</strong>: GitHub personal access token. You can find <a href='https://docs.github.com/en/authentication/keeping-your-account-and-data-secure/creating-a-personal-access-token' target='_blank'>here</a> how to generate personal access tokens. <span class='noBr'>(Example: ghp_ln1eJK4yuomnY6JREp72IDJC4Hq6Sm)</span></li><li><strong>User Name</strong>: The GitHub username</li><li><strong>Connect to Spinnaker</strong>: Toggle to configure Spinnaker for GitHub</li><li><strong>Permissions</strong>: Enable/disable access to the GITHUB account in Autopilot to specific user groups</li></ul></span>",
   "ACCOUNTNAME":{
-    "TOOLTIP":"The name of the account to operate on",
+    "TOOLTIP":"User-defined account name for your GitHub access.",
     "VALIDATION_MESSAGE":{
       "noSpecialCharacters": "Account Name cannot contain special characters other than -",
       "cannotContainSpace":"Account Name cannot contain space",
@@ -1364,27 +1384,27 @@
     }
   },
   "HOSTURL":{
-    "TOOLTIP":"GitHub URL",
+    "TOOLTIP":"Github's host address, such as https://github.com",
     "VALIDATION_MESSAGE":{
       "required":"Host URL cannot be empty",
       "invalidUrl": "URL is invalid"
     }
   },
   "URL":{
-    "TOOLTIP":"GitHub API base URL. Eg. https://api.github.com",
+    "TOOLTIP":"Github's API endpoint host address, such as https://api.github.com",
     "VALIDATION_MESSAGE":{
       "required":"API URL cannot be empty",
       "invalidUrl": "URL is invalid"
     }
   },
   "TOKEN":{
-    "TOOLTIP":"GitHub token",
+    "TOOLTIP":"The user's token",
     "VALIDATION_MESSAGE":{
       "required":"Token cannot be empty"
     }
   },
   "USERNAME":{
-    "TOOLTIP":"GitHub username",
+    "TOOLTIP":"The GitHub username",
     "VALIDATION_MESSAGE":{
       "noSpecialCharacters": "User Name cannot contain special characters other than - and _",
       "cannotContainSpace":"User Name cannot contain space",
@@ -1399,9 +1419,9 @@
 },
 "GITLAB":{
   "HEADER": "GitLab",
-  "BODY":"",
+  "BODY":"<span><li><strong>Account Name</strong>: User-defined account name for your GitLab access.</li><li><strong>Host URL</strong>: GitLab's host address, such as https://gitlab.com</li><li><strong>Username</strong>: The GitLab server username </li><li><strong>Token</strong>: The user's personal access token. Please refer this document for generating tokens.</li></span>",
   "ACCOUNTNAME":{
-    "TOOLTIP":"User defined name for the GitLab account",
+    "TOOLTIP":"User-defined account name for your GitLab access.",
     "VALIDATION_MESSAGE":{
       "noSpecialCharacters": "Account Name cannot contain special characters other than -",
       "cannotContainSpace":"Account Name cannot contain space",
@@ -1410,7 +1430,7 @@
     }
   },
   "HOSTURL":{
-    "TOOLTIP":"GitLab Host URL",
+    "TOOLTIP":"GitLab's host address, such as https://gitlab.com",
     "VALIDATION_MESSAGE":{
       "required":"Host URL cannot be empty",
       "invalidUrl": "URL is invalid"
@@ -1436,13 +1456,16 @@
   "SPINNAKERTOGGLE":{
     "TOOLTIP":"Switch On this toggle to configure the resource in a gitops enabled Spinnaker instance",
     "VALIDATION_MESSAGE":{}
+  },
+  "USERNAME":{
+    "TOOLTIP":"The GitLab server username"
   }
 },
 "GITREPO":{
   "HEADER": "Git Repo",
-  "BODY": "",
+  "BODY": "<span><li><strong>Account Name</strong>: User-defined account name for your Git Repo access.</li><li><strong>Authentication Type</strong>: Select an authentication type that corresponds to the connection credential parameter. Recommended using the user token method.</li></span>",
   "ACCOUNTNAME":{
-    "TOOLTIP":"The name of the account to operate on",
+    "TOOLTIP":"User-defined account name for your Git Repo access.",
     "VALIDATION_MESSAGE":{
       "noSpecialCharacters": "Account Name cannot contain special characters other than -",
       "cannotContainSpace":"Account Name cannot contain space",
@@ -1458,7 +1481,7 @@
     }
   },
   "AUTHENTICATIONTYPE":{
-    "TOOLTIP":"Select how the external resource confirms the user credentials",
+    "TOOLTIP":"Select an authentication type that corresponds to the connection credential parameter. Recommended using the user token method.",
     "VALIDATION_MESSAGE":{}
   },
   "URL":{
@@ -1496,9 +1519,9 @@
 },
 "HELM":{
   "HEADER": "Helm",
-  "BODY": "",
+  "BODY": "<span><li><strong>Account Name</strong>: User-defined account name for target Helm repository access.</li><li><strong>Repository</strong>: Helm Chart Repository’s HTTP endpoint.</li><li><strong>Authentication Type</strong>: Select an authentication type that corresponds to the connection credential parameter.</li><li><strong>Connect to Spinnaker</strong>: Toggle ON to propagate the change to Spinnaker Toggle on to propagate the change into the CD Tool.</li></span>",
   "ACCOUNTNAME":{
-    "TOOLTIP":"The name of the account to operate on",
+    "TOOLTIP":"User-defined account name for target Helm repository access",
     "VALIDATION_MESSAGE":{
       "noSpecialCharacters": "Account Name cannot contain special characters other than -",
       "cannotContainSpace":"Account Name cannot contain space",
@@ -1507,7 +1530,7 @@
     }
   },
   "REPOSITORY":{
-    "TOOLTIP":"URL of the Helm Chart Repository",
+    "TOOLTIP":"Helm Chart Repository’s HTTP endpoint",
     "VALIDATION_MESSAGE":{
       "required":"URL cannot be empty",
       "invalidUrl": "URL is invalid"
@@ -1520,7 +1543,7 @@
     }
   },
   "AUTHENTICATIONTYPE":{
-    "TOOLTIP":"Select how the external resource confirms the user credentials",
+    "TOOLTIP":"Select an authentication type that corresponds to the connection credential parameter.",
     "VALIDATION_MESSAGE":{}
   },
   "TOKEN":{
@@ -1554,15 +1577,15 @@
     }
   },
   "SPINNAKERTOGGLE":{
-    "TOOLTIP":"Switch On this toggle to configure the resource in a gitops enabled Spinnaker instance",
+    "TOOLTIP":"Toggle on to propagate the change into the CD Tool.",
     "VALIDATION_MESSAGE":{}
   }
 },
 "HTTP":{
   "HEADER": "Http",
-  "BODY": "",
+  "BODY": "<span><li><strong>Account Name</strong>: User-defined account name for HTTP protocol-based artifacts</li><li><strong>Authentication Type</strong>: Select an authentication type that corresponds to the connection credential parameter.</li><li><strong>Connect to Spinnaker</strong>: Toggle on to propagate the change into the CD Tool.</li></span>",
   "ACCOUNTNAME":{
-    "TOOLTIP":"The name of the account to operate on",
+    "TOOLTIP":"User-defined account name for HTTP protocol-based artifacts",
     "VALIDATION_MESSAGE":{
       "noSpecialCharacters": "Account Name cannot contain special characters other than -",
       "cannotContainSpace":"Account Name cannot contain space",
@@ -1572,7 +1595,7 @@
   },
 
   "AUTHENTICATIONTYPE":{
-    "TOOLTIP":"Select how the external resource confirms the user credentials",
+    "TOOLTIP":"Select an authentication type that corresponds to the connection credential parameter.",
     "VALIDATION_MESSAGE":{}
   },
   "TOKEN":{
@@ -1606,15 +1629,15 @@
     }
   },
   "SPINNAKERTOGGLE":{
-    "TOOLTIP":"Switch On this toggle to configure the resource in a gitops enabled Spinnaker instance",
+    "TOOLTIP":"Toggle on to propagate the change into the CD Tool.",
     "VALIDATION_MESSAGE":{}
   }
 },
 "GCS":{
   "HEADER": "GCS",
-  "BODY": "",
+  "BODY": "<span><li><strong>Account Name</strong>: User-defined account name for your Elasticsearch access.</li><li><strong>Endpoint</strong>: Elasticsearch host address, from which you access the Elasticsearch </li><li><strong>Username</strong>: Elasticsearch username </li><li><strong>Password</strong>: The Elasticsearch password</li><li><strong>Kibana Endpoint</strong>: Elasticsearch Kibana host address, from which you access the Elasticsearch Kibana</li><li><strong>Kibana username</strong>: Elasticsearch Kibana username</li><li><strong>Kibana Password</strong>: Elasticsearch Kibana password </li></span>",
   "ACCOUNTNAME":{
-    "TOOLTIP":"The name of the account to operate on",
+    "TOOLTIP":"User-defined account name for your Google Cloud Storage access.",
     "VALIDATION_MESSAGE":{
       "noSpecialCharacters": "Account Name cannot contain special characters other than -",
       "cannotContainSpace":"Account Name cannot contain space",
@@ -1623,24 +1646,24 @@
     }
   },
   "AUTHENTICATIONTYPE":{
-    "TOOLTIP":"Select how the external resource confirms the user credentials",
+    "TOOLTIP":"Select an authentication type that corresponds to the connection credential parameter.",
     "VALIDATION_MESSAGE":{}
   },
   "FILE": {
-    "TOOLTIP": "JSON service account that Spinnaker will use as credentials",
+    "TOOLTIP": "Configures Google service account’s json file",
     "VALIDATION_MESSAGE": {
     }
   },
   "SPINNAKERTOGGLE":{
-    "TOOLTIP":"Switch On this toggle to configure the resource in a gitops enabled Spinnaker instance",
+    "TOOLTIP":"Toggle on to propagate the change into the CD Tool.",
     "VALIDATION_MESSAGE":{}
   }
 },
 "ECR":{
   "HEADER": "ECR",
-  "BODY": "",
+  "BODY": "<span><p><strong>Fields</strong>:</p><ul class='helpTextUl'><li><strong>Account Name</strong>: User-defined account name for your ECR Docker registry access.</li><li><strong>Registry URL</strong>: The registry URL from which you want to pull and deploy images. <span class='noBr'> For example:https://aws_account_id.dkr.ecr.region.amazonaws.com</span></li><li><strong>Email</strong>: Users docker registry email. If no value is specified, the default value of fake.email@spinnaker.io will be used.</li><li><strong>Repositories</strong>: An optional list of repositories to cache images from. If not provided, Spinnaker will try to read the list of accessible repositories from the registries _catalog endpoint. <span class='noBr'> Example: library/ubuntu (Public repositories are prefixed with library/)</span></li><li><strong>Authentication Type</strong>: Select an authentication type that corresponds to the connection credential parameter.</li><li><strong>Connect to Spinnaker</strong>: Toggle on to propagate the change into the CD Tool.</li></ul></span>",
   "ACCOUNTNAME":{
-    "TOOLTIP":"The name of the account to operate on",
+    "TOOLTIP":"User-defined account name for your ECR Docker registry access.",
     "VALIDATION_MESSAGE":{
       "noSpecialCharacters": "Account Name cannot contain special characters other than -",
       "cannotContainSpace":"Account Name cannot contain space",
@@ -1649,14 +1672,14 @@
     }
   },
   "REPOSITORIES":{
-    "TOOLTIP":"An optional list of repositories to cache images from",
+    "TOOLTIP":"Users docker registry email. If no value is specified, the default value of fake.email@spinnaker.io will be used.",
     "VALIDATION_MESSAGE":{
       "cannotContainSpace":"Repository cannot contain space",
       "startingFromNumber": "Repository cannot start with numbers"
     }
   },
   "REGISTRYURL":{
-    "TOOLTIP":"The registry address you want to pull and deploy images from. For example: gcr.io",
+    "TOOLTIP":"The registry URL from which you want to pull and deploy images. For example:https://aws_account_id.dkr.ecr.region.amazonaws.com ",
     "VALIDATION_MESSAGE":{
     }
   },
@@ -1670,14 +1693,14 @@
     "TOOLTIP": "AWS region"
   },
   "EMAIL":{
-    "TOOLTIP":"Your docker registry email",
+    "TOOLTIP":"An optional list of repositories to cache images from. If not provided, Spinnaker will try to read the list of accessible repositories from the registries _catalog endpoint. Example: library/ubuntu (Public repositories are prefixed with library/)",
     "VALIDATION_MESSAGE":{
       "email":"Email Id is invalid",
       "required":"Email Id cannot be empty"
     }
   },
   "AUTHENTICATIONTYPE":{
-    "TOOLTIP":"Select how the external resource confirms the user credentials",
+    "TOOLTIP":"Select an authentication type that corresponds to the connection credential parameter.",
     "VALIDATION_MESSAGE":{}
   },
   "TOKEN":{
@@ -1711,15 +1734,15 @@
     }
   },
   "SPINNAKERTOGGLE":{
-    "TOOLTIP":"Switch On this toggle to configure the resource in a gitops enabled Spinnaker instance",
+    "TOOLTIP":"Toggle on to propagate the change into the CD Tool.",
     "VALIDATION_MESSAGE":{}
   }
 },
 "PUBSUB":{
   "HEADER": "PUBSUB",
-  "BODY": "",
+  "BODY": "<span><li><strong>Account Name</strong>: User-defined account name for your Google Cloud Pub/Sub access.</li></span>",
   "ACCOUNTNAME":{
-    "TOOLTIP":"The name of the account to operate on",
+    "TOOLTIP":"User-defined account name for your Google Cloud Pub/Sub access.",
     "VALIDATION_MESSAGE":{
       "noSpecialCharacters": "Account Name cannot contain special characters other than -",
       "cannotContainSpace":"Account Name cannot contain space",
@@ -1819,9 +1842,9 @@
 },
 "GCR":{
   "HEADER": "GCR",
-  "BODY": "",
+  "BODY": "<span><p><strong>Fields</strong>:</p><ul class='helpTextUl'><li><strong>Account Name</strong>: User-defined account name for your GCR Docker registry access.</li><li><strong>Registry URL</strong>: The registry URL from which you want to pull and deploy images. <span class='noBr'> For example: https://gcr.io - Global GCR, https://[us|eu|asia].gcr.io - Regional GCR</span></li><li><strong>Email</strong>: Users docker registry email. If no value is specified, the default value of fake.email@spinnaker.io will be used.</li><li><strong>Repositories</strong>: An optional list of repositories to cache images from. If not provided, Spinnaker will try to read the list of accessible repositories from the registries _catalog endpoint. <span class='noBr'> Example: library/ubuntu (Public repositories are prefixed with library/)</span></li><li><strong>Authentication Type</strong>: Select an authentication type that corresponds to the connection credential parameter.</li><li><strong>Connect to Spinnaker</strong>: Toggle on to propagate the change into the CD Tool.</li></ul></span>",
   "ACCOUNTNAME":{
-    "TOOLTIP":"The name of the account to operate on",
+    "TOOLTIP":"User-defined account name for your GCR Docker registry access.",
     "VALIDATION_MESSAGE":{
       "noSpecialCharacters": "Account Name cannot contain special characters other than -",
       "cannotContainSpace":"Account Name cannot contain space",
@@ -1830,18 +1853,18 @@
     }
   },
   "AUTHENTICATIONTYPE":{
-    "TOOLTIP":"Select how the external resource confirms the user credentials",
+    "TOOLTIP":"Select an authentication type that corresponds to the connection credential parameter.",
     "VALIDATION_MESSAGE":{}
   },
   "REPOSITORIES":{
-    "TOOLTIP":"An optional list of repositories to cache images from",
+    "TOOLTIP":"An optional list of repositories to cache images from. If not provided, Spinnaker will try to read the list of accessible repositories from the registries _catalog endpoint. Example: library/ubuntu (Public repositories are prefixed with library/)",
     "VALIDATION_MESSAGE":{
       "cannotContainSpace":"Repository cannot contain space",
       "startingFromNumber": "Repository cannot start with numbers"
     }
   },
   "REGISTRYURL":{
-    "TOOLTIP":"The registry address you want to pull and deploy images from. For example: gcr.io",
+    "TOOLTIP":"The registry URL from which you want to pull and deploy images. For example: https://gcr.io - Global GCR, https://[us|eu|asia].gcr.io - Regional GCR",
     "VALIDATION_MESSAGE":{
     }
   },
@@ -1852,7 +1875,7 @@
     }
   },
   "EMAIL":{
-    "TOOLTIP":"Your docker registry email",
+    "TOOLTIP":"Users docker registry email. If no value is specified, the default value of fake.email@spinnaker.io will be used.",
     "VALIDATION_MESSAGE":{
       "email":"Email Id is invalid",
       "required":"Email Id cannot be empty"
@@ -1896,7 +1919,7 @@
     }
   },
   "SPINNAKERTOGGLE":{
-    "TOOLTIP":"Switch On this toggle to configure the resource in a gitops enabled Spinnaker instance",
+    "TOOLTIP":"Toggle on to propagate the change into the CD Tool.",
     "VALIDATION_MESSAGE":{}
   }
 },
@@ -1947,9 +1970,9 @@
   },
   "JENKINS":{
     "HEADER":"Jenkins",
-    "BODY":"<span><p>Jenkins integration can be used as a datasource for Approval Gate as well as to configure Spinnaker for Jenkins.</p><p><strong>Fields</strong>:</p><ul class='helpTextUl'><li><strong>Account Name</strong>: User defined name for the Jenkins Account <span class='noBr'>(Example: opsmx-jenkins)</span></li><li><strong>Host URL</strong>: Jenkins URL <span class='noBr'>(Example: https://xyz.my-jenkins.com/jenkins)</span></li><li><strong>Authentication Type</strong>: can be Token or User Name/Password    </li><li><strong>Token</strong>: Jenkins personal access token. You can find <a href='https://www.jenkins.io/doc/book/using/using-credentials/' target='_blank'>here</a> how to generate personal access tokens. <span>(Example: 77d67609a841b1811a114b7fbfa109b3c2)</span></li><li><strong>User Name</strong>: Jenkins User Name</li><li><strong>Password</strong>: Jenkins Password</li><li><strong>Connect to Spinnaker</strong>: Toggle to configure Spinnaker for Jenkins</li><li><strong>Permissions</strong>: Enable/disable access to the Jenkins account in Autopilot to specific usergroups</li></ul></span>",
+    "BODY":"<span><p>Jenkins integration can be used as a datasource for Approval Gate as well as to configure Spinnaker for Jenkins.</p><p><strong>Fields</strong>:</p><ul class='helpTextUl'><li><strong>Account Name</strong>: User-defined account name for your Jenkins access. <span class='noBr'>(Example: opsmx-jenkins)</span></li><li><strong>Host URL</strong>: Jenkins host address, <span class='noBr'>such as https://jenkins.opsmx.net</span></li><li><strong>Authentication Type</strong>: Select an authentication type that corresponds to the connection credential parameter. It is preferable to use token authentication with username and token. </li><li><strong>Token</strong>: Jenkins personal access token. You can find <a href='https://www.jenkins.io/doc/book/using/using-credentials/' target='_blank'>here</a> how to generate personal access tokens. <span>(Example: 77d67609a841b1811a114b7fbfa109b3c2)</span></li><li><strong>CSRF</strong>: Recommended to toggle on the CSRF (Cross-Site Request Forgery) flag</li><li><strong>User Name</strong>: Jenkins User Name</li><li><strong>Password</strong>: Jenkins Password</li><li><strong>Connect to Spinnaker</strong>: Toggle to configure Spinnaker for Jenkins</li><li><strong>Permissions</strong>: Enable/disable access to the Jenkins account in Autopilot to specific user groups</li></ul></span>",
     "ACCOUNTNAME":{
-      "TOOLTIP":"The name of the account to operate on",
+      "TOOLTIP":"User-defined account name for your Jenkins access.",
       "VALIDATION_MESSAGE":{
       "noSpecialCharacters": "Account Name cannot contain special characters other than -",
       "cannotContainSpace":"Account Name cannot contain space",
@@ -1958,14 +1981,18 @@
     }
     },
     "HOSTURL":{
-      "TOOLTIP":"Jenkins URL",
+      "TOOLTIP":"Jenkins host address, such as https://jenkins.opsmx.net",
       "VALIDATION_MESSAGE":{
         "required":"Host URL cannot be empty",
         "invalidUrl": "URL is invalid"
       }
     },
     "AUTHENTICATIONTYPE":{
-      "TOOLTIP":"Select how the external resource confirms the user credentials",
+      "TOOLTIP":"Select an authentication type that corresponds to the connection credential parameter. It is preferable to use token authentication with username and token.",
+      "VALIDATION_MESSAGE":{}
+    },
+    "CSRFFLAG":{
+      "TOOLTIP":"Recommended to toggle on the CSRF (Cross-Site Request Forgery) flag.",
       "VALIDATION_MESSAGE":{}
     },
     "TOKEN":{
@@ -2173,9 +2200,9 @@
   },
   "ELASTICSEARCH":{
     "HEADER": "Elasticsearch",
-    "BODY":"",
+    "BODY":"<span><li><strong>Account Name</strong>: User-defined account name for your Elasticsearch access.</li><li><strong>Endpoint</strong>: Elasticsearch host address, from which you access the Elasticsearch</li><li><strong>Username</strong>: Elasticsearch username </li><li><strong>Password</strong>: Elasticsearch password</li><li><strong>Kibana Endpoint</strong>: Elasticsearch Kibana host address, from which you access the Elasticsearch Kibana</li><li><strong>Kibana username</strong>: Elasticsearch Kibana username</li><li><strong>Kibana Password</strong>: Elasticsearch Kibana password</li><span>",
     "ACCOUNTNAME":{
-      "TOOLTIP":"User defined name for the Elasticsearch account",
+      "TOOLTIP":"User-defined account name for your Elasticsearch access.",
       "VALIDATION_MESSAGE":{
       "noSpecialCharacters": "Account Name cannot contain special characters other than -",
       "cannotContainSpace":"Account Name cannot contain space",
@@ -2184,14 +2211,14 @@
     }
     },
     "ENDPOINT":{
-      "TOOLTIP":"ElasticSearch End Point",
+      "TOOLTIP":"Elasticsearch host address, from which you access the Elasticsearch",
       "VALIDATION_MESSAGE":{
         "required":"Elastic End Point cannot be empty",
         "invalidUrl": "URL is invalid"
       }
     },
     "USERNAME":{
-      "TOOLTIP":"ElasticSearch User Name",
+      "TOOLTIP":"Elasticsearch username ",
       "VALIDATION_MESSAGE":{
         "noSpecialCharacters": "User Name cannot contain special characters other than - and _",
         "cannotContainSpace":"User Name cannot contain space",
@@ -2199,20 +2226,20 @@
       }
     },
     "PASSWORD":{
-      "TOOLTIP":"ElasticSearch Password",
+      "TOOLTIP":"Elasticsearch password",
       "VALIDATION_MESSAGE":{
         "required":"Password cannot be empty"
       }
     },
     "KIBANAENDPOINT":{
-      "TOOLTIP":"ElasticSearch Kibana End Point",
+      "TOOLTIP":"Elasticsearch Kibana host address, from which you access the Elasticsearch Kibana",
       "VALIDATION_MESSAGE":{
         "required":"Kibana End Point cannot be empty",
         "invalidUrl": "URL is invalid"
       }
     },
     "KIBANAUSERNAME":{
-      "TOOLTIP":"ElasticSearch Kibana User Name",
+      "TOOLTIP":"Elasticsearch Kibana username",
       "VALIDATION_MESSAGE":{
         "noSpecialCharacters": "Kibana User Name cannot contain special characters other than - and _",
         "cannotContainSpace":"Kibana User Name cannot contain space",
@@ -2221,7 +2248,7 @@
       }
     },
     "KIBANAPASSWORD":{
-      "TOOLTIP":"ElasticSearch Kibana Password",
+      "TOOLTIP":"Elasticsearch Kibana password",
       "VALIDATION_MESSAGE":{
         "required":"Kibana Password cannot be empty"
       }
@@ -2229,9 +2256,9 @@
   },
     "GRAPHITE":{
       "HEADER": "Graphite",
-      "BODY":"",
+      "BODY":"<span><li><strong>Account Name</strong>: User-defined account name for your Graphite access.</li><li><strong>Endpoint</strong>: Graphite host address, from which you access the Graphite </li></span>",
       "ACCOUNTNAME":{
-        "TOOLTIP":"User defined name for the Graphite account",
+        "TOOLTIP":"User-defined account name for your Graphite access.",
         "VALIDATION_MESSAGE":{
       "noSpecialCharacters": "Account Name cannot contain special characters other than -",
       "cannotContainSpace":"Account Name cannot contain space",
@@ -2240,7 +2267,7 @@
     }
       },
       "URL":{
-        "TOOLTIP":"Graphite End Point",
+        "TOOLTIP":"Graphite host address, from which you access the Graphite ",
         "VALIDATION_MESSAGE":{
           "required":"End Point cannot be empty",
           "invalidUrl": "URL is invalid"
@@ -2249,9 +2276,9 @@
     },
     "GRAYLOG":{
       "HEADER": "GRAYLOG",
-      "BODY":"",
+      "BODY":"<span><li><strong>Account Name</strong>: User-defined account name for your Graylog access</li><li><strong>Endpoint</strong>: Graylog host address, from which you access the Graylog </li><li><strong>Token</strong>: The user's token </li></span>",
       "ACCOUNTNAME":{
-        "TOOLTIP":"User defined name for the GRAYLOG account",
+        "TOOLTIP":"User-defined account name for your Graylog access.",
         "VALIDATION_MESSAGE":{
       "noSpecialCharacters": "Account Name cannot contain special characters other than -",
       "cannotContainSpace":"Account Name cannot contain space",
@@ -2260,7 +2287,7 @@
     }
       },
       "ENDPOINT":{
-        "TOOLTIP":"GrayLog End Point",
+        "TOOLTIP":"Graylog host address, from which you access the Graylog ",
         "VALIDATION_MESSAGE":{
           "required":"End Point cannot be empty",
           "invalidUrl": "URL is invalid"
@@ -2275,9 +2302,9 @@
     },
     "NEWRELIC":{
       "HEADER": "New Relic",
-      "BODY":"",
+      "BODY":"<span><li><strong>Account Name</strong>: User-defined account name for your NewRelic access.</li><li><strong>Api Key</strong>: The user's token to authenticate with Newrelic</li><li><strong>Application Key</strong>: The application key identifies which account the incoming data belongs to.</li><li><strong>Account ID</strong>: Provide account ID to identify the account </li><li><strong>Query Key</strong>: Provide a query key to filter the data </li></span>",
       "ACCOUNTNAME":{
-        "TOOLTIP":"User defined name for the New Relic account",
+        "TOOLTIP":"User-defined account name for your NewRelic access.",
         "VALIDATION_MESSAGE":{
       "noSpecialCharacters": "Account Name cannot contain special characters other than -",
       "cannotContainSpace":"Account Name cannot contain space",
@@ -2292,29 +2319,32 @@
         }
       },
       "APPLICATIONKEY":{
-        "TOOLTIP":"NewRelic Application Key",
+        "TOOLTIP":"The application key identifies which account the incoming data belongs to.",
         "VALIDATION_MESSAGE":{
           "required":"Token cannot be empty"
         }
       },
       "ACCOUNTID":{
-        "TOOLTIP":"NewRelic Account Id",
+        "TOOLTIP":"Provide account ID to identify the account ",
         "VALIDATION_MESSAGE":{
           "required":"Token cannot be empty"
         }
       },
       "QUERYKEY":{
-        "TOOLTIP":"NewRelic Query Key",
+        "TOOLTIP":"Provide a query key to filter the data ",
         "VALIDATION_MESSAGE":{
           "required":"Token cannot be empty"
         }
+      },
+      "TOKEN":{
+        "TOOLTIP":"The user's token"
       }
     },
     "PROMETHEUS":{
       "HEADER": "Prometheus",
-      "BODY":"",
+      "BODY":"<span><li><strong>Account Name</strong>: User-defined account name for your Prometheus access.</li><li><strong>Endpoint</strong>: Prometheus host address, from which you access the Prometheus</li><li><strong>Username</strong>: Prometheus username</li><li><strong>Password</strong>: Prometheus password</li></span>",
       "ACCOUNTNAME":{
-        "TOOLTIP":"User defined name for the Prometheus account",
+        "TOOLTIP":"User-defined account name for your Prometheus access.",
         "VALIDATION_MESSAGE":{
       "noSpecialCharacters": "Account Name cannot contain special characters other than -",
       "cannotContainSpace":"Account Name cannot contain space",
@@ -2323,14 +2353,14 @@
     }
       },
       "ENDPOINT":{
-        "TOOLTIP":"Prometheus End Point",
+        "TOOLTIP":"Prometheus host address, from which you access the Prometheus",
         "VALIDATION_MESSAGE":{
           "required":"End Point cannot be empty",
           "invalidUrl": "URL is invalid"
         }
       },
       "USERNAME":{
-        "TOOLTIP":"Prometheus User Name",
+        "TOOLTIP":"Prometheus username",
         "VALIDATION_MESSAGE":{
           "noSpecialCharacters": "User Name cannot contain special characters other than - and _",
           "cannotContainSpace":"User Name cannot contain space",
@@ -2339,7 +2369,7 @@
         }
       },
       "PASSWORD":{
-        "TOOLTIP":"Prometheus Password",
+        "TOOLTIP":"Prometheus password",
         "VALIDATION_MESSAGE":{
           "required":"Password cannot be empty"
         }
@@ -2347,9 +2377,9 @@
     },
     "SPLUNK":{
       "HEADER": "Splunk",
-      "BODY":"",
+      "BODY":"<span><li><strong>AccountName</strong>: User-defined account name for your Splunk access.</li><li><strong>Splunk Url</strong>: Splunk host address, from which you access the Splunk</li><li><strong>Username</strong>: The Splunk's username</li><li><strong>Username</strong>: The Splunk's username</li><li><strong>Password</strong>: Splunk's password</li><li><strong>Splunk DashBoard Url </strong>: Splunk Dashboard URL that you want to access </li><span>",
       "ACCOUNTNAME":{
-        "TOOLTIP":"User defined name for the Splunk account",
+        "TOOLTIP":"User-defined account name for your Splunk access.",
         "VALIDATION_MESSAGE":{
       "noSpecialCharacters": "Account Name cannot contain special characters other than -",
       "cannotContainSpace":"Account Name cannot contain space",
@@ -2358,20 +2388,20 @@
     }
       },
       "END_POINT":{
-        "TOOLTIP":"Splunk Splunk URL",
+        "TOOLTIP":"Splunk host address, from which you access the Splunk",
         "VALIDATION_MESSAGE":{
           "required":"Splunk Url  cannot be empty",
           "invalidUrl": "URL is invalid"
         }
       },
       "PASSWORD":{
-        "TOOLTIP":"Splunk Password",
+        "TOOLTIP":"Splunk's password",
         "VALIDATION_MESSAGE":{
           "required":"Password cannot be empty"
         }
       },
       "USER_NAME":{
-        "TOOLTIP":"Splunk User Name",
+        "TOOLTIP":"Splunk's user name",
         "VALIDATION_MESSAGE":{
       "noSpecialCharacters": "Account Name cannot contain special characters other than -",
       "cannotContainSpace":"Account Name cannot contain space",
@@ -2380,7 +2410,7 @@
     }
       },
       "DASHBOARD_ENDPOINT":{
-        "TOOLTIP":"Splunk DashBoard URL",
+        "TOOLTIP":"Splunk Dashboard URL that you want to access ",
         "VALIDATION_MESSAGE":{
           "required":"Splunk DashBoard Url cannot be empty",
           "invalidUrl": "URL is invalid"
@@ -2443,9 +2473,9 @@
     
     "VMWARETANZU":{
       "HEADER": "VMWare Tanzu Observability",
-      "BODY":"",
+      "BODY":"<span><li><strong>Account Name</strong>: User-defined account name for your VMWare Tanzu access</li><li><strong>Endpoint</strong>: VMWare Tanzu host address, from which you access the VMWare Tanzu</li><li><strong>Email</strong>: Provide the user's registered and authorized email</li><li><strong>API token</strong>: The user's API token </li></span>",
       "ACCOUNTNAME":{
-        "TOOLTIP":"User defined name for the VMWare Tanzu Observability account",
+        "TOOLTIP":"User-defined account name for your VMWare Tanzu access",
         "VALIDATION_MESSAGE":{
       "noSpecialCharacters": "Account Name cannot contain special characters other than -",
       "cannotContainSpace":"Account Name cannot contain space",
@@ -2454,21 +2484,21 @@
     }
       },
       "END_POINT":{
-        "TOOLTIP":"VMWare Tanzu Observability URL",
+        "TOOLTIP":"VMWare Tanzu host address, from which you access the VMWare Tanzu",
         "VALIDATION_MESSAGE":{
           "required":"Url cannot be empty",
           "invalidUrl": "URL is invalid"
         }
       },
       "EMAIL":{
-        "TOOLTIP":"VMWare Tanzu Observability Email Id",
+        "TOOLTIP":"Provide the user's registered and authorized email",
         "VALIDATION_MESSAGE":{
           "email":"Email Id is invalid",
           "required":"Email Id cannot be empty"
         }
       },
       "API_TOKEN":{
-        "TOOLTIP":"VMWare Tanzu Observability Personal Access Token",
+        "TOOLTIP":"The user's API token ",
         "VALIDATION_MESSAGE":{
           "required":"Api Token cannot be empty"
         }
@@ -2480,7 +2510,7 @@
     },
     "SLACK":{
       "HEADER": "Slack",
-      "BODY":"",
+      "BODY":"<span><li><strong>Account Name</strong>: User-defined account name for your Slack access.</li><li><strong>BotName</strong>: Provide the bot name where you want to receive notifications in slack</li><li><strong>Token</strong>: The user's token to authenticate with slack.</li></span>",
       "ACCOUNTNAME":{
         "TOOLTIP":"User defined name for the Slack account",
         "VALIDATION_MESSAGE":{
@@ -2512,9 +2542,9 @@
     },
     "OPA":{
       "HEADER": "OPA",
-      "BODY":"",
+      "BODY":"<span><li><strong>Account Name</strong>: User-defined account name for your OPA server access.</li><li><strong>EndPoint</strong>: OPA server host address, <span>such as https://opa:8181</span></li></span>",
       "ACCOUNTNAME":{
-        "TOOLTIP":"User defined name for the OPA account",
+        "TOOLTIP":"User-defined account name for your OPA server access",
         "VALIDATION_MESSAGE":{
       "noSpecialCharacters": "Account Name cannot contain special characters other than -",
       "cannotContainSpace":"Account Name cannot contain space",
@@ -2523,7 +2553,7 @@
     }
       },
       "ENDPOINT":{
-        "TOOLTIP":"OPA End Point",
+        "TOOLTIP":"OPA server host address, such as https://opa:8181",
         "VALIDATION_MESSAGE":{
           "required":"End Point cannot be empty",
           "invalidUrl": "URL is invalid"
@@ -2532,9 +2562,9 @@
     },
     "AQUAWAVE":{
       "HEADER": "Aqua Wave",
-      "BODY":"",
+      "BODY":"<span><li><strong>Account Name</strong>: User-defined account name for your Aqua Wave access.</li><li><strong>Username</strong>: The Aquawave username</li><li><strong>Token</strong>: The user's token.</li></span>",
       "ACCOUNTNAME":{
-        "TOOLTIP":"User defined name for the Aqua Wave account",
+        "TOOLTIP":"User-defined account name for your Aqua Wave access.",
         "VALIDATION_MESSAGE":{
       "noSpecialCharacters": "Account Name cannot contain special characters other than -",
       "cannotContainSpace":"Account Name cannot contain space",
@@ -2543,7 +2573,7 @@
     }
       },
       "USERNAME":{
-        "TOOLTIP":"Aqua Wave User Name",
+        "TOOLTIP":"The Aquawave username",
         "VALIDATION_MESSAGE":{
           "noSpecialCharacters": "User Name cannot contain special characters other than - and _",
           "cannotContainSpace":"User Name cannot contain space",
@@ -2560,9 +2590,9 @@
     },
     "APPSCAN":{
       "HEADER": "HCL AppScan",
-      "BODY":"",
+      "BODY":"<span><li><strong>Account Name</strong>: User-defined account name for your HCL AppScan access.</li><li><strong>Token</strong>: The user's token</li></span>",
       "ACCOUNTNAME":{
-        "TOOLTIP":"User defined name for the HCL AppScan account",
+        "TOOLTIP":"User-defined account name for your HCL AppScan access.",
         "VALIDATION_MESSAGE":{
       "noSpecialCharacters": "Account Name cannot contain special characters other than -",
       "cannotContainSpace":"Account Name cannot contain space",
@@ -2571,7 +2601,7 @@
     }
       },
       "TOKEN":{
-        "TOOLTIP":"Appscan Personal Access Token",
+        "TOOLTIP":"The user's personal access token ",
         "VALIDATION_MESSAGE":{
           "required":"Token cannot be empty"
         }
@@ -2579,9 +2609,9 @@
     },
     "JFROG":{
       "HEADER": "JFrog XRay Scanning",
-      "BODY":"",
+      "BODY":"<span><li><strong>Account Name</strong>: User-defined account name for your Jfrog Xray access.</li><li><strong>Endpoint</strong>: Your Jfrog Xray host address, from which you access the Jfrog Xray instance</li><li><strong>Token</strong>: The user's token.</li></span>",
       "ACCOUNTNAME":{
-        "TOOLTIP":"User defined name for the JFrog XRay Scanning account",
+        "TOOLTIP":"User-defined account name for your Jfrog Xray access.",
         "VALIDATION_MESSAGE":{
       "noSpecialCharacters": "Account Name cannot contain special characters other than -",
       "cannotContainSpace":"Account Name cannot contain space",
@@ -2590,14 +2620,14 @@
     }
       },
       "ENDPOINT":{
-        "TOOLTIP":"JFrog URL",
+        "TOOLTIP":"Jfrog Xray host address, from which you access the Jfrog Xray instance",
         "VALIDATION_MESSAGE":{
           "required":"Endpoint cannot be empty",
           "invalidUrl": "URL is invalid"
         }
       },
       "TOKEN":{
-        "TOOLTIP":"JFrog Personal Access Token",
+        "TOOLTIP":"The user's token from jfrog xray to authenticate",
         "VALIDATION_MESSAGE":{
           "required":"Token cannot be empty"
         }
@@ -2605,9 +2635,9 @@
     },
     "PRISMACLOUD":{
       "HEADER": "Prisma Cloud",
-      "BODY":"",
+      "BODY":"<span><li><strong>Account Name</strong>: User-defined account name for your Prisma Cloud access.</li><li><strong>Host Url</strong>: Your Prisma Cloud host address, from which you access the Prisma Cloud instance</li><li><strong>Application Url</strong>: </li><li><strong>Access Key ID</strong>: The user's access key who has access to the Prisma Cloud. If you are unsure, consult your Prisma Cloud administrator to get an access key.</li><li><strong>Secret key</strong>: The user's secret key</li></span>",
       "ACCOUNTNAME":{
-        "TOOLTIP":"User defined name for the Prisma Cloud account",
+        "TOOLTIP":"User-defined account name for your Prisma Cloud access.",
         "VALIDATION_MESSAGE":{
       "noSpecialCharacters": "Account Name cannot contain special characters other than -",
       "cannotContainSpace":"Account Name cannot contain space",
@@ -2616,7 +2646,7 @@
     }
       },
       "HOSTURL":{
-        "TOOLTIP":"Prisma Cloud Host URL",
+        "TOOLTIP":"Prisma Cloud host address, from which you access the Prisma Cloud instance",
         "VALIDATION_MESSAGE":{
           "required":"Host URL cannot be empty",
           "invalidUrl": "URL is invalid"
@@ -2630,13 +2660,13 @@
         }
       },
       "ACCESSKEYID":{
-        "TOOLTIP":"Prisma Cloud Access Key Id",
+        "TOOLTIP":"The user's access key who has access to the Prisma Cloud. If you are unsure, consult your Prisma Cloud administrator to get an access key.",
         "VALIDATION_MESSAGE":{
           "required":"Access Key Id cannot be empty"
         }
       },
       "SECRETKEY":{
-        "TOOLTIP":"Prisma Cloud Secret Key",
+        "TOOLTIP":"The user's secret key",
         "VALIDATION_MESSAGE":{
           "required":"Secret Key cannot be empty"
         }
@@ -2644,7 +2674,7 @@
     },
     "SONARQUBE":{
       "HEADER": "SonarQube",
-      "BODY":"",
+      "BODY":"<span><li><strong>Account Name</strong>: User-defined account name for your Sonarqube access. </li><li><strong>Host Url</strong>: host address, from which you access the Sonaqube instance</li><li><strong>Token</strong>: The user's token</li></span>",
       "ACCOUNTNAME":{
         "TOOLTIP":"User defined name for the SonarQube account",
         "VALIDATION_MESSAGE":{
@@ -2655,14 +2685,14 @@
     }
       },
       "HOSTURL":{
-        "TOOLTIP":"Sonarqube Host URL",
+        "TOOLTIP":"Sonarqube host address, from which you access the Sonaqube instance",
         "VALIDATION_MESSAGE":{
           "required":"Host URL cannot be empty",
           "invalidUrl": "URL is invalid"
         }
       },
       "TOKEN":{
-        "TOOLTIP":"Sonarqube Personal Access Token",
+        "TOOLTIP":"The user's token (it is optional)",
         "VALIDATION_MESSAGE":{
           "required":"Token cannot be empty"
         }
@@ -2672,7 +2702,7 @@
       "HEADER": "Autopilot",
       "BODY":"",
       "ACCOUNTNAME":{
-        "TOOLTIP":"User defined name for the Autopilot account",
+        "TOOLTIP":"User-defined account name for your Sonarqube access. ",
         "VALIDATION_MESSAGE":{
       "noSpecialCharacters": "Account Name cannot contain special characters other than -",
       "cannotContainSpace":"Account Name cannot contain space",
@@ -3161,4 +3191,3 @@
     }
   }
 }
-
