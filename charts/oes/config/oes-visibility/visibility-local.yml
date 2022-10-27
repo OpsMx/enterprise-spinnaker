@@ -74,6 +74,13 @@ autopilot:
 platform:
   service:
     url: http://oes-platform:8095
+auditservice:
+  enabled: true
+  name: auditservice
+  url: "http://oes-audit-service:8097"
+auditclientservice:
+  name: auditclientservice
+  url: "http://oes-audit-client:8098"
 
 datasource:
   secretManagement:
