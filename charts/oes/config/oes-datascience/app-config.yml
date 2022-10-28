@@ -16,7 +16,7 @@ OBJECT_STORAGE:
 POSTGRES:
       USERNAME: '{{ .Values.db.username }}'
       PASSWORD: '{{ .Values.db.password }}'
-      HOST: oes-db
+      HOST: {{ (split ":" (split "//" .Values.db.url)._1)._0 }}
       PORT: 5432
       DB: autopilotqueue
 

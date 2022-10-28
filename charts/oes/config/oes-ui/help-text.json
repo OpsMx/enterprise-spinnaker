@@ -1053,7 +1053,7 @@
   "REGION":{
     "TOOLTIP":"AWS region where the AWS S3 bucket is located",
     "VALIDATION_MESSAGE":{
-      "required":"S3 region cannot be empty"
+      "required":"Region cannot be empty"
     }
   },
   "APIENDPOINT":{
@@ -1073,7 +1073,7 @@
 },
 "ARTIFACTORY":{
   "HEADER": "Artifactory",
-  "BODY":"<span><p>JFrog Artifactory integration can be used as an Artifact source in Spinnaker and also a Data source for Approval-Gate.</p><p><strong>Fields</strong>:</p><ul class='helpTextUl'><li><strong>Account Name</strong>: User-defined account name for your Jfrog Artifactory access. The account name appears in Spinnaker as an Artifactory trigger type input. <span class='noBr'>(Example: opsmx-artifactory)</span></li><li><strong>Endpoint</strong>: The base URL of your Artifactory search is reachable at. <span class='noBr'>(Example: https://xyz.myjfrog.com)</span></li><li><strong>Repo</strong>: The Artifactory repo which needs to be searched</li><li><strong>Repo Type</strong>: The package type of repo in your Artifactory is to be searched. Default is Maven.</li><li><strong>Group Id</strong>: The group id in your Artifactory is to be searched</li><li><strong>Username</strong>: The Artifactory user's username for authentication</li><li><strong>Password</strong>: The Artifactory user's password for authentication</li><li><strong>Token</strong>: Artifactory personal access token. You can find <a href='https://www.jfrog.com/confluence/display/JFROG/Access+Tokens' target='_blank'>here</a> how to generate personal access tokens. <span class='autolinebreak'>(Example: ZlQDAwMFwvdXNlcnNcL21hZGh1a2FyIiwic2NwIjoiYXBwbGllZC1wZXJtaXNzaW9uc1wvYWRtaW4gYXBpOioiLCJhdWQiOlsiamZydEAqIiwiamZhY0AqIiwiamZldnmbWRAKiJdLCJpc3MiOiJqZmZlQDAAzNzY3MiwiaWF0IjoxNjI5ODY0ODcyLCJqdGkiOiI1ZWFiNjlhYi1hZDY0LTRjOGItOTMyZC0wMDAxMWZiZWU5YWIifQ.tzBgL3fQgZ1dwlLLS2UAT7G)</span></li><li><strong>Connect to Spinnaker</strong>: Toggle on to propagate the change into the CD Tool.</li><li><strong>Permissions</strong>: Enable or disable specific user groups' access to the Artifactory account in ISD.</li></ul></span>",
+  "BODY":"<span><p>JFrog Artifactory integration can be used as an Artifact source in Spinnaker and also a Data source for Approval-Gate.</p><p><strong>Fields</strong>:</p><ul class='helpTextUl'><li><strong>Account Name</strong>: User-defined account name for your Jfrog Artifactory access. The account name appears in Spinnaker as an Artifactory trigger type input.</li><li><strong>Endpoint</strong>: The base URL of your Artifactory search is reachable at. <span class='noBr'>(Example: https://xyz.my-jfrog.com)</span></li><li><strong>Repo</strong>: The Artifactory repo which needs to be searched</li><li><strong>Repo Type</strong>: The package type of repo in your Artifactory is to be searched. Default is Maven.</li><li><strong>Group Id</strong>: The group id in your Artifactory is to be searched</li><li><strong>Username</strong>: The Artifactory user's username for authentication</li><li><strong>Password</strong>: The Artifactory user's password for authentication</li><li><strong>Token</strong>: Artifactory personal access token. You can find <a href='https://www.jfrog.com/confluence/display/JFROG/Access+Tokens' target='_blank'>here</a> how to generate personal access tokens. <span class='autolinebreak'>(Example: ZlQDAwMFwvdXNlcnNcL21hZGh1a2FyIiwic2NwIjoiYXBwbGllZC1wZXJtaXNzaW9uc1wvYWRtaW4gYXBpOioiLCJhdWQiOlsiamZydEAqIiwiamZhY0AqIiwiamZldnmbWRAKiJdLCJpc3MiOiJqZmZlQDAAzNzY3MiwiaWF0IjoxNjI5ODY0ODcyLCJqdGkiOiI1ZWFiNjlhYi1hZDY0LTRjOGItOTMyZC0wMDAxMWZiZWU5YWIifQ.tzBgL3fQgZ1dwlLLS2UAT7G)</span></li><li><strong>Connect to Spinnaker</strong>: Toggle on to propagate the change into the CD Tool.</li><li><strong>Permissions</strong>: Enable or disable specific user groups' access to the Artifactory account in ISD.</li></ul></span>",
   "ACCOUNTNAME":{
     "TOOLTIP":"User-defined account name for your Jfrog Artifactory access. The account name appears in Spinnaker as an Artifactory trigger type input.",
     "VALIDATION_MESSAGE":{
@@ -1087,7 +1087,7 @@
     "TOOLTIP":"The base URL of your Artifactory search is reachable at",
     "VALIDATION_MESSAGE":{
       "required":"Endpoint cannot be empty",
-      "invalidUrl": "URL is invalid"
+      "invalidUrl": "Endpoint URL is invalid"
     }
   },
   "REPO":{ 
@@ -1121,7 +1121,7 @@
   "USERNAME":{
     "TOOLTIP":"The Artifactory user's username for authentication",
     "VALIDATION_MESSAGE":{
-      "required":"Username cannot be empty"
+      "required":"User Name cannot be empty"
     }
   },
   "PASSWORD":{
@@ -1151,14 +1151,14 @@
     "TOOLTIP":"BitBucket Cloud (SaaS) Web URL. It is usually https://bitbucket.org",
     "VALIDATION_MESSAGE":{
       "required":"Host URL cannot be empty",
-      "invalidUrl": "URL is invalid"
+      "invalidUrl": "Host URL is invalid"
     }
   },
   "APIURL":{
     "TOOLTIP":"Bitbucket API base URL. Eg. https://api.github.com",
     "VALIDATION_MESSAGE":{
       "required":"API URL cannot be empty",
-      "invalidUrl": "URL is invalid"
+      "invalidUrl": "API URL is invalid"
     }
   },
   "AUTHENTICATIONTYPE":{
@@ -1193,7 +1193,7 @@
 },
 "BITBUCKET_SERVER":{
   "HEADER": "Bitbucket Server",
-  "BODY":"<span><p>BitBucket Server integration can be used as a datasource for Approval Gate as well as to configure Spinnaker for BitBucket Server.</p><p><strong>Fields</strong>:</p><ul class='helpTextUl'><li><strong>Account Name</strong>: User-defined account name for your BitBucket Cloud access. <span class='noBr'>(Example: opsmx-bitbucket)</span></li><li><strong>Host URL</strong>: BitBucket Cloud (SaaS) Web URL. <span class='noBr'> It is usually https://bitbucket.org</span></li><li><strong>Authentication Type</strong>: Select one of the available options. If you are unsure, consult your BitBucket administrator to determine which authentication mechanism is used.</li><li><strong>Anonymous</strong>: No username or password is used. Access identity is anonymous.</li><li><strong>User Name</strong>: Bitbucket Server User Name</li><li><strong>Token</strong>: The user's username and access token This token is obtained from the Bitbucket user profile page. You can find <a href='https://confluence.atlassian.com/bitbucketserver/personal-access-tokens-939515499.html' target='_blank'>here</a> how to generate personal access tokens. <span class='noBr'>(Example: DjpMgHmwqUnIvvmljFgqGQ)</span></li><li><strong>Password</strong>: Bitbucket Server Password</li><li><strong>Connect to Spinnaker</strong>: Toggle on to propagate the change into the CD Tool.</li><li><strong>Permissions</strong>: Enable/disable access to the Bitbucket Server account in Autopilot to specific user groups</li></ul></span>",
+  "BODY":"<span><p>BitBucket Server integration can be used as a datasource for Approval Gate as well as to configure Spinnaker for BitBucket Server.</p><p><strong>Fields</strong>:</p><ul class='helpTextUl'><li><strong>Account Name</strong>: User-defined account name for your BitBucket Cloud access. <span class='noBr'>(Example: opsmx-bitbucket)</span></li><li><strong>Host URL</strong>: BitBucket Cloud (SaaS) Web URL. <span class='noBr'> It is usually https://bitbucket.org</span></li><li><strong>Authentication Type</strong>: Select one of the available options. If you are unsure, consult your BitBucket administrator to determine which authentication mechanism is used.</li><li><strong>Anonymous</strong>: No username or password is used. Access identity is anonymous.</li><li><strong>Token</strong>: The user's username and access token This token is obtained from the Bitbucket user profile page. You can find <a href='https://confluence.atlassian.com/bitbucketserver/personal-access-tokens-939515499.html' target='_blank'>here</a> how to generate personal access tokens. <span class='noBr'>(Example: DjpMgHmwqUnIvvmljFgqGQ)</span></li><li><strong>Username & Password </strong>: Accepts the user's username and password to connect to Bitbucket. Deprecated and not recommended.</li><li><strong>User Name</strong>: Bitbucket Server User Name</li><li><strong>Password</strong>: Bitbucket Server Password</li><li><strong>Connect to Spinnaker</strong>: Toggle on to propagate the change into the CD Tool.</li><li><strong>Permissions</strong>: Enable/disable access to the Bitbucket Server account in Autopilot to specific user groups</li></ul></span>",
   "ACCOUNTNAME":{
     "TOOLTIP":"User-defined account name for your BitBucket Cloud access.",
     "VALIDATION_MESSAGE":{
@@ -1207,7 +1207,7 @@
     "TOOLTIP":"BitBucket Cloud (SaaS) Web URL. It is usually https://bitbucket.org",
     "VALIDATION_MESSAGE":{
       "required":"Host URL cannot be empty",
-      "invalidUrl": "URL is invalid"
+      "invalidUrl": "Host URL is invalid"
     }
   },
   "AUTHENTICATIONTYPE":{
@@ -1252,6 +1252,21 @@
       "startingFromNumber": "Account Name cannot start with numbers"
     }
   },
+  "URL":{
+    "TOOLTIP":"The registry URL from which you want to pull and deploy images. DockerHub example: https://hub.docker.com",
+    "VALIDATION_MESSAGE": {
+  "required": "Registry URL cannot be empty"
+}
+  },
+"EMAIL":{
+  "TOOLTIP":"Users docker registry email. If no value is specified, the default value of fake.email@spinnaker.io will be used."
+},
+"REPOSITORIES":{
+"TOOLTIP":"An optional list of repositories to cache images from. If not provided, Spinnaker will try to read the list of accessible repositories from the registries _catalog endpoint. Example: library/ubuntu (Public repositories are prefixed with library/)"
+},
+"GROUPMEMBERSHIP":{
+  "TOOLTIP":""
+  },
   "AUTHENTICATIONTYPE":{
     "TOOLTIP":"Select an authentication type that corresponds to the connection credential parameter.",
     "VALIDATION_MESSAGE":{}
@@ -1281,24 +1296,12 @@
     "TOOLTIP":"Docker Registry Host URL",
     "VALIDATION_MESSAGE":{
       "required":"Host URL cannot be empty",
-      "invalidUrl": "URL is invalid"
+      "invalidUrl": "Host URL is invalid"
     }
   },
   "SPINNAKERTOGGLE":{
     "TOOLTIP":"Switch On this toggle to configure the resource in a gitops enabled Spinnaker instance",
     "VALIDATION_MESSAGE":{}
-  },
-  "REGISTRYURL":{
-    "TOOLTIP":"The registry URL from which you want to pull and deploy images. DockerHub example: https://hub.docker.com"
-  },
-  "EMAIL":{
-  "TOOLTIP":"Users docker registry email. If no value is specified, the default value of fake.email@spinnaker.io will be used."
-  },
-  "REPOSITORIES":{
-  "TOOLTIP":"An optional list of repositories to cache images from. If not provided, Spinnaker will try to read the list of accessible repositories from the registries _catalog endpoint. Example: library/ubuntu (Public repositories are prefixed with library/)"
-  },
-  "GROUPMEMBERSHIP":{
-    "TOOLTIP":""
   }
 },
 "OCR":{
@@ -1320,7 +1323,7 @@
       "startingFromNumber": "Repository cannot start with numbers"
     }
   },
-  "REGISTRYURL":{
+  "URL":{
     "TOOLTIP":"The registry URL from which you want to pull and deploy images. For example: https://quay.io - RedHat quay.io",
     "VALIDATION_MESSAGE":{
       "required":"Registry URL cannot be empty"
@@ -1364,7 +1367,7 @@
     "TOOLTIP":"Container Registry Host URL",
     "VALIDATION_MESSAGE":{
       "required":"Host URL cannot be empty",
-      "invalidUrl": "URL is invalid"
+      "invalidUrl": "Host URL is invalid"
     }
   },
   "SPINNAKERTOGGLE":{
@@ -1387,14 +1390,14 @@
     "TOOLTIP":"Github's host address, such as https://github.com",
     "VALIDATION_MESSAGE":{
       "required":"Host URL cannot be empty",
-      "invalidUrl": "URL is invalid"
+      "invalidUrl": "Host URL is invalid"
     }
   },
   "URL":{
     "TOOLTIP":"Github's API endpoint host address, such as https://api.github.com",
     "VALIDATION_MESSAGE":{
       "required":"API URL cannot be empty",
-      "invalidUrl": "URL is invalid"
+      "invalidUrl": "API URL is invalid"
     }
   },
   "TOKEN":{
@@ -1419,7 +1422,7 @@
 },
 "GITLAB":{
   "HEADER": "GitLab",
-  "BODY":"<span><li><strong>Account Name</strong>: User-defined account name for your GitLab access.</li><li><strong>Host URL</strong>: GitLab's host address, such as https://gitlab.com</li><li><strong>Username</strong>: The GitLab server username </li><li><strong>Token</strong>: The user's personal access token. Please refer this document for generating tokens.</li></span>",
+  "BODY":"<span><li><strong>Account Name</strong>: User-defined account name for your GitLab access.</li><li><strong>Host URL</strong>: GitLab's host address, such as https://gitlab.com</li><li><strong>Username</strong>: The GitLab server username </li><li><strong>Token</strong>: The user's personal access token. Please refer <a href='https://docs.gitlab.com/ee/user/profile/personal_access_tokens.html' target='_blank'>this document</a> for generating tokens.</li></span>",
   "ACCOUNTNAME":{
     "TOOLTIP":"User-defined account name for your GitLab access.",
     "VALIDATION_MESSAGE":{
@@ -1433,14 +1436,14 @@
     "TOOLTIP":"GitLab's host address, such as https://gitlab.com",
     "VALIDATION_MESSAGE":{
       "required":"Host URL cannot be empty",
-      "invalidUrl": "URL is invalid"
+      "invalidUrl": "Host URL is invalid"
     }
   },
   "APIBASEURL":{
     "TOOLTIP":"",
     "VALIDATION_MESSAGE":{
       "required":"API URL cannot be empty",
-      "invalidUrl": "URL is invalid"
+      "invalidUrl": "API URL is invalid"
     }
   },
   "AUTHENTICATIONTYPE":{
@@ -1476,8 +1479,8 @@
   "DEPLOYMENT":{
     "TOOLTIP":"This Halyard deployment will be used for Account creation / update",
     "VALIDATION_MESSAGE":{
-      "required":"URL cannot be empty",
-      "invalidUrl": "URL is invalid"
+      "required":"deployment URL cannot be empty",
+      "invalidUrl": "deployment URL is invalid"
     }
   },
   "AUTHENTICATIONTYPE":{
@@ -1488,7 +1491,7 @@
     "TOOLTIP":"",
     "VALIDATION_MESSAGE":{
       "required":"API URL cannot be empty",
-      "invalidUrl": "URL is invalid"
+      "invalidUrl": "API URL is invalid"
     }
   },
   "TOKEN":{
@@ -1532,8 +1535,8 @@
   "REPOSITORY":{
     "TOOLTIP":"Helm Chart Repository’s HTTP endpoint",
     "VALIDATION_MESSAGE":{
-      "required":"URL cannot be empty",
-      "invalidUrl": "URL is invalid"
+      "required":"Repository cannot be empty",
+      "invalidUrl": "Repository URL is invalid"
     }
   },
   "DEPLOYMENT":{
@@ -1564,6 +1567,7 @@
   "PASSWORD": {
     "TOOLTIP": "Password",
     "VALIDATION_MESSAGE":{
+      "required" : "Password cannot be empty"
     }
   },
   "PASSWORDCOMMAND": {
@@ -1635,7 +1639,7 @@
 },
 "GCS":{
   "HEADER": "GCS",
-  "BODY": "<span><li><strong>Account Name</strong>: User-defined account name for your Elasticsearch access.</li><li><strong>Endpoint</strong>: Elasticsearch host address, from which you access the Elasticsearch </li><li><strong>Username</strong>: Elasticsearch username </li><li><strong>Password</strong>: The Elasticsearch password</li><li><strong>Kibana Endpoint</strong>: Elasticsearch Kibana host address, from which you access the Elasticsearch Kibana</li><li><strong>Kibana username</strong>: Elasticsearch Kibana username</li><li><strong>Kibana Password</strong>: Elasticsearch Kibana password </li></span>",
+  "BODY": "<span><p><strong>Fields</strong>:</p><ul class='helpTextUl'></ul><li><strong>Account Name</strong>: User-defined account name for your Google Cloud Storage access.</li><li><strong>Authentication Type</strong>: Select an authentication type that corresponds to the connection credential parameter. </li><li><strong>Json-Key file</strong>: Configures Google service account’s json file </li><li><strong>Connect to Spinnaker</strong>: Toggle on to propagate the change into the CD Tool. </li></ul></span>",
   "ACCOUNTNAME":{
     "TOOLTIP":"User-defined account name for your Google Cloud Storage access.",
     "VALIDATION_MESSAGE":{
@@ -1678,9 +1682,10 @@
       "startingFromNumber": "Repository cannot start with numbers"
     }
   },
-  "REGISTRYURL":{
-    "TOOLTIP":"The registry URL from which you want to pull and deploy images. For example:https://aws_account_id.dkr.ecr.region.amazonaws.com ",
+  "URL":{
+    "TOOLTIP":"The registry URL from which you want to pull and deploy images. For example:https://aws_account_id.dkr.ecr.region.amazonaws.com",
     "VALIDATION_MESSAGE":{
+      "required" : "Registry URL cannot be empty"
     }
   },
   "GROUPMEMBERSHIP":{
@@ -1726,6 +1731,7 @@
   "PASSWORDCOMMAND": {
     "TOOLTIP": "Command to retrieve docker token/password, commands must be available in environment",
     "VALIDATION_MESSAGE":{
+      "required" : "Password-command cannot be empty"
     }
   },
   "FILE": {
@@ -1863,11 +1869,6 @@
       "startingFromNumber": "Repository cannot start with numbers"
     }
   },
-  "REGISTRYURL":{
-    "TOOLTIP":"The registry URL from which you want to pull and deploy images. For example: https://gcr.io - Global GCR, https://[us|eu|asia].gcr.io - Regional GCR",
-    "VALIDATION_MESSAGE":{
-    }
-  },
   "REQUIREDGROUPMEMBERSHIP":{
     "TOOLTIP":"A user must be a member of at least one specified group in order to make changes to this account’s cloud resources",
     "VALIDATION_MESSAGE":{
@@ -1882,10 +1883,10 @@
     }
   },
   "URL":{
-    "TOOLTIP":"",
+    "TOOLTIP":"The registry URL from which you want to pull and deploy images. For example: https://gcr.io - Global GCR, https://[us|eu|asia].gcr.io - Regional GCR",
     "VALIDATION_MESSAGE":{
-      "required":"API URL cannot be empty",
-      "invalidUrl": "URL is invalid"
+      "required":"Registry URL cannot be empty",
+      "invalidUrl": "Registry URL is invalid"
     }
   },
   "TOKEN":{
@@ -1906,11 +1907,13 @@
   "PASSWORD": {
     "TOOLTIP": "Your docker registry password",
     "VALIDATION_MESSAGE":{
+      "required" : "Password cannot be empty"
     }
   },
   "PASSWORDCOMMAND": {
     "TOOLTIP": "Command to retrieve docker token/password, commands must be available in environment",
     "VALIDATION_MESSAGE":{
+      "required" : "Password-command cannot be empty"
     }
   },
   "FILE": {
@@ -1939,7 +1942,7 @@
       "TOOLTIP":"Bamboo URL",
       "VALIDATION_MESSAGE":{
         "required":"Bamboo End Point cannot be empty",
-        "invalidUrl": "URL is invalid"
+        "invalidUrl": "Bamboo End Point URL is invalid"
       }
     },
     "AUTHENTICATIONTYPE":{
@@ -1984,7 +1987,7 @@
       "TOOLTIP":"Jenkins host address, such as https://jenkins.opsmx.net",
       "VALIDATION_MESSAGE":{
         "required":"Host URL cannot be empty",
-        "invalidUrl": "URL is invalid"
+        "invalidUrl": "Host URL is invalid"
       }
     },
     "AUTHENTICATIONTYPE":{
@@ -2050,7 +2053,7 @@
       "TOOLTIP":"Jira Host URL",
       "VALIDATION_MESSAGE":{
         "required":"Host URL cannot be empty",
-        "invalidUrl": "URL is invalid"
+        "invalidUrl": "Host URL is invalid"
       }
     },
     "SPINNAKERTOGGLE":{
@@ -2090,7 +2093,7 @@
       "TOOLTIP":"Service Now Host URL",
       "VALIDATION_MESSAGE":{
         "required":"Host URL cannot be empty",
-        "invalidUrl": "URL is invalid"
+        "invalidUrl": "Host URL is invalid"
       }
     }
   }
@@ -2111,7 +2114,7 @@
       "TOOLTIP":"APPDYNAMICS Controller Host",
       "VALIDATION_MESSAGE":{
         "required":"Controller Host  cannot be empty",
-        "invalidUrl": "URL is invalid"
+        "invalidUrl": "Controller Host URL is invalid"
       }
     },
     "TEMPORARYACCESSTOKEN":{
@@ -2162,7 +2165,7 @@
     "API_KEY":{
       "TOOLTIP":"DATADOG Api Key",
       "VALIDATION_MESSAGE":{
-        "required":"Application Key cannot be empty"
+        "required":"API key cannot be empty"
       }
     },
     "APPLICATION_KEY":{
@@ -2187,8 +2190,8 @@
     "END_POINT":{
       "TOOLTIP":"Dynatrace URL",
       "VALIDATION_MESSAGE":{
-        "required":"Url cannot be empty",
-        "invalidUrl": "URL is invalid"
+        "required":"Endpoint Url cannot be empty",
+        "invalidUrl": "Endpoint URL is invalid"
       }
     },
     "API_TOKEN":{
@@ -2214,7 +2217,7 @@
       "TOOLTIP":"Elasticsearch host address, from which you access the Elasticsearch",
       "VALIDATION_MESSAGE":{
         "required":"Elastic End Point cannot be empty",
-        "invalidUrl": "URL is invalid"
+        "invalidUrl": "Elastic End Point URL is invalid"
       }
     },
     "USERNAME":{
@@ -2235,7 +2238,7 @@
       "TOOLTIP":"Elasticsearch Kibana host address, from which you access the Elasticsearch Kibana",
       "VALIDATION_MESSAGE":{
         "required":"Kibana End Point cannot be empty",
-        "invalidUrl": "URL is invalid"
+        "invalidUrl": "Kibana End Point URL is invalid"
       }
     },
     "KIBANAUSERNAME":{
@@ -2270,13 +2273,13 @@
         "TOOLTIP":"Graphite host address, from which you access the Graphite ",
         "VALIDATION_MESSAGE":{
           "required":"End Point cannot be empty",
-          "invalidUrl": "URL is invalid"
+          "invalidUrl": "End Point URL is invalid"
         }
       }
     },
     "GRAYLOG":{
       "HEADER": "GRAYLOG",
-      "BODY":"<span><li><strong>Account Name</strong>: User-defined account name for your Graylog access</li><li><strong>Endpoint</strong>: Graylog host address, from which you access the Graylog </li><li><strong>Token</strong>: The user's token </li></span>",
+      "BODY":"<span><li><strong>Account Name</strong>: User-defined account name for your Graylog access.</li><li><strong>Endpoint</strong>: Graylog host address, from which you access the Graylog </li><li><strong>Token</strong>: The user's token </li></span>",
       "ACCOUNTNAME":{
         "TOOLTIP":"User-defined account name for your Graylog access.",
         "VALIDATION_MESSAGE":{
@@ -2290,7 +2293,7 @@
         "TOOLTIP":"Graylog host address, from which you access the Graylog ",
         "VALIDATION_MESSAGE":{
           "required":"End Point cannot be empty",
-          "invalidUrl": "URL is invalid"
+          "invalidUrl": "End Point URL is invalid"
         }
       },
       "TOKEN":{
@@ -2315,25 +2318,25 @@
       "APIKEY":{
         "TOOLTIP":"NewRelic Api Key",
         "VALIDATION_MESSAGE":{
-          "required":"Token cannot be empty"
+          "required":"API key cannot be empty"
         }
       },
       "APPLICATIONKEY":{
         "TOOLTIP":"The application key identifies which account the incoming data belongs to.",
         "VALIDATION_MESSAGE":{
-          "required":"Token cannot be empty"
+          "required":"Application Key cannot be empty"
         }
       },
       "ACCOUNTID":{
         "TOOLTIP":"Provide account ID to identify the account ",
         "VALIDATION_MESSAGE":{
-          "required":"Token cannot be empty"
+          "required":"Account Id cannot be empty"
         }
       },
       "QUERYKEY":{
         "TOOLTIP":"Provide a query key to filter the data ",
         "VALIDATION_MESSAGE":{
-          "required":"Token cannot be empty"
+          "required":"Query Key cannot be empty"
         }
       },
       "TOKEN":{
@@ -2356,7 +2359,7 @@
         "TOOLTIP":"Prometheus host address, from which you access the Prometheus",
         "VALIDATION_MESSAGE":{
           "required":"End Point cannot be empty",
-          "invalidUrl": "URL is invalid"
+          "invalidUrl": "End Point URL is invalid"
         }
       },
       "USERNAME":{
@@ -2377,7 +2380,7 @@
     },
     "SPLUNK":{
       "HEADER": "Splunk",
-      "BODY":"<span><li><strong>AccountName</strong>: User-defined account name for your Splunk access.</li><li><strong>Splunk Url</strong>: Splunk host address, from which you access the Splunk</li><li><strong>Username</strong>: The Splunk's username</li><li><strong>Username</strong>: The Splunk's username</li><li><strong>Password</strong>: Splunk's password</li><li><strong>Splunk DashBoard Url </strong>: Splunk Dashboard URL that you want to access </li><span>",
+      "BODY":"<span><li><strong>Account Name</strong>: User-defined account name for your Splunk access.</li><li><strong>Splunk Url</strong>: Splunk host address, from which you access the Splunk</li><li><strong>Username</strong>: The Splunk's username</li><li><strong>Password</strong>: Splunk's password</li><li><strong>Splunk DashBoard Url </strong>: Splunk Dashboard URL that you want to access </li><span>",
       "ACCOUNTNAME":{
         "TOOLTIP":"User-defined account name for your Splunk access.",
         "VALIDATION_MESSAGE":{
@@ -2391,7 +2394,7 @@
         "TOOLTIP":"Splunk host address, from which you access the Splunk",
         "VALIDATION_MESSAGE":{
           "required":"Splunk Url  cannot be empty",
-          "invalidUrl": "URL is invalid"
+          "invalidUrl": "Splunk URL is invalid"
         }
       },
       "PASSWORD":{
@@ -2413,7 +2416,7 @@
         "TOOLTIP":"Splunk Dashboard URL that you want to access ",
         "VALIDATION_MESSAGE":{
           "required":"Splunk DashBoard Url cannot be empty",
-          "invalidUrl": "URL is invalid"
+          "invalidUrl": "Splunk DashBoard URL is invalid"
         }
       }
     },
@@ -2456,8 +2459,8 @@
       },
       "ACCESSKEY":{
         "TOOLTIP":"sumologic Access Key. You can generate Access Id (Administration > Security > Access Keys)",
-        "VALIDATION_MEeSSAGE":{
-          "required":"Access Key cannot be empty"
+        "VALIDATION_MESSAGE":{
+      "required":"Access key cannot be empty"
         }
       },
       "ZONE":{
@@ -2486,8 +2489,8 @@
       "END_POINT":{
         "TOOLTIP":"VMWare Tanzu host address, from which you access the VMWare Tanzu",
         "VALIDATION_MESSAGE":{
-          "required":"Url cannot be empty",
-          "invalidUrl": "URL is invalid"
+          "required":"End Point cannot be empty",
+          "invalidUrl": "End Point URL is invalid"
         }
       },
       "EMAIL":{
@@ -2556,7 +2559,7 @@
         "TOOLTIP":"OPA server host address, such as https://opa:8181",
         "VALIDATION_MESSAGE":{
           "required":"End Point cannot be empty",
-          "invalidUrl": "URL is invalid"
+          "invalidUrl": "End Point URL is invalid"
         }
       }
     },
@@ -2584,7 +2587,7 @@
       "TOKEN":{
         "TOOLTIP":"Aqua Wave Personal Access Token",
         "VALIDATION_MESSAGE":{
-          "required":"Token cannot be empty"
+          "required":"Bearer token cannot be empty"
         }
       }
     },
@@ -2603,7 +2606,7 @@
       "TOKEN":{
         "TOOLTIP":"The user's personal access token ",
         "VALIDATION_MESSAGE":{
-          "required":"Token cannot be empty"
+          "required":"Bearer token cannot be empty"
         }
       }
     },
@@ -2623,7 +2626,7 @@
         "TOOLTIP":"Jfrog Xray host address, from which you access the Jfrog Xray instance",
         "VALIDATION_MESSAGE":{
           "required":"Endpoint cannot be empty",
-          "invalidUrl": "URL is invalid"
+          "invalidUrl": "Endpoint URL is invalid"
         }
       },
       "TOKEN":{
@@ -2635,7 +2638,7 @@
     },
     "PRISMACLOUD":{
       "HEADER": "Prisma Cloud",
-      "BODY":"<span><li><strong>Account Name</strong>: User-defined account name for your Prisma Cloud access.</li><li><strong>Host Url</strong>: Your Prisma Cloud host address, from which you access the Prisma Cloud instance</li><li><strong>Application Url</strong>: </li><li><strong>Access Key ID</strong>: The user's access key who has access to the Prisma Cloud. If you are unsure, consult your Prisma Cloud administrator to get an access key.</li><li><strong>Secret key</strong>: The user's secret key</li></span>",
+      "BODY":"<span><li><strong>Account Name</strong>: User-defined account name for your Prisma Cloud access.</li><li><strong>Host Url</strong>: Your Prisma Cloud host address, from which you access the Prisma Cloud instance</li><li><strong>Access Key ID</strong>: The user's access key who has access to the Prisma Cloud. If you are unsure, consult your Prisma Cloud administrator to get an access key.</li><li><strong>Secret key</strong>: The user's secret key</li></span>",
       "ACCOUNTNAME":{
         "TOOLTIP":"User-defined account name for your Prisma Cloud access.",
         "VALIDATION_MESSAGE":{
@@ -2649,14 +2652,14 @@
         "TOOLTIP":"Prisma Cloud host address, from which you access the Prisma Cloud instance",
         "VALIDATION_MESSAGE":{
           "required":"Host URL cannot be empty",
-          "invalidUrl": "URL is invalid"
+          "invalidUrl": "Host URL is invalid"
         }
       },
       "APPLICATIONURL":{
         "TOOLTIP":"Prisma Cloud Application URL",
         "VALIDATION_MESSAGE":{
           "required":"Application URL cannot be empty",
-          "invalidUrl": "URL is invalid"
+          "invalidUrl": "Application URL is invalid"
         }
       },
       "ACCESSKEYID":{
@@ -2674,7 +2677,7 @@
     },
     "SONARQUBE":{
       "HEADER": "SonarQube",
-      "BODY":"<span><li><strong>Account Name</strong>: User-defined account name for your Sonarqube access. </li><li><strong>Host Url</strong>: host address, from which you access the Sonaqube instance</li><li><strong>Token</strong>: The user's token</li></span>",
+      "BODY":"<span><li><strong>Account Name</strong>: User-defined account name for your Sonarqube access. </li><li><strong>Host Url</strong>: Sonarqube host address, from which you access the Sonaqube instance</li><li><strong>Token</strong>: The user's token (it is optional)</li></span>",
       "ACCOUNTNAME":{
         "TOOLTIP":"User defined name for the SonarQube account",
         "VALIDATION_MESSAGE":{
@@ -2688,7 +2691,7 @@
         "TOOLTIP":"Sonarqube host address, from which you access the Sonaqube instance",
         "VALIDATION_MESSAGE":{
           "required":"Host URL cannot be empty",
-          "invalidUrl": "URL is invalid"
+          "invalidUrl": "Host URL is invalid"
         }
       },
       "TOKEN":{
