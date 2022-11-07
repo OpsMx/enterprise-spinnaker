@@ -6,6 +6,6 @@ image:
   repository: docker.io/opsmx11/restapp
   pullPolicy: IfNotPresent
   # Overrides the image tag whose default is the chart appVersion.
-  tag: 0.1.0
+  tag: simple-restapp-1
 
-imagePullSecrets: us-east-2-ecr-registry
+imagePullSecrets: opsmx11-secret
