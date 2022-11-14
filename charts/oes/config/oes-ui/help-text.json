@@ -1,3 +1,4 @@
+
 {
   "POLICY_LISTING": {
     "HEADER": "Policies not found!",
@@ -174,21 +175,28 @@
         }
       },
       "APP_KEY": {
-        "TOOLTIP": "The appKey (password) of your service principal",
+        "TOOLTIP": "The App Key (password) of your service principal",
         "VALIDATION_MESSAGE": {
           "required": "App key cannot be empty",
           "cannotContainSpace": "App key cannot contain space"
         }
       },
       "CLIENT_ID": {
-        "TOOLTIP": "The clientId (also called appId) of your service principal",
+        "TOOLTIP": "The Client Id (also called appId) of your service principal",
         "VALIDATION_MESSAGE": {
           "required": "Client Id cannot be empty",
           "cannotContainSpace": "Client Id cannot contain space"
         }
       },
+      "AZURE_REGIONS": {
+        "TOOLTIP": "The Azure regions this Spinnaker account will manage",
+        "VALIDATION_MESSAGE": {
+          "required": "Region cannot be empty",
+          "cannotContainSpace": "Region cannot contain space"
+        }
+      },
       "DEFAULT_KEYVALUT": {
-        "TOOLTIP": "The name of a KeyVault that contains the user name, password, and ssh public key used to create VMs",
+        "TOOLTIP": "The name of a Key Vault that contains the user name, password, and ssh public key used to create VMs",
         "VALIDATION_MESSAGE": {
           "required": "Default Keyvault cannot be empty",
           "cannotContainSpace": "Default Keyvault cannot contain space"
@@ -206,6 +214,39 @@
         "VALIDATION_MESSAGE": {
           "required": "Tenant Id cannot be empty",
           "cannotContainSpace": "Tenant Id cannot contain space"
+        }
+      },
+      "DEFAULT_RESOURCE_GROUP": {
+        "TOOLTIP": "The default resource group to contain any non-application specific resources.",
+        "VALIDATION_MESSAGE": {
+          "required": "Default Resouce Group cannot be empty",
+          "cannotContainSpace": "Default Resouce Group cannot contain space"
+        }
+      },
+      "OBJECT_ID": {
+        "TOOLTIP": "The objectId of your service principal. This is only required if using Packer to bake Windows images.",
+        "VALIDATION_MESSAGE": {
+          "required": "Object Id cannot be empty",
+          "cannotContainSpace": "Object Id cannot contain space"
+        }
+      },
+      "PACKER_RESOURCE_GROUP": {
+        "TOOLTIP": "The resource group to use if baking images with Packer",
+        "VALIDATION_MESSAGE": {
+          "required": "Packer Resouce Group cannot be empty",
+          "cannotContainSpace": "Packer Resouce Group cannot contain space"
+        }
+      },
+      "PACKER_STORAGE_ACCOUNT": {
+        "TOOLTIP": "The storage account to use if baking images with Packer.",
+        "VALIDATION_MESSAGE": {
+          "required": "Packer Storage Account cannot be empty",
+          "cannotContainSpace": "Packer Storage Account cannot contain space"
+        }
+      },
+      "SSH_PUBLIC_KEY": {
+        "TOOLTIP": "Whether to use SSH public key to provision the linux vm. The default value is true which means using the ssh public key.",
+        "VALIDATION_MESSAGE": {
         }
       },
       "GCP_FILE": {
@@ -1131,7 +1172,7 @@
     }
   },
   "SPINNAKERTOGGLE":{
-    "TOOLTIP":"The Token of the artifactory user to authenticate as",
+    "TOOLTIP":"Toggle on to propagate the change into the CD Tool.",
     "VALIDATION_MESSAGE":{}
   }
 },
@@ -1466,7 +1507,7 @@
 },
 "GITREPO":{
   "HEADER": "Git Repo",
-  "BODY": "<span><li><strong>Account Name</strong>: User-defined account name for your Git Repo access.</li><li><strong>Authentication Type</strong>: Select an authentication type that corresponds to the connection credential parameter. Recommended using the user token method.</li></span>",
+  "BODY": "<span><li><strong>Account Name</strong>: User-defined account name for your Git Repo access.</li><li><strong>API URL</strong>: The API URL of the Git repository URL.<p><strong>Examples</strong>:</p><ul><li>https://api.github.com</li><li>https://api.bitbucket.org/2.0/respositories</li><li>https://gitlab.com/api/v4/</li></ul></li><li><strong>Authentication Type</strong>: Select an authentication type that corresponds to the connection credential parameter. Recommended using the user token method.</li></span>",
   "ACCOUNTNAME":{
     "TOOLTIP":"User-defined account name for your Git Repo access.",
     "VALIDATION_MESSAGE":{
@@ -1474,6 +1515,13 @@
       "cannotContainSpace":"Account Name cannot contain space",
       "required":"Account Name cannot be empty",
       "startingFromNumber": "Account Name cannot start with numbers"
+    }
+  },
+  "APIURL":{
+    "TOOLTIP":"<div><div>The API URL of the Git repository URL.</div><strong>Examples</strong>:<ul><li>https://api.github.com</li><li>https://api.bitbucket.org/2.0/respositories</li><li>https://gitlab.com/api/v4/</li></ul></div>",
+    "VALIDATION_MESSAGE":{
+      "required":"API URL cannot be empty",
+      "invalidUrl": "API URL is invalid"
     }
   },
   "DEPLOYMENT":{
@@ -2490,14 +2538,14 @@
         "TOOLTIP":"VMWare Tanzu host address, from which you access the VMWare Tanzu",
         "VALIDATION_MESSAGE":{
           "required":"End Point cannot be empty",
-          "invalidUrl": "End Point URL is invalid"
+          "invalidUrl": "End Point is invalid"
         }
       },
       "EMAIL":{
         "TOOLTIP":"Provide the user's registered and authorized email",
         "VALIDATION_MESSAGE":{
-          "email":"Email Id is invalid",
-          "required":"Email Id cannot be empty"
+          "email":"Email is invalid",
+          "required":"Email cannot be empty"
         }
       },
       "API_TOKEN":{
