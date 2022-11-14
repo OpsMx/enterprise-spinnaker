@@ -237,13 +237,13 @@ def update_custom_gates_navigation_url(plKeyExecDict):
                 print("The output is: ", output)
                 output_str = str(output.decode("utf-8"))
                 output_json = json.loads(output_str)
-                if b'approval' == stage_type:
+                if b'approval' == stage_type and 'navigationalURL' in output_json:
                     update_approval_gate_url(output_json, plKey, exec_str)
 
-                elif b'verification' == stage_type or b'testverification' == stage_type:
+                elif (b'verification' == stage_type or b'testverification' == stage_type) and ('verificationURL' in output_json or 'canaryReportURL' in output_json):
                     update_verification_gate_url(output_json, plKey, exec_str)
 
-                elif b'policy' == stage_type:
+                elif b'policy' == stage_type and 'policyName' in output_json:
                     update_policy_gate_url(output_json, plKey, exec_str)
 
     except Exception as e:
@@ -267,7 +267,7 @@ def update_approval_gate_url(json_data, pl_key, execution_str):
     except Exception as e:
         print("Exception occurred while updating approval gate navigation url : ", e)
         logging.error("Exception occurred while updating approval gate navigation url : ", exc_info=True)
-        raise e
+        
 
 
 def update_verification_gate_url(json_data, pl_key, execution_str):
@@ -290,7 +290,7 @@ def update_verification_gate_url(json_data, pl_key, execution_str):
     except Exception as e:
         print("Exception occurred while updating verification gate : ", e)
         logging.error("Exception occurred while updating verification gate : ", exc_info=True)
-        raise e
+        
 
 
 def get_service_id(application_name, pipeline_name):
@@ -331,7 +331,7 @@ def update_policy_gate_url(json_data, pl_key, execution_str):
     except Exception as e:
         print("Exception occurred while updating policy gate url : ", e)
         logging.error("Exception occurred while updating policy gate url : ", exc_info=True)
-        raise e
+        
 
 
 def migrate_spinnaker_audits():
