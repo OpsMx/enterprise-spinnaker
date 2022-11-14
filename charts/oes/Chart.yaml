@@ -1,8 +1,8 @@
 apiVersion: v2
 name: oes
-version: 4.0.4
-appVersion: 4.0.0
-description: "ISD-4.0 - Integrated UI and Quick Install Fixes"
+version: 4.0.7
+appVersion: 4.0.2
+description: "ISD-4.0 - Integrated UI and Pipeline Stage level RBAC"
 icon: https://raw.githubusercontent.com/OpsMx/enterprise-spinnaker/master/img/opsmx.png
 maintainers:
 - email: srinivas@opsmx.io
