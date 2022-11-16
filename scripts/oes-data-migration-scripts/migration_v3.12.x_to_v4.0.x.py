@@ -243,7 +243,7 @@ def update_custom_gates_navigation_url(plKeyExecDict):
                 elif (b'verification' == stage_type or b'testverification' == stage_type) and ('verificationURL' in output_json or 'canaryReportURL' in output_json):
                     update_verification_gate_url(output_json, plKey, exec_str)
 
-                elif b'policy' == stage_type and 'policyName' in output_json:
+                elif b'policy' == stage_type:
                     update_policy_gate_url(output_json, plKey, exec_str)
 
     except Exception as e:
@@ -267,6 +267,7 @@ def update_approval_gate_url(json_data, pl_key, execution_str):
     except Exception as e:
         print("Exception occurred while updating approval gate navigation url : ", e)
         logging.error("Exception occurred while updating approval gate navigation url : ", exc_info=True)
+        raise e
         
 
 
@@ -290,6 +291,7 @@ def update_verification_gate_url(json_data, pl_key, execution_str):
     except Exception as e:
         print("Exception occurred while updating verification gate : ", e)
         logging.error("Exception occurred while updating verification gate : ", exc_info=True)
+        raise e
         
 
 
@@ -331,6 +333,7 @@ def update_policy_gate_url(json_data, pl_key, execution_str):
     except Exception as e:
         print("Exception occurred while updating policy gate url : ", e)
         logging.error("Exception occurred while updating policy gate url : ", exc_info=True)
+        raise e
         
 
 
