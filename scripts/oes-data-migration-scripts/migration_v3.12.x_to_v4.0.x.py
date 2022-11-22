@@ -69,6 +69,7 @@ def perform_migration():
             logging.info("Create audit db table area_chart_counts")
             print("Create audit db table area_chart_counts")
             createAreaCharts()
+            audit_conn.commit()
         except Exception as e:
             logging.error("Failure at step 4", exc_info=True)
             is_error_occurred = True
