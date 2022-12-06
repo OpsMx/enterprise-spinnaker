@@ -10,10 +10,10 @@ spring:
     connectors:
       configured: JIRA,GIT,AUTOPILOT,SONARQUBE,JENKINS,AQUAWAVE
   logging:
-    level:  
-      io:     
+    level:
+      io:
         swagger:
-          models: 
+          models:
             parameters:
               AbstractSerializableParameter: ERROR
 

@@ -4,7 +4,7 @@ kind: Service
 metadata:
   labels:
     app: oes
-    component: visibility 
+    component: visibility
 {{ include "oes.standard-labels" . | indent 4 }}
 {{- if .Values.visibility.serviceAnnotations }}
   annotations:
@@ -14,7 +14,7 @@ metadata:
 spec:
   type: ClusterIP
   ports:
-  - name: visibility 
+  - name: visibility
     protocol: TCP
     port: 8096
     targetPort: 8096

@@ -28,7 +28,7 @@ spec:
 {{ include "oes.standard-labels" . | indent 8 }}
     spec:
       containers:
-      - image: {{ template "auditclient.image" . }} 
+      - image: {{ template "auditclient.image" . }}
         imagePullPolicy: IfNotPresent
         name: oes-audit-client
         ports:

@@ -85,7 +85,7 @@ data:
               TOKEN=$(cat token.json | jq '.sha1' -r)
 
               response=$(curl --header "Content-Type: application/json"  --header "x-spinnaker-user: admin" --request POST http://oes-platform:8095/platformservice/v6/datasource --data '{"datasourceType": "GITHUB", "name": "gitops", "spinEnabled": "false", "configurationFields": {"token": "'$TOKEN'", "username": "", "hostUrl": "http://{{ .Release.Name }}-gitea-http:3000", "url": "http://{{ .Release.Name }}-gitea-http:3000/api/v1/users/{{ .Values.global.gitea.admin.username }}" } }')
-              
+
               id=$(echo $response | jq '.id')
               curl --header "Content-Type: application/json"  --header "x-spinnaker-user: admin" --request POST http://oes-sapor:8085/oes/accountsConfig/v4/spinnaker --data '{"name":"preview-saas","url":"{{ .Values.spinnaker.spinCli.gate.endpoint }}","authenticationType":"LDAP","externalAccountFlag":true,"pipelinePromotionFlag":true,"syncAccountFlag":false,"externalAccountConfiguration":{"accountId": "'"${id}"'","accountName":"gitops","provider":"GITHUB","config":{"bucketName":"","region":"","endPoint":"http://{{ .Release.Name }}-gitea-http:3000/'$GITEA_USERNAME'/gitea-standard-repo.git","sourcePath":""}},"pipelinePromotionConfiguration":{"accountId": "'"${id}"'","accountName":"gitops","provider":"GITHUB","config":{"bucketName":"","region":"","endPoint":"http://{{ .Release.Name }}-gitea-http:3000/'$GITEA_USERNAME'/gitea-standard-repo.git","sourcePath":""}},"password":"'"${PASSWORD}"'","userName":"'"${USERNAME}"'"}'
 
