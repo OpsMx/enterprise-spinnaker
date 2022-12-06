@@ -83,7 +83,7 @@ spinnaker:
   restart:
     endPoint: /webhooks/webhook/restartSpinnaker
   encrypt:
-    enabled: {{ .Values.sapor.config.encrypt.enabled }}
+    enabled: {{ .Values.global.sapor.config.encrypt.enabled }}
   sync:
     permission:
       enabled: {{ .Values.sapor.config.sync.permission.enabled }}

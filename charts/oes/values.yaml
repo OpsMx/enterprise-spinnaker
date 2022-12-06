@@ -156,6 +156,13 @@ global:
       adminGroups: admin    #Name of the valid admin group in your service provider
       password: saporadmin  #password for the saporgate
 
+  sapor:
+    config:
+      encrypt:
+        enabled: false
+        key: Q7udUkHPuA3VnNlOtksSgQ
+
+
   ## ldap configuration used in oes-gate, oes-platform and spinnaker gate for authentication and authorization
   ldap:
     enabled: true
@@ -615,11 +622,11 @@ sapor:
           password: changeit
           
     #encryption key needed for sapor to startup from 3.9
-    encrypt:
-      enabled: false
+    #encrypt:
+    #  enabled: true
       # This key should match the encryption key specified in .hal/default/profiles/spinnakerConfig.yaml 
       # encryption key needed for sapor to startup from 3.9
-      key: Q7udUkHPuA3VnNlOtksSgQ
+      #key: Q7udUkHPuA3VnNlOtksSgQ
     # Set the below field to true if datasource configurations from platform, please don't change
     datasources:
       platform: true
