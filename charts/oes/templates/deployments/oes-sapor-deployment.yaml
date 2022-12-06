@@ -46,14 +46,14 @@ spec:
           protocol: TCP
         volumeMounts:
         {{- if .Values.forwarder.enabled }}
-        - mountPath: /opt/opsmx/controller/ca.crt	
-          name: ca-certs-volume	
-          subPath: tls.crt	
-        - mountPath: /opt/opsmx/controller/cert/tls.crt	
-          name: certs-volume	
-          subPath: tls.crt	
-        - mountPath: /opt/opsmx/controller/cert/tls.key	
-          name: certs-volume	
+        - mountPath: /opt/opsmx/controller/ca.crt
+          name: ca-certs-volume
+          subPath: tls.crt
+        - mountPath: /opt/opsmx/controller/cert/tls.crt
+          name: certs-volume
+          subPath: tls.crt
+        - mountPath: /opt/opsmx/controller/cert/tls.key
+          name: certs-volume
           subPath: tls.key
         {{- end }}
         - name: sapor-config-volume

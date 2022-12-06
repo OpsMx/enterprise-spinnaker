@@ -35,7 +35,7 @@ services:
   clouddriver:
     host: 0.0.0.0
     port: 7002
-    {{- if .Values.global.stormdriver }}    
+    {{- if .Values.global.stormdriver }}
     baseUrl: http://stormdriver:7002
     enabled: true
     {{- else }}
@@ -46,7 +46,7 @@ services:
     host: 0.0.0.0
     port: 7002
     baseUrl: http://spin-clouddriver-caching:7002
-    {{- if .Values.global.stormdriver }}    
+    {{- if .Values.global.stormdriver }}
     enabled: false
     {{- else }}
     enabled: true
@@ -55,7 +55,7 @@ services:
     host: 0.0.0.0
     port: 7002
     baseUrl: http://spin-clouddriver-ro:7002
-    {{- if .Values.global.stormdriver }}    
+    {{- if .Values.global.stormdriver }}
     enabled: false
     {{- else }}
     enabled: true
@@ -64,7 +64,7 @@ services:
     host: 0.0.0.0
     port: 7002
     baseUrl: http://spin-clouddriver-ro-deck:7002
-    {{- if .Values.global.stormdriver }}    
+    {{- if .Values.global.stormdriver }}
     enabled: false
     {{- else }}
     enabled: true
@@ -73,7 +73,7 @@ services:
     host: 0.0.0.0
     port: 7002
     baseUrl: http://spin-clouddriver-rw:7002
-    {{- if .Values.global.stormdriver }}    
+    {{- if .Values.global.stormdriver }}
     enabled: false
     {{- else }}
     enabled: true
@@ -86,7 +86,7 @@ services:
   echo:
     host: 0.0.0.0
     port: 8089
-    {{- if .Values.global.stormdriver }}    
+    {{- if .Values.global.stormdriver }}
     baseUrl: http://spin-echo:8089
     enabled: true
     {{- else }}
@@ -97,7 +97,7 @@ services:
     host: 0.0.0.0
     port: 8089
     baseUrl: http://spin-echo-scheduler:8089
-    {{- if .Values.global.stormdriver }}    
+    {{- if .Values.global.stormdriver }}
     enabled: false
     {{- else }}
     enabled: true
@@ -106,7 +106,7 @@ services:
     host: 0.0.0.0
     port: 8089
     baseUrl: http://spin-echo-worker:8089
-    {{- if .Values.global.stormdriver }}    
+    {{- if .Values.global.stormdriver }}
     enabled: false
     {{- else }}
     enabled: true

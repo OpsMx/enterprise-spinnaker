@@ -78,12 +78,12 @@ pipeline-promotion:
     accessKeyId: {{ .Values.spinnaker.gitopsHalyard.repo.s3accesskey }}
     secretAccessKey: {{ .Values.spinnaker.gitopsHalyard.repo.s3secretkey }}
     region: {{ .Values.spinnaker.gitopsHalyard.repo.s3region }}
-    bucketName: {{ .Values.spinnaker.gitopsHalyard.repo.s3bucket }} 
+    bucketName: {{ .Values.spinnaker.gitopsHalyard.repo.s3bucket }}
 spinnaker:
   restart:
     endPoint: /webhooks/webhook/restartSpinnaker
   encrypt:
-    enabled: {{ .Values.sapor.config.encrypt.enabled }}
+    enabled: {{ .Values.global.sapor.config.encrypt.enabled }}
   sync:
     permission:
       enabled: {{ .Values.sapor.config.sync.permission.enabled }}

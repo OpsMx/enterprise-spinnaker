@@ -32,7 +32,7 @@ spec:
             - "run"
             - "--server"
         - name: opa-persist
-          command: 
+          command:
           - /bin/bash
           - /tmp/config/opa-persist.sh
           envFrom:

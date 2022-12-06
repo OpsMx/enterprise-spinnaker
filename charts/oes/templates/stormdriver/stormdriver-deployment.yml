@@ -61,5 +61,5 @@ spec:
         - name: control-secret
           secret:
             defaultMode: 420
-            secretName: oes-control-secret          
+            secretName: oes-control-secret
 {{- end }}

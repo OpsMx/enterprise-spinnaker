@@ -67,12 +67,12 @@ spec:
           subPath: bootstrap.yml
         {{- if .Values.gate.config.saml.enabled }}
         - mountPath: {{ .Values.gate.config.saml.keyStore }}
-          name: saml-jks	
-          subPath: oessaml.jks	
+          name: saml-jks
+          subPath: oessaml.jks
         - mountPath: {{ .Values.gate.config.saml.metadataUrl }}
-          name: metadata-xml	
+          name: metadata-xml
           subPath: oesmetadata.xml
-        {{- end }} 
+        {{- end }}
         {{- if .Values.global.customCerts.enabled }}
         - mountPath: /etc/pki/ca-trust/extracted/java/cacerts
           subPath: cacerts
@@ -120,10 +120,10 @@ spec:
       {{- end }}
       volumes:
       {{- if .Values.gate.config.saml.enabled }}
-      - secret:	
+      - secret:
           secretName: {{ .Values.gate.config.saml.jksSecretName }}
         name: saml-jks
-      - secret:	
+      - secret:
           secretName: {{ .Values.gate.config.saml.metadataSecretName }}
         name: metadata-xml
       {{- end }}

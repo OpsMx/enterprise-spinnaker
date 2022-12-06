@@ -151,8 +151,9 @@ data:
     sed -i  s/SPINNAKER_NAMESPACE/${SPINNAKER_NAMESPACE}/ /tmp/spinnaker/.hal/config
     sed -i  s/RELEASE_NAME/{{ .Release.Name }}/g /tmp/spinnaker/.hal/config
     BRANCH={{ .Values.gitopsHalyard.repo.halConfigBranch }}
-    echo $BRANCH
     sed -i s/BRANCH/${BRANCH}/ /tmp/spinnaker/.hal/default/profiles/spinnakerconfig.yml
+    KEY={{ .Values.global.sapor.config.encrypt.key }}
+    sed -i s/KEY/${KEY}/ /tmp/spinnaker/.hal/default/profiles/spinnakerconfig.yml
     {{- if .Values.gitopsHalyard.environment }}
     sed -i  s/ENVIRONMENT/{{ .Values.gitopsHalyard.environment }}/g /tmp/spinnaker/.hal/config
     {{- end }}
@@ -315,7 +316,20 @@ data:
       kubectl apply -f /tmp/spinnaker/pipeline-decrypted/ -n ${SPINNAKER_NAMESPACE}
      fi
     fi
-   
+    # decrypt json files for integrations
+    ls /tmp/spinnaker/.hal -1 | grep .enc > /tmp/jsonfiles
+    if [ -s /tmp/jsonfiles ];
+    then
+      echo "Data is available in jsonfiles"
+      while read -r line;
+      do
+       echo "$line" ;
+       java -cp "Decryptor.jar:/home/spinnaker/java-lib/*" Decryptor $decrypt_key "/tmp/spinnaker/.hal/$line" json
+      done < /tmp/jsonfiles
+      rm -rf /tmp/spinnaker/.hal/*.enc
+      cp /tmp/spinnaker/.hal/decrypted/* /tmp/spinnaker/.hal/
+      rm -rf /tmp/spinnaker/.hal/decrypted/
+    fi
     ############# Auto Configuration for Custom Stages in ORCA #############
 
     if [ -d "/tmp/spinnaker/clusterconfig/" ]
