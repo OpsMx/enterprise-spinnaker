@@ -1,1 +1,82 @@
-35:          command:
+{{- if or (eq .Values.installationMode "OES-AP")  (eq .Values.installationMode "EASY") -}}
+{{- if .Values.opa.enabled -}}
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  annotations:
+{{ include "isd.standard-annotations" . | indent 4 }}
+  labels:
+    app: opa
+{{ include "oes.standard-labels" . | indent 4 }}
+  name: opa
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: opa
+  template:
+    metadata:
+      annotations:
+{{- if .Values.opa.annotations -}}
+{{ toYaml .Values.opa.annotations | nindent 8 }}
+{{- end }}
+      labels:
+        app: opa
+{{ include "oes.standard-labels" . | indent 8 }}
+      name: opa
+    spec:
+      containers:
+        - name: opa
+          image: {{ .Values.opa.image.repository }}:{{ .Values.opa.image.tag }}
+          args:
+            - "run"
+            - "--server"
+        - name: opa-persist
+          command:
+          - /bin/bash
+          - /tmp/config/opa-persist.sh
+          envFrom:
+          - secretRef:
+              name: oes-gate-secret
+          image: quay.io/opsmxpublic/customterraformstage:v1
+          imagePullPolicy: IfNotPresent
+          volumeMounts:
+          - mountPath: /tmp/config
+            name: opa-persist
+      {{- if .Values.imagePullSecret}}
+      imagePullSecrets:
+      - name: {{ .Values.imagePullSecret}}
+      {{- end }}
+      {{- if and (.Values.global.openshift) (not .Values.global.securityContext) }}
+      securityContext: {{ default "{}" }}
+      {{- else }}
+      {{- if and (.Values.global.openshift) (.Values.global.securityContext) }}
+      securityContext:
+{{ toYaml .Values.global.securityContext | indent 8 }}
+      {{- else }}
+      {{- if and (not .Values.global.openshift) (.Values.global.securityContext) }}
+      securityContext:
+{{ toYaml .Values.global.securityContext | indent 8 }}
+      {{- end }}
+      {{- end }}
+      {{- end }}
+      {{- if .Values.global.nodeSelector }}
+      nodeSelector:
+{{ toYaml .Values.global.nodeSelector | indent 8 }}
+      {{- end }}
+      {{- if .Values.global.affinity }}
+      affinity:
+{{ toYaml .Values.global.affinity | indent 8 }}
+      {{- end }}
+      {{- if .Values.global.tolerations }}
+      tolerations:
+{{ toYaml .Values.global.tolerations | indent 8 }}
+      {{- end }}
+      restartPolicy: Always
+      volumes:
+        - configMap:
+            defaultMode: 420
+            name: opa-persist
+          name: opa-persist
+{{- end -}}
+{{- end -}}
