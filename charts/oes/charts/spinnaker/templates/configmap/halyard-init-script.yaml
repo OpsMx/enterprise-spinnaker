@@ -296,15 +296,16 @@ data:
     {{- if .Values.gitopsHalyard.mTLS.enabled }}
     sed -i  s/SPINNAKER_NAMESPACE/${SPINNAKER_NAMESPACE}/g /tmp/spinnaker/.hal/default/service-settings/*
     {{- end }}
+
+    # The decrypt token extract
+    kubectl get secret bootstrap -o jsonpath='{.data.bootstrap\.yml}' -n ${SPINNAKER_NAMESPACE} | base64 -d > /tmp/decryptkry.txt
+    decrypt_key=$(yq e '.jasypt.encryptor.password' /tmp/decryptkry.txt)
+
     # pipeline promotion configuration setup
     #
     ls -lart /home/spinnaker/java-lib/
     if [ -d "/tmp/spinnaker/pipeline-promotion/" ]
     then
-      #decrypt_key=$(kubectl get cm bootstrap -o yaml  -n ${SPINNAKER_NAMESPACE}| grep 'password:' | awk '{ print $2}')
-      #decrypt_key=$(kubectl get secret bootstrap -o jsonpath='{.data.bootstrap\.yml}' -n ${SPINNAKER_NAMESPACE} | base64 -d | grep 'password:' | awk '{ print $2}')
-      kubectl get secret bootstrap -o jsonpath='{.data.bootstrap\.yml}' -n ${SPINNAKER_NAMESPACE} | base64 -d > /tmp/decryptkry.txt
-      decrypt_key=$(yq e '.jasypt.encryptor.password' /tmp/decryptkry.txt)
       if [[ $decrypt_key != "" ]];
       then
         for filename in /tmp/spinnaker/pipeline-promotion/*; do
@@ -317,26 +318,27 @@ data:
      fi
     fi
     # decrypt json files for integrations
+
     ls /tmp/spinnaker/.hal -1 | grep .enc > /tmp/jsonfiles
     if [ -s /tmp/jsonfiles ];
     then
-      echo "Data is available in jsonfiles"
-      while read -r line;
-      do
-       echo "$line" ;
-       java -cp "Decryptor.jar:/home/spinnaker/java-lib/*" Decryptor $decrypt_key "/tmp/spinnaker/.hal/$line" json
-      done < /tmp/jsonfiles
-      rm -rf /tmp/spinnaker/.hal/*.enc
-      cp /tmp/spinnaker/.hal/decrypted/* /tmp/spinnaker/.hal/
-      rm -rf /tmp/spinnaker/.hal/decrypted/
+      if [[ $decrypt_key != "" ]];
+      then
+        echo "Data is available in jsonfiles"
+        while read -r line;
+        do
+         echo "$line" ;
+         java -cp "Decryptor.jar:/home/spinnaker/java-lib/*" Decryptor $decrypt_key "/tmp/spinnaker/.hal/$line" json
+        done < /tmp/jsonfiles
+        rm -rf /tmp/spinnaker/.hal/*.enc
+        cp /tmp/spinnaker/.hal/decrypted/* /tmp/spinnaker/.hal/
+        rm -rf /tmp/spinnaker/.hal/decrypted/
+      fi
     fi
     ############# Auto Configuration for Custom Stages in ORCA #############
 
     if [ -d "/tmp/spinnaker/clusterconfig/" ]
     then
-      #decrypt_key=$(kubectl get secret bootstrap -o jsonpath='{.data.bootstrap\.yml}' -n ${SPINNAKER_NAMESPACE} | base64 -d | grep 'password:' | awk '{ print $2}')
-      kubectl get secret bootstrap -o jsonpath='{.data.bootstrap\.yml}' -n ${SPINNAKER_NAMESPACE} | base64 -d > /tmp/decryptkry.txt
-      decrypt_key=$(yq e '.jasypt.encryptor.password' /tmp/decryptkry.txt)
       if [[ $decrypt_key != "" ]];
       then
         for filename in /tmp/spinnaker/clusterconfig/*; do
