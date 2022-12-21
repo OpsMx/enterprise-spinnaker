@@ -675,7 +675,7 @@ def alterAppEnvironmentTable():
 
 def dropDeliveryInsights():
     try:
-        cur_audit.execute("drop TABLE delivery_insights_chart_counts")
+        cur_audit.execute("drop TABLE IF EXISTS delivery_insights_chart_counts")
         logging.info("Successfully dropped delivery_insights_chart_counts table")
         print("Successfully dropped delivery_insights_chart_counts table")
     except Exception as e:
@@ -685,7 +685,7 @@ def dropDeliveryInsights():
 
 def dropAreaCharts():
     try:
-        cur_audit.execute("drop TABLE area_chart_counts")
+        cur_audit.execute("drop TABLE IF EXISTS area_chart_counts")
         logging.info("Successfully dropped area_chart_counts table")
         print("Successfully dropped area_chart_counts table")
     except Exception as e:
