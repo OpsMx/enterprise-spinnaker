@@ -142,8 +142,7 @@ def perform_migration():
             logging.info("Update cluster and location in service_deployments_current table")
             print("Update cluster and location in service_deployments_current table")
             pipeline_executions = fetch_pipeline_executions()
-            persist_cluster(pipeline_executions)
-            persist_location(pipeline_executions)
+            persist_cluster_and_location(pipeline_executions)
         except Exception as e:
             logging.error("Failure at step 13", exc_info=True)
             is_error_occurred = True
@@ -188,6 +187,13 @@ def perform_migration():
             logging.critical("Failure at step 16 : ", exc_info=True)
             is_error_occurred = True
 
+        try:
+            logging.info("Add schema version to platform db table db_version")
+            print("Add schema version to platform db table db_version")
+            addDBVersion()
+        except Exception as e:
+            logging.error("Failure at step 17 : ", exc_info=True)
+            is_error_occurred = True
 
         if is_error_occurred == True:
             logging.info(
@@ -523,10 +529,10 @@ def update_sync_status():
         raise e
 
 
-def persist_cluster(pipeline_executions):
+def persist_cluster_and_location(pipeline_executions):
     try:
-        logging.info("Migration to update the cluster name")
-        print("Migration to update the cluster name")
+        logging.info("Migration to update the cluster and location")
+        print("Migration to update the cluster and location")
         for pipeline_execution in pipeline_executions:
             pipeline_execution_json = pipeline_execution[1]
             try:
@@ -546,52 +552,6 @@ def persist_cluster(pipeline_executions):
                             metadata = outputs_manifest['metadata']
                             annotations = metadata['annotations']
                             cluster = annotations['moniker.spinnaker.io/cluster']
-                            select_data = pipeline_name, app_name
-                            cur_platform.execute(
-                                "select a.id as application_id, p.id as pipeline_id from applications a LEFT OUTER JOIN service s ON a.id = s.application_id LEFT OUTER JOIN service_pipeline_map spm ON spm.service_id = s.id LEFT OUTER JOIN pipeline p ON spm.pipeline_id = p.id where p.pipeline_name = %s and a.name = %s",
-                                select_data)
-                            records = cur_platform.fetchall()
-                            for record in records:
-                                data = cluster, record[0], record[1], image
-                                logging.info(f"updating cluster for the app and pipeline : {select_data}")
-                                logging.info(f"data :  {data}")
-                                cur_platform.execute(
-                                    "UPDATE service_deployments_current SET cluster = %s WHERE application_id = %s and pipeline_id = %s and image = %s",
-                                    data)
-            except KeyError as ke:
-                pass
-            except Exception as ex:
-                print("Exception in nested catch block : ", ex)
-                logging.error("Exception in nested catch block:", exc_info=True)
-                raise ex
-    except Exception as e:
-        print("Exception occurred while persisting the cluster name: ", e)
-        logging.error("Exception occurred while persisting the cluster name:", exc_info=True)
-        raise e
-
-
-def persist_location(pipeline_executions):
-    try:
-        logging.info("Migration to update the location name")
-        print("Migration to update the location name")
-        for pipeline_execution in pipeline_executions:
-            pipeline_execution_json = pipeline_execution[1]
-            try:
-                details = pipeline_execution_json['details']
-                app_name = details['application']
-                content = pipeline_execution_json['content']
-                execution = content['execution']
-                if execution['type'] == 'PIPELINE':
-                    pipeline_name = execution['name']
-                stages = execution['stages']
-                for stage in stages:
-                    if stage['type'] == 'deployManifest':
-                        context = stage['context']
-                        image = get_image(context)
-                        outputs_manifests = context['outputs.manifests']
-                        for outputs_manifest in outputs_manifests:
-                            metadata = outputs_manifest['metadata']
-                            annotations = metadata['annotations']
                             location = annotations['artifact.spinnaker.io/location']
                             select_data = pipeline_name, app_name
                             cur_platform.execute(
@@ -599,12 +559,10 @@ def persist_location(pipeline_executions):
                                 select_data)
                             records = cur_platform.fetchall()
                             for record in records:
-                                data = location, record[0], record[1], image
-                                logging.info(f"updating location for the app and pipeline :  {select_data}")
-                                logging.info(f"data : {data}")
-                                cur_platform.execute(
-                                    "UPDATE service_deployments_current SET location = %s WHERE application_id = %s and pipeline_id = %s and image = %s",
-                                    data)
+                                data = cluster, location, record[0], record[1], image
+                                logging.info(f"updating cluster and location for the app and pipeline : {select_data}")
+                                logging.info(f"data :  {data}")
+                                cur_platform.execute("UPDATE service_deployments_current SET cluster = %s , location = %s WHERE application_id = %s and pipeline_id = %s and image = %s", data)
             except KeyError as ke:
                 pass
             except Exception as ex:
@@ -612,8 +570,8 @@ def persist_location(pipeline_executions):
                 logging.error("Exception in nested catch block:", exc_info=True)
                 raise ex
     except Exception as e:
-        print("Exception occurred while persisting the location name: ", e)
-        logging.error("Exception occurred while persisting the location name:", exc_info=True)
+        print("Exception occurred while persisting the cluster and location: ", e)
+        logging.error("Exception occurred while persisting the cluster and location:", exc_info=True)
         raise e
 
 
@@ -1397,6 +1355,22 @@ def login_to_isd():
     except Exception as e:
         print("Exception occurred while logging in to ISD : ", e)
         logging.error("Exception occurred while logging in to ISD : ", exc_info=True)
+        raise e
+
+def addDBVersion():
+    try:
+        # create db_version table if not exists
+        cur_platform.execute("CREATE TABLE IF NOT EXISTS db_version (id serial PRIMARY KEY,"
+                             "version_no character varying(20) NOT NULL,"
+                             "created_at TIMESTAMPTZ,"
+                             "updated_at TIMESTAMPTZ)")
+        # set db version
+        date = datetime.datetime.now()
+        version = "4.0.2"
+        cur_platform.execute("INSERT INTO db_version (version_no, created_at, updated_at) VALUES (version, date, date)")
+    except Exception as e:
+        print("Exception occurred while adding db version : ", e)
+        logging.error("Exception occurred while adding db version  : ", exc_info=True)
         raise e
 
 
