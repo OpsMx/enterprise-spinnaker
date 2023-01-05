@@ -36,11 +36,11 @@ class SourceDetailsEntity:
         self.name = name
         self.type = type
 
+def update_db(version):     # pre-upgrade DB Update
 
-def perform_migration():
     try:
         global is_error_occurred
-        logging.info('Migrating from v3.12.x to v4.0')
+        logging.info('Migrating from v3.12.x to v4.0.x')
 
         try:
             logging.info("Drop audit db table delivery_insights_chart_counts")
@@ -140,21 +140,12 @@ def perform_migration():
             is_error_occurred = True
 
         try:
-            logging.info("Update cluster and location in service_deployments_current table")
-            print("Update cluster and location in service_deployments_current table")
-            pipeline_executions = fetch_pipeline_executions()
-            persist_cluster_and_location(pipeline_executions)
-        except Exception as e:
-            logging.error("Failure at step 13", exc_info=True)
-            is_error_occurred = True
-
-        try:
             logging.info("Updating Spinnaker existing gate Json in spinnaker")
             print("Updating Spinnaker existing gate Json in spinnaker")
             cookie = login_to_isd()
             processPipelineJsonForExistingGates(cookie)
         except Exception as e:
-            logging.error("Failure at step 14", exc_info=True)
+            logging.error("Failure at step 13", exc_info=True)
             is_error_occurred = True
 
         try:
@@ -176,9 +167,49 @@ def perform_migration():
             add_not_null_constraint_to_source_details_id()
             drop_column_source()
         except Exception as e:
-            logging.critical("Failure at step 15 : ", exc_info=True)
+            logging.critical("Failure at step 14 : ", exc_info=True)
             is_error_occurred = True
 
+        try:
+            logging.info("Add schema version to platform db table db_version")
+            print("Add schema version to platform db table db_version")
+            addDBVersion(version)
+        except Exception as e:
+            logging.error("Failure at step 15 : ", exc_info=True)
+            is_error_occurred = True
+
+        if is_error_occurred == True:
+            logging.info(
+                f"{bcolors.FAIL} {bcolors.BOLD}FAILURE: {bcolors.ENDC}{bcolors.FAIL}Migration script execution failed. Please contact the support team{bcolors.ENDC}")
+            raise Exception("FAILURE: Migration script execution failed. Please contact the support team.")
+        else:
+            logging.info(f"{bcolors.OKGREEN}{bcolors.BOLD}Successfully completed the migration.{bcolors.ENDC}")
+            print(f"{bcolors.OKGREEN}{bcolors.BOLD}Successfully completed the migration.{bcolors.ENDC}")
+            commit_transactions()
+
+    except Exception as e:
+        print("Exception occurred while updating databases : ", e)
+        logging.error("Exception occurred while updating databases from v3.12.x to v4.0.x:", exc_info=True)
+        logging.critical(e.__str__(), exc_info=True)
+        rollback_transactions()
+        exit(1)
+    finally:
+        close_connections()
+
+def perform_migration(version):     # post-upgrade Data Migration (to be run as a background job)
+    try:
+        global is_error_occurred
+        logging.info('Migrating data from v3.12.x to v4.0.x')
+
+
+        try:
+            logging.info("Update cluster and location in service_deployments_current table")
+            print("Update cluster and location in service_deployments_current table")
+            pipeline_executions = fetch_pipeline_executions()
+            persist_cluster_and_location(pipeline_executions)
+        except Exception as e:
+            logging.error("Failure at step 1", exc_info=True)
+            is_error_occurred = True
         try:
             print("Migrating the navigation Url format of the pipeline executions")
             logging.info("Migrating the navigation Url format of the pipeline executions")
@@ -191,15 +222,15 @@ def perform_migration():
                 spin_db_update_custom_gates_navigation_url(pi_executions)
                 mysqlcursor.close()
         except Exception as e:
-            logging.critical("Failure at step 16 : ", exc_info=True)
-            is_error_occurred = True
-
+            logging.critical("Failure at step 2 : ", exc_info=True)
+            is_error_occurred = True    
         try:
-            logging.info("Add schema version to platform db table db_version")
-            print("Add schema version to platform db table db_version")
-            addDBVersion()
+            logging.info("Update application name in audit events table")
+            print("Update application name in audit events table")
+            updateApprovalGateAUdit()
+
         except Exception as e:
-            logging.error("Failure at step 17 : ", exc_info=True)
+            logging.error("Failure at step 3", exc_info=True)
             is_error_occurred = True
 
         if is_error_occurred == True:
@@ -213,14 +244,15 @@ def perform_migration():
 
     except Exception as e:
         print("Exception occurred while migration : ", e)
-        logging.error("Exception occurred during migration from v3.12.x to v4.0:", exc_info=True)
+        logging.error("Exception occurred during migration from v3.12.x to v4.0.x:", exc_info=True)
         logging.critical(e.__str__(), exc_info=True)
         rollback_transactions()
         exit(1)
     finally:
         close_connections()
- 
- 
+
+
+
 def get_pipeline_execution_key_dict():
     try:
         keys = redis_conn.keys("pipeline:*:stageIndex")
@@ -1514,7 +1546,7 @@ def login_to_isd():
         logging.error("Exception occurred while logging in to ISD : ", exc_info=True)
         raise e
 
-def addDBVersion():
+def addDBVersion(version):
     try:
         # create db_version table if not exists
         cur_platform.execute("CREATE TABLE IF NOT EXISTS db_version (id serial PRIMARY KEY,"
@@ -1522,8 +1554,7 @@ def addDBVersion():
                              "created_at TIMESTAMPTZ,"
                              "updated_at TIMESTAMPTZ)")
         # set db version
-        date = datetime.datetime.now()
-        version = "4.0.2"
+        date = datetime.datetime.now()        
         data = version,date,date
         cur_platform.execute("INSERT INTO db_version (version_no, created_at, updated_at) VALUES (%s, %s, %s)",data)
     except Exception as e:
@@ -1535,16 +1566,16 @@ def addDBVersion():
 if __name__ == '__main__':
     n = len(sys.argv)
 
-    if n != 23:
+    if n != 24:
         print(
-            "Please pass valid 22 arguments <platform_db-name> <platform_host> <oes-db-name> <oes-db-host> <autopilot-db-name> <autopilot-db-host> <audit_db-name> <audit-db-host> <visibility_db-name> <visibility-db-host> "
-            "<db-port> <user-name> <password> <isd-gate-url> <isd-admin-username> <isd-admin-password> <sapor-host-url> <audit-service-url> <redis-host> <redis-port> <redis-password>")
+            "Please pass valid 23 arguments <platform_db-name> <platform_host> <oes-db-name> <oes-db-host> <autopilot-db-name> <autopilot-db-host> <audit_db-name> <audit-db-host> <visibility_db-name> <visibility-db-host> "
+            "<db-port> <user-name> <password> <isd-gate-url> <isd-admin-username> <isd-admin-password> <sapor-host-url> <audit-service-url> <redis/sql> <redis-host/sql-host> <redis-port/sql-username> <redis-password/sql-password> <migration-flag>")
         exit(1)
 
     global is_error_occurred
     is_error_occurred = False
 
-    logging.basicConfig(filename='/tmp/migration_v3.12.x_to_v4.0.log', filemode='w',
+    logging.basicConfig(filename='/tmp/migration_v3.12.x_to_v4.0.x.log', filemode='w',
                         format="%(asctime)s %(levelname)s %(threadName)s %(name)s %(message)s", datefmt='%H:%M:%S',
                         level=logging.INFO)
 
@@ -1566,18 +1597,28 @@ if __name__ == '__main__':
     isd_admin_password = sys.argv[16]
     sapor_host_url = sys.argv[17]
     audit_service_url = sys.argv[18]
-    spin_db_type = sys.argv[19]        
-    redis_host = sys.argv[20]
-    redis_port = sys.argv[21]
-    redis_password = sys.argv[22]
+    spin_db_type = sys.argv[19]
 
-    spin_db_host = sys.argv[20]
-    spin_db_username = sys.argv[21]
-    spin_db_password = sys.argv[22]
+    global redis_host
+    global redis_port
+    global redis_password
+
+    global spin_db_host
+    global spin_db_username
+    global spin_db_password
+    if spin_db_type == 'redis':     
+       redis_host = sys.argv[20]
+       redis_port = sys.argv[21]
+       redis_password = sys.argv[22]
+
+    if spin_db_type == 'sql':
+       spin_db_host = sys.argv[20]
+       spin_db_username = sys.argv[21]
+       spin_db_password = sys.argv[22]
+    migrate_data_flag = sys.argv[23]
 
     # Establishing the platform db connection
-    platform_conn = psycopg2.connect(database=platform_db, user=user_name, password=password, host=platform_host,
-                                     port=port)
+    platform_conn = psycopg2.connect(database=platform_db, user=user_name, password=password, host=platform_host,port=port)
     print('Opened platform database connection successfully')
 
     # Establishing the oesdb db connection
@@ -1604,5 +1645,11 @@ if __name__ == '__main__':
     cur_audit = audit_conn.cursor()
     cur_visibility = visibility_conn.cursor()
     spindb = get_sql_db_conn()
-    perform_migration()
+
+   #check if it is pre-upgrade DB Update or post-upgrade Data Migration     
+    if migrate_data_flag == 'false':        
+        update_db("4.0.2")      # Note: version here should be updated for each ISD release
+    elif migrate_data_flag == 'true':        
+        perform_migration("4.0.2")       # pass the ISD version we are performing data migration for (Note: version here should be updated for each ISD release)
+
 

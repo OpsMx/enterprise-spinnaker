@@ -3,9 +3,9 @@ Steps to migrate from v3.12.x to v4.0.x
 1. Copy the file : migration_v3.12.x_to_v4.0.x.py file from: <script source path>
 2. Run the below command to execute the script.
 
-python3 <scriptfilename> <platform_db-name> <platform_host> <oes-db-name> <oes-db-host> <autopilot-db-name> <autopilot-db-host> <audit_db-name> <audit-db-host> <visibility_db-name> <visibility-db-host> <db-port> <user-name> <password> <isd-gate-url> <isd-admin-username> <isd-admin-password> <sapor-host-url> <audit-service-url> <redis/sql> <redis-host/sql-host> <redis-port/sql-username> <redis-password/sql-password>
+python3 <scriptfilename> <platform_db-name> <platform_host> <oes-db-name> <oes-db-host> <autopilot-db-name> <autopilot-db-host> <audit_db-name> <audit-db-host> <visibility_db-name> <visibility-db-host> <db-port> <user-name> <password> <isd-gate-url> <isd-admin-username> <isd-admin-password> <sapor-host-url> <audit-service-url> <redis/sql> <redis-host/sql-host> <redis-port/sql-username> <redis-password/sql-password> <migration-flag>
 
-ex: python3 migration_v3.12.x_to_v4.0.x.py platformdb oes-db oesdb oes-db opsmx oes-db auditdb oes-db visibilitydb oes-db 5432 postgres networks123 https://gitops-test.isd-dev.opsmx.net/gate  use.name@opsmx.io loginpassword http://oes-sapor:8085 http://oes-audit:8097 redis/sql v312migration-redis-master/wu-mysql-db.cluster-cyjw4hmntwfy.us-east-1.rds.amazonaws.com  6379/admin password
+ex: python3 migration_v3.12.x_to_v4.0.x.py platformdb oes-db oesdb oes-db opsmx oes-db auditdb oes-db visibilitydb oes-db 5432 postgres networks123 https://gitops-test.isd-dev.opsmx.net/gate  use.name@opsmx.io loginpassword http://oes-sapor:8085 http://oes-audit:8097 redis/sql v312migration-redis-master/wu-mysql-db.cluster-cyjw4hmntwfy.us-east-1.rds.amazonaws.com  6379/admin password true/false
 
 
 
