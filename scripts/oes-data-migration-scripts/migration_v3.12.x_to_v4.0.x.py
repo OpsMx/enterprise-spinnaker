@@ -6,6 +6,7 @@ import logging
 import requests
 import datetime
 import redis
+import mysql.connector
 
 
 class bcolors:
@@ -35,11 +36,11 @@ class SourceDetailsEntity:
         self.name = name
         self.type = type
 
+def update_db(version):     # pre-upgrade DB Update
 
-def perform_migration():
     try:
         global is_error_occurred
-        logging.info('Migrating from v3.12.x to v4.0')
+        logging.info('Migrating from v3.12.x to v4.0.x')
 
         try:
             logging.info("Drop audit db table delivery_insights_chart_counts")
@@ -139,21 +140,12 @@ def perform_migration():
             is_error_occurred = True
 
         try:
-            logging.info("Update cluster and location in service_deployments_current table")
-            print("Update cluster and location in service_deployments_current table")
-            pipeline_executions = fetch_pipeline_executions()
-            persist_cluster_and_location(pipeline_executions)
-        except Exception as e:
-            logging.error("Failure at step 13", exc_info=True)
-            is_error_occurred = True
-
-        try:
             logging.info("Updating Spinnaker existing gate Json in spinnaker")
             print("Updating Spinnaker existing gate Json in spinnaker")
             cookie = login_to_isd()
             processPipelineJsonForExistingGates(cookie)
         except Exception as e:
-            logging.error("Failure at step 14", exc_info=True)
+            logging.error("Failure at step 13", exc_info=True)
             is_error_occurred = True
 
         try:
@@ -175,24 +167,70 @@ def perform_migration():
             add_not_null_constraint_to_source_details_id()
             drop_column_source()
         except Exception as e:
-            logging.critical("Failure at step 15 : ", exc_info=True)
-            is_error_occurred = True
-
-        try:
-            print("Migrating the navigation Url fromat of the pipeline executions")
-            logging.info("Migrating the navigation Url fromat of the pipeline executions")
-            plKeyExecDict = get_pipeline_execution_key_dict()
-            update_custom_gates_navigation_url(plKeyExecDict)
-        except Exception as e:
-            logging.critical("Failure at step 16 : ", exc_info=True)
+            logging.critical("Failure at step 14 : ", exc_info=True)
             is_error_occurred = True
 
         try:
             logging.info("Add schema version to platform db table db_version")
             print("Add schema version to platform db table db_version")
-            addDBVersion()
+            addDBVersion(version)
         except Exception as e:
-            logging.error("Failure at step 17 : ", exc_info=True)
+            logging.error("Failure at step 15 : ", exc_info=True)
+            is_error_occurred = True
+
+        if is_error_occurred == True:
+            logging.info(
+                f"{bcolors.FAIL} {bcolors.BOLD}FAILURE: {bcolors.ENDC}{bcolors.FAIL}Migration script execution failed. Please contact the support team{bcolors.ENDC}")
+            raise Exception("FAILURE: Migration script execution failed. Please contact the support team.")
+        else:
+            logging.info(f"{bcolors.OKGREEN}{bcolors.BOLD}Successfully completed the migration.{bcolors.ENDC}")
+            print(f"{bcolors.OKGREEN}{bcolors.BOLD}Successfully completed the migration.{bcolors.ENDC}")
+            commit_transactions()
+
+    except Exception as e:
+        print("Exception occurred while updating databases : ", e)
+        logging.error("Exception occurred while updating databases from v3.12.x to v4.0.x:", exc_info=True)
+        logging.critical(e.__str__(), exc_info=True)
+        rollback_transactions()
+        exit(1)
+    finally:
+        close_connections()
+
+def perform_migration(version):     # post-upgrade Data Migration (to be run as a background job)
+    try:
+        global is_error_occurred
+        logging.info('Migrating data from v3.12.x to v4.0.x')
+
+
+        try:
+            logging.info("Update cluster and location in service_deployments_current table")
+            print("Update cluster and location in service_deployments_current table")
+            pipeline_executions = fetch_pipeline_executions()
+            persist_cluster_and_location(pipeline_executions)
+        except Exception as e:
+            logging.error("Failure at step 1", exc_info=True)
+            is_error_occurred = True
+        try:
+            print("Migrating the navigation Url format of the pipeline executions")
+            logging.info("Migrating the navigation Url format of the pipeline executions")
+            if spin_db_type == 'redis':
+                plKeyExecDict = get_pipeline_execution_key_dict()
+                update_custom_gates_navigation_url(plKeyExecDict)
+            elif spin_db_type == 'sql':
+                mysqlcursor = spindb.cursor(buffered=True)
+                pi_executions = get_pi_executions(mysqlcursor)
+                spin_db_update_custom_gates_navigation_url(pi_executions)
+                mysqlcursor.close()
+        except Exception as e:
+            logging.critical("Failure at step 2 : ", exc_info=True)
+            is_error_occurred = True    
+        try:
+            logging.info("Update application name in audit events table")
+            print("Update application name in audit events table")
+            updateApprovalGateAUdit()
+
+        except Exception as e:
+            logging.error("Failure at step 3", exc_info=True)
             is_error_occurred = True
 
         if is_error_occurred == True:
@@ -206,14 +244,15 @@ def perform_migration():
 
     except Exception as e:
         print("Exception occurred while migration : ", e)
-        logging.error("Exception occurred during migration from v3.12.x to v4.0:", exc_info=True)
+        logging.error("Exception occurred during migration from v3.12.x to v4.0.x:", exc_info=True)
         logging.critical(e.__str__(), exc_info=True)
         rollback_transactions()
         exit(1)
     finally:
         close_connections()
- 
- 
+
+
+
 def get_pipeline_execution_key_dict():
     try:
         keys = redis_conn.keys("pipeline:*:stageIndex")
@@ -289,7 +328,7 @@ def update_verification_gate_url(json_data, pl_key, execution_str):
 
         application_name = redis_conn.hget(pl_key, 'application')
         pipeline_name = redis_conn.hget(pl_key, 'name')
-        service_id = get_service_id(application_name, pipeline_name)
+        service_id = get_service_id(str(application_name.decode("utf-8")), str(pipeline_name.decode("utf-8")))
         canary_report_url = json_data['canaryReportURL']
         json_data['canaryReportURL'] = canary_report_url + '/fromPlugin/' + str(service_id)
         dump = json.dumps(json_data)
@@ -304,7 +343,7 @@ def update_verification_gate_url(json_data, pl_key, execution_str):
 
 def get_service_id(application_name, pipeline_name):
     try:
-        data = str(application_name.decode("utf-8")), str(pipeline_name.decode("utf-8"))
+        data = application_name, pipeline_name
         cur_platform.execute("select s.id as service_id from service s LEFT OUTER JOIN applications a ON s.application_id = a.id LEFT OUTER JOIN service_pipeline_map spm ON spm.service_id = s.id left outer join pipeline p on spm.pipeline_id = p.id where a.name = %s and p.pipeline_name = %s", data)
         return cur_platform.fetchone()[0]
     except Exception as e:
@@ -315,7 +354,7 @@ def get_service_id(application_name, pipeline_name):
 
 def get_policy_name(application_name, pipeline_name, gate_name):
     try:
-        data = str(application_name.decode("utf-8")), str(pipeline_name.decode("utf-8")), str(gate_name.decode("utf-8"))
+        data = application_name, pipeline_name, gate_name
         cur_oesdb.execute("select policy_name from policy_gate where application_name = %s and pipeline_name = %s and gate_name = %s", data)
         return cur_oesdb.fetchone()[0]
     except Exception as e:
@@ -331,7 +370,7 @@ def update_policy_gate_url(json_data, pl_key, execution_str):
         application_name = redis_conn.hget(pl_key, 'application')
         pipeline_name = redis_conn.hget(pl_key, 'name')
         gate_name = redis_conn.hget(pl_key, 'stage.' + execution_str + '.name')
-        policy_name = get_policy_name(application_name, pipeline_name, gate_name)
+        policy_name = get_policy_name(str(application_name.decode("utf-8")), str(pipeline_name.decode("utf-8")), str(gate_name.decode("utf-8")))
         json_data['policyName'] = policy_name
         json_data['policyLink'] = '/policy/' + policy_name
         dump = json.dumps(json_data)
@@ -341,7 +380,135 @@ def update_policy_gate_url(json_data, pl_key, execution_str):
         print("Exception occurred while updating policy gate url : ", e)
         logging.error("Exception occurred while updating policy gate url : ", exc_info=True)
         raise e
+
+
+def get_pi_executions(mysqlcursor):
+    try:        
+        mysqlcursor.execute("SELECT pi.application, pi.body, ps.body FROM pipeline_stages ps LEFT OUTER JOIN pipelines pi ON ps.execution_id = pi.id")
+        return mysqlcursor.fetchall()        
+    except Exception as e:
+        print("Exception occurred while getting the pipeline executions : ", e)
+        logging.error("Exception occurred while getting the pipeline execution : ", exc_info=True)
+        raise e
+
+
+def updated_stage_execution_data(pi_stage_id, updated_json):
+    try:
+        dump_updated = json.dumps(updated_json)					
+        mysqlcursor = spindb.cursor()
+        sql = "UPDATE pipeline_stages SET body = %s WHERE id = %s"
+        data = (dump_updated, pi_stage_id)
+        mysqlcursor.execute(sql, data)        
+    except Exception as e:
+        logging.error("Exception occurred while updating stage execution : ", exc_info=True)
+        print("Exception occurred while updating stage execution :  : ", e)
+        raise e
+
+         
+def spin_db_update_custom_gates_navigation_url(pi_executions):
+    try:
+        for pi_execution in pi_executions:
+            application = pi_execution[0]
+            pi_execution_data = pi_execution[1]
+            pi_stage_execution = pi_execution[2]            
+            stage_execution_json = json.loads(pi_stage_execution)
+            pi_execution_json = json.loads(pi_execution_data)            
+            stage_type = stage_execution_json['type']                       
+            pipeline_name = pi_execution_json['name']
+            if stage_type == 'approval' and 'navigationalURL' in pi_stage_execution:
+               spin_db_update_approval_gate_url(stage_execution_json)
+                
+            elif (stage_type == 'verification' or stage_type == 'testverification') and ('verificationURL' in pi_stage_execution or 'canaryReportURL' in pi_stage_execution):
+                spin_db_update_verification_gate_url(application, pipeline_name, stage_execution_json)
+                
+            elif stage_type =='policy':
+                spin_db_update_policy_gate_url(application, pipeline_name, stage_execution_json)
+
+    except Exception as e:
+        logging.error("Exception occurred while updating custom gates : ", exc_info=True)
+        print("Exception occurred while updating custom gates : ", e)
+        raise e
+
+def get_stage_id(stage_execution_json):
+    try:
+        return stage_execution_json['id']
+    except Exception as e:
+        print("Exception occurred while getting the stage id : ", e)
+        logging.error("Exception occurred while getting the the stage id : ", exc_info=True)
+        raise e
+
+
+def get_stage_name(stage_execution_json):
+    try:
+        return stage_execution_json['name']
+    except Exception as e:
+        print("Exception occurred while getting the stage id : ", e)
+        logging.error("Exception occurred while getting the the stage id : ", exc_info=True)
+        raise e
+
+
+def spin_db_update_approval_gate_url(json_data):
+    try:
+        output_json = json_data['outputs']
+        navigational_url = output_json['navigationalURL']
+        if navigational_url.find('fromPlugin?instanceId') < 0:
+            location = output_json['location']
+            words = location.split('/')
+            instance_id = words[len(words) - 2]
+            logging.info(f"the instance id is:  {instance_id}")
+            output_json['navigationalURL'] = navigational_url + '/fromPlugin?instanceId=' + str(instance_id)
+            json_data['outputs'] = output_json                               
+            logging.info(f"The output after updating approval url is:  {json_data}")            
+            updated_stage_execution_data(get_stage_id(json_data),json_data)
+
+    except Exception as e:
+        print("Exception occurred while updating approval gate navigation url : ", e)
+        logging.error("Exception occurred while updating approval gate navigation url : ", exc_info=True)
+        raise e
+
+
+def spin_db_update_verification_gate_url(application_name, pipeline_name, json_data):
+    try:
+        output_json = json_data['outputs']
+        output_dump = json.dumps(output_json)
+        if 'verificationURL' in output_dump:
+            output_json['canaryReportURL'] = output_json['verificationURL']            
+            json_data['outputs'] = output_json           
+            logging.info(f"The output after updating verification gate url is: {json_data}")           
+            updated_stage_execution_data(get_stage_id(json_data),json_data)
+            return
+
+        service_id = get_service_id(application_name, pipeline_name)
+        canary_report_url = output_json['canaryReportURL']
+        output_json['canaryReportURL'] = canary_report_url + '/fromPlugin/' + str(service_id)        
+        json_data['outputs'] = output_json        
+        logging.info(f"The output after updating verification gate url is: {json_data}")        
+        updated_stage_execution_data(get_stage_id(json_data),json_data)
+
+    except Exception as e:
+        print("Exception occurred while updating verification gate : ", e)
+        logging.error("Exception occurred while updating verification gate : ", exc_info=True)
+        raise e
+
+
+def spin_db_update_policy_gate_url(application_name, pipeline_name, json_data):
+    try:
+        output_json = json_data['outputs']
+        output_dump = json.dumps(output_json)
+        if 'policyName' in output_dump:
+            return
         
+        policy_name = get_policy_name(application_name, pipeline_name, get_stage_name(json_data))
+        output_json['policyName'] = policy_name
+        output_json['policyLink'] = '/policy/' + policy_name
+        json_data['outputs'] = output_json        #
+        logging.info(f"The output after updating policy gate url is: {json_data}")        
+        updated_stage_execution_data(get_stage_id(json_data),json_data)
+
+    except Exception as e:
+        print("Exception occurred while updating policy gate url : ", e)
+        logging.error("Exception occurred while updating policy gate url : ", exc_info=True)
+        raise e        
 
 
 def migrate_spinnaker_audits():
@@ -375,6 +542,8 @@ def commit_transactions():
         oesdb_conn.commit()
         autopilot_conn.commit()
         audit_conn.commit()
+        if spindb.is_connected():
+           spindb.commit()
         logging.info("Successfully migrated")
     except Exception as e:
         logging.critical("Exception occurred while committing transactions : ", exc_info=True)
@@ -389,6 +558,8 @@ def close_connections():
         audit_conn.close()
         if audit_conn is not None:
             audit_conn.close()
+        if spindb.is_connected():
+            spindb.close()
     except Exception as e:
         logging.warning("Exception occurred while closing the DB connection : ", exc_info=True)
 
@@ -400,6 +571,8 @@ def rollback_transactions():
         autopilot_conn.rollback()
         if audit_conn is not None:
             audit_conn.rollback()
+        if spindb.is_connected():
+            spindb.rollback()            
     except Exception as e:
         logging.critical("Exception occurred while rolling back the transactions : ", exc_info=True)
         raise e
@@ -1340,6 +1513,22 @@ def postingGateJson(pipelineJson, cookie):
         raise e
 
 
+def get_redis_conn():
+    if spin_db_type == 'redis':   
+        #Establishing the redis connection       
+        redis = redis.Redis(host=redis_host, port=redis_port, password=redis_password)
+        print("Redis connection established successfully")
+        return redis
+
+
+def get_sql_db_conn():
+    if spin_db_type == 'sql':
+        #Establishing the spinnaker sql database connection       
+        sqldb = mysql.connector.connect(database='orca', user=spin_db_username, password=spin_db_password, host=spin_db_host)
+        print("Spinnaker database connection established successfully")         
+        return sqldb
+
+
 def login_to_isd():
     try:
         cookie = ""
@@ -1357,7 +1546,7 @@ def login_to_isd():
         logging.error("Exception occurred while logging in to ISD : ", exc_info=True)
         raise e
 
-def addDBVersion():
+def addDBVersion(version):
     try:
         # create db_version table if not exists
         cur_platform.execute("CREATE TABLE IF NOT EXISTS db_version (id serial PRIMARY KEY,"
@@ -1365,9 +1554,9 @@ def addDBVersion():
                              "created_at TIMESTAMPTZ,"
                              "updated_at TIMESTAMPTZ)")
         # set db version
-        date = datetime.datetime.now()
-        version = "4.0.2"
-        cur_platform.execute("INSERT INTO db_version (version_no, created_at, updated_at) VALUES (version, date, date)")
+        date = datetime.datetime.now()        
+        data = version,date,date
+        cur_platform.execute("INSERT INTO db_version (version_no, created_at, updated_at) VALUES (%s, %s, %s)",data)
     except Exception as e:
         print("Exception occurred while adding db version : ", e)
         logging.error("Exception occurred while adding db version  : ", exc_info=True)
@@ -1377,16 +1566,16 @@ def addDBVersion():
 if __name__ == '__main__':
     n = len(sys.argv)
 
-    if n != 22:
+    if n != 24:
         print(
-            "Please pass valid 21 arguments <platform_db-name> <platform_host> <oes-db-name> <oes-db-host> <autopilot-db-name> <autopilot-db-host> <audit_db-name> <audit-db-host> <visibility_db-name> <visibility-db-host> "
-            "<db-port> <user-name> <password> <isd-gate-url> <isd-admin-username> <isd-admin-password> <sapor-host-url> <audit-service-url> <redis-host> <redis-port> <redis-password>")
+            "Please pass valid 23 arguments <platform_db-name> <platform_host> <oes-db-name> <oes-db-host> <autopilot-db-name> <autopilot-db-host> <audit_db-name> <audit-db-host> <visibility_db-name> <visibility-db-host> "
+            "<db-port> <user-name> <password> <isd-gate-url> <isd-admin-username> <isd-admin-password> <sapor-host-url> <audit-service-url> <redis/sql> <redis-host/sql-host> <redis-port/sql-username> <redis-password/sql-password> <migration-flag>")
         exit(1)
 
     global is_error_occurred
     is_error_occurred = False
 
-    logging.basicConfig(filename='/tmp/migration_v3.12.x_to_v4.0.log', filemode='w',
+    logging.basicConfig(filename='/tmp/migration_v3.12.x_to_v4.0.x.log', filemode='w',
                         format="%(asctime)s %(levelname)s %(threadName)s %(name)s %(message)s", datefmt='%H:%M:%S',
                         level=logging.INFO)
 
@@ -1408,23 +1597,36 @@ if __name__ == '__main__':
     isd_admin_password = sys.argv[16]
     sapor_host_url = sys.argv[17]
     audit_service_url = sys.argv[18]
-    redis_host = sys.argv[19]
-    redis_port = sys.argv[20]
-    redis_password = sys.argv[21]
+    spin_db_type = sys.argv[19]
+
+    global redis_host
+    global redis_port
+    global redis_password
+
+    global spin_db_host
+    global spin_db_username
+    global spin_db_password
+    if spin_db_type == 'redis':     
+       redis_host = sys.argv[20]
+       redis_port = sys.argv[21]
+       redis_password = sys.argv[22]
+
+    if spin_db_type == 'sql':
+       spin_db_host = sys.argv[20]
+       spin_db_username = sys.argv[21]
+       spin_db_password = sys.argv[22]
+    migrate_data_flag = sys.argv[23]
 
     # Establishing the platform db connection
-    platform_conn = psycopg2.connect(database=platform_db, user=user_name, password=password, host=platform_host,
-                                     port=port)
+    platform_conn = psycopg2.connect(database=platform_db, user=user_name, password=password, host=platform_host,port=port)
     print('Opened platform database connection successfully')
 
     # Establishing the oesdb db connection
-    oesdb_conn = psycopg2.connect(database=oes_db, user=user_name, password=password,
-                                  host=oes_host, port=port)
+    oesdb_conn = psycopg2.connect(database=oes_db, user=user_name, password=password, host=oes_host, port=port)
     print("Sapor database connection established successfully")
 
     # Establishing the opsmx db connection
-    autopilot_conn = psycopg2.connect(database=autopilot_db, user=user_name, password=password, host=autopilot_host
-                                      , port=port)
+    autopilot_conn = psycopg2.connect(database=autopilot_db, user=user_name, password=password, host=autopilot_host, port=port)
     print("autopilot database connection established successfully")
 
     # Establishing the audit db connection
@@ -1432,19 +1634,22 @@ if __name__ == '__main__':
     print('Opened audit database connection successfully')
 
     # Establishing the visibility db connection
-    visibility_conn = psycopg2.connect(database=visibility_db, user=user_name, password=password, host=visibility_host,
-                                       port=port)
+    visibility_conn = psycopg2.connect(database=visibility_db, user=user_name, password=password, host=visibility_host, port=port)
     print("Visibility database connection established successfully")
 
-    #Establishing the redis connection
-    redis_conn = redis.Redis(host=redis_host, port=redis_port, password=redis_password)
-    print("Redis connection established successfully")
-
+    
+    redis_conn = get_redis_conn()
     cur_platform = platform_conn.cursor()
     cur_oesdb = oesdb_conn.cursor()
     cur_autopilot = autopilot_conn.cursor()
     cur_audit = audit_conn.cursor()
     cur_visibility = visibility_conn.cursor()
+    spindb = get_sql_db_conn()
 
-    perform_migration()
+   #check if it is pre-upgrade DB Update or post-upgrade Data Migration     
+    if migrate_data_flag == 'false':        
+        update_db("4.0.2")      # Note: version here should be updated for each ISD release
+    elif migrate_data_flag == 'true':        
+        perform_migration("4.0.2")       # pass the ISD version we are performing data migration for (Note: version here should be updated for each ISD release)
+
 
