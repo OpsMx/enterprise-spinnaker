@@ -192,6 +192,7 @@ def update_db(version):     # pre-upgrade DB Update
         logging.error("Exception occurred while updating databases from v3.12.x to v4.0.x:", exc_info=True)
         logging.critical(e.__str__(), exc_info=True)
         rollback_transactions()
+        rollback_audit_db_charts()
         exit(1)
     finally:
         close_connections()
@@ -578,6 +579,16 @@ def rollback_transactions():
         raise e
 
 
+def rollback_audit_db_charts():
+    try:
+        updatePrimaryKeyAreaCharts()
+        updatePrimaryKeyDeliveryInsights()
+        audit_conn.commit()
+    except Exception as e:
+        logging.critical("Exception occurred while rolling back the audit charts primary key transactions : ", exc_info=True)
+        raise e
+
+
 def get_distinct_source():
     try:
         cur_audit.execute("select distinct(source) from audit_events")
@@ -853,6 +864,30 @@ def createAreaCharts():
                           "PRIMARY KEY (application_name, days, pipeline_name, source_id, status))")
         logging.info("Successfully dropped area_chart_counts table")
         print("Successfully created area_chart_counts table")
+    except Exception as e:
+        print("Exception occurred in creating area_chart_counts table while updating script : ", e)
+        logging.error("Exception occurred in creating area_chart_counts table while updating script: ", exc_info=True)
+        raise e
+
+
+def updatePrimaryKeyDeliveryInsights():
+    try:
+        cur_audit.execute("ALTER TABLE IF EXISTS public.delivery_insights_chart_counts DROP CONSTRAINT delivery_insights_chart_counts_pkey")
+        cur_audit.execute("ALTER TABLE IF EXISTS public.delivery_insights_chart_counts ADD CONSTRAINT delivery_insights_chart_counts_pkey(app_pipeline_name, days))");
+        logging.info("Successfully updated the PRIMARY KEY area_chart_counts table")
+        print("Successfully updated the PRIMARY KEY delivery_insights_chart_counts table")
+    except Exception as e:
+        print("Exception occurred in creating delivery_insights_chart_counts table while updating script : ", e)
+        logging.error("Exception occurred in creating delivery_insights_chart_counts table while updating script: ", exc_info=True)
+        raise e
+
+
+def updatePrimaryKeyAreaCharts():
+    try:
+        cur_audit.execute("ALTER TABLE IF EXISTS public.area_chart_counts DROP CONSTRAINT area_chart_counts_pkey")
+        cur_audit.execute("ALTER TABLE IF EXISTS public.area_chart_counts ADD CONSTRAINT   area_chart_counts_pkey (application_name, days, pipeline_name, status))");
+        logging.info("Successfully updated the PRIMARY KEY area_chart_counts table")
+        print("Successfully updated the PRIMARY KEY area_chart_counts table")
     except Exception as e:
         print("Exception occurred in creating area_chart_counts table while updating script : ", e)
         logging.error("Exception occurred in creating area_chart_counts table while updating script: ", exc_info=True)
@@ -1651,5 +1686,4 @@ if __name__ == '__main__':
         update_db("4.0.2")      # Note: version here should be updated for each ISD release
     elif migrate_data_flag == 'true':        
         perform_migration("4.0.2")       # pass the ISD version we are performing data migration for (Note: version here should be updated for each ISD release)
-
 
