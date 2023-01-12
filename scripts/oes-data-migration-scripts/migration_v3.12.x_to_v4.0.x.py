@@ -639,7 +639,7 @@ def add_column_source_details_id():
 
 def create_table_source_details():
     try:
-        cur_audit.execute("CREATE TABLE source_details (id serial PRIMARY KEY,"
+        cur_audit.execute("CREATE TABLE IF NOT EXISTS source_details (id serial PRIMARY KEY,"
                           "created_at TIMESTAMPTZ,"
                           "updated_at TIMESTAMPTZ,"
                           "description character varying(255),"
@@ -662,6 +662,7 @@ def add_not_null_constraint_to_source_details_id():
 
 def relate_audit_events_and_source_details():
     try:
+        cur_audit.execute("ALTER TABLE audit_events DROP CONSTRAINT IF EXISTS fk_source_details_audit")
         cur_audit.execute("ALTER TABLE audit_events ADD CONSTRAINT fk_source_details_audit FOREIGN KEY (source_details_id) REFERENCES source_details(id)")
     except Exception as e:
         print("Exception occurred while add foreign key constraint to source_details table : ", e)
