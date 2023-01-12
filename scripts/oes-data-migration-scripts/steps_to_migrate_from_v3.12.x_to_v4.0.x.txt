@@ -8,4 +8,6 @@ python3 <scriptfilename> <platform_db-name> <platform_host> <oes-db-name> <oes-d
 ex: python3 migration_v3.12.x_to_v4.0.x.py platformdb oes-db oesdb oes-db opsmx oes-db auditdb oes-db visibilitydb oes-db 5432 postgres networks123 https://gitops-test.isd-dev.opsmx.net/gate  use.name@opsmx.io loginpassword http://oes-sapor:8085 http://oes-audit:8097 redis/sql v312migration-redis-master/wu-mysql-db.cluster-cyjw4hmntwfy.us-east-1.rds.amazonaws.com  6379/admin password true/false
 
 
-
+Set migration-flag to
+   1. false - pre-upgrade DB Update
+   2. true - post-upgrade Data Migration (to be run as a background job) 
