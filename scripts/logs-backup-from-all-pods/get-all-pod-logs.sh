@@ -21,7 +21,7 @@ do
   podname=$(echo "$line" | awk '{print$1}')
   containername=$(kubectl get po $podname -n $ns -o jsonpath='{.spec.containers[0].name}')
   echo getting logs for $podname
-  kubectl -n $ns logs $podname $containername > logdir/"$podname".log
+  kubectl -n $ns logs $podname -c $containername > logdir/"$podname".log
 done < logdir/pods.txt
 tar -cvf $filename logdir
 gzip $filename
