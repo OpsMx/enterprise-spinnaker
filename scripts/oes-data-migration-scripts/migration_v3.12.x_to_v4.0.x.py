@@ -39,156 +39,93 @@ class SourceDetailsEntity:
 def update_db(version):     # pre-upgrade DB Update
 
     try:
-        global is_error_occurred
-        logging.info('Migrating from v3.12.x to v4.0.x')
+        logging.info('Updating databases from v3.12.x to v4.0.x')
 
-        try:
-            logging.info("Drop audit db table delivery_insights_chart_counts")
-            print("Drop audit db table delivery_insights_chart_counts")
-            dropDeliveryInsights()
-        except Exception as e:
-            logging.error("Failure at step 1", exc_info=True)
-            is_error_occurred = True
+        logging.info("Dropping audit db table delivery_insights_chart_counts")
+        print("Dropping audit db table delivery_insights_chart_counts")
+        dropDeliveryInsights()
+        logging.info("Dropping audit db table area_chart_counts")
+        print("Dropping audit db table area_chart_counts")
+        dropAreaCharts()
 
-        try:
-            logging.info("Drop audit db table area_chart_counts")
-            print("Drop audit db table area_chart_counts")
-            dropAreaCharts()
-        except Exception as e:
-            logging.error("Failure at step 2", exc_info=True)
-            is_error_occurred = True
+        logging.info("Creating audit db table delivery_insights_chart_counts")
+        print("Creating audit db table delivery_insights_chart_counts")
+        createDeliveryInsights()
 
-        try:
-            logging.info("Create audit db table delivery_insights_chart_counts")
-            print("Create audit db table delivery_insights_chart_counts")
-            createDeliveryInsights()
-        except Exception as e:
-            logging.error("Failure at step 3", exc_info=True)
-            is_error_occurred = True
+        logging.info("Creating audit db table area_chart_counts")
+        print("Creating audit db table area_chart_counts")
+        createAreaCharts()
+        audit_conn.commit()
+            
 
-        try:
-            logging.info("Create audit db table area_chart_counts")
-            print("Create audit db table area_chart_counts")
-            createAreaCharts()
-            audit_conn.commit()
-        except Exception as e:
-            logging.error("Failure at step 4", exc_info=True)
-            is_error_occurred = True
+        logging.info("Altering platform db table app_environment")
+        print("Altering platform db table app_environment")
+        alterAppEnvironmentTable()
 
-        try:
-            logging.info("Alter platform db table app_environment")
-            print("Alter platform db table app_environment")
-            alterAppEnvironmentTable()
-        except Exception as e:
-            logging.error("Failure at step 5", exc_info=True)
-            is_error_occurred = True
+        logging.info("Updating spinnaker environments details in sapor db")
+        print("Updating spinnaker environments details in sapor db")
+        getEnvironmentData()
 
-        try:
-            logging.info("Fetch spinnaker environments details from sapor db")
-            print("Fetch spinnaker environments details from sapor db")
-            getEnvironmentData()
-        except Exception as e:
-            logging.error("Failure at step 6", exc_info=True)
-            is_error_occurred = True
+        logging.info("Updating spinnaker environments Id details in app_environment table of platform db")
+        print("Updating spinnaker environments Id details in app_environment table of platform db")
+        environmentUpdate()
+            
 
-        try:
-            logging.info("Update spinnaker environments Id details in app_environment table")
-            print("Update spinnaker environments Id details in app_environment table")
-            environmentUpdate()
-        except Exception as e:
-            logging.error("Failure at step 7", exc_info=True)
-            is_error_occurred = True
+        logging.info("Altering platform db table service_gate")
+        print("Altering platform db table service_gate")
+        alterServiceGateTable()
 
-        try:
-            logging.info("Alter platform db table service_gate")
-            print("Alter platform db table service_gate")
-            alterServiceGateTable()
-        except Exception as e:
-            logging.error("Failure at step 8", exc_info=True)
-            is_error_occurred = True
+        logging.info("Updating ref_id in service_gate table")
+        print("Updating ref_id in service_gate table")
+        updateRefId()
 
-        try:
-            logging.info("Update spinnaker environments Id details in app_environment table")
-            print("Update spinnaker environments Id details in app_environment table")
-            updateRefId()
-        except Exception as e:
-            logging.error("Failure at step 9", exc_info=True)
-            is_error_occurred = True
+        logging.info("Altering platform db table service_deployments_current")
+        print("Altering platform db table service_deployments_current")
+        add_columns_in_service_deployment_current()
 
-        try:
-            logging.info("Alter platform db table service_deployments_current")
-            print("Alter platform db table service_deployments_current")
-            add_columns_in_service_deployment_current()
-        except Exception as e:
-            logging.error("Failure at step 10", exc_info=True)
-            is_error_occurred = True
+        logging.info("Altering autopilot db table userlogfeedback and loganalysis")
+        print("Altering autopilot db table userlogfeedback and loganalysis")
+        update_autopilot_constraints()
 
-        try:
-            logging.info("Alter autopilot db table userlogfeedback and loganalysis")
-            print("Alter autopilot db table userlogfeedback and loganalysis")
-            update_autopilot_constraints()
-        except Exception as e:
-            logging.error("Failure at step 11", exc_info=True)
-            is_error_occurred = True
+        logging.info("Updating service_deployments_current table sync column data in platform db")
+        print("Updating service_deployments_current table sync column data in platform db")
+        update_sync_status()
 
-        try:
-            logging.info("Update service_deployments_current table sync column data in platform db")
-            print("Update service_deployments_current table sync column data in platform db")
-            update_sync_status()
-        except Exception as e:
-            logging.error("Failure at step 12", exc_info=True)
-            is_error_occurred = True
+        logging.info("Updating Spinnaker existing gate Json in spinnaker")
+        print("Updating Spinnaker existing gate Json in spinnaker")
+        processPipelineJsonForExistingGates()
+            
 
-        try:
-            logging.info("Updating Spinnaker existing gate Json in spinnaker")
-            print("Updating Spinnaker existing gate Json in spinnaker")
-            cookie = login_to_isd()
-            processPipelineJsonForExistingGates(cookie)
-        except Exception as e:
-            logging.error("Failure at step 13", exc_info=True)
-            is_error_occurred = True
+        print("Migrating audit source details")
+        logging.info("Migrating audit source details")
+        delete_records_with_source_null()
+        create_table_source_details()
+        add_column_source_details_id()
+        sources = get_distinct_source()
+        logging.info("sources"+str(sources))
+        for source in sources:
+            source = source[0]
+            if source == 'OES':
+               migrate_oes_audits()
+            elif source == 'spinnaker':
+               migrate_spinnaker_audits()
 
-        try:
-            print("Migrating audit source details")
-            logging.info("Migrating audit source details")
-            delete_records_with_source_null()
-            create_table_source_details()
-            add_column_source_details_id()
-            sources = get_distinct_source()
-            print("sources", sources)
-            for source in sources:
-                source = source[0]
-                if source == 'OES':
-                    migrate_oes_audits()
-                elif source == 'spinnaker':
-                    migrate_spinnaker_audits()
+        relate_audit_events_and_source_details()
+        add_not_null_constraint_to_source_details_id()
+        drop_column_source()
+            
 
-            relate_audit_events_and_source_details()
-            add_not_null_constraint_to_source_details_id()
-            drop_column_source()
-        except Exception as e:
-            logging.critical("Failure at step 14 : ", exc_info=True)
-            is_error_occurred = True
+        logging.info("Adding schema version to platform db table db_version")
+        print("Adding schema version to platform db table db_version")
+        addDBVersion(version)
 
-        try:
-            logging.info("Add schema version to platform db table db_version")
-            print("Add schema version to platform db table db_version")
-            addDBVersion(version)
-        except Exception as e:
-            logging.error("Failure at step 15 : ", exc_info=True)
-            is_error_occurred = True
-
-        if is_error_occurred == True:
-            logging.info(
-                f"{bcolors.FAIL} {bcolors.BOLD}FAILURE: {bcolors.ENDC}{bcolors.FAIL}Migration script execution failed. Please contact the support team{bcolors.ENDC}")
-            raise Exception("FAILURE: Migration script execution failed. Please contact the support team.")
-        else:
-            logging.info(f"{bcolors.OKGREEN}{bcolors.BOLD}Successfully completed the migration.{bcolors.ENDC}")
-            print(f"{bcolors.OKGREEN}{bcolors.BOLD}Successfully completed the migration.{bcolors.ENDC}")
-            commit_transactions()
+        commit_transactions()
+        logging.info("Successfully updated databases.")
+        print(f"{bcolors.OKGREEN}{bcolors.BOLD}Successfully updated databases.{bcolors.ENDC}")
 
     except Exception as e:
         print("Exception occurred while updating databases : ", e)
+        print(f"{bcolors.FAIL} {bcolors.BOLD}FAILURE: {bcolors.ENDC}{bcolors.FAIL}DB Upgrade script execution failed. Please contact the support team{bcolors.ENDC}")
         logging.error("Exception occurred while updating databases from v3.12.x to v4.0.x:", exc_info=True)
         logging.critical(e.__str__(), exc_info=True)
         rollback_transactions()
@@ -198,53 +135,35 @@ def update_db(version):     # pre-upgrade DB Update
 
 def perform_migration(version):     # post-upgrade Data Migration (to be run as a background job)
     try:
-        global is_error_occurred
         logging.info('Migrating data from v3.12.x to v4.0.x')
+        logging.info("Updating cluster and location in service_deployments_current table")
+        print("Updating cluster and location in service_deployments_current table")
+        pipeline_executions = fetch_pipeline_executions()
+        persist_cluster_and_location(pipeline_executions)
+          
+        print("Migrating the navigation Url format of the pipeline executions")
+        logging.info("Migrating the navigation Url format of the pipeline executions")
+        if spin_db_type == 'redis':
+            plKeyExecDict = get_pipeline_execution_key_dict()
+            update_custom_gates_navigation_url(plKeyExecDict)
+        elif spin_db_type == 'sql':
+             mysqlcursor = spindb.cursor(buffered=True)
+             pi_executions = get_pi_executions(mysqlcursor)
+             spin_db_update_custom_gates_navigation_url(pi_executions)
+             mysqlcursor.close()
+            
+        logging.info("Updating application name in audit events table")
+        print("Updating application name in audit events table")
+        updateApprovalGateAudit()
 
-
-        try:
-            logging.info("Update cluster and location in service_deployments_current table")
-            print("Update cluster and location in service_deployments_current table")
-            pipeline_executions = fetch_pipeline_executions()
-            persist_cluster_and_location(pipeline_executions)
-        except Exception as e:
-            logging.error("Failure at step 1", exc_info=True)
-            is_error_occurred = True
-        try:
-            print("Migrating the navigation Url format of the pipeline executions")
-            logging.info("Migrating the navigation Url format of the pipeline executions")
-            if spin_db_type == 'redis':
-                plKeyExecDict = get_pipeline_execution_key_dict()
-                update_custom_gates_navigation_url(plKeyExecDict)
-            elif spin_db_type == 'sql':
-                mysqlcursor = spindb.cursor(buffered=True)
-                pi_executions = get_pi_executions(mysqlcursor)
-                spin_db_update_custom_gates_navigation_url(pi_executions)
-                mysqlcursor.close()
-        except Exception as e:
-            logging.critical("Failure at step 2 : ", exc_info=True)
-            is_error_occurred = True    
-        try:
-            logging.info("Update application name in audit events table")
-            print("Update application name in audit events table")
-            updateApprovalGateAUdit()
-
-        except Exception as e:
-            logging.error("Failure at step 3", exc_info=True)
-            is_error_occurred = True
-
-        if is_error_occurred == True:
-            logging.info(
-                f"{bcolors.FAIL} {bcolors.BOLD}FAILURE: {bcolors.ENDC}{bcolors.FAIL}Migration script execution failed. Please contact the support team{bcolors.ENDC}")
-            raise Exception("FAILURE: Migration script execution failed. Please contact the support team.")
-        else:
-            logging.info(f"{bcolors.OKGREEN}{bcolors.BOLD}Successfully completed the migration.{bcolors.ENDC}")
-            print(f"{bcolors.OKGREEN}{bcolors.BOLD}Successfully completed the migration.{bcolors.ENDC}")
-            commit_transactions()
+        commit_transactions()
+        logging.info("Successfully completed the migration.")
+        print(f"{bcolors.OKGREEN}{bcolors.BOLD}Successfully completed the migration.{bcolors.ENDC}")            
 
     except Exception as e:
-        print("Exception occurred while migration : ", e)
-        logging.error("Exception occurred during migration from v3.12.x to v4.0.x:", exc_info=True)
+        print("Exception occurred during migration from v3.12.x to v4.0.x : ", e)
+        print(f"{bcolors.FAIL} {bcolors.BOLD}FAILURE: {bcolors.ENDC}{bcolors.FAIL}Data Migration script execution failed. Please contact the support team{bcolors.ENDC}")
+        logging.error("Exception occurred during migration from v3.12.x to v4.0.x : ", exc_info=True)
         logging.critical(e.__str__(), exc_info=True)
         rollback_transactions()
         exit(1)
@@ -546,6 +465,7 @@ def commit_transactions():
            spindb.commit()
         logging.info("Successfully migrated")
     except Exception as e:
+        print("Exception occurred while committing transactions : ", e)
         logging.critical("Exception occurred while committing transactions : ", exc_info=True)
         raise e
 
@@ -687,8 +607,8 @@ def add_columns_in_service_deployment_current():
             "ALTER TABLE service_deployments_current ADD COLUMN IF NOT EXISTS sync character varying DEFAULT NULL")
         cur_platform.execute("ALTER TABLE service_deployments_current ADD COLUMN IF NOT EXISTS location character varying DEFAULT NULL")
     except Exception as e:
-        logging.critical("Exception occurred while adding columns to service_deployments_current table : ",
-                         exc_info=True)
+        print("Exception occurred while adding columns to service_deployments_current table : ", e)
+        logging.error("Exception occurred while adding columns to service_deployments_current table : ", exc_info=True)
         raise e
 
 
@@ -790,7 +710,8 @@ def update_autopilot_constraints():
         cur_autopilot.execute(" ALTER TABLE userlogfeedback ALTER COLUMN logtemplate_id DROP not null ")
         cur_autopilot.execute(" ALTER TABLE loganalysis ALTER COLUMN log_template_opsmx_id DROP not null ")
     except Exception as e:
-        print("Exception occurred while  updating script : ", e)
+        print("Exception occurred while updating script : ", e)
+        logging.error("Exception occurred while updating script : ", exc_info=True)        
         raise e
 
 
@@ -936,7 +857,7 @@ def updateRefId():
         raise e
 
 
-def updateApprovalGateAUdit():
+def updateApprovalGateAudit():
     try:
         cur_audit.execute("select id,data from audit_events where data->>'eventType' = 'APPROVAL_GATE_AUDIT'")
         approval_audit_details = cur_audit.fetchall()
@@ -961,7 +882,8 @@ def updateApprovalGateAUdit():
                                                                                                                  audit_events_table_id))
                         fetchJsonAndUpdate(audit_events_table_id, applicationName, jsonData)
     except Exception as e:
-        print("Exception occurred while  updating script : ", e)
+        print("Exception occurred while updating application name in audit events table : ", e)
+        logging.error("Exception occurred updating application name in audit events table :", exc_info=True)
         raise e
 
 
@@ -993,13 +915,14 @@ def updateApprovalAuditJson(audit_events_table_id, updateJson):
         raise e
 
 
-def processPipelineJsonForExistingGates(cookie):
+def processPipelineJsonForExistingGates():
     try:
         cur_platform.execute(
             "select a.id as application_id , a.name as application_name , sp.service_id, g.id as gate_id, g.gate_name, g.gate_type, gp.pipeline_id "
             "from applications a left outer join service s on a.id = s.application_id left outer join service_pipeline_map sp on s.id=sp.service_id "
             "left outer join gate_pipeline_map gp on sp.pipeline_id=gp.pipeline_id left outer join service_gate g on gp.service_gate_id=g.id where a.source = 'Spinnaker' and g.id is not null")
         records = cur_platform.fetchall()
+        cookie = "no-cookie"        
         for record in records:
             logging.info("Record:"+str(record))
             applicationId = record[0]
@@ -1017,10 +940,10 @@ def processPipelineJsonForExistingGates(cookie):
                                               payloadConstraint, pipelineId, env_json)
             elif gateType.__eq__("verification"):
                 stageJson = verificationGateProcess(applicationId, serviceId, gateId, gateName, gateType,
-                                                    payloadConstraint, pipelineId, env_json, cookie)
+                                                    payloadConstraint, pipelineId, env_json)
             elif gateType.__eq__("approval"):
                 stageJson = approvalGateProcess(applicationId, serviceId, gateId, gateName, gateType,
-                                                payloadConstraint, pipelineId, env_json, cookie)
+                                                payloadConstraint, pipelineId, env_json)
             if stageJson is not None:
                 stageJson["application"] = appName
                 logging.info(f"StageJson is :  {stageJson}")
@@ -1128,9 +1051,9 @@ def policyParametersDataFilter(gateId, env_json_formatted, gateSecurity):
         raise e
 
 
-def verificationParametersDataFilter(gateId, env_json_formatted, cookie,applicationId):
+def verificationParametersDataFilter(gateId, env_json_formatted, applicationId):
     try:
-        logAndMetricInfoRes = getLogAndMetricName(applicationId, gateId, cookie)
+        logAndMetricInfoRes = getLogAndMetricName(applicationId, gateId)
         verification_pipeline_json = {
             "baselineRealTime": bool(False),
             "baselinestarttime": "",
@@ -1171,11 +1094,11 @@ def verificationParametersDataFilter(gateId, env_json_formatted, cookie,applicat
         raise e
 
 
-def getLogAndMetricName(applicationId, gateId, cookie):
+def getLogAndMetricName(applicationId, gateId):
     try:
-        URL = isd_gate_url + "/autopilot/api/v3/applications/{}/gates/{}".format(applicationId, gateId)
+        URL = autopilot_host_url + "/autopilot/api/v3/applications/{}/gates/{}".format(applicationId, gateId)
         logging.info(URL)
-        headers = {'cookie': cookie, 'x-spinnaker-user': isd_admin_username}
+        headers = {'x-spinnaker-user': isd_admin_username}
         request = requests.get(url=URL, headers=headers)
         logging.info(f"getLogAndMetricName response : {request}")
         return request.json()
@@ -1186,11 +1109,11 @@ def getLogAndMetricName(applicationId, gateId, cookie):
 
 
 def verificationGateProcess(applicationId, serviceId, gateId, gateName, gateType, payloadConstraint, pipelineId,
-                            env_json_formatted, cookie):
+                            env_json_formatted):
     try:
         logging.info("process verification gate json for application Id: " + str(applicationId) + " ,serviceId: " + str(
             serviceId) + " ,gateId: " + str(gateId))
-        parameters = verificationParametersDataFilter(gateId, env_json_formatted, cookie,applicationId)
+        parameters = verificationParametersDataFilter(gateId, env_json_formatted,applicationId)
         if (parameters is not None):
             verification_pipeline_json = {
                 "applicationId": applicationId,
@@ -1212,11 +1135,11 @@ def verificationGateProcess(applicationId, serviceId, gateId, gateName, gateType
 
 
 def approvalGateProcess(applicationId, serviceId, gateId, gateName, gateType, payloadConstraint, pipelineId, env_json,
-                        cookie):
+                        ):
     try:
         logging.info("process approval gate json for application Id: " + str(applicationId) + " ,serviceId: " + str(
             serviceId) + " ,gateId: " + str(gateId))
-        parameters = approvalParametersDataFilter(gateId, env_json, payloadConstraint, cookie)
+        parameters = approvalParametersDataFilter(gateId, env_json, payloadConstraint)
         approval_pipeline_json = {
             "applicationId": applicationId,
             "isNew": bool(True),
@@ -1235,13 +1158,13 @@ def approvalGateProcess(applicationId, serviceId, gateId, gateName, gateType, pa
         raise e
 
 
-def approvalParametersDataFilter(gateId, env_json_formatted, payloadConstraint, cookie):
+def approvalParametersDataFilter(gateId, env_json_formatted, payloadConstraint):
     try:
-        approvalGroupsData = getApprovalGroupsDataFilter(gateId, cookie)
+        approvalGroupsData = getApprovalGroupsDataFilter(gateId)
         automatedApproval = getAutomatedApproval(gateId)
         isAutomatedApproval = len(automatedApproval) > 0
         approvalGateId = getApprovalGateId(gateId)
-        selectedConnectors = getSelectedConnectors(approvalGateId, cookie)
+        selectedConnectors = getSelectedConnectors(approvalGateId)
         approval_pipeline_json = {
             "approvalGroups": approvalGroupsData,
             "automatedApproval": automatedApproval,
@@ -1271,12 +1194,12 @@ def getApprovalGateId(gateId):
         logging.error("Exception occurred while fetching approval gate Id by service gate Id", exc_info=True)
         raise e
 
-def getApprovalGroupsName(gateId, cookie):
+def getApprovalGroupsName(gateId):
     try:
-        URL = isd_gate_url + "/platformservice/v6/usergroups/permissions/resources/{}".format(gateId)
+        URL = platform_host_url + "/platformservice/v6/usergroups/permissions/resources/{}".format(gateId)
         logging.info(URL)
         PARAMS = {'featureType': 'APPROVAL_GATE'}
-        headers = {'cookie': cookie, 'x-spinnaker-user': isd_admin_username}
+        headers = {'x-spinnaker-user': isd_admin_username}
         request = requests.get(url=URL, headers=headers, params=PARAMS)
         return request.json()
     except Exception as e:
@@ -1285,11 +1208,11 @@ def getApprovalGroupsName(gateId, cookie):
         raise e
 
 
-def getApprovalGroupsDataJson(cookie):
+def getApprovalGroupsDataJson():
     try:
-        URL = isd_gate_url + "/platformservice/v2/usergroups"
+        URL = platform_host_url + "/platformservice/v2/usergroups"
         logging.info(URL)
-        headers = {'cookie': cookie}
+        headers = {'x-spinnaker-user': isd_admin_username}
         request = requests.get(url=URL, headers=headers)
         return request.json()
     except Exception as e:
@@ -1298,10 +1221,10 @@ def getApprovalGroupsDataJson(cookie):
         raise e
 
 
-def getApprovalGroupsDataFilter(gateId, cookie):
+def getApprovalGroupsDataFilter(gateId):
     dataList = []
-    getApprovalGroupsNamesData = getApprovalGroupsName(gateId, cookie)
-    getApprovalGroupsData = getApprovalGroupsDataJson(cookie)
+    getApprovalGroupsNamesData = getApprovalGroupsName(gateId)
+    getApprovalGroupsData = getApprovalGroupsDataJson()
     if 'userGroups' in getApprovalGroupsNamesData:
         getUserGroupsName = getApprovalGroupsNamesData['userGroups'][0]['userGroupNames']
     else:
@@ -1342,11 +1265,11 @@ def getAutomatedApproval(gateId):
         raise e
 
 
-def getConnectorsConfiguredNames(approvalGateId, cookie):
+def getConnectorsConfiguredNames(approvalGateId):
     try:
-        URL = isd_gate_url +"/visibilityservice/v1/approvalGates/{}/toolConnectors".format(approvalGateId)
+        URL = visibility_host_url +"/visibilityservice/v1/approvalGates/{}/toolConnectors".format(approvalGateId)
         logging.info(URL)
-        headers = {'cookie': cookie}
+        headers = {'x-spinnaker-user': isd_admin_username}
         request = requests.get(url=URL, headers=headers)
         return request.json()
     except Exception as e:
@@ -1355,11 +1278,11 @@ def getConnectorsConfiguredNames(approvalGateId, cookie):
         raise e
 
 
-def getAllConnectorsNameData(cookie):
+def getAllConnectorsNameData():
     try:
-        URL = isd_gate_url + "/visibilityservice/v6/getAllConnectorFields"
+        URL = visibility_host_url + "/visibilityservice/v6/getAllConnectorFields"
         logging.info(URL)
-        headers = {'cookie': cookie}
+        headers = {'x-spinnaker-user': isd_admin_username}
         request = requests.get(url=URL, headers=headers)
         return request.json()
     except Exception as e:
@@ -1368,10 +1291,10 @@ def getAllConnectorsNameData(cookie):
         raise e
 
 
-def getSelectedConnectors(approvalGateId, cookie):
+def getSelectedConnectors(approvalGateId):
     try:
         logging.info("Formatting selected connectors for gateId: " + str(approvalGateId))
-        getConnectorsNames = getConnectorsConfiguredNames(approvalGateId, cookie)
+        getConnectorsNames = getConnectorsConfiguredNames(approvalGateId)
         defaultData = [{
             "connectorType": "Connectors *",
             "helpText": "List of Connectors Configured",
@@ -1567,14 +1490,12 @@ def addDBVersion(version):
 if __name__ == '__main__':
     n = len(sys.argv)
 
-    if n != 24:
+    if n != 27:
         print(
-            "Please pass valid 23 arguments <platform_db-name> <platform_host> <oes-db-name> <oes-db-host> <autopilot-db-name> <autopilot-db-host> <audit_db-name> <audit-db-host> <visibility_db-name> <visibility-db-host> "
-            "<db-port> <user-name> <password> <isd-gate-url> <isd-admin-username> <isd-admin-password> <sapor-host-url> <audit-service-url> <redis/sql> <redis-host/sql-host> <redis-port/sql-username> <redis-password/sql-password> <migration-flag>")
+            "Please pass valid 26 arguments <platform_db-name> <platform_host> <oes-db-name> <oes-db-host> <autopilot-db-name> <autopilot-db-host> <audit_db-name> <audit-db-host> <visibility_db-name> <visibility-db-host> "
+            "<db-port> <user-name> <password> <isd-gate-url> <isd-admin-username> <isd-admin-password> <sapor-host-url> <audit-service-url> <redis/sql> <redis-host/sql-host> <redis-port/sql-username> <redis-password/sql-password> <migration-flag> <isd-platform-url> <isd-visibility-url> <isd-autopilot-url>")
         exit(1)
 
-    global is_error_occurred
-    is_error_occurred = False
 
     logging.basicConfig(filename='/tmp/migration_v3.12.x_to_v4.0.x.log', filemode='w',
                         format="%(asctime)s %(levelname)s %(threadName)s %(name)s %(message)s", datefmt='%H:%M:%S',
@@ -1617,6 +1538,12 @@ if __name__ == '__main__':
        spin_db_username = sys.argv[21]
        spin_db_password = sys.argv[22]
     migrate_data_flag = sys.argv[23]
+    platform_host_url = sys.argv[24]
+    visibility_host_url = sys.argv[25]
+    autopilot_host_url = sys.argv[26]
+
+    
+
 
     # Establishing the platform db connection
     platform_conn = psycopg2.connect(database=platform_db, user=user_name, password=password, host=platform_host,port=port)
@@ -1652,5 +1579,4 @@ if __name__ == '__main__':
         update_db("4.0.2")      # Note: version here should be updated for each ISD release
     elif migrate_data_flag == 'true':        
         perform_migration("4.0.2")       # pass the ISD version we are performing data migration for (Note: version here should be updated for each ISD release)
-
 
