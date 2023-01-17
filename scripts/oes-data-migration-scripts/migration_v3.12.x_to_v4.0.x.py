@@ -195,11 +195,11 @@ def update_custom_gates_navigation_url(plKeyExecDict):
                 exec_str = str(execution.decode("utf-8"))
                 field = "stage." + exec_str + ".outputs"
                 type = "stage."+exec_str+".type"
-                print("The pl key is: ", plKey)
-                print("The field is: ", field)
+                logging.info("The pl key is: %s", plKey)
+                logging.info("The field is: %s", field)
                 output = redis_conn.hget(plKey, field)
                 stage_type = redis_conn.hget(plKey, type)
-                print("The output is: ", output)
+                logging.info("The output is: %s", output)
                 output_str = str(output.decode("utf-8"))
                 output_json = json.loads(output_str)
                 if b'approval' == stage_type and 'navigationalURL' in output_json:
@@ -245,14 +245,16 @@ def update_verification_gate_url(json_data, pl_key, execution_str):
             logging.info(f"The output after updating verification gate url is: {json_data}")
             return
 
-        application_name = redis_conn.hget(pl_key, 'application')
-        pipeline_name = redis_conn.hget(pl_key, 'name')
-        service_id = get_service_id(str(application_name.decode("utf-8")), str(pipeline_name.decode("utf-8")))
         canary_report_url = json_data['canaryReportURL']
-        json_data['canaryReportURL'] = canary_report_url + '/fromPlugin/' + str(service_id)
-        dump = json.dumps(json_data)
-        redis_conn.hset(pl_key, "stage." + execution_str + ".outputs", dump)
-        logging.info(f"The output after updating verification gate url is: {json_data}")
+        if canary_report_url.find('fromPlugin') < 0:
+           application_name = redis_conn.hget(pl_key, 'application')
+           pipeline_name = redis_conn.hget(pl_key, 'name')
+           service_id = get_service_id(str(application_name.decode("utf-8")), str(pipeline_name.decode("utf-8")))
+           if service_id is not None:
+              json_data['canaryReportURL'] = canary_report_url + '/fromPlugin/' + str(service_id)
+              dump = json.dumps(json_data)
+              redis_conn.hset(pl_key, "stage." + execution_str + ".outputs", dump)
+              logging.info(f"The output after updating verification gate url is: {json_data}")
     except Exception as e:
         print("Exception occurred while updating verification gate : ", e)
         logging.error("Exception occurred while updating verification gate : ", exc_info=True)
@@ -264,7 +266,11 @@ def get_service_id(application_name, pipeline_name):
     try:
         data = application_name, pipeline_name
         cur_platform.execute("select s.id as service_id from service s LEFT OUTER JOIN applications a ON s.application_id = a.id LEFT OUTER JOIN service_pipeline_map spm ON spm.service_id = s.id left outer join pipeline p on spm.pipeline_id = p.id where a.name = %s and p.pipeline_name = %s", data)
-        return cur_platform.fetchone()[0]
+        serviceId = cur_platform.fetchone()
+        if serviceId is not None:
+           return serviceId[0]
+        else:
+          logging.info("service id was not found for the  application name : %s, Pipeline name :%s", application_name, pipeline_name)
     except Exception as e:
         print("Exception occurred while getting service id : ", e)
         logging.error("Exception occurred while getting service id : ", exc_info=True)
@@ -275,7 +281,11 @@ def get_policy_name(application_name, pipeline_name, gate_name):
     try:
         data = application_name, pipeline_name, gate_name
         cur_oesdb.execute("select policy_name from policy_gate where application_name = %s and pipeline_name = %s and gate_name = %s", data)
-        return cur_oesdb.fetchone()[0]
+        policyName = cur_oesdb.fetchone()
+        if  policyName is not None:
+            return policyName[0]
+        else:
+            logging.info("Policy name was not found for the  application name : %s, Pipeline name : %s, gate name : %s", application_name, pipeline_name,gate_name)
     except Exception as e:
         print("Exception occurred while getting the policy name : ", e)
         logging.error("Exception occurred while getting the policy name : ", exc_info=True)
@@ -290,11 +300,12 @@ def update_policy_gate_url(json_data, pl_key, execution_str):
         pipeline_name = redis_conn.hget(pl_key, 'name')
         gate_name = redis_conn.hget(pl_key, 'stage.' + execution_str + '.name')
         policy_name = get_policy_name(str(application_name.decode("utf-8")), str(pipeline_name.decode("utf-8")), str(gate_name.decode("utf-8")))
-        json_data['policyName'] = policy_name
-        json_data['policyLink'] = '/policy/' + policy_name
-        dump = json.dumps(json_data)
-        redis_conn.hset(pl_key, "stage." + execution_str + ".outputs", dump)
-        logging.info(f"The output after updating policy gate url is: {json_data}")
+        if policy_name is not None: 
+           json_data['policyName'] = policy_name
+           json_data['policyLink'] = '/policy/' + policy_name
+           dump = json.dumps(json_data)
+           redis_conn.hset(pl_key, "stage." + execution_str + ".outputs", dump)
+           logging.info(f"The output after updating policy gate url is: {json_data}")
     except Exception as e:
         print("Exception occurred while updating policy gate url : ", e)
         logging.error("Exception occurred while updating policy gate url : ", exc_info=True)
@@ -396,13 +407,14 @@ def spin_db_update_verification_gate_url(application_name, pipeline_name, json_d
             logging.info(f"The output after updating verification gate url is: {json_data}")           
             updated_stage_execution_data(get_stage_id(json_data),json_data)
             return
-
-        service_id = get_service_id(application_name, pipeline_name)
         canary_report_url = output_json['canaryReportURL']
-        output_json['canaryReportURL'] = canary_report_url + '/fromPlugin/' + str(service_id)        
-        json_data['outputs'] = output_json        
-        logging.info(f"The output after updating verification gate url is: {json_data}")        
-        updated_stage_execution_data(get_stage_id(json_data),json_data)
+        if canary_report_url.find('fromPlugin') < 0:
+           service_id = get_service_id(application_name, pipeline_name)
+           if service_id is not None:
+              output_json['canaryReportURL'] = canary_report_url + '/fromPlugin/' + str(service_id)        
+              json_data['outputs'] = output_json        
+              logging.info(f"The output after updating verification gate url is: {json_data}")        
+              updated_stage_execution_data(get_stage_id(json_data),json_data)
 
     except Exception as e:
         print("Exception occurred while updating verification gate : ", e)
@@ -418,11 +430,12 @@ def spin_db_update_policy_gate_url(application_name, pipeline_name, json_data):
             return
         
         policy_name = get_policy_name(application_name, pipeline_name, get_stage_name(json_data))
-        output_json['policyName'] = policy_name
-        output_json['policyLink'] = '/policy/' + policy_name
-        json_data['outputs'] = output_json        #
-        logging.info(f"The output after updating policy gate url is: {json_data}")        
-        updated_stage_execution_data(get_stage_id(json_data),json_data)
+        if policy_name is not None:
+           output_json['policyName'] = policy_name
+           output_json['policyLink'] = '/policy/' + policy_name
+           json_data['outputs'] = output_json        #
+           logging.info(f"The output after updating policy gate url is: {json_data}")        
+           updated_stage_execution_data(get_stage_id(json_data),json_data)
 
     except Exception as e:
         print("Exception occurred while updating policy gate url : ", e)
@@ -876,7 +889,7 @@ def updateApprovalGateAudit():
                     applicationName = cur_platform.fetchone()
                     if applicationName is not None:
                         applicationName = str(applicationName[0])
-                        print("GateId: {},pipelineId: {} ,applicationName: {} ,audit_events_table_id :{}".format(gateId,
+                        logging.info("GateId: {},pipelineId: {} ,applicationName: {} ,audit_events_table_id :{}".format(gateId,
                                                                                                                  pipelineId,
                                                                                                                  applicationName,
                                                                                                                  audit_events_table_id))
