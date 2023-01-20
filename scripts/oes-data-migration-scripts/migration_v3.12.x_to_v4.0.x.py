@@ -936,6 +936,7 @@ def processPipelineJsonForExistingGates():
             "left outer join gate_pipeline_map gp on sp.pipeline_id=gp.pipeline_id left outer join service_gate g on gp.service_gate_id=g.id where a.source = 'Spinnaker' and g.id is not null")
         records = cur_platform.fetchall()
         cookie = "no-cookie"
+        activateSpinnakerSession(cookie)
         userGroupsData = getApprovalGroupsDataJson()        
         for record in records:
             logging.info("Record:"+str(record))
@@ -966,6 +967,19 @@ def processPipelineJsonForExistingGates():
     except Exception as e:
         print("Exception occurred while processing the pipeline json for existing gates : ", e)
         logging.error("Exception occurred while processing the pipeline json for existing gates :", exc_info=True)
+        raise e
+
+
+def activateSpinnakerSession(cookie):
+    try:
+        empty_json = json.loads('{}')         
+        api_url = sapor_host_url+"/oes/appOnboarding/spinnaker/pipeline/stage"        
+        headers = {'Content-Type': 'application/json', 'x-user-cookie' : cookie,
+                   'x-spinnaker-user': isd_admin_username}
+        response = requests.post(url=api_url, headers=headers, data=json.dumps(empty_json))     
+    except Exception as e:
+        print("Exception activateSpinnakerSession : ", e)
+        logging.error("Exception activateSpinnakerSession :  :", exc_info=True)
         raise e
 
 
@@ -1096,8 +1110,8 @@ def verificationParametersDataFilter(gateId, env_json_formatted, applicationId):
                 "values": []
             }],
             "lifetime": "",
-            "logTemplate": logAndMetricInfoRes["logTemplateName"],
-            "metricTemplate": logAndMetricInfoRes["metricTemplateName"],
+            "logTemplate": logAndMetricInfoRes[0],
+            "metricTemplate": logAndMetricInfoRes[1],
             "minicanaryresult": ""
         }
         return verification_pipeline_json
@@ -1110,12 +1124,12 @@ def verificationParametersDataFilter(gateId, env_json_formatted, applicationId):
 
 def getLogAndMetricName(applicationId, gateId):
     try:
-        URL = autopilot_host_url + "/autopilot/api/v3/applications/{}/gates/{}".format(applicationId, gateId)
-        logging.info(URL)
-        headers = {'x-spinnaker-user': isd_admin_username}
-        request = requests.get(url=URL, headers=headers)
-        logging.info(f"getLogAndMetricName response : {request}")
-        return request.json()
+        data = applicationId, gateId
+        cur_autopilot.execute("select ulst.templatename, ust.pipeline_id from servicegate s left outer join userlogservicetemplate ulst on s.logtemplate_id = ulst.opsmx_id left outer join  userservicetemplate ust on s.metrictemplate_id = ust.opsmx_id where  s.application_id=%s and s.gateid=%s", data)
+        result = cur_autopilot.fetchone()
+        logging.info(f"getLogAndMetricName response : {result}")
+        if result is not None:
+           return  result
     except Exception as e:
         print("Exception occurred while fetching log and metric template name: ", e)
         logging.error("Exception occurred while fetching log and metric template name:", exc_info=True)
@@ -1222,8 +1236,7 @@ def getApprovalGroupsDataJson():
     try:
         URL = platform_host_url + "/platformservice/v2/usergroups"
         logging.info(URL)
-        headers = {'x-spinnaker-user': isd_admin_username}
-        request = requests.get(url=URL, headers=headers)
+        request = requests.get(url=URL)
         return request.json()
     except Exception as e:
         print("Exception occurred while fetching approval groups data : ", e)
@@ -1277,34 +1290,39 @@ def getAutomatedApproval(gateId):
 
 def getConnectorsConfiguredNames(approvalGateId):
     try:
-        URL = visibility_host_url +"/visibilityservice/v1/approvalGates/{}/toolConnectors".format(approvalGateId)
-        logging.info(URL)
-        headers = {'x-spinnaker-user': isd_admin_username}
-        request = requests.get(url=URL, headers=headers)
-        return request.json()
+        connectors = []
+        data = approvalGateId 
+        cur_visibility.execute("select datasource_name from approval_gate_tool_connector where approval_gate_id=%s", [data])
+        connectorsNames = cur_visibility.fetchall()
+        if connectorsNames is not None:
+           for connectorName in connectorsNames:            
+               connectorTypeAndName = getConnectorData(connectorName[0]) 
+               connectorData = {
+                    "connector": connectorTypeAndName[0],
+                    "account": connectorTypeAndName[1]
+               }
+               connectors.append(connectorData)
+        logging.info("Gate Id :%s, Connectors :%s",str(approvalGateId), str(connectors))
+        return  connectors
+    except Exception as e:
+        print("Exception occurred while fetching connector configured names : ", e)
+        logging.error("Exception occurred while fetching connector configured names:", exc_info=True)
+        raise e
+def getConnectorData(connectorName):
+    try:
+        data = connectorName 
+        cur_platform.execute("SELECT datasourcetype, name FROM datasource WHERE name=%s ", [data])
+        return cur_platform.fetchone()
     except Exception as e:
         print("Exception occurred while fetching connector configured names : ", e)
         logging.error("Exception occurred while fetching connector configured names:", exc_info=True)
         raise e
 
 
-def getAllConnectorsNameData():
-    try:
-        URL = visibility_host_url + "/visibilityservice/v6/getAllConnectorFields"
-        logging.info(URL)
-        headers = {'x-spinnaker-user': isd_admin_username}
-        request = requests.get(url=URL, headers=headers)
-        return request.json()
-    except Exception as e:
-        print("Exception occurred while fetching all connectors fields : ", e)
-        logging.error("Exception occurred while fetching all connectors fields:", exc_info=True)
-        raise e
-
-
 def getSelectedConnectors(approvalGateId):
     try:
         logging.info("Formatting selected connectors for gateId: " + str(approvalGateId))
-        getConnectorsNames = getConnectorsConfiguredNames(approvalGateId)
+        mainData = getConnectorsConfiguredNames(approvalGateId)
         defaultData = [{
             "connectorType": "Connectors *",
             "helpText": "List of Connectors Configured",
@@ -1327,13 +1345,7 @@ def getSelectedConnectors(approvalGateId):
             ],
             "values": []
         }]
-        mainData = []
-        for getConnectorsName in getConnectorsNames:
-            if ('connectorType' in getConnectorsName and 'accountName' in getConnectorsName):
-                tempData = {"connector": getConnectorsName['connectorType'],
-                            "account": getConnectorsName['accountName']}
-                mainData.append(tempData)
-            defaultData[0]["values"] = mainData
+        defaultData[0]["values"] = mainData
         return defaultData
     except Exception as e:
         print(
@@ -1437,7 +1449,7 @@ def postingGateJson(pipelineJson, cookie):
         response = requests.post(url=api_url, headers=headers, data=json.dumps(pipelineJson))
         logging.info("The response status is: " + str(response.status_code))
         if (response.status_code == 200 | response.status_code == 201):
-            logging.info("Successfully added stage! The response is:\n" + str(response.content) + '\n')
+            logging.info("Successfully added stage! The response is:\n" + str(response.text) + '\n')
         else:
             print("Failed to add stage; The response is: "+str(response.content))
             logging.info("Failed to add stage; The response is:\n" + str(response.content) + '\n')
@@ -1462,13 +1474,13 @@ def get_sql_db_conn():
         print("Spinnaker database connection established successfully")         
         return sqldb
 
-
+"""
 def login_to_isd():
     try:
         cookie = ""
-        cmd = "curl -vvv -X POST '" + isd_gate_url + "/login?username=" + isd_admin_username + "&password=" + isd_admin_password + "&submit=Login'"
+        cmd = "curl -vvv -X POST '" + spin_gate_url + "/login?username=" + spin_admin_username + "&password=" + spin_admin_password + "&submit=Login'"
         output = subprocess.getoutput(cmd=cmd)
-        output = output.replace(isd_admin_username, "***").replace(isd_admin_password, "***")
+        output = output.replace(spin_admin_username, "***").replace(spin_admin_password, "***")
         logging.info(f"Output for ISD login : {output}")
         components = output.split("<")
         for comp in components:
@@ -1479,6 +1491,8 @@ def login_to_isd():
         print("Exception occurred while logging in to ISD : ", e)
         logging.error("Exception occurred while logging in to ISD : ", exc_info=True)
         raise e
+"""
+
 
 def addDBVersion(version):
     try:
@@ -1500,10 +1514,10 @@ def addDBVersion(version):
 if __name__ == '__main__':
     n = len(sys.argv)
 
-    if n != 27:
+    if n != 25:
         print(
-            "Please pass valid 26 arguments <platform_db-name> <platform_host> <oes-db-name> <oes-db-host> <autopilot-db-name> <autopilot-db-host> <audit_db-name> <audit-db-host> <visibility_db-name> <visibility-db-host> "
-            "<db-port> <user-name> <password> <isd-gate-url> <isd-admin-username> <isd-admin-password> <sapor-host-url> <audit-service-url> <redis/sql> <redis-host/sql-host> <redis-port/sql-username> <redis-password/sql-password> <migration-flag> <isd-platform-url> <isd-visibility-url> <isd-autopilot-url>")
+            "Please pass valid 24 arguments <platform_db-name> <platform_host> <oes-db-name> <oes-db-host> <autopilot-db-name> <autopilot-db-host> <audit_db-name> <audit-db-host> <visibility_db-name> <visibility-db-host> "
+            "<db-port> <user-name> <password> <isd-gate-url> <isd-admin-username> <isd-admin-password> <sapor-host-url> <audit-service-url> <redis/sql> <redis-host/sql-host> <redis-port/sql-username> <redis-password/sql-password> <migration-flag> <isd-platform-url>")
         exit(1)
 
 
@@ -1549,8 +1563,6 @@ if __name__ == '__main__':
        spin_db_password = sys.argv[22]
     migrate_data_flag = sys.argv[23]
     platform_host_url = sys.argv[24]
-    visibility_host_url = sys.argv[25]
-    autopilot_host_url = sys.argv[26]
 
     
 
