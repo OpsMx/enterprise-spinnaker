@@ -935,7 +935,8 @@ def processPipelineJsonForExistingGates():
             "from applications a left outer join service s on a.id = s.application_id left outer join service_pipeline_map sp on s.id=sp.service_id "
             "left outer join gate_pipeline_map gp on sp.pipeline_id=gp.pipeline_id left outer join service_gate g on gp.service_gate_id=g.id where a.source = 'Spinnaker' and g.id is not null")
         records = cur_platform.fetchall()
-        cookie = "no-cookie"        
+        cookie = "no-cookie"
+        userGroupsData = getApprovalGroupsDataJson()        
         for record in records:
             logging.info("Record:"+str(record))
             applicationId = record[0]
@@ -956,7 +957,7 @@ def processPipelineJsonForExistingGates():
                                                     payloadConstraint, pipelineId, env_json)
             elif gateType.__eq__("approval"):
                 stageJson = approvalGateProcess(applicationId, serviceId, gateId, gateName, gateType,
-                                                payloadConstraint, pipelineId, env_json)
+                                                payloadConstraint, pipelineId, env_json, userGroupsData)
             if stageJson is not None:
                 stageJson["application"] = appName
                 logging.info(f"StageJson is :  {stageJson}")
@@ -1147,12 +1148,11 @@ def verificationGateProcess(applicationId, serviceId, gateId, gateName, gateType
         raise e
 
 
-def approvalGateProcess(applicationId, serviceId, gateId, gateName, gateType, payloadConstraint, pipelineId, env_json,
-                        ):
+def approvalGateProcess(applicationId, serviceId, gateId, gateName, gateType, payloadConstraint, pipelineId, env_json, userGroupsData):
     try:
         logging.info("process approval gate json for application Id: " + str(applicationId) + " ,serviceId: " + str(
             serviceId) + " ,gateId: " + str(gateId))
-        parameters = approvalParametersDataFilter(gateId, env_json, payloadConstraint)
+        parameters = approvalParametersDataFilter(gateId, env_json, payloadConstraint, userGroupsData)
         approval_pipeline_json = {
             "applicationId": applicationId,
             "isNew": bool(True),
@@ -1171,9 +1171,9 @@ def approvalGateProcess(applicationId, serviceId, gateId, gateName, gateType, pa
         raise e
 
 
-def approvalParametersDataFilter(gateId, env_json_formatted, payloadConstraint):
+def approvalParametersDataFilter(gateId, env_json_formatted, payloadConstraint, userGroupsData):
     try:
-        approvalGroupsData = getApprovalGroupsDataFilter(gateId)
+        approvalGroupsData = getApprovalGroupsDataFilter(gateId, userGroupsData)
         automatedApproval = getAutomatedApproval(gateId)
         isAutomatedApproval = len(automatedApproval) > 0
         approvalGateId = getApprovalGateId(gateId)
@@ -1207,19 +1207,16 @@ def getApprovalGateId(gateId):
         logging.error("Exception occurred while fetching approval gate Id by service gate Id", exc_info=True)
         raise e
 
+
 def getApprovalGroupsName(gateId):
     try:
-        URL = platform_host_url + "/platformservice/v6/usergroups/permissions/resources/{}".format(gateId)
-        logging.info(URL)
-        PARAMS = {'featureType': 'APPROVAL_GATE'}
-        headers = {'x-spinnaker-user': isd_admin_username}
-        request = requests.get(url=URL, headers=headers, params=PARAMS)
-        return request.json()
+        data = gateId
+        cur_platform.execute( "SELECT ug.name FROM user_group_permission_3_12 ugp LEFT OUTER JOIN user_group ug ON ugp.group_id = ug.id  where ugp.object_type ='APPROVAL_GATE' and ugp.object_id=%s",[data])
+        return cur_platform.fetchall()        
     except Exception as e:
         print("Exception occurred while fetching usergroups permission resources: ", e)
         logging.error("Exception occurred while fetching usergroups permission resources:", exc_info=True)
         raise e
-
 
 def getApprovalGroupsDataJson():
     try:
@@ -1234,21 +1231,21 @@ def getApprovalGroupsDataJson():
         raise e
 
 
-def getApprovalGroupsDataFilter(gateId):
+def getApprovalGroupsDataFilter(gateId, userGroupsData):
     dataList = []
-    getApprovalGroupsNamesData = getApprovalGroupsName(gateId)
-    getApprovalGroupsData = getApprovalGroupsDataJson()
-    if 'userGroups' in getApprovalGroupsNamesData:
-        getUserGroupsName = getApprovalGroupsNamesData['userGroups'][0]['userGroupNames']
-    else:
-        return dataList
-    for userGroupDetails in getUserGroupsName:
-        userGroup = [x for x in getApprovalGroupsData if x['userGroupName'] == userGroupDetails['userGroupName']]
-        if userGroup is not None:
-            dataList.append(userGroup[0])
+    approvalGroupList = getApprovalGroupsName(gateId)
+    for approvalGroupName in approvalGroupList:
+        groupDetails = getApprovalGroupData(approvalGroupName[0], userGroupsData)
+        if groupDetails is not None:
+           dataList.append(groupDetails)
     logging.info("Fetched approval groups data for gateId- " + str(gateId) + str(dataList))
     return dataList
-
+    
+    
+def getApprovalGroupData(groupName, userGroupsData):
+    for userGroup in userGroupsData:
+        if groupName == userGroup['userGroupName']:
+           return userGroup
 
 def getAutomatedApproval(gateId):
     try:
