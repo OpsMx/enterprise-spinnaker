@@ -40,7 +40,7 @@ def update_db(version):     # pre-upgrade DB Update
 
     try:
         logging.info('Updating databases from v3.12.x to v4.0.x')
-
+        
         logging.info("Dropping audit db table delivery_insights_chart_counts")
         print("Dropping audit db table delivery_insights_chart_counts")
         dropDeliveryInsights()
@@ -90,11 +90,11 @@ def update_db(version):     # pre-upgrade DB Update
         logging.info("Updating service_deployments_current table sync column data in platform db")
         print("Updating service_deployments_current table sync column data in platform db")
         update_sync_status()
-
+        
         logging.info("Updating Spinnaker existing gate Json in spinnaker")
         print("Updating Spinnaker existing gate Json in spinnaker")
         processPipelineJsonForExistingGates()
-            
+                   
 
         print("Migrating audit source details")
         logging.info("Migrating audit source details")
@@ -120,6 +120,7 @@ def update_db(version):     # pre-upgrade DB Update
         addDBVersion(version)
 
         commit_transactions()
+        
         logging.info("Successfully updated databases.")
         print(f"{bcolors.OKGREEN}{bcolors.BOLD}Successfully updated databases.{bcolors.ENDC}")
 
@@ -147,7 +148,7 @@ def perform_migration(version):     # post-upgrade Data Migration (to be run as 
             plKeyExecDict = get_pipeline_execution_key_dict()
             update_custom_gates_navigation_url(plKeyExecDict)
         elif spin_db_type == 'sql':
-             mysqlcursor = spindb.cursor(buffered=True)
+             mysqlcursor = spindb_orca.cursor(buffered=True)
              pi_executions = get_pi_executions(mysqlcursor)
              spin_db_update_custom_gates_navigation_url(pi_executions)
              mysqlcursor.close()
@@ -325,7 +326,7 @@ def get_pi_executions(mysqlcursor):
 def updated_stage_execution_data(pi_stage_id, updated_json):
     try:
         dump_updated = json.dumps(updated_json)					
-        mysqlcursor = spindb.cursor()
+        mysqlcursor = spindb_orca.cursor()
         sql = "UPDATE pipeline_stages SET body = %s WHERE id = %s"
         data = (dump_updated, pi_stage_id)
         mysqlcursor.execute(sql, data)        
@@ -491,8 +492,10 @@ def close_connections():
         audit_conn.close()
         if audit_conn is not None:
             audit_conn.close()
-        if spindb.is_connected():
-            spindb.close()
+        if spindb_orca.is_connected():
+            spindb_orca.close()
+        if spindb_front50.is_connected():
+            spindb_front50.close()
     except Exception as e:
         logging.warning("Exception occurred while closing the DB connection : ", exc_info=True)
 
@@ -504,8 +507,10 @@ def rollback_transactions():
         autopilot_conn.rollback()
         if audit_conn is not None:
             audit_conn.rollback()
-        if spindb.is_connected():
-            spindb.rollback()            
+        if spindb_orca.is_connected():
+            spindb_orca.rollback()            
+        if spindb_front50.is_connected():
+            spindb_front50.rollback()  
     except Exception as e:
         logging.critical("Exception occurred while rolling back the transactions : ", exc_info=True)
         raise e
@@ -936,7 +941,9 @@ def processPipelineJsonForExistingGates():
             "left outer join gate_pipeline_map gp on sp.pipeline_id=gp.pipeline_id left outer join service_gate g on gp.service_gate_id=g.id where a.source = 'Spinnaker' and g.id is not null")
         records = cur_platform.fetchall()
         cookie = "no-cookie"
-        userGroupsData = getApprovalGroupsDataJson()        
+        userGroupsData = getApprovalGroupsDataJson()
+        if spin_db_type == 'redis':
+           activateSpinnakerSession()
         for record in records:
             logging.info("Record:"+str(record))
             applicationId = record[0]
@@ -962,7 +969,10 @@ def processPipelineJsonForExistingGates():
                 stageJson["application"] = appName
                 logging.info(f"StageJson is :  {stageJson}")
                 pipelineJson = updatePipelineJson(pipelineId, stageJson)
-                postingGateJson(pipelineJson, cookie)
+                if spin_db_type == 'redis':     
+                   postingGateJson(pipelineJson, cookie)
+                if spin_db_type == 'sql':            
+                   postingGateJsonSQL(pipelineJson)
     except Exception as e:
         print("Exception occurred while processing the pipeline json for existing gates : ", e)
         logging.error("Exception occurred while processing the pipeline json for existing gates :", exc_info=True)
@@ -1428,6 +1438,21 @@ def formPipelineJson(pipelineId, dbPipelineJson, stageJson):
         raise e
 
 
+
+def postingGateJsonSQL(pipelineJson):
+    try:
+        pipeline_id = pipelineJson['id']
+        update_data = json.dumps(pipelineJson), isd_admin_username, pipeline_id	
+        mysqlcursor = spindb_front50.cursor()
+        sql = "UPDATE pipelines SET body = %s, last_modified_by = %s WHERE id = %s"        
+        mysqlcursor.execute(sql, update_data)
+    except Exception as e:
+        print("Exception occurred while posting gate: ", e)
+        logging.error("Exception occurred while posting gate", exc_info=True)
+        raise e
+
+
+
 def postingGateJson(pipelineJson, cookie):
     try:
         api_url = sapor_host_url+"/oes/appOnboarding/spinnaker/pipeline/stage"
@@ -1455,13 +1480,19 @@ def get_redis_conn():
         return redis
 
 
-def get_sql_db_conn():
+def get_sql_orca_db_conn():
     if spin_db_type == 'sql':
-        #Establishing the spinnaker sql database connection       
-        sqldb = mysql.connector.connect(database='orca', user=spin_db_username, password=spin_db_password, host=spin_db_host)
-        print("Spinnaker database connection established successfully")         
-        return sqldb
+        #Establishing the spinnaker orca sql database connection       
+        sqldb_orca = mysql.connector.connect(database='orca', user=spin_db_username, password=spin_db_password, host=spin_db_host)
+        print("Spinnaker orca database connection established successfully")         
+        return sqldb_orca
 
+def get_sql_front50_db_conn():
+    if spin_db_type == 'sql':
+        #Establishing the spinnaker front50 sql database connection       
+        sqldb_front50 = mysql.connector.connect(database='front50', user=spin_db_username, password=spin_db_password, host=spin_db_host)
+        print("Spinnaker front50 database connection established successfully")         
+        return sqldb_front50
 
 def login_to_isd():
     try:
@@ -1582,8 +1613,8 @@ if __name__ == '__main__':
     cur_autopilot = autopilot_conn.cursor()
     cur_audit = audit_conn.cursor()
     cur_visibility = visibility_conn.cursor()
-    spindb = get_sql_db_conn()
-
+    spindb_orca = get_sql_orca_db_conn()
+    spindb_front50 = get_sql_front50_db_conn()
    #check if it is pre-upgrade DB Update or post-upgrade Data Migration     
     if migrate_data_flag == 'false':        
         update_db("4.0.2")      # Note: version here should be updated for each ISD release
