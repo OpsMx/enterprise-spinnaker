@@ -148,10 +148,10 @@ def perform_migration(version):     # post-upgrade Data Migration (to be run as 
             plKeyExecDict = get_pipeline_execution_key_dict()
             update_custom_gates_navigation_url(plKeyExecDict)
         elif spin_db_type == 'sql':
-             mysqlcursor = spindb_orca.cursor(buffered=True)
-             pi_executions = get_pi_executions(mysqlcursor)
+             mysqlcursor_orca = spindb_orca.cursor(buffered=True)
+             pi_executions = get_pi_executions(mysqlcursor_orca)
              spin_db_update_custom_gates_navigation_url(pi_executions)
-             mysqlcursor.close()
+             mysqlcursor_orca.close()
             
         logging.info("Updating application name in audit events table")
         print("Updating application name in audit events table")
@@ -313,10 +313,10 @@ def update_policy_gate_url(json_data, pl_key, execution_str):
         raise e
 
 
-def get_pi_executions(mysqlcursor):
+def get_pi_executions(mysqlcursor_orca):
     try:        
-        mysqlcursor.execute("SELECT pi.application, pi.body, ps.body FROM pipeline_stages ps LEFT OUTER JOIN pipelines pi ON ps.execution_id = pi.id")
-        return mysqlcursor.fetchall()        
+        mysqlcursor_orca.execute("SELECT pi.application, pi.body, ps.body FROM pipeline_stages ps LEFT OUTER JOIN pipelines pi ON ps.execution_id = pi.id")
+        return mysqlcursor_orca.fetchall()        
     except Exception as e:
         print("Exception occurred while getting the pipeline executions : ", e)
         logging.error("Exception occurred while getting the pipeline execution : ", exc_info=True)
@@ -326,10 +326,10 @@ def get_pi_executions(mysqlcursor):
 def updated_stage_execution_data(pi_stage_id, updated_json):
     try:
         dump_updated = json.dumps(updated_json)					
-        mysqlcursor = spindb_orca.cursor()
+        mysqlcursor_orca = spindb_orca.cursor()
         sql = "UPDATE pipeline_stages SET body = %s WHERE id = %s"
         data = (dump_updated, pi_stage_id)
-        mysqlcursor.execute(sql, data)        
+        mysqlcursor_orca.execute(sql, data)        
     except Exception as e:
         logging.error("Exception occurred while updating stage execution : ", exc_info=True)
         print("Exception occurred while updating stage execution :  : ", e)
@@ -475,8 +475,10 @@ def commit_transactions():
         oesdb_conn.commit()
         autopilot_conn.commit()
         audit_conn.commit()
-        if spindb.is_connected():
-           spindb.commit()
+        if spindb_orca.is_connected():
+           spindb_orca.commit()            
+        if spindb_front50.is_connected():
+           spindb_front50.commit()
         logging.info("Successfully migrated")
     except Exception as e:
         print("Exception occurred while committing transactions : ", e)
@@ -1443,9 +1445,9 @@ def postingGateJsonSQL(pipelineJson):
     try:
         pipeline_id = pipelineJson['id']
         update_data = json.dumps(pipelineJson), isd_admin_username, pipeline_id	
-        mysqlcursor = spindb_front50.cursor()
+        mysqlcursor_front50 = spindb_front50.cursor()
         sql = "UPDATE pipelines SET body = %s, last_modified_by = %s WHERE id = %s"        
-        mysqlcursor.execute(sql, update_data)
+        mysqlcursor_front50.execute(sql, update_data)
     except Exception as e:
         print("Exception occurred while posting gate: ", e)
         logging.error("Exception occurred while posting gate", exc_info=True)
