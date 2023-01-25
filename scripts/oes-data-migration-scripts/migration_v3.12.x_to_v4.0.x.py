@@ -93,8 +93,7 @@ def update_db(version):     # pre-upgrade DB Update
 
         logging.info("Updating Spinnaker existing gate Json in spinnaker")
         print("Updating Spinnaker existing gate Json in spinnaker")
-        processPipelineJsonForExistingGates()
-            
+        processPipelineJsonForExistingGates()            
 
         print("Migrating audit source details")
         logging.info("Migrating audit source details")
@@ -112,14 +111,14 @@ def update_db(version):     # pre-upgrade DB Update
 
         relate_audit_events_and_source_details()
         add_not_null_constraint_to_source_details_id()
-        drop_column_source()
-            
+        drop_column_source()            
 
         logging.info("Adding schema version to platform db table db_version")
         print("Adding schema version to platform db table db_version")
         addDBVersion(version)
 
-        commit_transactions()
+        commit_transactions()        
+
         logging.info("Successfully updated databases.")
         print(f"{bcolors.OKGREEN}{bcolors.BOLD}Successfully updated databases.{bcolors.ENDC}")
 
@@ -976,7 +975,12 @@ def activateSpinnakerSession(cookie):
         api_url = sapor_host_url+"/oes/appOnboarding/spinnaker/pipeline/stage"        
         headers = {'Content-Type': 'application/json', 'x-user-cookie' : cookie,
                    'x-spinnaker-user': isd_admin_username}
-        response = requests.post(url=api_url, headers=headers, data=json.dumps(empty_json))     
+        response = requests.post(url=api_url, headers=headers, data=json.dumps(empty_json)) 
+        # expected api response is 401 (if session expired) or NPE (since we are passing empty json); raise exception for any other case
+        if response.status_code != 401:
+           logging.info("The response from dummy Sapor API call is : " + str(response.content) + '\n')
+           if 'NullPointerException' not in str(response.content):
+              raise Exception("Sapor API response shows failure!")
     except Exception as e:
         print("Exception activateSpinnakerSession : ", e)
         logging.error("Exception activateSpinnakerSession :  :", exc_info=True)
@@ -1236,8 +1240,8 @@ def getApprovalGroupsDataJson():
     try:
         URL = platform_host_url + "/platformservice/v2/usergroups"
         logging.info(URL)
-        request = requests.get(url=URL)
-        return request.json()
+        response = requests.get(url=URL)
+        return response.json()
     except Exception as e:
         print("Exception occurred while fetching approval groups data : ", e)
         logging.error("Exception occurred while fetching approval groups data:", exc_info=True)
@@ -1449,10 +1453,11 @@ def postingGateJson(pipelineJson, cookie):
         response = requests.post(url=api_url, headers=headers, data=json.dumps(pipelineJson))
         logging.info("The response status is: " + str(response.status_code))
         if (response.status_code == 200 | response.status_code == 201):
-            logging.info("Successfully added stage! The response is:\n" + str(response.text) + '\n')
+            logging.info("Successfully added stage")
         else:
             print("Failed to add stage; The response is: "+str(response.content))
             logging.info("Failed to add stage; The response is:\n" + str(response.content) + '\n')
+            raise Exception("Sapor API response shows failure!")
     except Exception as e:
         print("Exception occurred while posting gate: ", e)
         logging.error("Exception occurred while posting gate", exc_info=True)
@@ -1473,25 +1478,6 @@ def get_sql_db_conn():
         sqldb = mysql.connector.connect(database='orca', user=spin_db_username, password=spin_db_password, host=spin_db_host)
         print("Spinnaker database connection established successfully")         
         return sqldb
-
-"""
-def login_to_isd():
-    try:
-        cookie = ""
-        cmd = "curl -vvv -X POST '" + spin_gate_url + "/login?username=" + spin_admin_username + "&password=" + spin_admin_password + "&submit=Login'"
-        output = subprocess.getoutput(cmd=cmd)
-        output = output.replace(spin_admin_username, "***").replace(spin_admin_password, "***")
-        logging.info(f"Output for ISD login : {output}")
-        components = output.split("<")
-        for comp in components:
-            if comp.__contains__("set-cookie") or comp.__contains__("Set-Cookie"):
-                cookie = comp.split(":")[1].strip()
-        return cookie
-    except Exception as e:
-        print("Exception occurred while logging in to ISD : ", e)
-        logging.error("Exception occurred while logging in to ISD : ", exc_info=True)
-        raise e
-"""
 
 
 def addDBVersion(version):
