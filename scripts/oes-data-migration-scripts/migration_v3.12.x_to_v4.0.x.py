@@ -134,6 +134,11 @@ def update_db(version):     # pre-upgrade DB Update
 def perform_migration(version):     # post-upgrade Data Migration (to be run as a background job)
     try:
         logging.info('Migrating data from v3.12.x to v4.0.x')
+
+        logging.info("verify schema version in platform db table db_version")
+        print("verify schema version to platform db table db_version")
+        verifyDBVersion(version)
+
         logging.info("Updating cluster and location in service_deployments_current table")
         print("Updating cluster and location in service_deployments_current table")
         pipeline_executions = fetch_pipeline_executions()
@@ -1525,7 +1530,19 @@ def addDBVersion(version):
         print("Exception occurred while adding db version : ", e)
         logging.error("Exception occurred while adding db version  : ", exc_info=True)
         raise e
-
+def verifyDBVersion(version):
+    try:
+        # fetch db_version from platform db
+        cur_platform.execute("select version_no from db_version order by updated_at desc limit 1")
+        db_version = cur_platform.fetchone()
+        if db_version is not None and db_version[0] != version:
+           raise Exception("Version mismatch! Cannot proceed with the data migration. Expected db version :"+version+" found db version : "+db_version[0])
+        else:
+           logging.info("Failed fetch the ISD Schema version from Platform DB")       
+    except Exception as e:
+        print("Exception occurred while fetching db version : ", e)
+        logging.error("Exception occurred while fetching db version  : ", exc_info=True)
+        raise e
 
 if __name__ == '__main__':
     n = len(sys.argv)
