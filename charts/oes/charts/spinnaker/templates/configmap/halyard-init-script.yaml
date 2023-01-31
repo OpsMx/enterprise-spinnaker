@@ -237,6 +237,11 @@ data:
     yq e '.deploymentConfigurations.[].security.authn.saml.enabled = "false"' /tmp/spinnaker/.hal/config > /tmp/spinnaker/.hal/config1
     mv /tmp/spinnaker/.hal/config1 /tmp/spinnaker/.hal/config
     {{- end }}
+    {{- if .Values.global.spinnakerUrl }}
+    yq e '.deploymentConfigurations.[].security.apiSecurity.overrideBaseUrl = "{{ .Values.global.oesUI.protocol }}://{{ .Values.global.oesUI.host }}/gate"' /tmp/spinnaker/.hal/config > /tmp/spinnaker/.hal/config1
+    yq e '.deploymentConfigurations.[].security.uiSecurity.overrideBaseUrl = "{{ .Values.global.spinDeck.protocol }}://{{ .Values.global.spinDeck.host }}"' /tmp/spinnaker/.hal/config1 > /tmp/spinnaker/.hal/config2
+    mv /tmp/spinnaker/.hal/config2 /tmp/spinnaker/.hal/config
+    {{- end }}
     {{- if .Values.global.stormdriver }}
     yq e '.services.deck.baseUrl = "{{ .Values.global.oesUI.protocol }}://{{ .Values.global.oesUI.host }}/deck"' /tmp/spinnaker/.hal/default/profiles/stormdriver-spinnaker.yml > /tmp/spinnaker/.hal/default/profiles/stormdriver-spinnaker1.yml
     mv /tmp/spinnaker/.hal/default/profiles/stormdriver-spinnaker1.yml /tmp/spinnaker/.hal/default/profiles/stormdriver-spinnaker.yml

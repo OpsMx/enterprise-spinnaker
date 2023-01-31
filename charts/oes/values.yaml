@@ -57,6 +57,9 @@ global:
     spinnakerRBAC: false  # Set to true if RBAC is enabled in Spinnaker
     spinnakerKayanta: false
 
+  # Set to true if user need to access Spinnaker seperately
+  spinnakerUrl: false
+
   ## Set to true to expose oes-ui, oes-gate services over ingress
   createIngress: false
 
