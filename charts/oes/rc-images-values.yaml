@@ -1,0 +1,69 @@
+global:
+  # Custom Images registry where all the OSS and customized images used in the helm chart are stored
+  # Only update this is using a private repo such as ACR, ECR, GCR, JFrog, etc.
+  createIngress: true
+  
+  oesUI:
+    host: oes.example.ops.com
+
+  gitea:
+    enabled: false
+    standardrepoBranch: v4.0.3
+
+spinnaker:
+  autoInstallSampleApps: true   # Set this to FALSE if upgrading
+  # Initialize gitOps style Halyard
+  gitopsHalyard:
+    enabled: true
+    repo:
+      type: git # git, s3, stash(bitbucket server) use a different sample values file for s3/bitbuck-stash
+      baseUrlHostName: github.com    # Specify the Base FQDN of your repository without the protocol
+      organization: YOUR_ORG_NAME_OR_YOUR_USER_NAME_IF_NO_ORG
+      repository: YOUR_REPO_NAME # repo name for GitOps Halyard (Sample Reference: https://github.com/OpsMx/sample-gitops-repo.git).
+      halConfigBranch: master # Branch under which halyard config is present under above repository
+      dynamicAccRepository: SAME_AS_REPOSITORY_ABOVE # Please provide the repo name of the GitOps Dynamic Accounts Directory. Can be same as Hal repo. 
+      username: git/stash_username # Username to authenticate with git/stash repo
+      token: git/stash_token
+      #usermailid: saiteja.katabhatina@opsmx.io
+    pipelinePromotion:  # GitHub only,  Not supportd on S3 or Stash
+      enabled: true
+      type: git  # git, s3, stash
+      organization: YOUR_ORG_NAME_OR_YOUR_USER_NAME_IF_NO_ORG
+      repository: YOUR_REPO_NAME # bucket name in case of S3
+      rootFolder: pipeline/
+      ##### ONLY In case of S3
+      baseUrl: github.com  #  "git_url"
+      username: git/stash_username
+      token: git/stash_token
+      branch: master
+
+autopilot:
+  image:
+    tag: v4.0.3-rc1 
+audit:
+  image:
+    tag: v4.0.3-rc1
+auditClient:
+  image:
+    tag: v4.0.3-rc1
+datascience:
+  image:
+    tag: v4.0.3-rc1
+dashboard:
+  image:
+    tag: v4.0.3-rc1
+gate:
+  image:
+    tag: v4.0.3-rc1
+platform:
+  image:
+    tag: v4.0.3-rc1
+sapor:
+  image:
+    tag: v4.0.3-rc1
+ui:
+  image:
+    tag: v4.0.3-rc1
+visibility:
+  image:
+    tag: v4.0.3-rc1

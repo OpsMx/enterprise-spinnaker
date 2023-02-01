@@ -1,0 +1,34 @@
+{{- if and (.Values.global.createIngress) (.Values.global.spinnakerUrl) }}
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  annotations:
+{{- if .Values.global.certManager.installed }}
+    acme.cert-manager.io/http01-edit-in-place: "true"
+    cert-manager.io/issue-temporary-certificate: "true"
+    cert-manager.io/issuer: letsencrypt-{{ .Release.Namespace }}-spin
+    kubernetes.io/tls-acme: "true"
+{{- end }}
+{{- if .Values.global.spinDeck.ingress.annotations }}
+{{ tpl (toYaml .Values.global.spinDeck.ingress.annotations) . | indent 4 }}
+{{- end }}
+  name: spin-ingress
+spec:
+  rules:
+  - host: {{ .Values.global.spinDeck.host }}
+    http:
+      paths:
+      - backend:
+          service:
+            name: spin-deck
+            port:
+              number: 9000
+        path: /
+        pathType: ImplementationSpecific
+{{- if .Values.global.ssl.enabled }}
+  tls:
+  - hosts:
+    - {{ .Values.global.spinDeck.host }}
+{{ toYaml .Values.global.spinDeck.ingress.tls | indent 4 }}
+{{- end }}
+{{- end }}

@@ -81,7 +81,11 @@ services:
   deck:
     host: 0.0.0.0
     port: 9000
+    {{- if .Values.global.spinnakerUrl }}
+    baseUrl: {{ .Values.global.spinDeck.protocol }}://{{ .Values.global.spinDeck.host }}
+    {{- else }}
     baseUrl: {{ .Values.global.oesUI.protocol }}://{{ .Values.global.oesUI.host }}
+    {{- end }}
     enabled: true
   echo:
     host: 0.0.0.0
