@@ -1535,10 +1535,14 @@ def verifyDBVersion(version):
         # fetch db_version from platform db
         cur_platform.execute("select version_no from db_version order by updated_at desc limit 1")
         db_version = cur_platform.fetchone()
-        if db_version is not None and db_version[0] != version:
-           raise Exception("Version mismatch! Cannot proceed with the data migration. Expected db version :"+version+" found db version : "+db_version[0])
+        if db_version is not None: 
+           if db_version[0] != version:
+              raise Exception("Version mismatch! Cannot proceed with the data migration. Expected db version :"+version+" found db version : "+db_version[0])
+           else:
+              logging.info("Verified schema version. Schema version is : "+ db_version[0])  
         else:
            logging.info("Failed fetch the ISD Schema version from Platform DB")       
+           raise Exception("Failed fetch the ISD Schema version from Platform DB")
     except Exception as e:
         print("Exception occurred while fetching db version : ", e)
         logging.error("Exception occurred while fetching db version  : ", exc_info=True)
