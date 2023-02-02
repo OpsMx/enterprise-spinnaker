@@ -41,23 +41,6 @@ def update_db(version):     # pre-upgrade DB Update
     try:
         logging.info('Updating databases from v3.12.x to v4.0.x')
         
-        logging.info("Dropping audit db table delivery_insights_chart_counts")
-        print("Dropping audit db table delivery_insights_chart_counts")
-        dropDeliveryInsights()
-        logging.info("Dropping audit db table area_chart_counts")
-        print("Dropping audit db table area_chart_counts")
-        dropAreaCharts()
-
-        logging.info("Creating audit db table delivery_insights_chart_counts")
-        print("Creating audit db table delivery_insights_chart_counts")
-        createDeliveryInsights()
-
-        logging.info("Creating audit db table area_chart_counts")
-        print("Creating audit db table area_chart_counts")
-        createAreaCharts()
-        audit_conn.commit()
-            
-
         logging.info("Altering platform db table app_environment")
         print("Altering platform db table app_environment")
         alterAppEnvironmentTable()
@@ -94,30 +77,15 @@ def update_db(version):     # pre-upgrade DB Update
         logging.info("Updating Spinnaker existing gate Json in spinnaker")
         print("Updating Spinnaker existing gate Json in spinnaker")
         processPipelineJsonForExistingGates()
-
-        print("Migrating audit source details")
-        logging.info("Migrating audit source details")
-        delete_records_with_source_null()
-        create_table_source_details()
-        add_column_source_details_id()
-        sources = get_distinct_source()
-        logging.info("sources"+str(sources))
-        for source in sources:
-            source = source[0]
-            if source == 'OES':
-               migrate_oes_audits()
-            elif source == 'spinnaker':
-               migrate_spinnaker_audits()
-
-        relate_audit_events_and_source_details()
-        add_not_null_constraint_to_source_details_id()
-        drop_column_source()            
-
         logging.info("Adding schema version to platform db table db_version")
         print("Adding schema version to platform db table db_version")
         addDBVersion(version)
 
         commit_transactions()
+
+        migrate_audit_data()
+
+        # commit_transactions()
         logging.info("Successfully updated databases.")
         print(f"{bcolors.OKGREEN}{bcolors.BOLD}Successfully updated databases.{bcolors.ENDC}")
 
@@ -130,6 +98,39 @@ def update_db(version):     # pre-upgrade DB Update
         exit(1)
     finally:
         close_connections()
+
+
+def migrate_audit_data():
+    print("Migrating audit source details")
+    logging.info("Migrating audit source details")
+    delete_records_with_source_null()
+    create_table_source_details()
+    add_column_source_details_id()
+    sources = get_distinct_source()
+    logging.info("sources" + str(sources))
+    for source in sources:
+        source = source[0]
+        if source == 'OES':
+            migrate_oes_audits()
+        elif source == 'spinnaker':
+            migrate_spinnaker_audits()
+    relate_audit_events_and_source_details()
+    add_not_null_constraint_to_source_details_id()
+    drop_column_source()
+    logging.info("Dropping audit db table delivery_insights_chart_counts")
+    print("Dropping audit db table delivery_insights_chart_counts")
+    dropDeliveryInsights()
+    logging.info("Dropping audit db table area_chart_counts")
+    print("Dropping audit db table area_chart_counts")
+    dropAreaCharts()
+    logging.info("Creating audit db table delivery_insights_chart_counts")
+    print("Creating audit db table delivery_insights_chart_counts")
+    createDeliveryInsights()
+    logging.info("Creating audit db table area_chart_counts")
+    print("Creating audit db table area_chart_counts")
+    createAreaCharts()
+    audit_conn.commit()
+
 
 def perform_migration(version):     # post-upgrade Data Migration (to be run as a background job)
     try:
@@ -1638,4 +1639,5 @@ if __name__ == '__main__':
         update_db("4.0.2")      # Note: version here should be updated for each ISD release
     elif migrate_data_flag == 'true':        
         perform_migration("4.0.2")       # pass the ISD version we are performing data migration for (Note: version here should be updated for each ISD release)
+        audit_conn.autocommit = True
 
