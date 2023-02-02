@@ -80,7 +80,7 @@ def update_db(version):     # pre-upgrade DB Update
         logging.info("Adding schema version to platform db table db_version")
         print("Adding schema version to platform db table db_version")
         addDBVersion(version)
-
+        
         commit_transactions()
 
         migrate_audit_data()
