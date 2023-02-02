@@ -40,7 +40,7 @@ def update_db(version):     # pre-upgrade DB Update
 
     try:
         logging.info('Updating databases from v3.12.x to v4.0.x')
-        
+
         logging.info("Altering platform db table app_environment")
         print("Altering platform db table app_environment")
         alterAppEnvironmentTable()
@@ -85,7 +85,6 @@ def update_db(version):     # pre-upgrade DB Update
 
         migrate_audit_data()
 
-        # commit_transactions()
         logging.info("Successfully updated databases.")
         print(f"{bcolors.OKGREEN}{bcolors.BOLD}Successfully updated databases.{bcolors.ENDC}")
 
