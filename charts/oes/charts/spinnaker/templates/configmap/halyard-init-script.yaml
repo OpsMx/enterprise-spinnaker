@@ -210,10 +210,13 @@ data:
     sed -i s/false/true/ /tmp/spinnaker/.hal/default/profiles/settings-local.js
     yq -i e '.migrations.migrateToManagedServiceAccounts = "true"' /tmp/spinnaker/.hal/default/profiles/front50-local.yml
     {{- if .Values.global.auth.saml }}
-    touch /tmp/spinnaker/.hal/default/profiles/dummy.yml
-    echo "fiat:" > /tmp/spinnaker/.hal/default/profiles/dummy.yml
-    yq e '.fiat.admin.roles += ["{{ .Values.global.saporgate.config.adminGroups }}"]' /tmp/spinnaker/.hal/default/profiles/dummy.yml > /tmp/spinnaker/.hal/default/profiles/fiat-local.yml
-    rm -rf /tmp/spinnaker/.hal/default/profiles/dummy.yml
+    readfiat=$(yq e '.fiat' /tmp/spinnaker/.hal/default/profiles/fiat-local.yml)
+    if [[ "$readfiat" == "null" ]];
+    then 
+      yq -i e '.fiat.admin.roles += ["{{ .Values.global.saporgate.config.adminGroups }}"]' /tmp/spinnaker/.hal/default/profiles/fiat-local.yml
+    else
+      echo "INFO: Admin groups already present in fiat-local.yml file"
+    fi
     {{- end }}
     {{- if .Values.global.ldap.enabled }}
     yq -i e '.fiat.admin.roles += ["{{ .Values.global.saporgate.config.adminGroups }}"]' /tmp/spinnaker/.hal/default/profiles/fiat-local.yml
