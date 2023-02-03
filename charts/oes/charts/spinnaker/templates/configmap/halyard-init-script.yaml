@@ -135,8 +135,6 @@ data:
     fi
     {{- end }}
     {{- end }}
-
-   
     cp -r /tmp/spinnaker/test/{{ .Values.gitopsHalyard.repo.halConfigPath }} /tmp/spinnaker/.hal
     if [ -d "/tmp/spinnaker/test/pipeline-promotion/" ]
     then
