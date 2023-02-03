@@ -136,7 +136,7 @@ data:
     {{- end }}
     {{- end }}
 
-
+   
     cp -r /tmp/spinnaker/test/{{ .Values.gitopsHalyard.repo.halConfigPath }} /tmp/spinnaker/.hal
     if [ -d "/tmp/spinnaker/test/pipeline-promotion/" ]
     then
@@ -145,6 +145,31 @@ data:
     if [ -d "/tmp/spinnaker/test/clusterconfig/" ]
     then
        cp -r /tmp/spinnaker/test/clusterconfig /tmp/spinnaker/clusterconfig
+    fi
+    ## If BOM file present in gitops repo consider bom file and replace images in the service-setting folder to the respective services
+    if [ -r "/tmp/spinnaker/test/bom" ]
+    then
+      cp -r /tmp/spinnaker/test/bom /tmp/spinnaker/bom
+      ##read service  as asingle line comma saperated
+      halservices=$(yq e '(.services | keys)[]' bom | xargs | sed -e 's/ /,/g')
+      IFS=","
+      for i in $halservices
+      do
+        svcimg=$(yq e '.services.'$i'.image' bom)
+        svcn=$(ls default/service-settings/ | grep "$i" | xargs | sed -e 's/ /,/g')
+        if [[ "$svcn" != "" ]];
+        then
+          IFS=","
+          for svcfile in $svcn
+          do
+            yq -i e '.artifactId = "'$svcimg'"' default/service-settings/$svcfile 
+          done 
+        else
+          echo "WARNING: Service file $i is not located in default/service-settings/ to override the artifact image from bom"
+        fi
+      done 
+    else
+      echo "WARNING: Not specified bom in gitops repo overidden images will be  taken from default/service-settings"
     fi
     rm -rf /tmp/spinnaker/test
     DYNAMIC_ACCOUNTS_REPO=`echo $DYNAMIC_ACCOUNTS_REPO | sed 's/ *$//g'`
