@@ -135,8 +135,6 @@ data:
     fi
     {{- end }}
     {{- end }}
-
-
     cp -r /tmp/spinnaker/test/{{ .Values.gitopsHalyard.repo.halConfigPath }} /tmp/spinnaker/.hal
     if [ -d "/tmp/spinnaker/test/pipeline-promotion/" ]
     then
@@ -145,6 +143,38 @@ data:
     if [ -d "/tmp/spinnaker/test/clusterconfig/" ]
     then
        cp -r /tmp/spinnaker/test/clusterconfig /tmp/spinnaker/clusterconfig
+    fi
+    ## If BOM file present in gitops repo consider bom file and replace images in the service-setting folder to the respective services
+    if [ -r "/tmp/spinnaker/test/bom" ]
+    then
+      cp -r /tmp/spinnaker/test/bom /tmp/spinnaker/bom
+      rm -rf /tmp/spinnaker/.hal/bom
+      ## Updated the halyard config version
+      crthalversion=$(yq e '.deploymentConfigurations.[].version' /tmp/spinnaker/.hal/config)
+      halversion=$(yq e '.version' /tmp/spinnaker/bom)
+      echo "INFO: Updating the halyard version from VERSION $crthalversion to VERSION $halversion"
+      yq -i e '.deploymentConfigurations.[].version = "'$halversion'"' /tmp/spinnaker/.hal/config
+      ## Read service  as asingle line comma saperated
+      echo "INFO: Updating the spinnaker images of service-settings folder using bom file in gitops"
+      halservices=$(yq e '(.services | keys)[]' /tmp/spinnaker/bom | xargs | sed -e 's/ /,/g')
+      IFS=","
+      for i in $halservices
+      do
+        svcimg=$(yq e '.services.'$i'.image' /tmp/spinnaker/bom)
+        svcn=$(find /tmp/spinnaker/.hal/default/service-settings/ -name "$i"* | awk -F"/" '{print $NF}' | xargs | sed -e 's/ /,/g')
+        if [[ "$svcn" != "" ]];
+        then
+          IFS=","
+          for svcfile in $svcn
+          do
+            yq -i e '.artifactId = "'$svcimg'"' /tmp/spinnaker/.hal/default/service-settings/$svcfile
+          done
+        else
+          echo "WARNING: Service file $i is not located in default/service-settings/ to override the artifact image from bom"
+        fi
+      done
+    else
+      echo "WARNING: Not specified bom in gitops repo overidden images will be  taken from default/service-settings"
     fi
     rm -rf /tmp/spinnaker/test
     DYNAMIC_ACCOUNTS_REPO=`echo $DYNAMIC_ACCOUNTS_REPO | sed 's/ *$//g'`
@@ -172,17 +202,13 @@ data:
     sed -i  s/RELEASE_NAME/{{ .Release.Name }}/g /tmp/spinnaker/.hal/default/profiles/rosco-local.yml
     sed -i  s/RELEASE_NAME/{{ .Release.Name }}/g /tmp/spinnaker/.hal/default/service-settings/redis.yml
     {{- if not .Values.global.ldap.enabled }}
-    yq e '.deploymentConfigurations.[].security.authn.ldap.enabled = "false"' /tmp/spinnaker/.hal/config > /tmp/spinnaker/.hal/config1
-    mv /tmp/spinnaker/.hal/config1 /tmp/spinnaker/.hal/config
+    yq -i e '.deploymentConfigurations.[].security.authn.ldap.enabled = "false"' /tmp/spinnaker/.hal/config
     {{- end }}
     {{- if .Values.global.commonGate.spinnakerRBAC }}
-    yq e '.deploymentConfigurations.[].security.authz.enabled = "true"' /tmp/spinnaker/.hal/config > /tmp/spinnaker/.hal/config1
-    mv /tmp/spinnaker/.hal/config1 /tmp/spinnaker/.hal/config
-    yq e '.tasks.useManagedServiceAccounts = "true"' /tmp/spinnaker/.hal/default/profiles/orca-local.yml > /tmp/spinnaker/.hal/default/profiles/orca-local1.yml
-    mv /tmp/spinnaker/.hal/default/profiles/orca-local1.yml /tmp/spinnaker/.hal/default/profiles/orca-local.yml
+    yq -i e '.deploymentConfigurations.[].security.authz.enabled = "true"' /tmp/spinnaker/.hal/config
+    yq -i e '.tasks.useManagedServiceAccounts = "true"' /tmp/spinnaker/.hal/default/profiles/orca-local.yml
     sed -i s/false/true/ /tmp/spinnaker/.hal/default/profiles/settings-local.js
-    yq e '.migrations.migrateToManagedServiceAccounts = "true"' /tmp/spinnaker/.hal/default/profiles/front50-local.yml > /tmp/spinnaker/.hal/default/profiles/front50-local1.yml
-    mv /tmp/spinnaker/.hal/default/profiles/front50-local1.yml /tmp/spinnaker/.hal/default/profiles/front50-local.yml
+    yq -i e '.migrations.migrateToManagedServiceAccounts = "true"' /tmp/spinnaker/.hal/default/profiles/front50-local.yml
     {{- if .Values.global.auth.saml }}
     touch /tmp/spinnaker/.hal/default/profiles/dummy.yml
     echo "fiat:" > /tmp/spinnaker/.hal/default/profiles/dummy.yml
@@ -190,12 +216,10 @@ data:
     rm -rf /tmp/spinnaker/.hal/default/profiles/dummy.yml
     {{- end }}
     {{- if .Values.global.ldap.enabled }}
-    yq e '.fiat.admin.roles += ["{{ .Values.global.saporgate.config.adminGroups }}"]' /tmp/spinnaker/.hal/default/profiles/fiat-local.yml > /tmp/spinnaker/.hal/default/profiles/fiat-local1.yml
-    mv /tmp/spinnaker/.hal/default/profiles/fiat-local1.yml /tmp/spinnaker/.hal/default/profiles/fiat-local.yml
+    yq -i e '.fiat.admin.roles += ["{{ .Values.global.saporgate.config.adminGroups }}"]' /tmp/spinnaker/.hal/default/profiles/fiat-local.yml
     {{- end }}
     {{- else }}
-    yq e '.deploymentConfigurations.[].security.authz.enabled = "false"' /tmp/spinnaker/.hal/config > /tmp/spinnaker/.hal/config1
-    mv /tmp/spinnaker/.hal/config1 /tmp/spinnaker/.hal/config
+    yq -i e '.deploymentConfigurations.[].security.authz.enabled = "false"' /tmp/spinnaker/.hal/config
     {{- end }}
     if [ -f /tmp/spinnaker/.hal/default/profiles/fiat-local.yml ]; then
     sed -i  s/RELEASE_NAME/{{ .Release.Name }}/g /tmp/spinnaker/.hal/default/profiles/fiat-local.yml
@@ -214,8 +238,7 @@ data:
     #yq e '.services.gate.baseUrl = {{ .Values.global.oesUI.protocol }}:"'$oesuiurl'"' /tmp/gate1.yml > /tmp/gate2.yml
     yq e '.services.gate.baseUrl = "'$oesuiurl'"' /tmp/gate1.yml > /tmp/gate2.yml
     mv /tmp/gate2.yml /tmp/gate.yml
-    yq e '.deploymentConfigurations.[].security.apiSecurity.overrideBaseUrl = "'$oesuiurl'"' /tmp/spinnaker/.hal/config > /tmp/spinnaker/.hal/config1
-    mv /tmp/spinnaker/.hal/config1 /tmp/spinnaker/.hal/config
+    yq -i e '.deploymentConfigurations.[].security.apiSecurity.overrideBaseUrl = "'$oesuiurl'"' /tmp/spinnaker/.hal/config
     yq e -j '.' /tmp/gate.yml  > /tmp/saml.yml
     jq '.saml |= . + {"metadataLocal": "encryptedFile:oesmetadataxml:oesmetadata.xml"} + {"serviceAddress": "'$oesuiurl'"} + {"keyStore": "encryptedFile:oessamljks:oessaml.jks"} + {"keyStorePassword":"encrypted:samljks-password:password"}' /tmp/saml.yml > /tmp/finalsaml.yml
     #yq eval -P /tmp/saml1.yml > /tmp/saml2.yml
@@ -227,30 +250,24 @@ data:
     jq --argjson toolConnectorParameteres ''"$replace"'' '.deploymentConfigurations[].security.authn.saml += $toolConnectorParameteres' /tmp/spinnaker/.hal/config.json > /tmp/spinnaker/.hal/config1.json
     yq eval -P /tmp/spinnaker/.hal/config1.json > /tmp/spinnaker/.hal/finalconfig.json
     mv /tmp/spinnaker/.hal/finalconfig.json /tmp/spinnaker/.hal/config
-    yq e '.deploymentConfigurations.[].security.authn.saml.enabled = "true"' /tmp/spinnaker/.hal/config > /tmp/spinnaker/.hal/config1
-    mv /tmp/spinnaker/.hal/config1 /tmp/spinnaker/.hal/config
+    yq -i e '.deploymentConfigurations.[].security.authn.saml.enabled = "true"' /tmp/spinnaker/.hal/config
     sleep 30s
     kubectl delete secret oes-gate-config -n ${SPINNAKER_NAMESPACE}
     kubectl create secret generic oes-gate-config --from-file=/tmp/gate.yml -n ${SPINNAKER_NAMESPACE}
     kubectl delete pod -l component=gate -n ${SPINNAKER_NAMESPACE}
     {{- else }}
-    yq e '.deploymentConfigurations.[].security.authn.saml.enabled = "false"' /tmp/spinnaker/.hal/config > /tmp/spinnaker/.hal/config1
-    mv /tmp/spinnaker/.hal/config1 /tmp/spinnaker/.hal/config
+    yq -i e '.deploymentConfigurations.[].security.authn.saml.enabled = "false"' /tmp/spinnaker/.hal/config
     {{- end }}
     {{- if .Values.global.spinnakerUrl }}
-    yq e '.deploymentConfigurations.[].security.apiSecurity.overrideBaseUrl = "{{ .Values.global.oesUI.protocol }}://{{ .Values.global.oesUI.host }}/gate"' /tmp/spinnaker/.hal/config > /tmp/spinnaker/.hal/config1
-    yq e '.deploymentConfigurations.[].security.uiSecurity.overrideBaseUrl = "{{ .Values.global.spinDeck.protocol }}://{{ .Values.global.spinDeck.host }}"' /tmp/spinnaker/.hal/config1 > /tmp/spinnaker/.hal/config2
-    mv /tmp/spinnaker/.hal/config2 /tmp/spinnaker/.hal/config
+    yq -i e '.deploymentConfigurations.[].security.apiSecurity.overrideBaseUrl = "{{ .Values.global.oesUI.protocol }}://{{ .Values.global.oesUI.host }}/gate"' /tmp/spinnaker/.hal/config
+    yq -i e '.deploymentConfigurations.[].security.uiSecurity.overrideBaseUrl = "{{ .Values.global.spinDeck.protocol }}://{{ .Values.global.spinDeck.host }}"' /tmp/spinnaker/.hal/config
     {{- end }}
     {{- if .Values.global.stormdriver }}
-    yq e '.services.deck.baseUrl = "{{ .Values.global.oesUI.protocol }}://{{ .Values.global.oesUI.host }}/deck"' /tmp/spinnaker/.hal/default/profiles/stormdriver-spinnaker.yml > /tmp/spinnaker/.hal/default/profiles/stormdriver-spinnaker1.yml
-    mv /tmp/spinnaker/.hal/default/profiles/stormdriver-spinnaker1.yml /tmp/spinnaker/.hal/default/profiles/stormdriver-spinnaker.yml
-    yq e '.services.gate.baseUrl = "{{ .Values.global.oesUI.protocol }}://{{ .Values.global.oesUI.host }}/gate"' /tmp/spinnaker/.hal/default/profiles/stormdriver-spinnaker.yml > /tmp/spinnaker/.hal/default/profiles/stormdriver-spinnaker1.yml
-    mv /tmp/spinnaker/.hal/default/profiles/stormdriver-spinnaker1.yml /tmp/spinnaker/.hal/default/profiles/stormdriver-spinnaker.yml
+    yq -i e '.services.deck.baseUrl = "{{ .Values.global.oesUI.protocol }}://{{ .Values.global.oesUI.host }}/deck"' /tmp/spinnaker/.hal/default/profiles/stormdriver-spinnaker.yml
+    yq -i e '.services.gate.baseUrl = "{{ .Values.global.oesUI.protocol }}://{{ .Values.global.oesUI.host }}/gate"' /tmp/spinnaker/.hal/default/profiles/stormdriver-spinnaker.yml
     sed -i  s/RELEASE_NAME/{{ .Release.Name }}/g /tmp/spinnaker/.hal/default/profiles/stormdriver-spinnaker.yml
     {{- if .Values.global.commonGate.spinnakerRBAC }}
-    yq e '.services.fiat.enabled = true' /tmp/spinnaker/.hal/default/profiles/spinnaker.yml > /tmp/spinnaker/.hal/default/profiles/spinnaker1.yml
-    mv /tmp/spinnaker/.hal/default/profiles/spinnaker1.yml /tmp/spinnaker/.hal/default/profiles/spinnaker.yml
+    yq -i e '.services.fiat.enabled = true' /tmp/spinnaker/.hal/default/profiles/spinnaker.yml
     {{- end }}
     {{- else }}
     rm -rf /tmp/spinnaker/.hal/default/profiles/orca-overrides.yml
