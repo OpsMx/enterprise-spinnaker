@@ -150,24 +150,25 @@ data:
     if [ -r "/tmp/spinnaker/test/bom" ]
     then
       cp -r /tmp/spinnaker/test/bom /tmp/spinnaker/bom
+      rm -rf /tmp/spinnaker/.hal/bom
       ##read service  as asingle line comma saperated
-      halservices=$(yq e '(.services | keys)[]' bom | xargs | sed -e 's/ /,/g')
+      halservices=$(yq e '(.services | keys)[]' /tmp/spinnaker/bom | xargs | sed -e 's/ /,/g')
       IFS=","
       for i in $halservices
       do
-        svcimg=$(yq e '.services.'$i'.image' bom)
-        svcn=$(ls default/service-settings/ | grep "$i" | xargs | sed -e 's/ /,/g')
+        svcimg=$(yq e '.services.'$i'.image' /tmp/spinnaker/bom)
+        svcn=$(find /tmp/spinnaker/.hal/default/service-settings/ -name "$i"* | awk -F"/" '{print $NF}' | xargs | sed -e 's/ /,/g')
         if [[ "$svcn" != "" ]];
         then
           IFS=","
           for svcfile in $svcn
           do
-            yq -i e '.artifactId = "'$svcimg'"' default/service-settings/$svcfile 
-          done 
+            yq -i e '.artifactId = "'$svcimg'"' /tmp/spinnaker/.hal/default/service-settings/$svcfile
+          done
         else
           echo "WARNING: Service file $i is not located in default/service-settings/ to override the artifact image from bom"
         fi
-      done 
+      done
     else
       echo "WARNING: Not specified bom in gitops repo overidden images will be  taken from default/service-settings"
     fi
