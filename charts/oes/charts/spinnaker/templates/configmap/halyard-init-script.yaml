@@ -151,7 +151,13 @@ data:
     then
       cp -r /tmp/spinnaker/test/bom /tmp/spinnaker/bom
       rm -rf /tmp/spinnaker/.hal/bom
-      ##read service  as asingle line comma saperated
+      ## Updated the halyard config version
+      crthalversion=$(yq e '.deploymentConfigurations.[].version' /tmp/spinnaker/.hal/config)
+      halversion=$(yq e '.version' /tmp/spinnaker/bom)
+      echo "INFO: Updating the halyard version from VERSION $crthalversion to VERSION $halversion"
+      yq -i e '.deploymentConfigurations.[].version = "'$halversion'"' /tmp/spinnaker/.hal/config
+      ## Read service  as asingle line comma saperated
+      echo "INFO: Updating the spinnaker images of service-settings folder using bom file in gitops"
       halservices=$(yq e '(.services | keys)[]' /tmp/spinnaker/bom | xargs | sed -e 's/ /,/g')
       IFS=","
       for i in $halservices
