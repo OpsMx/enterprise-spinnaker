@@ -1556,7 +1556,7 @@ def get_postgres_front50_db_conn():
         postgresdb_front50 = psycopg2.connect(database='front50', user=spin_db_username, password=spin_db_password, host=spin_db_host,port=spin_db_port)
         print("Spinnaker front50 database connection established successfully")         
         return postgresdb_front50.cursor()
-psycopg2.connect(database=visibility_db, user=user_name, password=password, host=visibility_host, port=port)
+
 def addDBVersion(version):
     try:
         # create db_version table if not exists
@@ -1596,7 +1596,7 @@ if __name__ == '__main__':
     if n != 26:
         print(
             "Please pass valid 25 arguments <platform_db-name> <platform_host> <oes-db-name> <oes-db-host> <autopilot-db-name> <autopilot-db-host> <audit_db-name> <audit-db-host> <visibility_db-name> <visibility-db-host> "
-            "<db-port> <user-name> <password> <isd-gate-url> <isd-admin-username> <isd-admin-password> <sapor-host-url> <audit-service-url> <redis/sql/postgres> <redis-host/sql-host/postgres-host> <redis-port/sql-username/postgres-username> <redis-password/sql-password/postgres-password> <migration-flag> <isd-platform-url>  <sql-port/postgres-port>")
+            "<db-port> <user-name> <password> <isd-gate-url> <isd-admin-username> <isd-admin-password> <sapor-host-url> <audit-service-url> <redis/sql/postgres> <redis-host/sql-host/postgres-host> <redis-port/sql-port/postgres-port> <redis-username/sql-username/postgres-username> <redis-password/sql-password/postgres-password> <migration-flag> <isd-platform-url>")
         exit(1)
 
 
@@ -1626,29 +1626,34 @@ if __name__ == '__main__':
 
     global redis_host
     global redis_port
+    global redis_username
     global redis_password
 
     global spin_db_host
+    global spin_db_port
     global spin_db_username
     global spin_db_password
     if spin_db_type == 'redis':     
        redis_host = sys.argv[20]
        redis_port = sys.argv[21]
-       redis_password = sys.argv[22]
+       redis_username = sys.argv[22]
+       redis_password = sys.argv[23]
 
     if spin_db_type == 'sql':
        spin_db_host = sys.argv[20]
-       spin_db_username = sys.argv[21]
-       spin_db_password = sys.argv[22]
+       spin_db_port = sys.argv[21]
+       spin_db_username = sys.argv[22]
+       spin_db_password = sys.argv[23]
     if spin_db_type == 'postgres':
        spin_db_host = sys.argv[20]
-       spin_db_username = sys.argv[21]
-       spin_db_password = sys.argv[22]
+       spin_db_port = sys.argv[21]
+       spin_db_username = sys.argv[22]
+       spin_db_password = sys.argv[23]
 
 
-    migrate_data_flag = sys.argv[23]
-    platform_host_url = sys.argv[24]
-    spin_db_port = sys.argv[25]
+    migrate_data_flag = sys.argv[24]
+    platform_host_url = sys.argv[25]
+    
 
     
 
