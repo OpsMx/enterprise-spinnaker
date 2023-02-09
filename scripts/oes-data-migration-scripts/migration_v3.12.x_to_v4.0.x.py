@@ -152,6 +152,7 @@ def perform_migration(version):     # post-upgrade Data Migration (to be run as 
         elif spin_db_type == 'sql':
             mysqlcursor_orca = spindb_orca_sql.cursor(buffered=True)
             pi_executions = get_sql_pi_executions(mysqlcursor_orca)
+            #Should not close the cursor here, it is to be kept open until the "spin_db_update_custom_gates_navigation_url" operation complete
             spin_db_update_custom_gates_navigation_url(pi_executions)
             mysqlcursor_orca.close()
         elif spin_db_type == 'postgres':
