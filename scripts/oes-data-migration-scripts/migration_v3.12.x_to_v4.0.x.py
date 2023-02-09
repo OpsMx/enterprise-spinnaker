@@ -1535,9 +1535,7 @@ def get_sql_orca_db_conn(migrate_data_flag):
         if migrate_data_flag == 'true':
             sqldb_orca = mysql.connector.connect(database='orca', user=spin_db_username, password=spin_db_password, host=spin_db_host, autocommit = True)
         else:
-            sqldb_orca = mysql.connector.connect(database='orca', user=spin_db_username, password=spin_db_password,
-                                                 host=spin_db_host)
-
+            sqldb_orca = mysql.connector.connect(database='orca', user=spin_db_username, password=spin_db_password, host=spin_db_host)
         print("Spinnaker orca database connection established successfully")         
         return sqldb_orca
 
@@ -1547,8 +1545,7 @@ def get_sql_front50_db_conn(migrate_data_flag):
         if migrate_data_flag == 'true':
             sqldb_front50 = mysql.connector.connect(database='front50', user=spin_db_username, password=spin_db_password, host=spin_db_host, autocommit = True)
         else:
-            sqldb_front50 = mysql.connector.connect(database='front50', user=spin_db_username,
-                                                    password=spin_db_password, host=spin_db_host)
+            sqldb_front50 = mysql.connector.connect(database='front50', user=spin_db_username, password=spin_db_password, host=spin_db_host)
         print("Spinnaker front50 database connection established successfully")         
         return sqldb_front50
 
@@ -1556,6 +1553,8 @@ def get_postgres_orca_db_conn():
     if spin_db_type == 'postgres':
         #Establishing the spinnaker orca postgres database connection       
         postgresdb_orca = psycopg2.connect(database='orca', user=spin_db_username, password=spin_db_password, host=spin_db_host,port=spin_db_port)
+        if migrate_data_flag == 'true':
+           postgresdb_orca.autocommit = True
         print("Spinnaker orca database connection established successfully")         
         return postgresdb_orca.cursor()
 
@@ -1563,6 +1562,8 @@ def get_postgres_front50_db_conn():
     if spin_db_type == 'postgres':
         #Establishing the spinnaker front50 postgres database connection       
         postgresdb_front50 = psycopg2.connect(database='front50', user=spin_db_username, password=spin_db_password, host=spin_db_host,port=spin_db_port)
+        if migrate_data_flag == 'true':
+           postgresdb_orca.autocommit = True
         print("Spinnaker front50 database connection established successfully")         
         return postgresdb_front50.cursor()
 
@@ -1647,25 +1648,14 @@ if __name__ == '__main__':
        redis_port = sys.argv[21]
        redis_username = sys.argv[22]
        redis_password = sys.argv[23]
-
-    if spin_db_type == 'sql':
+    else:
        spin_db_host = sys.argv[20]
        spin_db_port = sys.argv[21]
        spin_db_username = sys.argv[22]
        spin_db_password = sys.argv[23]
-    if spin_db_type == 'postgres':
-       spin_db_host = sys.argv[20]
-       spin_db_port = sys.argv[21]
-       spin_db_username = sys.argv[22]
-       spin_db_password = sys.argv[23]
-
 
     migrate_data_flag = sys.argv[24]
     platform_host_url = sys.argv[25]
-    
-
-    
-
 
     # Establishing the platform db connection
     platform_conn = psycopg2.connect(database=platform_db, user=user_name, password=password, host=platform_host,port=port)
