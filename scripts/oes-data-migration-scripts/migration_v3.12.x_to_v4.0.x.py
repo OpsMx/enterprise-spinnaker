@@ -156,7 +156,7 @@ def perform_migration(version):     # post-upgrade Data Migration (to be run as 
             spin_db_update_custom_gates_navigation_url(pi_executions)
             mysqlcursor_orca.close()
         elif spin_db_type == 'postgres':
-            pi_executions = get_postgres_pi_executions()
+            pi_executions = get_sql_pi_executions(spindb_orca_postgres)
             spin_db_update_custom_gates_navigation_url(pi_executions)
 
             
@@ -320,19 +320,10 @@ def update_policy_gate_url(json_data, pl_key, execution_str):
         raise e
 
 
-def get_sql_pi_executions(mysqlcursor_orca):
+def get_sql_pi_executions(sqlcursor_orca):
     try:        
-        mysqlcursor_orca.execute("SELECT pi.application, pi.body, ps.body FROM pipeline_stages ps LEFT OUTER JOIN pipelines pi ON ps.execution_id = pi.id")
-        return mysqlcursor_orca.fetchall()        
-    except Exception as e:
-        print("Exception occurred while getting the pipeline executions : ", e)
-        logging.error("Exception occurred while getting the pipeline execution : ", exc_info=True)
-        raise e
-
-def get_postgres_pi_executions():
-    try:        
-        spindb_orca_postgres.execute("SELECT pi.application, pi.body, ps.body FROM pipeline_stages ps LEFT OUTER JOIN pipelines pi ON ps.execution_id = pi.id")
-        return spindb_orca_postgres.fetchall()        
+        sqlcursor_orca.execute("SELECT pi.application, pi.body, ps.body FROM pipeline_stages ps LEFT OUTER JOIN pipelines pi ON ps.execution_id = pi.id")
+        return sqlcursor_orca.fetchall()        
     except Exception as e:
         print("Exception occurred while getting the pipeline executions : ", e)
         logging.error("Exception occurred while getting the pipeline execution : ", exc_info=True)
@@ -346,6 +337,7 @@ def updated_stage_execution_data(pi_stage_id, updated_json):
         if spin_db_type == 'sql':
            mysqlcursor_orca = spindb_orca_sql.cursor()        
            mysqlcursor_orca.execute(sql, data)
+           mysqlcursor_orca.close()
         elif spin_db_type == 'postgres':
            spindb_orca_postgres.execute(sql, data)
 
@@ -1494,6 +1486,7 @@ def postingGateJsonSQL(pipelineJson):
         if spin_db_type == 'sql':
            mysqlcursor_front50 = spindb_front50_sql.cursor()
            mysqlcursor_front50.execute(sql, update_data)
+           mysqlcursor_front50.close()
         elif spin_db_type == 'postgres':
            spindb_front50_postgres.execute(sql, update_data)
 
