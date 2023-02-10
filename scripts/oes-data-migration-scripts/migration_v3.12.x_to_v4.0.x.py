@@ -487,14 +487,14 @@ def commit_transactions():
         oesdb_conn.commit()
         autopilot_conn.commit()
         audit_conn.commit()
-        if spindb_orca_sql.is_connected():
+        if spindb_orca_sql is not None and spindb_orca_sql.is_connected():
            spindb_orca_sql.commit()            
-        if spindb_front50_sql.is_connected():
+        if spindb_front50_sql is not None and spindb_front50_sql.is_connected():
            spindb_front50_sql.commit()
-        if spindb_orca_postgres.is_connected():
-           spindb_orca_postgres.commit()            
-        if spindb_front50_postgres.is_connected():
-           spindb_front50_postgres.commit()
+        if spindb_orca_postgres_conn is not None and spindb_orca_postgres_conn.is_connected():
+           spindb_orca_postgres_conn.commit()            
+        if spindb_front50_postgres_conn is not None and spindb_front50_postgres_conn.is_connected():
+           spindb_front50_postgres_conn.commit()
         logging.info("Successfully migrated")
     except Exception as e:
         print("Exception occurred while committing transactions : ", e)
@@ -510,14 +510,14 @@ def close_connections():
         audit_conn.close()
         if audit_conn is not None:
             audit_conn.close()
-        if spindb_orca_sql.is_connected():
+        if spindb_orca_sql is not None and spindb_orca_sql.is_connected():
             spindb_orca_sql.close()
-        if spindb_front50_sql.is_connected():
+        if spindb_front50_sql is not None and spindb_front50_sql.is_connected():
             spindb_front50_sql.close()
-        if spindb_orca_postgres.is_connected():
-            spindb_orca_postgres.close()
-        if spindb_front50_postgres.is_connected():
-            spindb_front50_postgres.close()
+        if spindb_orca_postgres_conn is not None and spindb_orca_postgres_conn.is_connected():
+            spindb_orca_postgres_conn.close()
+        if spindb_front50_postgres_conn is not None and spindb_front50_postgres_conn.is_connected():
+            spindb_front50_postgres_conn.close()
 
     except Exception as e:
         logging.warning("Exception occurred while closing the DB connection : ", exc_info=True)
@@ -529,11 +529,15 @@ def rollback_transactions():
         oesdb_conn.rollback()
         autopilot_conn.rollback()
         if audit_conn is not None:
-            audit_conn.rollback()
-        if spindb_orca.is_connected():
-            spindb_orca.rollback()            
-        if spindb_front50.is_connected():
-            spindb_front50.rollback()  
+           audit_conn.rollback()
+        if spindb_orca_sql is not None and spindb_orca_sql.is_connected():
+           spindb_orca.rollback()            
+        if spindb_front50_sql is not None and spindb_front50_sql.is_connected():
+           spindb_front50.rollback()  
+        if spindb_orca_postgres_conn is not None and spindb_orca_postgres_conn.is_connected():
+            spindb_orca_postgres_conn.rollback()
+        if spindb_front50_postgres_conn is not None and spindb_front50_postgres_conn.is_connected():
+            spindb_front50_postgres_conn.rollback()
     except Exception as e:
         logging.critical("Exception occurred while rolling back the transactions : ", exc_info=True)
         raise e
@@ -1523,7 +1527,8 @@ def get_redis_conn():
         return redis
 
 
-def get_sql_orca_db_conn(migrate_data_flag):
+def get_sql_orca_db_conn():
+    sqldb_orca = None
     if spin_db_type == 'sql':
         #Establishing the spinnaker orca sql database connection
         if migrate_data_flag == 'true':
@@ -1533,7 +1538,8 @@ def get_sql_orca_db_conn(migrate_data_flag):
         print("Spinnaker orca database connection established successfully")         
         return sqldb_orca
 
-def get_sql_front50_db_conn(migrate_data_flag):
+def get_sql_front50_db_conn():
+    sqldb_front50 = None
     if spin_db_type == 'sql':
         #Establishing the spinnaker front50 sql database connection
         if migrate_data_flag == 'true':
@@ -1550,7 +1556,7 @@ def get_postgres_orca_db_conn():
         if migrate_data_flag == 'true':
            postgresdb_orca.autocommit = True
         print("Spinnaker orca database connection established successfully")         
-        return postgresdb_orca.cursor()
+        return postgresdb_orca
 
 def get_postgres_front50_db_conn():
     if spin_db_type == 'postgres':
@@ -1559,7 +1565,7 @@ def get_postgres_front50_db_conn():
         if migrate_data_flag == 'true':
            postgresdb_front50.autocommit = True
         print("Spinnaker front50 database connection established successfully")         
-        return postgresdb_front50.cursor()
+        return postgresdb_front50
 
 def addDBVersion(version):
     try:
@@ -1571,6 +1577,7 @@ def addDBVersion(version):
         # set db version
         date = datetime.datetime.now()        
         data = version,date,date
+        cur_platform.execute("DELETE FROM  db_version (version_no, created_at, updated_at) VALUES (%s, %s, %s)",data)
         cur_platform.execute("INSERT INTO db_version (version_no, created_at, updated_at) VALUES (%s, %s, %s)",data)
     except Exception as e:
         print("Exception occurred while adding db version : ", e)
@@ -1679,15 +1686,23 @@ if __name__ == '__main__':
     cur_audit = audit_conn.cursor()
     cur_visibility = visibility_conn.cursor()
     spindb_orca_sql = get_sql_orca_db_conn()
-    spindb_front50_sql = get_sql_front50_db_conn()
-    spindb_orca_postgres = get_postgres_orca_db_conn()
-    spindb_front50_postgres = get_postgres_front50_db_conn()
+    spindb_front50_sql = get_sql_front50_db_conn()    
+    spindb_orca_postgres_conn = get_postgres_orca_db_conn()
+    spindb_front50_postgres_conn = get_postgres_front50_db_conn()
+    spindb_orca_postgres =  None   
+    spindb_front50_postgres = None
+    if spindb_orca_postgres_conn is not None:
+       spindb_orca_postgres =  spindb_orca_postgres_conn.cursor()
+    if spindb_front50_postgres_conn is not None:
+       spindb_front50_postgres = spindb_front50_postgres_conn.cursor()    
+
 
    #check if it is pre-upgrade DB Update or post-upgrade Data Migration     
     if migrate_data_flag == 'false':        
-        update_db("4.0.2")      # Note: version here should be updated for each ISD release
+        update_db("4.0.3")      # Note: version here should be updated for each ISD release
     elif migrate_data_flag == 'true':        
-        perform_migration("4.0.2")       # pass the ISD version we are performing data migration for (Note: version here should be updated for each ISD release)
         audit_conn.autocommit = True
         platform_conn.autocommit = True
+        perform_migration("4.0.3")       # pass the ISD version we are performing data migration for (Note: version here should be updated for each ISD release)
+
 
