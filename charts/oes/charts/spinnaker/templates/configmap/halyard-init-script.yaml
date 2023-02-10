@@ -264,6 +264,8 @@ data:
     {{- if .Values.global.spinnakerUrl }}
     yq -i e '.deploymentConfigurations.[].security.apiSecurity.overrideBaseUrl = "{{ .Values.global.oesUI.protocol }}://{{ .Values.global.oesUI.host }}/gate"' /tmp/spinnaker/.hal/config
     yq -i e '.deploymentConfigurations.[].security.uiSecurity.overrideBaseUrl = "{{ .Values.global.spinDeck.protocol }}://{{ .Values.global.spinDeck.host }}"' /tmp/spinnaker/.hal/config
+    sed -i s/PROTOCOL/{{ .Values.global.oesUI.protocol }}/ /tmp/spinnaker/.hal/default/profiles/settings-local.js
+    sed -i s/UI_URL/{{ .Values.global.oesUI.host }}/ /tmp/spinnaker/.hal/default/profiles/settings-local.js
     {{- end }}
     {{- if .Values.global.stormdriver }}
     yq -i e '.services.deck.baseUrl = "{{ .Values.global.oesUI.protocol }}://{{ .Values.global.oesUI.host }}/deck"' /tmp/spinnaker/.hal/default/profiles/stormdriver-spinnaker.yml
