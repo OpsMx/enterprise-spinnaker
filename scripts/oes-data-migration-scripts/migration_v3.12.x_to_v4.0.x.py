@@ -150,10 +150,15 @@ def perform_migration(version):     # post-upgrade Data Migration (to be run as 
             plKeyExecDict = get_pipeline_execution_key_dict()
             update_custom_gates_navigation_url(plKeyExecDict)
         elif spin_db_type == 'sql':
-             mysqlcursor_orca = spindb_orca.cursor(buffered=True)
-             pi_executions = get_pi_executions(mysqlcursor_orca)
-             spin_db_update_custom_gates_navigation_url(pi_executions)
-             mysqlcursor_orca.close()
+            mysqlcursor_orca = spindb_orca_sql.cursor(buffered=True)
+            pi_executions = get_sql_pi_executions(mysqlcursor_orca)
+            #Should not close the cursor here, it is to be kept open until the "spin_db_update_custom_gates_navigation_url" operation complete
+            spin_db_update_custom_gates_navigation_url(pi_executions)
+            mysqlcursor_orca.close()
+        elif spin_db_type == 'postgres':
+            pi_executions = get_sql_pi_executions(spindb_orca_postgres)
+            spin_db_update_custom_gates_navigation_url(pi_executions)
+
             
         logging.info("Updating application name in audit events table")
         print("Updating application name in audit events table")
@@ -315,23 +320,28 @@ def update_policy_gate_url(json_data, pl_key, execution_str):
         raise e
 
 
-def get_pi_executions(mysqlcursor_orca):
+def get_sql_pi_executions(sqlcursor_orca):
     try:        
-        mysqlcursor_orca.execute("SELECT pi.application, pi.body, ps.body FROM pipeline_stages ps LEFT OUTER JOIN pipelines pi ON ps.execution_id = pi.id")
-        return mysqlcursor_orca.fetchall()        
+        sqlcursor_orca.execute("SELECT pi.application, pi.body, ps.body FROM pipeline_stages ps LEFT OUTER JOIN pipelines pi ON ps.execution_id = pi.id")
+        return sqlcursor_orca.fetchall()        
     except Exception as e:
         print("Exception occurred while getting the pipeline executions : ", e)
         logging.error("Exception occurred while getting the pipeline execution : ", exc_info=True)
         raise e
 
-
 def updated_stage_execution_data(pi_stage_id, updated_json):
     try:
-        dump_updated = json.dumps(updated_json)					
-        mysqlcursor_orca = spindb_orca.cursor()
+        dump_updated = json.dumps(updated_json)
         sql = "UPDATE pipeline_stages SET body = %s WHERE id = %s"
         data = (dump_updated, pi_stage_id)
-        mysqlcursor_orca.execute(sql, data)        
+        if spin_db_type == 'sql':
+           mysqlcursor_orca = spindb_orca_sql.cursor()        
+           mysqlcursor_orca.execute(sql, data)
+           mysqlcursor_orca.close()
+        elif spin_db_type == 'postgres':
+           spindb_orca_postgres.execute(sql, data)
+
+
     except Exception as e:
         logging.error("Exception occurred while updating stage execution : ", exc_info=True)
         print("Exception occurred while updating stage execution :  : ", e)
@@ -477,10 +487,14 @@ def commit_transactions():
         oesdb_conn.commit()
         autopilot_conn.commit()
         audit_conn.commit()
-        if spindb_orca.is_connected():
-           spindb_orca.commit()            
-        if spindb_front50.is_connected():
-           spindb_front50.commit()
+        if spindb_orca_sql.is_connected():
+           spindb_orca_sql.commit()            
+        if spindb_front50_sql.is_connected():
+           spindb_front50_sql.commit()
+        if spindb_orca_postgres.is_connected():
+           spindb_orca_postgres.commit()            
+        if spindb_front50_postgres.is_connected():
+           spindb_front50_postgres.commit()
         logging.info("Successfully migrated")
     except Exception as e:
         print("Exception occurred while committing transactions : ", e)
@@ -496,10 +510,15 @@ def close_connections():
         audit_conn.close()
         if audit_conn is not None:
             audit_conn.close()
-        if spindb_orca.is_connected():
-            spindb_orca.close()
-        if spindb_front50.is_connected():
-            spindb_front50.close()
+        if spindb_orca_sql.is_connected():
+            spindb_orca_sql.close()
+        if spindb_front50_sql.is_connected():
+            spindb_front50_sql.close()
+        if spindb_orca_postgres.is_connected():
+            spindb_orca_postgres.close()
+        if spindb_front50_postgres.is_connected():
+            spindb_front50_postgres.close()
+
     except Exception as e:
         logging.warning("Exception occurred while closing the DB connection : ", exc_info=True)
 
@@ -975,8 +994,9 @@ def processPipelineJsonForExistingGates():
                 pipelineJson = updatePipelineJson(pipelineId, stageJson)
                 if spin_db_type == 'redis':     
                    postingGateJson(pipelineJson, cookie)
-                if spin_db_type == 'sql':            
+                else:            
                    postingGateJsonSQL(pipelineJson)
+
     except Exception as e:
         print("Exception occurred while processing the pipeline json for existing gates : ", e)
         logging.error("Exception occurred while processing the pipeline json for existing gates :", exc_info=True)
@@ -1458,20 +1478,22 @@ def formPipelineJson(pipelineId, dbPipelineJson, stageJson):
         raise e
 
 
-
 def postingGateJsonSQL(pipelineJson):
     try:
         pipeline_id = pipelineJson['id']
-        update_data = json.dumps(pipelineJson), isd_admin_username, pipeline_id	
-        mysqlcursor_front50 = spindb_front50.cursor()
+        update_data = json.dumps(pipelineJson), isd_admin_username, pipeline_id        
         sql = "UPDATE pipelines SET body = %s, last_modified_by = %s WHERE id = %s"        
-        mysqlcursor_front50.execute(sql, update_data)
+        if spin_db_type == 'sql':
+           mysqlcursor_front50 = spindb_front50_sql.cursor()
+           mysqlcursor_front50.execute(sql, update_data)
+           mysqlcursor_front50.close()
+        elif spin_db_type == 'postgres':
+           spindb_front50_postgres.execute(sql, update_data)
+
     except Exception as e:
         print("Exception occurred while posting gate: ", e)
         logging.error("Exception occurred while posting gate", exc_info=True)
         raise e
-
-
 
 def postingGateJson(pipelineJson, cookie):
     try:
@@ -1507,9 +1529,7 @@ def get_sql_orca_db_conn(migrate_data_flag):
         if migrate_data_flag == 'true':
             sqldb_orca = mysql.connector.connect(database='orca', user=spin_db_username, password=spin_db_password, host=spin_db_host, autocommit = True)
         else:
-            sqldb_orca = mysql.connector.connect(database='orca', user=spin_db_username, password=spin_db_password,
-                                                 host=spin_db_host)
-
+            sqldb_orca = mysql.connector.connect(database='orca', user=spin_db_username, password=spin_db_password, host=spin_db_host)
         print("Spinnaker orca database connection established successfully")         
         return sqldb_orca
 
@@ -1519,10 +1539,27 @@ def get_sql_front50_db_conn(migrate_data_flag):
         if migrate_data_flag == 'true':
             sqldb_front50 = mysql.connector.connect(database='front50', user=spin_db_username, password=spin_db_password, host=spin_db_host, autocommit = True)
         else:
-            sqldb_front50 = mysql.connector.connect(database='front50', user=spin_db_username,
-                                                    password=spin_db_password, host=spin_db_host)
+            sqldb_front50 = mysql.connector.connect(database='front50', user=spin_db_username, password=spin_db_password, host=spin_db_host)
         print("Spinnaker front50 database connection established successfully")         
         return sqldb_front50
+
+def get_postgres_orca_db_conn():
+    if spin_db_type == 'postgres':
+        #Establishing the spinnaker orca postgres database connection       
+        postgresdb_orca = psycopg2.connect(database='orca', user=spin_db_username, password=spin_db_password, host=spin_db_host,port=spin_db_port)
+        if migrate_data_flag == 'true':
+           postgresdb_orca.autocommit = True
+        print("Spinnaker orca database connection established successfully")         
+        return postgresdb_orca.cursor()
+
+def get_postgres_front50_db_conn():
+    if spin_db_type == 'postgres':
+        #Establishing the spinnaker front50 postgres database connection       
+        postgresdb_front50 = psycopg2.connect(database='front50', user=spin_db_username, password=spin_db_password, host=spin_db_host,port=spin_db_port)
+        if migrate_data_flag == 'true':
+           postgresdb_front50.autocommit = True
+        print("Spinnaker front50 database connection established successfully")         
+        return postgresdb_front50.cursor()
 
 def addDBVersion(version):
     try:
@@ -1560,10 +1597,10 @@ def verifyDBVersion(version):
 if __name__ == '__main__':
     n = len(sys.argv)
 
-    if n != 25:
+    if n != 26:
         print(
-            "Please pass valid 24 arguments <platform_db-name> <platform_host> <oes-db-name> <oes-db-host> <autopilot-db-name> <autopilot-db-host> <audit_db-name> <audit-db-host> <visibility_db-name> <visibility-db-host> "
-            "<db-port> <user-name> <password> <isd-gate-url> <isd-admin-username> <isd-admin-password> <sapor-host-url> <audit-service-url> <redis/sql> <redis-host/sql-host> <redis-port/sql-username> <redis-password/sql-password> <migration-flag> <isd-platform-url>")
+            "Please pass valid 25 arguments <platform_db-name> <platform_host> <oes-db-name> <oes-db-host> <autopilot-db-name> <autopilot-db-host> <audit_db-name> <audit-db-host> <visibility_db-name> <visibility-db-host> "
+            "<db-port> <user-name> <password> <isd-gate-url> <isd-admin-username> <isd-admin-password> <sapor-host-url> <audit-service-url> <redis/sql/postgres> <redis-host/sql-host/postgres-host> <redis-port/sql-port/postgres-port> <redis-username/sql-username/postgres-username> <redis-password/sql-password/postgres-password> <migration-flag> <isd-platform-url>")
         exit(1)
 
 
@@ -1593,25 +1630,26 @@ if __name__ == '__main__':
 
     global redis_host
     global redis_port
+    global redis_username
     global redis_password
 
     global spin_db_host
+    global spin_db_port
     global spin_db_username
     global spin_db_password
     if spin_db_type == 'redis':     
        redis_host = sys.argv[20]
        redis_port = sys.argv[21]
-       redis_password = sys.argv[22]
-
-    if spin_db_type == 'sql':
+       redis_username = sys.argv[22]
+       redis_password = sys.argv[23]
+    else:
        spin_db_host = sys.argv[20]
-       spin_db_username = sys.argv[21]
-       spin_db_password = sys.argv[22]
-    migrate_data_flag = sys.argv[23]
-    platform_host_url = sys.argv[24]
+       spin_db_port = sys.argv[21]
+       spin_db_username = sys.argv[22]
+       spin_db_password = sys.argv[23]
 
-    
-
+    migrate_data_flag = sys.argv[24]
+    platform_host_url = sys.argv[25]
 
     # Establishing the platform db connection
     platform_conn = psycopg2.connect(database=platform_db, user=user_name, password=password, host=platform_host,port=port)
@@ -1632,16 +1670,19 @@ if __name__ == '__main__':
     # Establishing the visibility db connection
     visibility_conn = psycopg2.connect(database=visibility_db, user=user_name, password=password, host=visibility_host, port=port)
     print("Visibility database connection established successfully")
+     
 
-    
     redis_conn = get_redis_conn()
     cur_platform = platform_conn.cursor()
     cur_oesdb = oesdb_conn.cursor()
     cur_autopilot = autopilot_conn.cursor()
     cur_audit = audit_conn.cursor()
     cur_visibility = visibility_conn.cursor()
-    spindb_orca = get_sql_orca_db_conn(migrate_data_flag)
-    spindb_front50 = get_sql_front50_db_conn(migrate_data_flag)
+    spindb_orca_sql = get_sql_orca_db_conn()
+    spindb_front50_sql = get_sql_front50_db_conn()
+    spindb_orca_postgres = get_postgres_orca_db_conn()
+    spindb_front50_postgres = get_postgres_front50_db_conn()
+
    #check if it is pre-upgrade DB Update or post-upgrade Data Migration     
     if migrate_data_flag == 'false':        
         update_db("4.0.2")      # Note: version here should be updated for each ISD release
