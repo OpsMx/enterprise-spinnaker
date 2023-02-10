@@ -1577,7 +1577,7 @@ def addDBVersion(version):
         # set db version
         date = datetime.datetime.now()        
         data = version,date,date
-        cur_platform.execute("DELETE FROM  db_version (version_no, created_at, updated_at) VALUES (%s, %s, %s)",data)
+        cur_platform.execute("DELETE FROM  db_version WHERE version_no = %s",version)
         cur_platform.execute("INSERT INTO db_version (version_no, created_at, updated_at) VALUES (%s, %s, %s)",data)
     except Exception as e:
         print("Exception occurred while adding db version : ", e)
