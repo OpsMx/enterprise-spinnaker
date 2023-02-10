@@ -1557,7 +1557,7 @@ def get_postgres_front50_db_conn():
         #Establishing the spinnaker front50 postgres database connection       
         postgresdb_front50 = psycopg2.connect(database='front50', user=spin_db_username, password=spin_db_password, host=spin_db_host,port=spin_db_port)
         if migrate_data_flag == 'true':
-           postgresdb_orca.autocommit = True
+           postgresdb_front50.autocommit = True
         print("Spinnaker front50 database connection established successfully")         
         return postgresdb_front50.cursor()
 
