@@ -5,7 +5,7 @@ metadata:
   labels:
 {{ include "spinnaker.standard-labels" . | indent 4 }}
 data:
-  spin-pipeline-import.sh: |
+  spin-pipeline-import.sh: |-
     #!/bin/bash
     echo "Waiting for all Spinnaker Services to come-up"
     wait_period=0
