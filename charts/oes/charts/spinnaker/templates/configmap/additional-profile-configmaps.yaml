@@ -61,4 +61,3 @@ data:
        -
         wrap: false
         url: http://oes-sapor.{{ .Release.Namespace }}:8085/oes/echo
-  
