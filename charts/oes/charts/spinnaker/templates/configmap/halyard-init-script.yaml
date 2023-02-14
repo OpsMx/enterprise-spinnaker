@@ -79,7 +79,7 @@ data:
     GIT_USER=$gitea_user
     GIT_TOKEN=$gitea_pass
 
-    echo "Checking if the local gitea repo exists....." 
+    echo "Checking if the local gitea repo exists....."
     curl -k -X GET "http://{{ .Release.Name }}-gitea-http.$SPINNAKER_NAMESPACE:3000/api/v1/users/$gitea_user/repos" >/tmp/spinnaker/repo.json
     checkrepo=$(cat /tmp/spinnaker/repo.json | jq '.[] | select(.name=="gitea-standard-repo")')
 
@@ -212,7 +212,7 @@ data:
     {{- if .Values.global.auth.saml }}
     readfiat=$(yq e '.fiat' /tmp/spinnaker/.hal/default/profiles/fiat-local.yml)
     if [[ "$readfiat" == "null" ]];
-    then 
+    then
       yq -i e '.fiat.admin.roles += ["{{ .Values.global.saporgate.config.adminGroups }}"]' /tmp/spinnaker/.hal/default/profiles/fiat-local.yml
     else
       echo "INFO: Admin groups already present in fiat-local.yml file"

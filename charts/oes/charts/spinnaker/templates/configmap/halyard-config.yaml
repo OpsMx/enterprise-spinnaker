@@ -157,11 +157,6 @@ data:
     $HAL_COMMAND config deploy ha echo enable
     {{- end }}
 
-    
-    
-
-
-
     # Enable Authentication by default
     {{- if .Values.global.ldap.enabled }}
     {{- if .Values.global.installOpenLdap }}
@@ -175,7 +170,7 @@ data:
     $HAL_COMMAND config security authn ldap disable
     {{- end }}
 
-    # Enable Authorization 
+    # Enable Authorization
     {{- if .Values.global.commonGate.spinnakerRBAC }}
     $HAL_COMMAND config security authz enable
     {{- else }}

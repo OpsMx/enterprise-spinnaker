@@ -5,9 +5,9 @@ metadata:
   labels:
 {{ include "spinnaker.standard-labels" . | indent 4 }}
 data:
-  spin-pipeline-import.sh: |-
+  spin-pipeline-import.sh: |
     #!/bin/bash
-    echo \"Waiting for all Spinnaker Services to come-up\"
+    echo "Waiting for all Spinnaker Services to come-up"
     wait_period=0
     while true
     do
@@ -32,45 +32,20 @@ data:
     ## AUTOPILOT
     SAPORGATE=$(grep sapor-gate /tmp/inst.status | awk '{print $2}')
     OESGATE=$(grep oes-gate /tmp/inst.status | awk '{print $2}')
-
-
     wait_period=$(($wait_period+10))
-
     {{- if .Values.global.stormdriver }}
     READYBASIC=$( [ "$DECK" == "true" ] && [ "$CLOUDDRIVER" == "true" ] && [ "$FRONT" == "true" ] && [ "$ORCA" == "true" ] && [ "$ECHO" == "true" ]  && [ "$SAPORGATE" == "true" ] && [ "$OESGATE" == "true" ]; echo $(($? == 0)) )
     {{- else }}
     READYBASIC=$( [ "$DECK" == "true" ] && [ "$CLOUDCACHING" == "true" ] && [ "$CLOUDRO" == "true" ] && [ "$CLOUDRW" == "true" ] && [ "$CLOUDRODECK" == "true" ] && [ "$FRONT" == "true" ] && [ "$ORCA" == "true" ] && [ "$ECHOWORKER" == "true" ] && [ "$ECHOSCHEDULER" == "true" ] && [ "$SAPORGATE" == "true" ] && [ "$OESGATE" == "true" ];  echo $(($? == 0)) )
     {{- end }}
-
     {{- if .Values.global.commonGate.spinnakerRBAC }}
     READY=$( [ $READYBASIC == 1 ] && [ "$FIAT" == "true" ]; echo $(($? == 0)) )
     {{- else }}
     READY=$READYBASIC
     {{- end }}
-
-
     if [ $READY == 1 ];
-    #CLOUDRO=$(grep spin-clouddriver-ro /tmp/inst.status |grep -v deck | awk '{print $2}')
-    #CLOUDRODECK=$(grep spin-clouddriver-ro-deck /tmp/inst.status | awk '{print $2}')
-    #CLOUDRW=$(grep spin-clouddriver-rw /tmp/inst.status | awk '{print $2}')
-    #CLOUDCACHING=$(grep spin-clouddriver-caching /tmp/inst.status | awk '{print $2}')
-    #DECK=$(grep spin-deck /tmp/inst.status | awk '{print $2}')
-    #ECHOWORKER=$(grep spin-echo-worker /tmp/inst.status | awk '{print $2}')
-    #ECHOSCHEDULER=$(grep spin-echo-scheduler  /tmp/inst.status | awk '{print $2}')
-    #FRONT=$(grep spin-front /tmp/inst.status  | awk '{print $2}')
-    #GATE=$(grep spin-gate /tmp/inst.status | awk '{print $2}')
-    #FIAT=$(grep spin-fiat /tmp/inst.status | awk '{print $2}')
-    #ORCA=$(grep spin-orca /tmp/inst.status | awk '{print $2}')
-    #SAPORGATE=$(grep sapor-gate /tmp/inst.status | awk '{print $2}')
-    #OESGATE=$(grep oes-gate /tmp/inst.status | awk '{print $2}')
-    #wait_period=$(($wait_period+10))
-    #{{- if .Values.global.commonGate.spinnakerRBAC }}
-    #if [ "$DECK" == "true" ] && [ "$CLOUDCACHING" == "true" ] && [ "$CLOUDRO" == "true" ] && [ "$CLOUDRW" == "true" ] && [ "$CLOUDRODECK" == "true" ] && [ "$FRONT" == "true" ] && [ "$GATE" == "true" ] && [ "$ORCA" == "true" ] && [ "$ECHOWORKER" == "true" ] && [ "$ECHOSCHEDULER" == "true" ] && [ "$FIAT" == "true" ] && [ "$SAPORGATE" == "true" ] && [ "$OESGATE" == "true" ];
-    #{{- else }}
-    #if [ "$DECK" == "true" ] && [ "$CLOUDCACHING" == "true" ] && [ "$CLOUDRO" == "true" ] && [ "$CLOUDRW" == "true" ] && [ "$CLOUDRODECK" == "true" ] && [ "$FRONT" == "true" ] && [ "$GATE" == "true" ] && [ "$ORCA" == "true" ] && [ "$ECHOWORKER" == "true" ] && [ "$ECHOSCHEDULER" == "true" ] && [ "$SAPORGATE" == "true" ] && [ "$OESGATE" == "true" ];
-    #{{- end }}
     then
-        echo \"Spinnaker and OES is Installed and ready\"
+        echo "Spinnaker and OES is Installed and ready"
         mkdir -p /tmp/config/git/
         git -c {{ .Values.gitopsHalyard.repo.configArgs }} clone https://github.com/OpsMx/sample-pipelines.git /tmp/config/git/
         if [[ $? != 0 ]]; then
@@ -82,7 +57,7 @@ data:
         cd /tmp/config/git
         cp -p /tmp/config/spin/config .
         ### remove commected line in file
-        grep -v "#" create-app.sh > removecomment.sh 
+        grep -v "#" create-app.sh > removecomment.sh
         sed 's/$/ --config config/' removecomment.sh > create-app1.sh
         #### Loop begins to save the json if fails it tries for 3 times
         INPUT=$(sed -n '$=' create-app1.sh)
@@ -96,10 +71,12 @@ data:
            echo Retrying.....
            $command > /dev/null 2>&1
             if [[ $? != 0 ]]; then
-              echo "ERROR: Failed to save the Application using the spincli. Please check the spincli configuration in {{ .Release.Name }}-spinnaker-spin-config  secret or check the pipelinejson"
+              echo "ERROR: Failed to save the Application/Pipeline using the spincli. Please check the spincli configuration in {{ .Release.Name }}-spinnaker-spin-config  secret or check the pipelinejson"
+              echo "$command"
               #exit 1
               if [[ "$i" == 3 ]]; then
-              echo "ERROR: Failed to save the Application using the spincli. Please check the spincli configuration in {{ .Release.Name }}-spinnaker-spin-config  secret or check the pipelinejson"
+              echo "ERROR: Failed to save the Application/Pipeline using the spincli. Please check the spincli configuration in {{ .Release.Name }}-spinnaker-spin-config  secret or check the pipelinejson"
+              echo "$command"
               exit 1
               fi
             else
@@ -118,10 +95,10 @@ data:
     else
         if [ $wait_period -gt 1800 ];
         then
-            echo \"Script is timed out as the Spinnaker is not ready in 30 min.......\"
+            echo "Script is timed out as the Spinnaker is not ready in 30 min......."
             break
         else
-            echo \"Waiting for Spinnaker services to be ready\"
+            echo "Waiting for Spinnaker services to be ready"
             sleep 1m
         fi
     fi
