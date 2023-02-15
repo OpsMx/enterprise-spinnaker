@@ -77,6 +77,7 @@ def update_db(version):     # pre-upgrade DB Update
         logging.info("Updating Spinnaker existing gate Json in spinnaker")
         print("Updating Spinnaker existing gate Json in spinnaker")
         processPipelineJsonForExistingGates()
+        
         logging.info("Adding schema version to platform db table db_version")
         print("Adding schema version to platform db table db_version")
         addDBVersion(version)
@@ -531,9 +532,9 @@ def rollback_transactions():
         if audit_conn is not None:
            audit_conn.rollback()
         if spindb_orca_sql is not None and spindb_orca_sql.is_connected():
-           spindb_orca.rollback()            
+           spindb_orca_sql.rollback()            
         if spindb_front50_sql is not None and spindb_front50_sql.is_connected():
-           spindb_front50.rollback()  
+           spindb_front50_sql.rollback()  
         if spindb_orca_postgres_conn is not None and spindb_orca_postgres_conn.is_connected():
             spindb_orca_postgres_conn.rollback()
         if spindb_front50_postgres_conn is not None and spindb_front50_postgres_conn.is_connected():
@@ -1577,7 +1578,7 @@ def addDBVersion(version):
         # set db version
         date = datetime.datetime.now()        
         data = version,date,date
-        cur_platform.execute("DELETE FROM  db_version WHERE version_no ="+str(version))
+        cur_platform.execute(f"DELETE FROM  db_version WHERE version_no='{version}'")
         cur_platform.execute("INSERT INTO db_version (version_no, created_at, updated_at) VALUES (%s, %s, %s)",data)
     except Exception as e:
         print("Exception occurred while adding db version : ", e)
@@ -1704,5 +1705,4 @@ if __name__ == '__main__':
         audit_conn.autocommit = True
         platform_conn.autocommit = True
         perform_migration("4.0.3")       # pass the ISD version we are performing data migration for (Note: version here should be updated for each ISD release)
-
 
