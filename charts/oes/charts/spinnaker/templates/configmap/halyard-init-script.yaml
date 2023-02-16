@@ -265,10 +265,10 @@ data:
     yq -i e '.deploymentConfigurations.[].security.apiSecurity.overrideBaseUrl = "{{ .Values.global.oesUI.protocol }}://{{ .Values.global.oesUI.host }}/gate"' /tmp/spinnaker/.hal/config
     yq -i e '.deploymentConfigurations.[].security.uiSecurity.overrideBaseUrl = "{{ .Values.global.spinDeck.protocol }}://{{ .Values.global.spinDeck.host }}"' /tmp/spinnaker/.hal/config
     if [ -f /tmp/spinnaker/.hal/default/profiles/settings-local.js ]; then
-       echo "var uiUrl = "{{ .Values.global.oesUI.protocol }}://{{ .Values.global.oesUI.host }}";" >> /tmp/spinnaker/.hal/default/profiles/settings-local.js
+       echo 'var uiUrl = "{{ .Values.global.oesUI.protocol }}://{{ .Values.global.oesUI.host }}";' >> /tmp/spinnaker/.hal/default/profiles/settings-local.js
     else
        touch /tmp/spinnaker/.hal/default/profiles/settings-local.js
-       echo "var uiUrl = "{{ .Values.global.oesUI.protocol }}://{{ .Values.global.oesUI.host }}";" >> /tmp/spinnaker/.hal/default/profiles/settings-local.js
+       echo 'var uiUrl = "{{ .Values.global.oesUI.protocol }}://{{ .Values.global.oesUI.host }}";' >> /tmp/spinnaker/.hal/default/profiles/settings-local.js
     fi
     {{- end }}
     {{- if .Values.global.stormdriver }}
