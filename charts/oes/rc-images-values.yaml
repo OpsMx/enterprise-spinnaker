@@ -41,7 +41,7 @@ spinnaker:
 
 autopilot:
   image:
-    tag: v4.0.3-rc3 
+    tag: v4.0.3-rc3
 audit:
   image:
     tag: v4.0.3-rc3
