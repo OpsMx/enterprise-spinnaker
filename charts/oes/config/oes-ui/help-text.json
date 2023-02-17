@@ -89,7 +89,8 @@
         "VALIDATION_MESSAGE": {
           "required": "Account name cannot be empty",
           "cannotContainSpace": "Account name cannot contain space",
-          "noSpecialCharacters": "Allowed special character is '-'"
+          "noSpecialCharacters": "Allowed special character is '-'",
+          "startingFromNumber": "Account Name cannot start with numbers"
         }
       },
       "NAMESPACE": {
@@ -100,22 +101,17 @@
           "noSpecialCharacters": "Special characters not allowed except ',-'"
         }
       },
+      "OMIT_NAMESPACE": {
+        "TOOLTIP": "A list of namespaces this Spinnaker account cannot deploy to or cache",
+        "VALIDATION_MESSAGE": {
+          "required": "",
+          "noSpecialCharacters": "Special characters not allowed except ',-'"
+        }
+      },
       "UPLOAD_KUBECONFIG_FILE": {
         "TOOLTIP": "The path to your kubeconfig file. By default, it will be under the Spinnaker user’s home directory in the typical .kube/config location.",
         "VALIDATION_MESSAGE": {
           "required": "File cannot be empty"
-        }
-      },
-      "READ": {
-        "TOOLTIP": "A user must have at least one of these roles in order to view this account’s cloud resources.",
-        "VALIDATION_MESSAGE": {
-          "cannotContainSpace": "Read Permissions cannot contain space"
-        }
-      },
-      "WRITE": {
-        "TOOLTIP": "A user must have at least one of these roles in order to make changes to this account’s cloud resources",
-        "VALIDATION_MESSAGE": {
-          "cannotContainSpace": "Write Permissions cannot contain space"
         }
       },
       "EXECUTE": {
@@ -149,6 +145,10 @@
         "TOOLTIP": "Whether this account is the primary account? If yes then provide the access & secret key details.",
         "VALIDATION_MESSAGE": {}
       },
+      "DYNAMIC_ACCOUNT": {
+        "TOOLTIP": "If Enabled, this account will be added to the spinnaker using External Account Configuration, which allows you to load the configurations dynamically without requiring redeployment of Clouddriver.",
+        "VALIDATION_MESSAGE": {}
+        },
       "ACCESS_KEY": {
         "TOOLTIP": "The default access key used to communicate with AWS",
         "VALIDATION_MESSAGE": {
@@ -1059,7 +1059,6 @@
     "HEADER": "No Users found",
     "BODY": ""
   },
-
   "APPLICATION_DEPLOYMENT": {
     "DEPLOYMENT_GRID_SYNC": {
       "TOOLTIP": "When the cluster deployment matches with the latest pipeline execution it is 'In Sync'; if not, it is 'Out of Sync'"
@@ -1589,7 +1588,6 @@
   "DEPLOYMENT":{
     "TOOLTIP":"This Halyard deployment will be used for Account creation / update",
     "VALIDATION_MESSAGE":{
-
     }
   },
   "AUTHENTICATIONTYPE":{
@@ -2107,7 +2105,6 @@
       "TOOLTIP":"Switch On this toggle to configure the resource in a gitops enabled Spinnaker instance",
       "VALIDATION_MESSAGE":{}
     }
-
   },
   "SERVICENOW":{
     "HEADER": "Service Now",
@@ -2207,7 +2204,6 @@
       "required":"Account Name cannot be empty",
       "startingFromNumber": "Account Name cannot start with numbers"
     }
-
     },
     "API_KEY":{
       "TOOLTIP":"DATADOG Api Key",
@@ -2520,7 +2516,6 @@
     }
       }
     },
-
     "VMWARETANZU":{
       "HEADER": "VMWare Tanzu Observability",
       "BODY":"<span><li><strong>Account Name</strong>: User-defined account name for your VMWare Tanzu access</li><li><strong>Endpoint</strong>: VMWare Tanzu host address, from which you access the VMWare Tanzu</li><li><strong>Email</strong>: Provide the user's registered and authorized email</li><li><strong>API token</strong>: The user's API token </li></span>",

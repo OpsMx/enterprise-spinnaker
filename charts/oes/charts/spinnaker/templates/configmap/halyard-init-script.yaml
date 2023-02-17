@@ -232,7 +232,7 @@ data:
     if [ -f /tmp/spinnaker/.hal/halyard.yaml ]; then
     cp /tmp/spinnaker/.hal/halyard.yaml /tmp/config
     fi
-    {{- if and (.Values.global.auth.saml) (.Values.global.commonGate.enabled) }}
+    {{- if and .Values.global.auth.saml (not .Values.global.spinnakerUrl) .Values.global.commonGate.enabled }}
     kubectl get secret oes-gate-config -o jsonpath='{.data.*}' -n ${SPINNAKER_NAMESPACE} | base64 -d > /tmp/gate1.yml
     oesuihost=$(yq e '.saml.redirectHostname' /tmp/gate1.yml)
     oesuiurl={{ .Values.global.oesUI.protocol }}://$oesuihost
@@ -259,13 +259,29 @@ data:
     kubectl create secret generic oes-gate-config --from-file=/tmp/gate.yml -n ${SPINNAKER_NAMESPACE}
     kubectl delete pod -l component=gate -n ${SPINNAKER_NAMESPACE}
     {{- else }}
+    {{- if and .Values.global.auth.saml .Values.global.commonGate.enabled .Values.global.spinnakerUrl }}
+    yq -i e '.deploymentConfigurations.[].security.authn.saml.enabled = "true"' /tmp/spinnaker/.hal/config
+    {{- else }}
     yq -i e '.deploymentConfigurations.[].security.authn.saml.enabled = "false"' /tmp/spinnaker/.hal/config
+    {{- end }}
     {{- end }}
     {{- if .Values.global.spinnakerUrl }}
     yq -i e '.deploymentConfigurations.[].security.apiSecurity.overrideBaseUrl = "{{ .Values.global.oesUI.protocol }}://{{ .Values.global.oesUI.host }}/gate"' /tmp/spinnaker/.hal/config
     yq -i e '.deploymentConfigurations.[].security.uiSecurity.overrideBaseUrl = "{{ .Values.global.spinDeck.protocol }}://{{ .Values.global.spinDeck.host }}"' /tmp/spinnaker/.hal/config
-    sed -i s/PROTOCOL/{{ .Values.global.oesUI.protocol }}/ /tmp/spinnaker/.hal/default/profiles/settings-local.js
-    sed -i s/UI_URL/{{ .Values.global.oesUI.host }}/ /tmp/spinnaker/.hal/default/profiles/settings-local.js
+    if [ -f /tmp/spinnaker/.hal/default/profiles/settings-local.js ]; then
+       cat /tmp/spinnaker/.hal/default/profiles/settings-local.js | grep -o uiUrl
+       if [ $? != 0 ]; then
+         echo "Updating the ISD URL in settings-local.js file"
+         echo 'var uiUrl = "{{ .Values.global.oesUI.protocol }}://{{ .Values.global.oesUI.host }}";' >> /tmp/spinnaker/.hal/default/profiles/settings-local.js
+       fi
+    else
+       touch /tmp/spinnaker/.hal/default/profiles/settings-local.js
+       cat /tmp/spinnaker/.hal/default/profiles/settings-local.js | grep -o uiUrl
+       if [ $? != 0 ]; then
+         echo "Created and Updated the ISD UI Url in settings-local.js file"
+         echo 'var uiUrl = "{{ .Values.global.oesUI.protocol }}://{{ .Values.global.oesUI.host }}";' >> /tmp/spinnaker/.hal/default/profiles/settings-local.js
+       fi
+    fi
     {{- end }}
     {{- if .Values.global.stormdriver }}
     yq -i e '.services.deck.baseUrl = "{{ .Values.global.oesUI.protocol }}://{{ .Values.global.oesUI.host }}/deck"' /tmp/spinnaker/.hal/default/profiles/stormdriver-spinnaker.yml
