@@ -1523,9 +1523,9 @@ def postingGateJson(pipelineJson, cookie):
 def get_redis_conn():
     if spin_db_type == 'redis':   
         #Establishing the redis connection       
-        redis = redis.Redis(host=redis_host, port=redis_port, password=redis_password)
+        redisdb_conn = redis.Redis(host=redis_host, port=redis_port, password=redis_password)
         print("Redis connection established successfully")
-        return redis
+        return redisdb_conn
 
 
 def get_sql_orca_db_conn():
