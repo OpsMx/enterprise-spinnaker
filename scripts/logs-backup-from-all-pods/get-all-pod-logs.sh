@@ -31,7 +31,7 @@ do
   echo getting logs for $podname
   kubectl -n $ns logs $podname -c $containername > logdir/"$podname".log
 done < logdir/pods.txt
-python extract_logs.py $ISD_ADMIN_USERNAME $ISD_ADMIN_PASSWORD $REDIS_HOST $REDIS_PORT $REDIS_PASSWORD $ISD_GATE_URL $DAYS $INSTALLATION_TYPE
+python3 extract_logs.py $ISD_ADMIN_USERNAME $ISD_ADMIN_PASSWORD $REDIS_HOST $REDIS_PORT $REDIS_PASSWORD $ISD_GATE_URL $DAYS $INSTALLATION_TYPE
 zip -r -e "$filename.zip" logdir -P 'opsmx-password'
 rm -rf logdir
 echo please send /tmp/$filename.zip to opsmx by email
