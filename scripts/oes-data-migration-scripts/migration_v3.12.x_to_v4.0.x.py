@@ -971,7 +971,7 @@ def processPipelineJsonForExistingGates():
         cookie = "no-cookie"
         userGroupsData = getApprovalGroupsDataJson()
         if spin_db_type == 'redis':
-           activateSpinnakerSession()
+           activateSpinnakerSession(cookie)
         for record in records:
             logging.info("Record:"+str(record))
             applicationId = record[0]
