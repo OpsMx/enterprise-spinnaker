@@ -2,13 +2,15 @@ global:
   # Custom Images registry where all the OSS and customized images used in the helm chart are stored
   # Only update this is using a private repo such as ACR, ECR, GCR, JFrog, etc.
   createIngress: true
-  
+
   oesUI:
     host: oes.example.ops.com
 
   gitea:
     enabled: false
     standardrepoBranch: v4.0.3
+
+  spinnakerUrl: false
 
 spinnaker:
   autoInstallSampleApps: true   # Set this to FALSE if upgrading
@@ -21,7 +23,7 @@ spinnaker:
       organization: YOUR_ORG_NAME_OR_YOUR_USER_NAME_IF_NO_ORG
       repository: YOUR_REPO_NAME # repo name for GitOps Halyard (Sample Reference: https://github.com/OpsMx/sample-gitops-repo.git).
       halConfigBranch: master # Branch under which halyard config is present under above repository
-      dynamicAccRepository: SAME_AS_REPOSITORY_ABOVE # Please provide the repo name of the GitOps Dynamic Accounts Directory. Can be same as Hal repo. 
+      dynamicAccRepository: SAME_AS_REPOSITORY_ABOVE # Please provide the repo name of the GitOps Dynamic Accounts Directory. Can be same as Hal repo.
       username: git/stash_username # Username to authenticate with git/stash repo
       token: git/stash_token
       #usermailid: saiteja.katabhatina@opsmx.io
@@ -39,31 +41,31 @@ spinnaker:
 
 autopilot:
   image:
-    tag: v4.0.3-rc2 
+    tag: v4.0.3-rc3 
 audit:
   image:
-    tag: v4.0.3-rc2
+    tag: v4.0.3-rc3
 auditClient:
   image:
-    tag: v4.0.3-rc2
+    tag: v4.0.3-rc3
 datascience:
   image:
-    tag: v4.0.3-rc2
+    tag: v4.0.3-rc3
 dashboard:
   image:
-    tag: v4.0.3-rc2
+    tag: v4.0.3-rc3
 gate:
   image:
-    tag: v4.0.3-rc2
+    tag: v4.0.3-rc3
 platform:
   image:
-    tag: v4.0.3-rc2
+    tag: v4.0.3-rc3
 sapor:
   image:
-    tag: v4.0.3-rc2
+    tag: v4.0.3-rc3
 ui:
   image:
-    tag: v4.0.3-rc2
+    tag: v4.0.3-rc3
 visibility:
   image:
-    tag: v4.0.3-rc2
+    tag: v4.0.3-rc3
