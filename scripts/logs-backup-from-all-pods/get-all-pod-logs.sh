@@ -10,6 +10,11 @@ REDIS_PASSWORD=$6
 ISD_GATE_URL=$7
 DAYS=$8
 INSTALLATION_TYPE=$9
+PLATFORM_DB=${10}
+PLATFORM_HOST=${11}
+USER_NAME=${12}
+PASSWORD=${13}
+PORT=${14}
 [ -z "$ns" ] && echo "Please pass namespace as an argument"
 [ -z "$ns" ] && exit 1
 FILE=logs.tar            
@@ -31,7 +36,7 @@ do
   echo getting logs for $podname
   kubectl -n $ns logs $podname -c $containername > logdir/"$podname".log
 done < logdir/pods.txt
-python3 extract_logs.py $ISD_ADMIN_USERNAME $ISD_ADMIN_PASSWORD $REDIS_HOST $REDIS_PORT $REDIS_PASSWORD $ISD_GATE_URL $DAYS $INSTALLATION_TYPE
+python3 extract_logs.py $ISD_ADMIN_USERNAME $ISD_ADMIN_PASSWORD $REDIS_HOST $REDIS_PORT $REDIS_PASSWORD $ISD_GATE_URL $DAYS $INSTALLATION_TYPE $PLATFORM_DB $PLATFORM_HOST $USER_NAME $PASSWORD $PORT
 zip -r -e "$filename.zip" logdir -P 'opsmx-password'
 rm -rf logdir
 echo please send /tmp/$filename.zip to opsmx by email
