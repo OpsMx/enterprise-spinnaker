@@ -1612,8 +1612,8 @@ def verifyDBVersion(version):
         raise e
 
 if __name__ == '__main__':
-	
-    print("Parameters:\n"+str(sys.argv[1])+" "+ str(sys.argv[2])+" "+str(sys.argv[3])+" "+ str(sys.argv[4])+" "+str(sys.argv[5])+" "+ str(sys.argv[6])+" "+str(sys.argv[7])+" "+ str(sys.argv[8])+" "+str(sys.argv[9])+" "+ str(sys.argv[10])+" "+str(sys.argv[11])+" "+ str(sys.argv[12])+" ***** "+ str(sys.argv[14])+" "+str(sys.argv[15])+" ***** "+str(sys.argv[17])+" "+ str(sys.argv[18])+" "+str(sys.argv[19])+" "+ str(sys.argv[20])+" "+str(sys.argv[21])+" "+ str(sys.argv[22])+" ***** "+ str(sys.argv[24])+" "+ str(sys.argv[25])+'\n')
+	# This is not working through Job
+    #print("Parameters:\n"+str(sys.argv[1])+" "+ str(sys.argv[2])+" "+str(sys.argv[3])+" "+ str(sys.argv[4])+" "+str(sys.argv[5])+" "+ str(sys.argv[6])+" "+str(sys.argv[7])+" "+ str(sys.argv[8])+" "+str(sys.argv[9])+" "+ str(sys.argv[10])+" "+str(sys.argv[11])+" "+ str(sys.argv[12])+" ***** "+ str(sys.argv[14])+" "+str(sys.argv[15])+" ***** "+str(sys.argv[17])+" "+ str(sys.argv[18])+" "+str(sys.argv[19])+" "+ str(sys.argv[20])+" "+str(sys.argv[21])+" "+ str(sys.argv[22])+" ***** "+ str(sys.argv[24])+" "+ str(sys.argv[25])+'\n')
     n = len(sys.argv)
 
     if n != 26:
