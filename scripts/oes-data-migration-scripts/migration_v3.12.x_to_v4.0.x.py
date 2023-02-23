@@ -73,19 +73,21 @@ def update_db(version):     # pre-upgrade DB Update
         logging.info("Updating service_deployments_current table sync column data in platform db")
         print("Updating service_deployments_current table sync column data in platform db")
         update_sync_status()
-        
+
         logging.info("Updating Spinnaker existing gate Json in spinnaker")
         print("Updating Spinnaker existing gate Json in spinnaker")
         processPipelineJsonForExistingGates()
         
+        commit_transactions()
+        
+        update_audit_db()
+
         logging.info("Adding schema version to platform db table db_version")
         print("Adding schema version to platform db table db_version")
         addDBVersion(version)
-        
+
         commit_transactions()
-
-        update_audit_db()
-
+        
         logging.info("Successfully updated databases.")
         print(f"{bcolors.OKGREEN}{bcolors.BOLD}Successfully updated databases.{bcolors.ENDC}")
 
@@ -129,7 +131,7 @@ def update_audit_db():
     logging.info("Creating audit db table area_chart_counts")
     print("Creating audit db table area_chart_counts")
     createAreaCharts()
-    audit_conn.commit()
+
 
 
 def perform_migration(version):     # post-upgrade Data Migration (to be run as a background job)
@@ -496,7 +498,9 @@ def commit_transactions():
            spindb_orca_postgres_conn.commit()            
         if spindb_front50_postgres_conn is not None and spindb_front50_postgres_conn.is_connected():
            spindb_front50_postgres_conn.commit()
-        logging.info("Successfully migrated")
+        
+        logging.info("DB changes are committed")
+        print("DB changes are committed")
     except Exception as e:
         print("Exception occurred while committing transactions : ", e)
         logging.critical("Exception occurred while committing transactions : ", exc_info=True)
@@ -519,6 +523,9 @@ def close_connections():
             spindb_orca_postgres_conn.close()
         if spindb_front50_postgres_conn is not None and spindb_front50_postgres_conn.is_connected():
             spindb_front50_postgres_conn.close()
+            
+        logging.info("DB connections are closed")
+        print("DB connections are closed")       
 
     except Exception as e:
         logging.warning("Exception occurred while closing the DB connection : ", exc_info=True)
@@ -539,6 +546,8 @@ def rollback_transactions():
             spindb_orca_postgres_conn.rollback()
         if spindb_front50_postgres_conn is not None and spindb_front50_postgres_conn.is_connected():
             spindb_front50_postgres_conn.rollback()
+        logging.info("DB changes are rolled back")
+        print("DB changes are rolled back")
     except Exception as e:
         logging.critical("Exception occurred while rolling back the transactions : ", exc_info=True)
         raise e
@@ -1603,6 +1612,8 @@ def verifyDBVersion(version):
         raise e
 
 if __name__ == '__main__':
+	
+    print("Parameters:\n"+str(sys.argv[1])+" "+ str(sys.argv[2])+" "+str(sys.argv[3])+" "+ str(sys.argv[4])+" "+str(sys.argv[5])+" "+ str(sys.argv[6])+" "+str(sys.argv[7])+" "+ str(sys.argv[8])+" "+str(sys.argv[9])+" "+ str(sys.argv[10])+" "+str(sys.argv[11])+" "+ str(sys.argv[12])+" ***** "+ str(sys.argv[14])+" "+str(sys.argv[15])+" ***** "+str(sys.argv[17])+" "+ str(sys.argv[18])+" "+str(sys.argv[19])+" "+ str(sys.argv[20])+" "+str(sys.argv[21])+" "+ str(sys.argv[22])+" ***** "+ str(sys.argv[24])+" "+ str(sys.argv[25])+'\n')
     n = len(sys.argv)
 
     if n != 26:
@@ -1611,10 +1622,11 @@ if __name__ == '__main__':
             "<db-port> <user-name> <password> <isd-gate-url> <isd-admin-username> <isd-admin-password> <sapor-host-url> <audit-service-url> <redis/sql/postgres> <redis-host/sql-host/postgres-host> <redis-port/sql-port/postgres-port> <redis-username/sql-username/postgres-username> <redis-password/sql-password/postgres-password> <migration-flag> <isd-platform-url>")
         exit(1)
 
-
     logging.basicConfig(filename='/tmp/migration_v3.12.x_to_v4.0.x.log', filemode='w',
                         format="%(asctime)s %(levelname)s %(threadName)s %(name)s %(message)s", datefmt='%H:%M:%S',
                         level=logging.INFO)
+
+    logging.info("Parameters:\n"+str(sys.argv[1])+" "+ str(sys.argv[2])+" "+str(sys.argv[3])+" "+ str(sys.argv[4])+" "+str(sys.argv[5])+" "+ str(sys.argv[6])+" "+str(sys.argv[7])+" "+ str(sys.argv[8])+" "+str(sys.argv[9])+" "+ str(sys.argv[10])+" "+str(sys.argv[11])+" "+ str(sys.argv[12])+" ***** "+ str(sys.argv[14])+" "+str(sys.argv[15])+" ***** "+str(sys.argv[17])+" "+ str(sys.argv[18])+" "+str(sys.argv[19])+" "+ str(sys.argv[20])+" "+str(sys.argv[21])+" "+ str(sys.argv[22])+" ***** "+ str(sys.argv[24])+" "+ str(sys.argv[25])+'\n')
 
     platform_db = sys.argv[1]
     platform_host = sys.argv[2]
