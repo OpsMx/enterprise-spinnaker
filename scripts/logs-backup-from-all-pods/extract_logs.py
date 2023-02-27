@@ -91,25 +91,11 @@ def get_pipelines_executed_users_count():
 
 def get_no_of_active_users_count():
     if days.strip() != 'None':
-        sql = "select count(*) from(select * from ( select q3.name, q3.created_at, q3.eventType, rank() over(PARTITION BY " \
-              "q3.name order by q3.created_at desc) as rank_no from (SELECT distinct " \
-              "q1.data->'auditData'->'source'->>'name' as name, created_at, data->>'eventType' as eventType FROM " \
-              "audit_events q1 where q1.data->>'eventType' in ('SUCCESSFUL_USER_LOGOUT_AUDIT')  and created_at >= %s  " \
-              "union select distinct q2.data->'auditData'->>'userName' as name, q2.created_at, q2.data->>'eventType' as " \
-              "eventType FROM audit_events q2 where q2.data->>'eventType' in ('USER_ACTIVITY_AUDIT')  and created_at >= " \
-              "%s ) as q3) as q4 where q4.rank_no = 1 order by q4.created_at desc) as q6 where q6.eventType not in (" \
-              "'SUCCESSFUL_USER_LOGOUT_AUDIT')"
+        sql = "SELECT count(distinct  data->'auditData'-> 'source'->> 'name') FROM audit_events WHERE data->>'eventType' @@ ' AUTHENTICATION_SUCCESSFUL_AUDIT' AND created_at >= %s"
         date = datetime.now() - timedelta(days=int(days))
-        data = date,date
-        cur_audit.execute(sql, data)
+        cur_audit.execute(sql, [date])
     else:
-        sql = "select count(*) from(select * from ( select q3.name, q3.created_at, q3.eventType, rank() over(PARTITION BY " \
-              "q3.name order by q3.created_at desc) as rank_no from (SELECT distinct " \
-              "q1.data->'auditData'->'source'->>'name' as name, created_at, data->>'eventType' as eventType FROM " \
-              "audit_events q1 where q1.data->>'eventType' in ('SUCCESSFUL_USER_LOGOUT_AUDIT') union select distinct " \
-              "q2.data->'auditData'->>'userName' as name, q2.created_at, q2.data->>'eventType' as eventType FROM " \
-              "audit_events q2 where q2.data->>'eventType' in ('USER_ACTIVITY_AUDIT')) as q3) as q4 where q4.rank_no " \
-              "= 1 order by q4.created_at desc) as q6 where q6.eventType not in ('SUCCESSFUL_USER_LOGOUT_AUDIT')"
+        sql = "SELECT count(distinct  data->'auditData'-> 'source'->> 'name') FROM audit_events WHERE data->>'eventType' @@ ' AUTHENTICATION_SUCCESSFUL_AUDIT'"
         cur_audit.execute(sql)
     return cur_audit.fetchone()[0]
 
@@ -166,7 +152,7 @@ if __name__ == '__main__':
     n = len(sys.argv)
     if n != 14:
         print("Please pass valid 8 arguments <isd-admin-username> <isd-admin-password> <redis-host> "
-              "<redis-port> <redis-password> <isd-gate-url> <days> <installation_type>")
+              "<redis-port> <redis-password> <isd-gate-url> <days> <installation_type> <audit_db> <audit_host> <user_name> <password> <port>")
         exit(1)
 
     global is_error_occurred
