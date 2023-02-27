@@ -154,12 +154,12 @@ def perform_migration(version):     # post-upgrade Data Migration (to be run as 
             update_custom_gates_navigation_url(plKeyExecDict)
         elif spin_db_type == 'sql':
             mysqlcursor_orca = spindb_orca_sql.cursor(buffered=True)
-            pi_executions = get_sql_pi_executions(mysqlcursor_orca)
+            pi_executions = get_sql_pi_executions_mysql(mysqlcursor_orca)
             #Should not close the cursor here, it is to be kept open until the "spin_db_update_custom_gates_navigation_url" operation complete
             spin_db_update_custom_gates_navigation_url(pi_executions)
             mysqlcursor_orca.close()
         elif spin_db_type == 'postgres':
-            pi_executions = get_sql_pi_executions(spindb_orca_postgres)
+            pi_executions = get_sql_pi_executions_postgres(spindb_orca_postgres)
             spin_db_update_custom_gates_navigation_url(pi_executions)
 
             
@@ -323,15 +323,23 @@ def update_policy_gate_url(json_data, pl_key, execution_str):
         raise e
 
 
-def get_sql_pi_executions(sqlcursor_orca):
+def get_sql_pi_executions_mysql(sqlcursor_orca):
     try:        
-        sqlcursor_orca.execute("SELECT pi.application, pi.body, ps.body FROM pipeline_stages ps LEFT OUTER JOIN pipelines pi ON ps.execution_id = pi.id")
+        sqlcursor_orca.execute("SELECT pi.application, pi.body, ps.body FROM pipeline_stages ps LEFT OUTER JOIN pipelines pi ON ps.execution_id = pi.id where (JSON_EXTRACT(ps.body, '$.type') = 'verification') or (JSON_EXTRACT(ps.body, '$.type') = 'testVerification') or (JSON_EXTRACT(ps.body, '$.type') = 'policy') or (JSON_EXTRACT(ps.body, '$.type') = 'approval')")
         return sqlcursor_orca.fetchall()        
     except Exception as e:
         print("Exception occurred while getting the pipeline executions : ", e)
         logging.error("Exception occurred while getting the pipeline execution : ", exc_info=True)
         raise e
 
+def get_sql_pi_executions_postgres(spindb_orca_postgres):
+    try:        
+        spindb_orca_postgres.execute("SELECT pi.application, pi.body, ps.body FROM pipeline_stages ps LEFT OUTER JOIN pipelines pi ON ps.execution_id = pi.id where (ps.body::jsonb ->> 'type' @@ 'verification') or (ps.body::jsonb ->> 'type' @@ 'testVerification') or(ps.body::jsonb ->> 'type' @@ 'policy') or (ps.body::jsonb ->> 'type' @@ 'approval')")
+        return spindb_orca_postgres.fetchall()        
+    except Exception as e:
+        print("Exception occurred while getting the pipeline executions : ", e)
+        logging.error("Exception occurred while getting the pipeline execution : ", exc_info=True)
+        raise e
 def updated_stage_execution_data(pi_stage_id, updated_json):
     try:
         dump_updated = json.dumps(updated_json)
