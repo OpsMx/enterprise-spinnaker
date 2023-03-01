@@ -3,7 +3,7 @@ name: Release Charts
 on:
   push:
     branches:
-      - v4.0
+      - v4.0.3
     paths:
       - 'charts/oes/Chart.yaml'
       - 'charts/oes/Chart.lock'
