@@ -107,25 +107,25 @@ def start_extraction():
         url = isd_gate_url + "/applications"
         apps = get_response(url, cookie)
         apps_count = len(apps)
-        print("apps_count: ", apps_count)
+        # print("apps_count: ", apps_count)
         pipelines_count = 0
-        # for app in apps:
-        #     name = app['name']
-        #     url = isd_gate_url +  "/applications/" + name + "/pipelineConfigs"
-        #     pipelines = get_response(url, cookie)
-        #     pipelines_count = pipelines_count + len(pipelines)
-        print("pipelines_count: ", pipelines_count)
+        for app in apps:
+            name = app['name']
+            url = isd_gate_url +  "/applications/" + name + "/pipelineConfigs"
+            pipelines = get_response(url, cookie)
+            pipelines_count = pipelines_count + len(pipelines)
+        # print("pipelines_count: ", pipelines_count)
         cookie = login_to_isd()
         url = isd_gate_url + "/credentials"
         cloud_accounts = get_response(url, cookie)
         cloud_accounts_count = len(cloud_accounts)
-        print("cloud_accounts_count: ", cloud_accounts_count)
+        # print("cloud_accounts_count: ", cloud_accounts_count)
         users = redis_conn.keys(
             "spring:session:index:org.springframework.session.FindByIndexNameSessionRepository.PRINCIPAL_NAME_INDEX_NAME:*")
         users_count = len(users)
-        print("users_count: ", users_count)
-        no_of_users_executed_pipelines = 0 #get_pipelines_executed_users_count()
-        print("no_of_users_executed_pipelines: ", no_of_users_executed_pipelines)
+        # print("users_count: ", users_count)
+        no_of_users_executed_pipelines = get_pipelines_executed_users_count()
+        # print("no_of_users_executed_pipelines: ", no_of_users_executed_pipelines)
         f = open("/tmp/logdir/usage_counts.txt", "w")
         f.write("apps_count: "+ str(apps_count) + "\n")
         f.write("pipelines_count: "+ str(pipelines_count)+ "\n")
@@ -139,7 +139,7 @@ def start_extraction():
         if installation_type == 'ISD':
             no_of_active_users_count = get_no_of_active_users_count()
             f.write("no_of_active_users_count: "+ str(no_of_active_users_count)+ " for " + dys + " days"+"\n")
-            print("no_of_active_users_count: ", no_of_active_users_count)
+            # print("no_of_active_users_count: ", no_of_active_users_count)
         f.close()
     except Exception as e:
         print("Exception occurred while computing the application counts: ", e)
@@ -178,10 +178,10 @@ if __name__ == '__main__':
 
     # Establishing the redis connection
     redis_conn = redis.Redis(host=redis_host, port=redis_port, password=redis_password)
-    print("Redis connection established successfully")
+    # print("Redis connection established successfully")
 
     # Establishing the platform db connection
     audit_conn = psycopg2.connect(database=audit_db, user=user_name, password=password, host=audit_host, port=port)
-    print('Opened platform database connection successfully')
+    # print('Opened platform database connection successfully')
     cur_audit = audit_conn.cursor()
     start_extraction()

@@ -27,6 +27,7 @@ echo getting logs from $ns
 cd /tmp
 rm -rf logdir
 rm -rf logs*.tar.gz
+rm -rf logs*.zip
 mkdir -p logdir
 kubectl get po -n $ns --no-headers > logdir/pods.txt
 while read -r line;
