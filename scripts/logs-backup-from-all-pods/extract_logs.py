@@ -145,6 +145,9 @@ def start_extraction():
         print("Exception occurred while computing the application counts: ", e)
         logging.error("Exception occurred while computing the application counts: ", exc_info=True)
         raise e
+    finally:
+        redis_conn.close()
+        audit_conn.close()
     pass
 
 
