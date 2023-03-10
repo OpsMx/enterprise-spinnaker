@@ -30,7 +30,7 @@ def login_to_isd():
 def get_response(url, cookie):
     try:
         logging.info(url)
-        headers = {'cookie': cookie, 'x-spinnaker-user': isd_admin_username}
+        headers = {'cookie': cookie}
         request = requests.get(url=url, headers=headers)
         logging.info(f"getResponse response : {request}")
         return request.json()
