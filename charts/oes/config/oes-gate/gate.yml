@@ -28,7 +28,7 @@ services:
      baseUrl: "http://oes-audit-client:8098"
      enabled: true
   oesui:
-    {{- if and .Values.global.spinnakerUrl .Values.global.auth.saml }}
+    {{- if and .Values.global.spinnakerUrl .Values.global.bookmarkISDUrl }}
     externalUrl: {{ .Values.global.spinDeck.protocol }}://{{ .Values.global.spinDeck.host }}
     {{- else }}
     externalUrl: /ui/

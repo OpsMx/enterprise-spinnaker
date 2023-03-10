@@ -60,6 +60,10 @@ global:
   # Set to true if user need to access Spinnaker seperately
   spinnakerUrl: false
 
+  # Set to true if user wants to bookmark the ISD url for Saml/OpenLdap
+  # Mandatory .Values.global.spinnakerUrl must be set to true
+  bookmarkISDUrl: false
+
   ## Set to true to expose oes-ui, oes-gate services over ingress
   createIngress: false
 
