@@ -3,7 +3,7 @@ Steps to migrate from v3.11.x to v3.12
 1. Copy the file : migration_v3.11.x_to_v3.12.py file to platform pod
 2. Run the below command to execute the script.
 
-        python3 <scriptfilename> <platform_db-name> <platform_host> <oes-db-name> <oes-db-host> <autopilot_db> <autopilot_host> <audit_db-name> <audit-db-host> <visibility_db-name> <visibility-db-host> <db-port> <isd-host-url> <spinnaker-gate-url> <unified-host-url> <isd-admin-username> <isd-admin-password> <db-username> <db-password>
+        python3 <scriptfilename> <platform_db-name> <platform_host> <oes-db-name> <oes-db-host> <autopilot_db> <autopilot_host> <audit_db-name> <audit-db-host> <visibility_db-name> <visibility-db-host> <db-port> <isd-host-url> <spinnaker-gate-url> <unified-host-url> <isd-admin-username> <isd-admin-password> <db-username> <db-password> <thread-pool-size>
 
-    ex: python3 migration_v3.11_to_v3.12.py platformdb oes-db oesdb oes-db  opsmx oes-db auditdb oes-db visibilitydb oes-db 5432  https://isd-gate.dev.opsmx.net http://sapor-gate:8084 https://upgrade-ui.isd-dev.opsmx.net/gate isd-admin-username isd-admin-password dbusername dbpassword
+    ex: python3 migration_v3.11_to_v3.12.py platformdb oes-db oesdb oes-db  opsmx oes-db auditdb oes-db visibilitydb oes-db 5432  https://isd-gate.dev.opsmx.net http://sapor-gate:8084 https://upgrade-ui.isd-dev.opsmx.net/gate isd-admin-username isd-admin-password dbusername dbpassword 20
 
