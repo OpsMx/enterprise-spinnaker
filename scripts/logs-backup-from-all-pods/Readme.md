@@ -8,7 +8,7 @@ Create secrets mentioned below.**NOTE**: You only need to create these secrets i
 
 Read the comments in the yaml file and Execute below commands, by repalcing the namespace
 
-- `kubectl -n opsmx-isd apply -f infoisd-inputcm.yaml` # Read the comments in the yaml and apply 
+- `kubectl -n opsmx-isd apply -f isdinfo-inputcm.yaml` # Read the comments in the yaml and apply 
 - `kubectl -n opsmx-isd apply -f serviceaccount.yaml` # Edit namespace if changed from the default "opsmx-isd"
 - `kubectl -n opsmx-isd apply -f job.yaml` # Change the namespace accordingly default is "opsmx-isd"
 
