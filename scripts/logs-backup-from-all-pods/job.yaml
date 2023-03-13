@@ -11,7 +11,7 @@ spec:
       containers:
         - args:
             - |-
-              set -x
+              #set -x
               source /repo/environment
               cat /repo/environment
               ls -ltra
