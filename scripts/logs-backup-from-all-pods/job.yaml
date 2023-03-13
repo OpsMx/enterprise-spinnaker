@@ -1,0 +1,127 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: isd-info
+  labels:
+    app: isd-logs
+spec:
+  backoffLimit: 2
+  template:
+    spec:
+      containers:
+        - args:
+            - |-
+              set -x
+              source /repo/environment
+              cat /repo/environment
+              ls -ltra
+              cd /home/opsmx/scripts/scripts/logs-backup-from-all-pods/
+              export INSTALLATION_TYPE=$installationType
+              export ns=$namespace
+              if [ "$INSTALLATION_TYPE" == "ISD" ] && [ "$logintype" == "ldap" ]; then
+                 getsecrets=$(kubectl get secrets -n $namespace | grep 'ldappassword\|redispassword')
+                 if [ -z "$getsecrets" ]; then
+                    echo "ldappassword and redispassword secret is not created creating it........."
+                    kubectl -n $namespace create secret generic ldappassword --from-literal ldappassword=opsmxadmin123
+                    kubectl -n $namespace create secret generic redispassword --from-literal redispassword=password
+                 fi
+              else
+                  getsecret=$(kubectl get secrets -n $namespace | grep redispassword)
+                  if [ -z "$getsecret" ]; then
+                     echo "redispassword secret is not created creating it........."
+                     kubectl -n $namespace create secret generic redispassword --from-literal redispassword=password
+                  fi
+              fi
+              export ISD_ADMIN_PASSWORD=$ldappassword
+              export PLATFORM_HOST=$host
+              export ISD_GATE_URL=$oesuiurl
+              export PORT=$port
+              export USER_NAME=$pguser
+              export PASSWORD=$pgpassword
+              export ISD_ADMIN_USERNAME=$saporusername
+              export REDIS_PASSWORD=$redispassword
+              export REDIS_PORT=6379
+              export REDIS_HOST=$release-redis-master
+              export PLATFORM_DB=auditdb
+              export DAYS=$days
+              cp -r /home/opsmx/scripts/scripts/logs-backup-from-all-pods/extract_logs.py /tmp/
+              if [ -z "$ISD_ADMIN_PASSWORD" ] && [ -z "$PLATFORM_HOST" ] && [ -z "$ISD_GATE_URL" ] && [ -z "$PORT" ] && [ -z "$USER_NAME" ] && [ -z "$PASSWORD" ] && [ -z "$ISD_ADMIN_USERNAME" ] && [ -z "$ns" ] && [ -z "$REDIS_PASSWORD" ] && [ -z "$REDIS_PORT" ] && [-z "$REDIS_HOST"] && [-z "$INSTALLATION_TYPE" ] && [ -z "$DAYS" ] && [-z "$PLATFORM_DB" ]; then
+                echo "All the paramerts are not passed ........."
+                exit 1
+              fi
+              if [ "$INSTALLATION_TYPE" == "ISD" ] && [ "$logintype" == "ldap" ]; then
+
+                          echo "get-all-pod-logs.sh $ns $ISD_ADMIN_USERNAME $ISD_ADMIN_PASSWORD $REDIS_HOST $REDIS_PORT $REDIS_PASSWORD $ISD_GATE_URL $DAYS $INSTALLATION_TYPE $PLATFORM_DB $PLATFORM_HOST $USER_NAME $PASSWORD $PORT"
+
+                          bash -x get-all-pod-logs.sh $ns $ISD_ADMIN_USERNAME $ISD_ADMIN_PASSWORD $REDIS_HOST $REDIS_PORT $REDIS_PASSWORD $ISD_GATE_URL $DAYS $INSTALLATION_TYPE $PLATFORM_DB $PLATFORM_HOST $USER_NAME $PASSWORD $PORT
+
+              elif [ "$INSTALLATION_TYPE" == "ISD" ] && [ "$logintype" == "saml" ]; then
+
+                          echo "get-all-pod-logs.sh $ns $ISD_ADMIN_USERNAME saporadmin $REDIS_HOST $REDIS_PORT $REDIS_PASSWORD http://sapor-gate:8084 $DAYS $INSTALLATION_TYPE $PLATFORM_DB $PLATFORM_HOST $USER_NAME $PASSWORD $PORT"
+
+                          bash -x get-all-pod-logs.sh $ns $ISD_ADMIN_USERNAME saporadmin $REDIS_HOST $REDIS_PORT $REDIS_PASSWORD http://sapor-gate:8084 $DAYS $INSTALLATION_TYPE $PLATFORM_DB $PLATFORM_HOST $USER_NAME $PASSWORD $PORT
+
+              else
+
+                 echo "Some went wrong in script"
+
+              fi
+                      CREATION_TIME=`date -u +"%d-%m-%Y-%H.%M.%S"`
+
+                      mkdir -p /tmp/$CREATION_TIME/
+                      echo $CREATION_TIME
+
+                            ls -ltra /tmp/*.zip
+
+                            tar -czvf /tmp/OpsMx-Logs-$CREATION_TIME.tar.gz /tmp/*.zip
+
+                            curl --location --request PUT 'https://opsmx.jfrog.io/artifactory/opsmx-logs/isdlogs/OpsMx-Logs-'"$CREATION_TIME"'.tar.gz' --header 'Authorization: Basic YW5vb3B0ZWo6T3BzTXhAMTIz' --header 'Content-Type: application/gzip' --data-binary '@/tmp/OpsMx-Logs-'"$CREATION_TIME"'.tar.gz'
+
+                        if [ $? -eq 0 ]; then
+
+                                     echo "Logs sucessfully pushed to https://opsmx.jfrog.io/artifactory/opsmx-logs/isdlogs/OpsMx-Logs-$CREATION_TIME.tar.gz"
+                              else
+                                     echo "Failed to push logs to https://opsmx.jfrog.io/artifactory/opsmx-logs/isdlogs/OpsMx-Logs-$CREATION_TIME.tar.gz"
+
+                                     exit 1
+                          fi
+          command:
+            - /bin/bash
+            - +x
+            - '-c'
+          image: 'quay.io/opsmxpublic/opsmx-custom-binaries:153981f-43'
+          imagePullPolicy: Always
+          name: details
+          envFrom:
+            - configMapRef:
+                name: isdinfo-inputcm
+          volumeMounts:
+            - mountPath: /repo
+              name: repo-volume
+      initContainers:
+        - args:
+            - |-
+
+              export ns="${namespace}"
+
+              source /home/opsmx/scripts/db_migration_script.sh
+
+              ls -ltra  /repo/
+          command:
+            - /bin/bash
+            - +x
+            - '-c'
+          image: 'quay.io/opsmxpublic/opsmx-custom-binaries:opsmx-isd-scripts-latest'
+          imagePullPolicy: Always
+          name: get-params
+          envFrom:
+            - configMapRef:
+                name: isdinfo-inputcm
+          volumeMounts:
+            - mountPath: /repo
+              name: repo-volume
+      restartPolicy: Never
+      serviceAccountName: isd-info
+      volumes:
+        - emptyDir: {}
+          name: repo-volume
