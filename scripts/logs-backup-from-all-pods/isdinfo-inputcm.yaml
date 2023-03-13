@@ -1,0 +1,10 @@
+apiVersion: v1
+data:
+  namespace: opsmx-isd # Namespace where ISD is installed , default is opsmx-isd
+  days: "1"  # Updated the number of days accordingly to get the data
+  installationType: ISD
+  release: isd      # Updated the release name default is isd
+  logintype: ldap   # Supported are ldap or saml default is ldap
+kind: ConfigMap
+metadata:
+  name: isdinfo-inputcm
