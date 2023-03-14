@@ -27,10 +27,28 @@ spec:
         component: auditservice
 {{ include "oes.standard-labels" . | indent 8 }}
     spec:
+      {{- if (eq .Values.db.enabled true) }}
+      initContainers:
+      - name: db-check
+        image: {{ .Values.global.customImages.registry }}/pgchecker:v1
+        command:
+          - sh
+          - -c
+          - |
+            echo 'Waiting for OES-DB to become ready...'
+            until printf "." && nc -z -w 2 oes-db 5432; do
+               sleep 2;
+            done;
+            echo 'OESDB OK ✓'
+      {{- end }}
       containers:
       - image: {{ template "auditservice.image" . }}
         imagePullPolicy: IfNotPresent
         name: oes-audit
+        env:
+       {{- if .Values.extraEnvVars }}
+       {{- include "tplvalues.render" (dict "value" .Values.extraEnvVars "context" $) | nindent 8 }}
+       {{- end }}
         ports:
         - containerPort: 8097
           name: backend

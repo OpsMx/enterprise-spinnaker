@@ -84,13 +84,25 @@ spec:
       {{- if (eq .Values.db.enabled true) }}
       initContainers:
       - name: db-check
-        image: {{ .Values.global.customImages.registry }}/postgres:9.6.5
-        command: ['/bin/bash', '-c', "sleep 30;echo Waiting for oes-db to be up and running; pg_isready -h oes-db -p 5432 && echo PostgreSQL DB is ready to receive connections"]
+        image: {{ .Values.global.customImages.registry }}/pgchecker:v1
+        command:
+          - sh
+          - -c
+          - |
+            echo 'Waiting for OES-DB to become ready...'
+            until printf "." && nc -z -w 2 oes-db 5432; do
+               sleep 2;
+            done;
+            echo 'OESDB OK ✓'
       {{- end }}
       containers:
         - image: {{ template "autopilot.image" . }}
           imagePullPolicy: {{ .Values.autopilot.image.pullPolicy }}
           name: oes-autopilot
+          env:
+          {{- if .Values.extraEnvVars }}
+          {{- include "tplvalues.render" (dict "value" .Values.extraEnvVars "context" $) | nindent 12 }}
+          {{- end }}
           resources:
 {{ toYaml .Values.autopilot.resources | indent 12 }}
           ports:

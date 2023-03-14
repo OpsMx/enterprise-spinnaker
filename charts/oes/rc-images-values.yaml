@@ -41,31 +41,19 @@ spinnaker:
 
 autopilot:
   image:
-    tag: v4.0.3-rc3
-audit:
-  image:
-    tag: v4.0.3-rc3
-auditClient:
-  image:
-    tag: v4.0.3-rc3
-datascience:
-  image:
-    tag: v4.0.3-rc3
+    tag: v4.0.4.b1
 dashboard:
   image:
-    tag: v4.0.3-rc3
+    tag: v4.0.4.b1
 gate:
   image:
-    tag: v4.0.3-rc3
-platform:
-  image:
-    tag: v4.0.3-rc3
+    tag: v4.0.4.b1
 sapor:
   image:
-    tag: v4.0.3-rc3
+    tag: v4.0.4.b1
 ui:
   image:
-    tag: v4.0.3-rc3
+    tag: v4.0.4.b1
 visibility:
   image:
-    tag: v4.0.3-rc3
+    tag: v4.0.4.b1
