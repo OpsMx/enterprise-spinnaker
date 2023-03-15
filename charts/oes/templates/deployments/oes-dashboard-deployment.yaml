@@ -31,6 +31,10 @@ spec:
       containers:
       - image: {{ template "dashboard.image" . }}
         name: oes-dashboard
+        env:
+        {{- if .Values.extraEnvVars }}
+        {{- include "tplvalues.render" (dict "value" .Values.extraEnvVars "context" $) | nindent 8 }}
+        {{- end }}
         ports:
         - containerPort: 8094
           protocol: TCP

@@ -29,6 +29,10 @@ spec:
       - image: {{ .Values.rabbitmq.image.registry }}:{{ .Values.rabbitmq.image.repository }}
         imagePullPolicy: IfNotPresent
         name: rabbitmq
+        env:
+        {{- if .Values.extraEnvVars }}
+        {{- include "tplvalues.render" (dict "value" .Values.extraEnvVars "context" $) | nindent 8 }}
+        {{- end }}
         ports:
         - containerPort: {{ .Values.rabbitmq.port }}
           protocol: TCP
