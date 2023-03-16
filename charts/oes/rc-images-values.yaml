@@ -8,7 +8,7 @@ global:
 
   gitea:
     enabled: false
-    standardrepoBranch: v4.0.3
+    standardrepoBranch: v4.0.4
 
   spinnakerUrl: false
 
