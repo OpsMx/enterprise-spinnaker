@@ -1,13 +1,13 @@
 global:
   # Custom Images registry where all the OSS and customized images used in the helm chart are stored
   # Only update this is using a private repo such as ACR, ECR, GCR, JFrog, etc.
-  createIngress: true
+  createIngress: false
 
   oesUI:
     host: oes.example.ops.com
 
   gitea:
-    enabled: false
+    enabled: true
     standardrepoBranch: v4.0.3
 
   spinnakerUrl: false
