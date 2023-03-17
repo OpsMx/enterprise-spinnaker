@@ -1,7 +1,7 @@
 apiVersion: v2
 name: oes
-version: 4.0.9
-appVersion: 4.0.3
+version: 4.0.10
+appVersion: 4.0.4.b1
 description: "ISD and Spinnaker with v1.28.4"
 icon: https://raw.githubusercontent.com/OpsMx/enterprise-spinnaker/master/img/opsmx.png
 maintainers:
