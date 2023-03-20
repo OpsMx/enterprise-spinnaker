@@ -8,6 +8,8 @@ import psycopg2
 import redis
 import requests
 from datetime import datetime, timedelta
+import mysql.connector
+
 
 def login_to_isd():
     try:
@@ -40,7 +42,7 @@ def get_response(url, cookie):
         raise e
 
 
-def get_pipelines_executed_users_count():
+def get_pipelines_executed_users_count_from_redis():
     keys = redis_conn.keys("pipeline:*:stageIndex")
     names = set()
     if days.strip() != 'None':
@@ -53,7 +55,7 @@ def get_pipelines_executed_users_count():
         date = datetime.datetime.now() - datetime.datetime(1970, 1, 1)
         date = date - datetime.timedelta(days=int(days))
         seconds = (date.total_seconds())
-        epoch_start_date = round(seconds*1000)
+        epoch_start_date = round(seconds * 1000)
         # print("epoch_start_date: ", epoch_start_date)
         for plKey, execution in pl_key_exec_dict.items():
             exec_str = str(execution.decode("utf-8"))
@@ -100,6 +102,26 @@ def get_no_of_active_users_count():
     return cur_audit.fetchone()[0]
 
 
+def get_pipelines_executed_users_count_from_sql():
+    names = set()
+    if days.strip() != 'None':
+        date = datetime.datetime.now() - datetime.datetime(1970, 1, 1)
+        date = date - datetime.timedelta(days=int(days))
+        seconds = (date.total_seconds())
+        epoch_start_date = round(seconds * 1000)
+        sqldb_orca_cursor.execute("select body from pipelines where start_time >= %s", [epoch_start_date])
+        pipeline_executions = sqldb_orca_cursor.fetchall()
+    else:
+        sqldb_orca_cursor.execute("select body from pipelines")
+        pipeline_executions = sqldb_orca_cursor.fetchall()
+    for pipeline_execution in pipeline_executions:
+        pi_execution_json = json.loads(pipeline_execution)
+        trigger = pi_execution_json['trigger']
+        user = trigger['user']
+        names.add(user)
+    return len(names)
+
+
 def start_extraction():
     try:
         cookie = login_to_isd()
@@ -111,7 +133,7 @@ def start_extraction():
         pipelines_count = 0
         for app in apps:
             name = app['name']
-            url = isd_gate_url +  "/applications/" + name + "/pipelineConfigs"
+            url = isd_gate_url + "/applications/" + name + "/pipelineConfigs"
             pipelines = get_response(url, cookie)
             pipelines_count = pipelines_count + len(pipelines)
         # print("pipelines_count: ", pipelines_count)
@@ -124,21 +146,25 @@ def start_extraction():
             "spring:session:index:org.springframework.session.FindByIndexNameSessionRepository.PRINCIPAL_NAME_INDEX_NAME:*")
         users_count = len(users)
         # print("users_count: ", users_count)
-        no_of_users_executed_pipelines = get_pipelines_executed_users_count()
+        if spin_db_type == 'sql':
+            no_of_users_executed_pipelines = get_pipelines_executed_users_count_from_sql()
+        else:
+            no_of_users_executed_pipelines = get_pipelines_executed_users_count_from_redis()
         # print("no_of_users_executed_pipelines: ", no_of_users_executed_pipelines)
         f = open("/tmp/logdir/usage_counts.txt", "w")
-        f.write("apps_count: "+ str(apps_count) + "\n")
-        f.write("pipelines_count: "+ str(pipelines_count)+ "\n")
-        f.write("cloud_accounts_count: "+ str(cloud_accounts_count)+ "\n")
-        f.write("users_count: "+ str(users_count)+ "\n")
+        f.write("apps_count: " + str(apps_count) + "\n")
+        f.write("pipelines_count: " + str(pipelines_count) + "\n")
+        f.write("cloud_accounts_count: " + str(cloud_accounts_count) + "\n")
+        f.write("users_count: " + str(users_count) + "\n")
         if days.strip() != 'None':
             dys = days
         else:
             dys = "all"
-        f.write("no_of_users_executed_pipelines: "+ str(no_of_users_executed_pipelines)+ " for " + dys + " days"+"\n")
+        f.write(
+            "no_of_users_executed_pipelines: " + str(no_of_users_executed_pipelines) + " for " + dys + " days" + "\n")
         if installation_type == 'ISD':
             no_of_active_users_count = get_no_of_active_users_count()
-            f.write("no_of_active_users_count: "+ str(no_of_active_users_count)+ " for " + dys + " days"+"\n")
+            f.write("no_of_active_users_count: " + str(no_of_active_users_count) + " for " + dys + " days" + "\n")
             # print("no_of_active_users_count: ", no_of_active_users_count)
         f.close()
     except Exception as e:
@@ -153,9 +179,9 @@ def start_extraction():
 
 if __name__ == '__main__':
     n = len(sys.argv)
-    if n != 14:
+    if n != 18:
         print("Please pass valid 8 arguments <isd-admin-username> <isd-admin-password> <redis-host> "
-              "<redis-port> <redis-password> <isd-gate-url> <days> <installation_type> <audit_db> <audit_host> <user_name> <password> <port>")
+              "<redis-port> <redis-password> <isd-gate-url> <days> <installation_type> <audit_db> <audit_host> <user_name> <password> <port> <spin_db_type> <spin_db_username> <spin_db_password> <spin_db_host>")
         exit(1)
 
     global is_error_occurred
@@ -178,13 +204,21 @@ if __name__ == '__main__':
     user_name = sys.argv[11]
     password = sys.argv[12]
     port = sys.argv[13]
-
+    spin_db_type = sys.argv[14]
+    spin_db_username = sys.argv[15]
+    spin_db_password = sys.argv[16]
+    spin_db_host = sys.argv[17]
     # Establishing the redis connection
     redis_conn = redis.Redis(host=redis_host, port=redis_port, password=redis_password)
     # print("Redis connection established successfully")
 
     # Establishing the platform db connection
     audit_conn = psycopg2.connect(database=audit_db, user=user_name, password=password, host=audit_host, port=port)
+    sqldb_orca_cursor = None
+    if spin_db_type == 'sql':
+        sqldb_orca = mysql.connector.connect(database='orca', user=spin_db_username, password=spin_db_password,
+                                         host=spin_db_host)
+        sqldb_orca_cursor = sqldb_orca.cursor(buffered=True)
     # print('Opened platform database connection successfully')
     cur_audit = audit_conn.cursor()
     start_extraction()
