@@ -7,9 +7,7 @@ data:
     kubectl get po -n {{ .Release.Namespace }} -o jsonpath='{range .items[*]}{..metadata.name}{"\t"}{..containerStatuses..ready}{"\n"}{end}' > /tmp/inst.status
     SAPOR=$(grep oes-sapor /tmp/inst.status | awk '{print $2}')
     PLATFORM=$(grep oes-platform /tmp/inst.status | awk '{print $2}')
-
     wait_period=$(($wait_period+10))
-
     if [ "$SAPOR" == "true" ] && [ "$PLATFORM" == "true" ];
     then
       echo \"Spinnaker and OES services are Up and Ready..\"
@@ -29,7 +27,7 @@ data:
         #Delete Policy ID
         cat tmp.json|jq .response | jq 'del(.policyId)'  > update.json
         #update
-        curl -H x-spinnaker-user:$USERPASS  -X PUT -H "Content-Type: application/json" -d @update.json $BASEURL/oes/v1/policy/$ID
+        curl -H x-spinnaker-user:$USERPASS -X PUT -H "Content-Type: application/json" -d @update.json $BASEURL/oes/v1/policy/$ID
       done <  policies
       sleep infinity
       #endFOR
