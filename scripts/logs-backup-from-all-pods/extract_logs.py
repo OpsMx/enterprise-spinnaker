@@ -52,11 +52,10 @@ def get_pipelines_executed_users_count_from_redis():
             plKey = key[:35]
             pl_key_exec_dict[plKey] = executions[len(executions) - 1]
         # print("The pl_key_exec_dict is: ", pl_key_exec_dict)
-        date = datetime.datetime.now() - datetime.datetime(1970, 1, 1)
-        date = date - datetime.timedelta(days=int(days))
+        date = datetime.now() - datetime(1970, 1, 1)
+        date = date - timedelta(days=int(days))
         seconds = (date.total_seconds())
         epoch_start_date = round(seconds * 1000)
-        # print("epoch_start_date: ", epoch_start_date)
         for plKey, execution in pl_key_exec_dict.items():
             exec_str = str(execution.decode("utf-8"))
             field = "stage." + exec_str + ".endTime"
@@ -66,18 +65,14 @@ def get_pipelines_executed_users_count_from_redis():
                 field = "stage." + exec_str + ".startDate"
                 time = redis_conn.hget(plKey, field)
                 if time is None:
-                    # print("No start and end dates found for ", plKey)
                     continue
             time = str(time.decode("utf-8"))
             time = int(time)
-            # print("The time is: ", time)
             if epoch_start_date <= time:
-                # print("Found in time execution")
                 trigger_bytes = redis_conn.hget(plKey, "trigger")
                 trigger_str = str(trigger_bytes.decode("utf-8"))
                 trigger_json = json.loads(trigger_str)
                 name = trigger_json['user']
-                # print("and the user in time execution is: ", name)
                 names.add(name)
     else:
         for key in keys:
@@ -87,7 +82,7 @@ def get_pipelines_executed_users_count_from_redis():
             trigger_json = json.loads(trigger_str)
             name = trigger_json['user']
             names.add(name)
-    # print("names: ", names)
+    print("names: ", names)
     return len(names)
 
 
@@ -105,8 +100,8 @@ def get_no_of_active_users_count():
 def get_pipelines_executed_users_count_from_sql():
     names = set()
     if days.strip() != 'None':
-        date = datetime.datetime.now() - datetime.datetime(1970, 1, 1)
-        date = date - datetime.timedelta(days=int(days))
+        date = datetime.now() - datetime(1970, 1, 1)
+        date = date - timedelta(days=int(days))
         seconds = (date.total_seconds())
         epoch_start_date = round(seconds * 1000)
         sqldb_orca_cursor.execute("select body from pipelines where start_time >= %s", [epoch_start_date])
@@ -115,7 +110,7 @@ def get_pipelines_executed_users_count_from_sql():
         sqldb_orca_cursor.execute("select body from pipelines")
         pipeline_executions = sqldb_orca_cursor.fetchall()
     for pipeline_execution in pipeline_executions:
-        pi_execution_json = json.loads(pipeline_execution)
+        pi_execution_json = json.loads(pipeline_execution[0])
         trigger = pi_execution_json['trigger']
         user = trigger['user']
         names.add(user)
@@ -174,13 +169,15 @@ def start_extraction():
     finally:
         redis_conn.close()
         audit_conn.close()
+        if spin_db_type == 'sql':
+            sqldb_orca.close()
     pass
 
 
 if __name__ == '__main__':
     n = len(sys.argv)
     if n != 18:
-        print("Please pass valid 8 arguments <isd-admin-username> <isd-admin-password> <redis-host> "
+        print("Please pass valid 17 arguments <isd-admin-username> <isd-admin-password> <redis-host> "
               "<redis-port> <redis-password> <isd-gate-url> <days> <installation_type> <audit_db> <audit_host> <user_name> <password> <port> <spin_db_type> <spin_db_username> <spin_db_password> <spin_db_host>")
         exit(1)
 
@@ -210,15 +207,15 @@ if __name__ == '__main__':
     spin_db_host = sys.argv[17]
     # Establishing the redis connection
     redis_conn = redis.Redis(host=redis_host, port=redis_port, password=redis_password)
-    # print("Redis connection established successfully")
+    print("Redis connection established successfully")
 
     # Establishing the platform db connection
     audit_conn = psycopg2.connect(database=audit_db, user=user_name, password=password, host=audit_host, port=port)
     sqldb_orca_cursor = None
     if spin_db_type == 'sql':
         sqldb_orca = mysql.connector.connect(database='orca', user=spin_db_username, password=spin_db_password,
-                                         host=spin_db_host)
+                                             host=spin_db_host)
         sqldb_orca_cursor = sqldb_orca.cursor(buffered=True)
-    # print('Opened platform database connection successfully')
+    print('Opened audit database connection successfully')
     cur_audit = audit_conn.cursor()
     start_extraction()
