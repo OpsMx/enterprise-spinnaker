@@ -1,9 +1,3 @@
-######## Please read the below comments and update the parameters accordingly #####################
-# User need to update the namespace parameter
-# User need to update the days
-# User need to udpate the release name which is used for installation
-# User need to update the spinnakerStorage to sql if spinnaker is configured with mysql
-#
 ---
 ######## Please read the below comments and update the parameters accordingly #####################
 # User need to update the namespace parameter
@@ -39,7 +33,7 @@ roleRef:
 subjects:
   - kind: ServiceAccount
     name: isd-info
-    namespace: opsmx-isd #Please update the namespace accordingly
+    namespace: mahesh-jmeter #Please update the namespace accordingly
 ---
 apiVersion: batch/v1
 kind: Job
@@ -59,13 +53,15 @@ spec:
               ls -ltra
               cd /home/opsmx/scripts/scripts/logs-backup-from-all-pods/
               export INSTALLATION_TYPE=$installationType
+              export SPIN_DB_TYPE=$spinnakerStorage
               export ns=$namespace
-              if [ "$INSTALLATION_TYPE" == "ISD" ]; then
+              if [ "$INSTALLATION_TYPE" == "ISD" ] && [ "$spinnakerStorage" == "redis" ]; then
                  getsecret=$(kubectl get secrets -n $namespace | grep 'redispassword')
                  if [ -z "$getsecret" ]; then
                     echo "Redispassword secret is not present in the cluster so creating it........."
                     kubectl -n $ns create secret generic redispassword --from-literal redispassword=password
                  fi
+              elif [ "$INSTALLATION_TYPE" == "ISD" ] && [ "$spinnakerStorage" == "sql" ]; then
                  mysqlsecret=$(kubectl get secrets -n $namespace | grep 'mysqlcredentials')
                  if [ -z "$mysqlsecret" ]; then
                     echo "Mysqlsecret is not present in the cluster so please create it........."
@@ -85,7 +81,6 @@ spec:
               export REDIS_HOST=$release-redis-master
               export PLATFORM_DB=auditdb
               export DAYS=$days
-              export SPIN_DB_TYPE=$spinnakerStorage
               export SPIN_DB_USERNAME=$mysqlusername
               export SPIN_DB_PASSWORD=$mysqlpassword
               export SPIN_DB_HOST=$mysqlhost
@@ -100,11 +95,11 @@ spec:
 
                   bash -x get-all-pod-logs.sh $ns $ISD_ADMIN_USERNAME $ISD_ADMIN_PASSWORD $REDIS_HOST $REDIS_PORT $REDIS_PASSWORD http://sapor-gate:8084 $DAYS $INSTALLATION_TYPE $PLATFORM_DB $PLATFORM_HOST $USER_NAME $PASSWORD $PORT $SPIN_DB_TYPE $SPIN_DB_USERNAME $SPIN_DB_PASSWORD $SPIN_DB_HOST
 
-              elif [ "$INSTALLATION_TYPE" == "ISD" ] && [ "$spinnakersource" == "redis" ]; then
+              elif [ "$INSTALLATION_TYPE" == "ISD" ] && [ "$spinnakerStorage" == "redis" ]; then
 
-                  echo "get-all-pod-logs.sh $ns $ISD_ADMIN_USERNAME $ISD_ADMIN_PASSWORD $REDIS_HOST $REDIS_PORT $REDIS_PASSWORD http://sapor-gate:8084 $DAYS $INSTALLATION_TYPE $PLATFORM_DB $PLATFORM_HOST $USER_NAME $PASSWORD $PORT"
+                  echo "get-all-pod-logs.sh $ns $ISD_ADMIN_USERNAME $ISD_ADMIN_PASSWORD $REDIS_HOST $REDIS_PORT $REDIS_PASSWORD http://sapor-gate:8084 $DAYS $INSTALLATION_TYPE $PLATFORM_DB $PLATFORM_HOST $USER_NAME $PASSWORD $PORT $SPIN_DB_TYPE SPIN_DB_USERNAME=None SPIN_DB_PASSWORD=None SPIN_DB_HOST=None"
 
-                  bash -x get-all-pod-logs.sh $ns $ISD_ADMIN_USERNAME $ISD_ADMIN_PASSWORD $REDIS_HOST $REDIS_PORT $REDIS_PASSWORD http://sapor-gate:8084 $DAYS $INSTALLATION_TYPE $PLATFORM_DB $PLATFORM_HOST $USER_NAME $PASSWORD $PORT SPIN_DB_TYPE=None
+                  bash -x get-all-pod-logs.sh $ns $ISD_ADMIN_USERNAME $ISD_ADMIN_PASSWORD $REDIS_HOST $REDIS_PORT $REDIS_PASSWORD http://sapor-gate:8084 $DAYS $INSTALLATION_TYPE $PLATFORM_DB $PLATFORM_HOST $USER_NAME $PASSWORD $PORT $SPIN_DB_TYPE SPIN_DB_USERNAME=None SPIN_DB_PASSWORD=None SPIN_DB_HOST=None
 
               else
 
@@ -134,7 +129,7 @@ spec:
             - /bin/bash
             - +x
             - '-c'
-          image: 'quay.io/opsmxpublic/opsmx-custom-binaries:153981f-46'
+          image: 'quay.io/opsmxpublic/opsmx-custom-binaries:153981f-52'
           imagePullPolicy: Always
           name: details
           envFrom:
