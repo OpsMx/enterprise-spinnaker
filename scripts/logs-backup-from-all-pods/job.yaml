@@ -5,6 +5,13 @@
 # User need to update the spinnakerStorage to sql if spinnaker is configured with mysql
 #
 ---
+######## Please read the below comments and update the parameters accordingly #####################
+# User need to update the namespace parameter
+# User need to update the days
+# User need to udpate the release name which is used for installation
+# User need to update the spinnakerStorage to sql if spinnaker is configured with mysql
+#
+---
 apiVersion: v1
 data:
   namespace: opsmx-isd # Namespace where ISD is installed , default is opsmx-isd
@@ -32,7 +39,7 @@ roleRef:
 subjects:
   - kind: ServiceAccount
     name: isd-info
-    namespace: mahesh-jmeter #Please update the namespace accordingly
+    namespace: opsmx-isd #Please update the namespace accordingly
 ---
 apiVersion: batch/v1
 kind: Job
@@ -58,6 +65,12 @@ spec:
                  if [ -z "$getsecret" ]; then
                     echo "Redispassword secret is not present in the cluster so creating it........."
                     kubectl -n $ns create secret generic redispassword --from-literal redispassword=password
+                 fi
+                 mysqlsecret=$(kubectl get secrets -n $namespace | grep 'mysqlcredentials')
+                 if [ -z "$mysqlsecret" ]; then
+                    echo "Mysqlsecret is not present in the cluster so please create it........."
+                    echo "kubectl -n $namespace create secret generic mysqlcredentials --from-literal host=PUT_YOUR_MYSQL_HOST_NAME --from-literal username=PUT_YOUR_MYSQL_USER_NAME --from-literal password=PUT_YOUR_MYSQL_PASSWORD"
+                    exit 1
                  fi
               fi
               export ISD_ADMIN_PASSWORD=$saporpassword
@@ -121,7 +134,7 @@ spec:
             - /bin/bash
             - +x
             - '-c'
-          image: 'quay.io/opsmxpublic/opsmx-custom-binaries:153981f-43'
+          image: 'quay.io/opsmxpublic/opsmx-custom-binaries:153981f-46'
           imagePullPolicy: Always
           name: details
           envFrom:
