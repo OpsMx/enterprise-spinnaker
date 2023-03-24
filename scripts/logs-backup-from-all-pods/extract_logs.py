@@ -52,7 +52,7 @@ def get_pipelines_executed_users_count_from_redis():
             plKey = key[:35]
             pl_key_exec_dict[plKey] = executions[len(executions) - 1]
         # print("The pl_key_exec_dict is: ", pl_key_exec_dict)
-        date = datetime.datetime.now() - datetime.datetime(1970, 1, 1)
+        date = datetime.now() - datetime(1970, 1, 1)
         date = date - datetime.timedelta(days=int(days))
         seconds = (date.total_seconds())
         epoch_start_date = round(seconds * 1000)
@@ -105,7 +105,7 @@ def get_no_of_active_users_count():
 def get_pipelines_executed_users_count_from_sql():
     names = set()
     if days.strip() != 'None':
-        date = datetime.datetime.now() - datetime.datetime(1970, 1, 1)
+        date = datetime.now() - datetime(1970, 1, 1)
         date = date - datetime.timedelta(days=int(days))
         seconds = (date.total_seconds())
         epoch_start_date = round(seconds * 1000)
