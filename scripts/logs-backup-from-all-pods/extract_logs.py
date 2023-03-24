@@ -53,7 +53,7 @@ def get_pipelines_executed_users_count_from_redis():
             pl_key_exec_dict[plKey] = executions[len(executions) - 1]
         # print("The pl_key_exec_dict is: ", pl_key_exec_dict)
         date = datetime.now() - datetime(1970, 1, 1)
-        date = date - datetime.timedelta(days=int(days))
+        date = date - timedelta(days=int(days))
         seconds = (date.total_seconds())
         epoch_start_date = round(seconds * 1000)
         # print("epoch_start_date: ", epoch_start_date)
@@ -66,13 +66,11 @@ def get_pipelines_executed_users_count_from_redis():
                 field = "stage." + exec_str + ".startDate"
                 time = redis_conn.hget(plKey, field)
                 if time is None:
-                    # print("No start and end dates found for ", plKey)
                     continue
             time = str(time.decode("utf-8"))
             time = int(time)
             # print("The time is: ", time)
             if epoch_start_date <= time:
-                # print("Found in time execution")
                 trigger_bytes = redis_conn.hget(plKey, "trigger")
                 trigger_str = str(trigger_bytes.decode("utf-8"))
                 trigger_json = json.loads(trigger_str)
@@ -106,7 +104,7 @@ def get_pipelines_executed_users_count_from_sql():
     names = set()
     if days.strip() != 'None':
         date = datetime.now() - datetime(1970, 1, 1)
-        date = date - datetime.timedelta(days=int(days))
+        date = date - timedelta(days=int(days))
         seconds = (date.total_seconds())
         epoch_start_date = round(seconds * 1000)
         sqldb_orca_cursor.execute("select body from pipelines where start_time >= %s", [epoch_start_date])
@@ -150,7 +148,7 @@ def start_extraction():
             no_of_users_executed_pipelines = get_pipelines_executed_users_count_from_sql()
         else:
             no_of_users_executed_pipelines = get_pipelines_executed_users_count_from_redis()
-        # print("no_of_users_executed_pipelines: ", no_of_users_executed_pipelines)
+        print("no_of_users_executed_pipelines: ", no_of_users_executed_pipelines)
         f = open("/tmp/logdir/usage_counts.txt", "w")
         f.write("apps_count: " + str(apps_count) + "\n")
         f.write("pipelines_count: " + str(pipelines_count) + "\n")
@@ -219,6 +217,6 @@ if __name__ == '__main__':
         sqldb_orca = mysql.connector.connect(database='orca', user=spin_db_username, password=spin_db_password,
                                          host=spin_db_host)
         sqldb_orca_cursor = sqldb_orca.cursor(buffered=True)
-    # print('Opened platform database connection successfully')
+    # print('Opened audit database connection successfully')
     cur_audit = audit_conn.cursor()
     start_extraction()
