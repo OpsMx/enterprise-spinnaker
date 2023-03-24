@@ -178,7 +178,7 @@ def start_extraction():
 if __name__ == '__main__':
     n = len(sys.argv)
     if n != 18:
-        print("Please pass valid 8 arguments <isd-admin-username> <isd-admin-password> <redis-host> "
+        print("Please pass valid 17 arguments <isd-admin-username> <isd-admin-password> <redis-host> "
               "<redis-port> <redis-password> <isd-gate-url> <days> <installation_type> <audit_db> <audit_host> <user_name> <password> <port> <spin_db_type> <spin_db_username> <spin_db_password> <spin_db_host>")
         exit(1)
 
