@@ -169,6 +169,8 @@ def start_extraction():
     finally:
         redis_conn.close()
         audit_conn.close()
+        if spin_db_type == 'sql':
+            sqldb_orca.close()
     pass
 
 
