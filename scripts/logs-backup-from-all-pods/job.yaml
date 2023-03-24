@@ -1,3 +1,40 @@
+---
+######## Please read the below comments and update the parameters accordingly #####################
+# User need to update the namespace parameter
+# User need to update the days
+# User need to udpate the release name which is used for installation
+# User need to update the spinnakerStorage to sql if spinnaker is configured with mysql
+#
+---
+apiVersion: v1
+data:
+  namespace: opsmx-isd # Namespace where ISD is installed , default is opsmx-isd
+  days: "1"  # Updated the number of days accordingly to get the data
+  installationType: ISD
+  release: isd      # Release name is which is used for used for installation default is isd
+  spinnakerStorage: "redis" # Default is redis change to sql if spinnaker is configured with external mysql
+kind: ConfigMap
+metadata:
+  name: isdinfo-inputcm
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: isd-info
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: isd-info
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: cluster-admin
+subjects:
+  - kind: ServiceAccount
+    name: isd-info
+    namespace: mahesh-jmeter #Please update the namespace accordingly
+---
 apiVersion: batch/v1
 kind: Job
 metadata:
@@ -13,26 +50,26 @@ spec:
             - |-
               #set -x
               source /repo/environment
-              cat /repo/environment
               ls -ltra
               cd /home/opsmx/scripts/scripts/logs-backup-from-all-pods/
               export INSTALLATION_TYPE=$installationType
+              export SPIN_DB_TYPE=$spinnakerStorage
               export ns=$namespace
-              if [ "$INSTALLATION_TYPE" == "ISD" ] && [ "$logintype" == "ldap" ]; then
-                 getsecrets=$(kubectl get secrets -n $namespace | grep 'ldappassword\|redispassword')
-                 if [ -z "$getsecrets" ]; then
-                    echo "ldappassword and redispassword secret is not created creating it........."
-                    kubectl -n $namespace create secret generic ldappassword --from-literal ldappassword=opsmxadmin123
-                    kubectl -n $namespace create secret generic redispassword --from-literal redispassword=password
+              if [ "$INSTALLATION_TYPE" == "ISD" ] && [ "$spinnakerStorage" == "redis" ]; then
+                 getsecret=$(kubectl get secrets -n $namespace | grep 'redispassword')
+                 if [ -z "$getsecret" ]; then
+                    echo "Redispassword secret is not present in the cluster so creating it........."
+                    kubectl -n $ns create secret generic redispassword --from-literal redispassword=password
                  fi
-              else
-                  getsecret=$(kubectl get secrets -n $namespace | grep redispassword)
-                  if [ -z "$getsecret" ]; then
-                     echo "redispassword secret is not created creating it........."
-                     kubectl -n $namespace create secret generic redispassword --from-literal redispassword=password
-                  fi
+              elif [ "$INSTALLATION_TYPE" == "ISD" ] && [ "$spinnakerStorage" == "sql" ]; then
+                 mysqlsecret=$(kubectl get secrets -n $namespace | grep 'mysqlcredentials')
+                 if [ -z "$mysqlsecret" ]; then
+                    echo "Mysqlsecret is not present in the cluster so please create it........."
+                    echo "kubectl -n $namespace create secret generic mysqlcredentials --from-literal host=PUT_YOUR_MYSQL_HOST_NAME --from-literal username=PUT_YOUR_MYSQL_USER_NAME --from-literal password=PUT_YOUR_MYSQL_PASSWORD"
+                    exit 1
+                 fi
               fi
-              export ISD_ADMIN_PASSWORD=$ldappassword
+              export ISD_ADMIN_PASSWORD=$saporpassword
               export PLATFORM_HOST=$host
               export ISD_GATE_URL=$oesuiurl
               export PORT=$port
@@ -44,26 +81,29 @@ spec:
               export REDIS_HOST=$release-redis-master
               export PLATFORM_DB=auditdb
               export DAYS=$days
+              export SPIN_DB_USERNAME=$mysqlusername
+              export SPIN_DB_PASSWORD=$mysqlpassword
+              export SPIN_DB_HOST=$mysqlhost
               cp -r /home/opsmx/scripts/scripts/logs-backup-from-all-pods/extract_logs.py /tmp/
               if [ -z "$ISD_ADMIN_PASSWORD" ] && [ -z "$PLATFORM_HOST" ] && [ -z "$ISD_GATE_URL" ] && [ -z "$PORT" ] && [ -z "$USER_NAME" ] && [ -z "$PASSWORD" ] && [ -z "$ISD_ADMIN_USERNAME" ] && [ -z "$ns" ] && [ -z "$REDIS_PASSWORD" ] && [ -z "$REDIS_PORT" ] && [-z "$REDIS_HOST"] && [-z "$INSTALLATION_TYPE" ] && [ -z "$DAYS" ] && [-z "$PLATFORM_DB" ]; then
                 echo "All the paramerts are not passed ........."
                 exit 1
               fi
-              if [ "$INSTALLATION_TYPE" == "ISD" ] && [ "$logintype" == "ldap" ]; then
+              if [ "$INSTALLATION_TYPE" == "ISD" ] && [ "$spinnakerStorage" == "sql" ]; then
 
-                          echo "get-all-pod-logs.sh $ns $ISD_ADMIN_USERNAME $ISD_ADMIN_PASSWORD $REDIS_HOST $REDIS_PORT $REDIS_PASSWORD $ISD_GATE_URL $DAYS $INSTALLATION_TYPE $PLATFORM_DB $PLATFORM_HOST $USER_NAME $PASSWORD $PORT"
+                  echo "get-all-pod-logs.sh $ns $ISD_ADMIN_USERNAME $ISD_ADMIN_PASSWORD $REDIS_HOST $REDIS_PORT $REDIS_PASSWORD http://sapor-gate:8084 $DAYS $INSTALLATION_TYPE $PLATFORM_DB $PLATFORM_HOST $USER_NAME $PASSWORD $PORT $SPIN_DB_TYPE $SPIN_DB_USERNAME $SPIN_DB_PASSWORD $SPIN_DB_HOST"
 
-                          bash -x get-all-pod-logs.sh $ns $ISD_ADMIN_USERNAME $ISD_ADMIN_PASSWORD $REDIS_HOST $REDIS_PORT $REDIS_PASSWORD $ISD_GATE_URL $DAYS $INSTALLATION_TYPE $PLATFORM_DB $PLATFORM_HOST $USER_NAME $PASSWORD $PORT
+                  bash -x get-all-pod-logs.sh $ns $ISD_ADMIN_USERNAME $ISD_ADMIN_PASSWORD $REDIS_HOST $REDIS_PORT $REDIS_PASSWORD http://sapor-gate:8084 $DAYS $INSTALLATION_TYPE $PLATFORM_DB $PLATFORM_HOST $USER_NAME $PASSWORD $PORT $SPIN_DB_TYPE $SPIN_DB_USERNAME $SPIN_DB_PASSWORD $SPIN_DB_HOST
 
-              elif [ "$INSTALLATION_TYPE" == "ISD" ] && [ "$logintype" == "saml" ]; then
+              elif [ "$INSTALLATION_TYPE" == "ISD" ] && [ "$spinnakerStorage" == "redis" ]; then
 
-                          echo "get-all-pod-logs.sh $ns $ISD_ADMIN_USERNAME saporadmin $REDIS_HOST $REDIS_PORT $REDIS_PASSWORD http://sapor-gate:8084 $DAYS $INSTALLATION_TYPE $PLATFORM_DB $PLATFORM_HOST $USER_NAME $PASSWORD $PORT"
+                  echo "get-all-pod-logs.sh $ns $ISD_ADMIN_USERNAME $ISD_ADMIN_PASSWORD $REDIS_HOST $REDIS_PORT $REDIS_PASSWORD http://sapor-gate:8084 $DAYS $INSTALLATION_TYPE $PLATFORM_DB $PLATFORM_HOST $USER_NAME $PASSWORD $PORT $SPIN_DB_TYPE SPIN_DB_USERNAME=None SPIN_DB_PASSWORD=None SPIN_DB_HOST=None"
 
-                          bash -x get-all-pod-logs.sh $ns $ISD_ADMIN_USERNAME saporadmin $REDIS_HOST $REDIS_PORT $REDIS_PASSWORD http://sapor-gate:8084 $DAYS $INSTALLATION_TYPE $PLATFORM_DB $PLATFORM_HOST $USER_NAME $PASSWORD $PORT
+                  bash -x get-all-pod-logs.sh $ns $ISD_ADMIN_USERNAME $ISD_ADMIN_PASSWORD $REDIS_HOST $REDIS_PORT $REDIS_PASSWORD http://sapor-gate:8084 $DAYS $INSTALLATION_TYPE $PLATFORM_DB $PLATFORM_HOST $USER_NAME $PASSWORD $PORT $SPIN_DB_TYPE SPIN_DB_USERNAME=None SPIN_DB_PASSWORD=None SPIN_DB_HOST=None
 
               else
 
-                 echo "Some went wrong in script"
+                 echo "Installation mode is selected as None"
 
               fi
                       CREATION_TIME=`date -u +"%d-%m-%Y-%H.%M.%S"`
@@ -89,7 +129,7 @@ spec:
             - /bin/bash
             - +x
             - '-c'
-          image: 'quay.io/opsmxpublic/opsmx-custom-binaries:153981f-43'
+          image: 'quay.io/opsmxpublic/opsmx-custom-binaries:153981f-52'
           imagePullPolicy: Always
           name: details
           envFrom:
