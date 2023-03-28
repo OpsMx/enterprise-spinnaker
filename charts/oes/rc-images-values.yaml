@@ -39,21 +39,24 @@ spinnaker:
       token: git/stash_token
       branch: master
 
+auditClient:
+  image:
+    tag: v4.0.4.b2
 autopilot:
   image:
-    tag: v4.0.4.b1
-dashboard:
-  image:
-    tag: v4.0.4.b1
+    tag: v4.0.4.b2
 gate:
   image:
-    tag: v4.0.4.b1
+    tag: v4.0.4.b2
+platform:
+  image:
+    tag: v4.0.4.b2
+dashboard:
+  image:
+    tag: v4.0.4.b2
 sapor:
   image:
-    tag: v4.0.4.b1
+    tag: v4.0.4.b2
 ui:
   image:
-    tag: v4.0.4.b1
-visibility:
-  image:
-    tag: v4.0.4.b1
+    tag: v4.0.4.b2
