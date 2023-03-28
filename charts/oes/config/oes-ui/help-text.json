@@ -568,6 +568,10 @@
         "TOOLTIP": "The duration for which the canary analysis was performed, 1 lifetime hour is equal to 1 hour.",
         "VALIDATION_MESSAGE": {}
       },
+      "LIFETIME_MINUTES": {
+        "TOOLTIP": "Minutes to let the analysis run before making a final determination",
+        "VALIDATION_MESSAGE": {}
+      },
       "RECLASSIFICATION_DURATION": {
         "TOOLTIP": "The time taken to perform reclassification",
         "VALIDATION_MESSAGE": {}
