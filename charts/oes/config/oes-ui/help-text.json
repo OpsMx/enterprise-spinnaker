@@ -1669,6 +1669,7 @@
   "PASSWORD": {
     "TOOLTIP": "Password",
     "VALIDATION_MESSAGE":{
+      "required" : "Password cannot be empty"      
     }
   },
   "PASSWORDCOMMAND": {
@@ -2174,7 +2175,7 @@
   },
   "CLOUDWATCH":{
     "HEADER": "AWS-CLOUDWATCH",
-    "BODY":"",
+    "BODY":"<span>Amazon CloudWatch Can be used as a monitoring provider in the verification gates</span>",
     "ACCOUNTNAME":{
       "TOOLTIP":"User defined name for the AWS-CLOUDWATCH account",
       "VALIDATION_MESSAGE":{
@@ -2751,7 +2752,7 @@
       "HEADER": "Autopilot",
       "BODY":"",
       "ACCOUNTNAME":{
-        "TOOLTIP":"User-defined account name for your Sonarqube access. ",
+        "TOOLTIP":"User defined name for the Autopilot account",
         "VALIDATION_MESSAGE":{
       "noSpecialCharacters": "Account Name cannot contain special characters other than -",
       "cannotContainSpace":"Account Name cannot contain space",
