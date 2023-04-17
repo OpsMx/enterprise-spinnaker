@@ -75,6 +75,9 @@ spec:
         - mountPath: /opsmx/conf/standard-error-code.csv
           name: standard-error-conf
           subPath: standard-error-codes.csv
+        - mountPath: /opsmx/conf/feature.yml
+          name: isd-feature-flag-conf
+          subPath: feature.yml
         {{- if .Values.global.customCerts.enabled }}
         - mountPath: /etc/pki/ca-trust/extracted/java/cacerts
           subPath: cacerts
@@ -134,4 +137,11 @@ spec:
             path: standard-error-codes.csv
           name: standard-error-codes-config
         name: standard-error-conf
+      - configMap:
+          defaultMode: 420
+          items:
+          - key: feature.yml
+            path: feature.yml
+          name: isd-feature-flag-config
+        name: isd-feature-flag-conf
 {{- end -}}

@@ -1,0 +1,15 @@
+apiVersion: v1
+data:
+  feature.yml: |
+     feature:
+       auth-provider:
+         flag: true
+         jira: OP-18050
+       db-cleanup:
+         flag: false
+         jira: OP-19921         
+kind: ConfigMap
+metadata:
+  labels:
+    app: oes
+  name: isd-feature-flag-config
