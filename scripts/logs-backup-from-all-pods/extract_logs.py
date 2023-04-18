@@ -210,7 +210,7 @@ if __name__ == '__main__':
     print("Redis connection established successfully")
 
     # Establishing the platform db connection
-    if port == 0:
+    if port == '0':
         audit_conn = psycopg2.connect(database=audit_db, user=user_name, password=password, host=audit_host)
     else:
         audit_conn = psycopg2.connect(database=audit_db, user=user_name, password=password, host=audit_host, port=port)
