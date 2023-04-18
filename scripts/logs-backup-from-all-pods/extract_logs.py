@@ -210,7 +210,10 @@ if __name__ == '__main__':
     print("Redis connection established successfully")
 
     # Establishing the platform db connection
-    audit_conn = psycopg2.connect(database=audit_db, user=user_name, password=password, host=audit_host, port=port)
+    if port == 0:
+        audit_conn = psycopg2.connect(database=audit_db, user=user_name, password=password, host=audit_host)
+    else:
+        audit_conn = psycopg2.connect(database=audit_db, user=user_name, password=password, host=audit_host, port=port)
     sqldb_orca_cursor = None
     if spin_db_type == 'sql':
         sqldb_orca = mysql.connector.connect(database='orca', user=spin_db_username, password=spin_db_password,
