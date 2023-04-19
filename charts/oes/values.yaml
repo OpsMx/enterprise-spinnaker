@@ -1176,8 +1176,8 @@ rbac:
 opa:
   enabled: true
   image:
-    repository: openpolicyagent/opa
-    tag: latest
+    repository: opa
+    tag: v0.47.0
     pullPolicy: IfNotPresent
   annotations:
     moniker.spinnaker.io/application: isd
