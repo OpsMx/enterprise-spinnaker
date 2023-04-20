@@ -75,6 +75,65 @@ entries:
   oes:
   - apiVersion: v2
     appVersion: 4.0.3
+    created: "2023-04-20T10:48:24.172291546Z"
+    dependencies:
+    - condition: global.installOpenLdap
+      name: openldap
+      repository: ""
+      version: 1.2.3
+    - condition: installSpinnaker
+      name: spinnaker
+      repository: ""
+      version: 2.2.3
+    - condition: global.minio.enabled
+      name: minio
+      repository: ""
+      version: 8.0.9
+    - condition: installRedis
+      name: redis
+      repository: ""
+      version: 10.5.3
+    - condition: enableCentralLogging
+      name: elasticsearch
+      repository: ""
+      version: 7.5.0
+    - condition: enableCentralLogging
+      name: kibana
+      repository: ""
+      version: 7.5.0
+    - condition: enableCentralLogging
+      name: fluent-bit
+      repository: ""
+      version: 2.8.2
+    - condition: global.enableCentralMonitoring
+      name: prometheus
+      repository: ""
+      version: 11.16.2
+    - condition: global.enableCentralMonitoring
+      name: grafana
+      repository: ""
+      version: 6.31.0
+    - condition: global.gitea.enabled
+      name: gitea
+      repository: ""
+      version: 5.0.1
+    description: ISD and Spinnaker with v1.28.4 and supports openshift
+    digest: 6b2c94f516a690f2cf21775cf7fe5b42c8feae22e1a3edd215e92a6168d43cc3
+    home: https://www.opsmx.com/
+    icon: https://raw.githubusercontent.com/OpsMx/enterprise-spinnaker/master/img/opsmx.png
+    keywords:
+    - OpsMx
+    - OES
+    - Autopilot
+    maintainers:
+    - email: srinivas@opsmx.io
+      name: ksrinimba
+    name: oes
+    urls:
+    - https://github.com/OpsMx/enterprise-spinnaker/releases/download/oes-4.0.10/oes-4.0.10.tgz
+    version: 4.0.10
+  - apiVersion: v2
+    appVersion: 4.0.3
     created: "2023-03-01T04:59:07.922738442Z"
     dependencies:
     - condition: global.installOpenLdap
