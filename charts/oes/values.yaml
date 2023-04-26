@@ -31,6 +31,15 @@ k8sServiceType: ClusterIP
 #    value: -Dhttps.proxyHost=proxy.server.local -Dhttps.proxyPort=3128
 #  - name: JAVA_OPTS
 #    value: -Xmx512m
+
+####################################################
+## Set to true if user want to clean up the ISD Data
+dbcleanup: false
+  ## Change the days interval value if user wants to delete older than 180days data; default value 180days
+  daysinterval: 180
+
+####################################################
+
 # Global variables can be accessed across all the charts including sub-charts
 global:
   # Custom Images registry where all the OSS and customized images used in the helm chart are stored
