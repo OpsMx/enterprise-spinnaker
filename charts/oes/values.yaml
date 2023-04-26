@@ -32,10 +32,11 @@ k8sServiceType: ClusterIP
 #  - name: JAVA_OPTS
 #    value: -Xmx512m
 
-####################################################
-## Set to true if user want to clean up the ISD Data
-dbcleanup: false
-  ## Change the days interval value if user wants to delete older than 180days data; default value 180days
+#####################################################
+## Set to true if user want to clean up the ISD Data;default is false
+dbcleanup:
+  enabled: false
+  ## Change the days interval value if user wants to delete older than 180days data
   daysinterval: 180
 
 ####################################################
@@ -596,7 +597,7 @@ sapor:
   ## Image specific details
   image:
     repository: ubi8-oes-sapor
-    v4.0.4.b3
+    tag: v4.0.4.b3
     pullPolicy: IfNotPresent
 
   annotations:
