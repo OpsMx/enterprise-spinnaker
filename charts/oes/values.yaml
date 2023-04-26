@@ -31,6 +31,15 @@ k8sServiceType: ClusterIP
 #    value: -Dhttps.proxyHost=proxy.server.local -Dhttps.proxyPort=3128
 #  - name: JAVA_OPTS
 #    value: -Xmx512m
+
+####################################################
+## Set to true if user want to clean up the ISD Data
+dbcleanup: false
+  ## Change the days interval value if user wants to delete older than 180days data; default value 180days
+  daysinterval: 180
+
+####################################################
+
 # Global variables can be accessed across all the charts including sub-charts
 global:
   # Custom Images registry where all the OSS and customized images used in the helm chart are stored
@@ -292,7 +301,7 @@ autopilot:
   ## Image specific details
   image:
     repository: ubi8-oes-autopilot
-    tag: v4.0.3
+    tag: v4.0.4.b4-rc1
     pullPolicy: IfNotPresent
 
   annotations:
@@ -325,7 +334,7 @@ audit:
   ##
   image:
     repository: ubi8-oes-audit-service
-    tag: v4.0.3
+    tag: v4.0.4.b4-rc1
     pullPolicy: IfNotPresent
 
   serviceAnnotations: {}
@@ -347,7 +356,7 @@ auditClient:
   ##
   image:
     repository: ubi8-oes-audit-client
-    tag: v4.0.3
+    tag: v4.0.4.b4-rc1
     pullPolicy: IfNotPresent
 
   serviceAnnotations: {}
@@ -369,7 +378,7 @@ datascience:
   ##
   image:
     repository: ubi8-oes-datascience
-    tag: v4.0.3
+    tag: v4.0.4.b4-rc1
     pullPolicy: IfNotPresent
 
   serviceAnnotations: {}
@@ -388,7 +397,7 @@ dashboard:
   ## Image specific details
   image:
     repository: ubi8-oes-dashboard
-    tag: v4.0.3
+    tag: v4.0.4.b3
     pullPolicy: IfNotPresent
 
   annotations:
@@ -444,7 +453,7 @@ gate:
   ## Image specific details
   image:
     repository: ubi8-gate
-    tag: v4.0.3
+    tag: v4.0.4.b4-rc1
     pullPolicy: IfNotPresent
 
   serviceAnnotations: {}
@@ -521,7 +530,7 @@ platform:
   ## Image specific details
   image:
     repository: ubi8-oes-platform
-    tag: v4.0.3
+    tag: v4.0.4.b4-rc1
     pullPolicy: IfNotPresent
 
   annotations:
@@ -587,7 +596,7 @@ sapor:
   ## Image specific details
   image:
     repository: ubi8-oes-sapor
-    tag: v4.0.3
+    v4.0.4.b3
     pullPolicy: IfNotPresent
 
   annotations:
@@ -679,7 +688,7 @@ ui:
   ## Image specific details
   image:
     repository: ubi8-oes-ui
-    tag: v4.0.3
+    tag: v4.0.4.b4-rc1
     pullPolicy: IfNotPresent
 
   annotations:
@@ -697,7 +706,7 @@ visibility:
   ## Image specific details
   image:
     repository: ubi8-oes-visibility
-    tag: v4.0.3
+    tag: v4.0.4.b4-rc1
     pullPolicy: IfNotPresent
 
   annotations:
@@ -1337,4 +1346,3 @@ kibana:
             sleep 60;
             curl https://raw.githubusercontent.com/OpsMx/enterprise-spinnaker/master/scripts/kibana/kibana_objects.ndjson > /tmp/kibana_objects.ndjson;
             curl -X POST "localhost:5601/api/saved_objects/_import?overwrite=true" -H "kbn-xsrf: true" --form file=@/tmp/kibana_objects.ndjson 2>&1 1> /tmp/postStart.out;
-

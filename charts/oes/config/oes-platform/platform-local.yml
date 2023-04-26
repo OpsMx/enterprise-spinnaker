@@ -47,8 +47,12 @@ dashboard:
 database:
   cleanup:
     scheduler:
+      {{- if .Values.dbcleanup }}
       enabled: true
-      daysInterval: 30
+      {{- else }}
+      enabled: false
+      {{- end }}
+      daysInterval: {{ .Values.dbcleanup.daysinterval }}
       cron: 0 0 0 * * *
 oes:
   sapor:
