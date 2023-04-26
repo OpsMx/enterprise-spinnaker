@@ -76,7 +76,7 @@ spec:
               export USER_NAME=$pguser
               export PASSWORD=$pgpassword
               export ISD_ADMIN_USERNAME=$saporusername
-              export REDIS_PASSWORD=$redispassword
+              export REDIS_PASSWORD=$(kubectl -n "$namespace" get secret redispassword -o jsonpath='{.data.redispassword}'| base64 -d)
               export REDIS_PORT=6379
               export REDIS_HOST=$release-redis-master
               export PLATFORM_DB=auditdb
