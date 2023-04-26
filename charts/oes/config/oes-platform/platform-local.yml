@@ -47,11 +47,7 @@ dashboard:
 database:
   cleanup:
     scheduler:
-      {{- if .Values.dbcleanup }}
-      enabled: true
-      {{- else }}
-      enabled: false
-      {{- end }}
+      enabled: {{ .Values.dbcleanup.enabled }}
       daysInterval: {{ .Values.dbcleanup.daysinterval }}
       cron: 0 0 0 * * *
 oes:
