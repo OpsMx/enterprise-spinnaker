@@ -6,7 +6,7 @@ data:
          flag: true
          jira: OP-18050
        db-cleanup:
-         flag: false
+         flag: true
          jira: OP-19921         
 kind: ConfigMap
 metadata:
