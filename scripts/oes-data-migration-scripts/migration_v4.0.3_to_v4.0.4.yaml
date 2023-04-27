@@ -1,0 +1,139 @@
+apiVersion: v1
+data:
+  audit-local.yml: c3ByaW5nOgogIGRhdGFzb3VyY2U6CiAgICB1cmw6IGpkYmM6cG9zdGdyZXNxbDovL29lcy1kYjo1NDMyL2F1ZGl0ZGIKICAgIHVzZXJuYW1lOiAncG9zdGdyZXMnCiAgICBwYXNzd29yZDogJ25ldHdvcmtzMTIzJwpsb2dnaW5nOgogICAgbGV2ZWw6CiAgICAgIGNvbS5vcHNteC5hdWRpdHNlcnZpY2U6IElORk8KZGI6CiAgbWlncmF0aW9uOgogICAgZW5hYmxlZDogdHJ1ZQptZXNzYWdlLWJyb2tlcjoKICBlbmFibGVkOiBmYWxzZQogIHVzZXJuYW1lOiAncmFiYml0bXEnCiAgcGFzc3dvcmQ6ICdOZXR3b3JrczEyMycKICBob3N0OiByYWJiaXRtcS1zZXJ2aWNlCiAgcG9ydDogNTY3MgogIGVuZHBvaW50OgogICAgbmFtZTogcmFiYml0bXEKc3RhbmRhcmRFcnJvckNvZGVzOgogIGZpbGVQYXRoOiAvb3BzbXgvY29uZi9zdGFuZGFyZC1lcnJvci1jb2RlLmNzdgpmZWlnbjoKICBjbGllbnQ6CiAgICBwbGF0Zm9ybXNlcnZpY2U6CiAgICAgIG5hbWU6IHBsYXRmb3Jtc2VydmljZQogICAgICB1cmw6IGh0dHA6Ly9vZXMtcGxhdGZvcm06ODA5NQogICAgYXVkaXRjbGllbnRzZXJ2aWNlOgogICAgICBuYW1lOiBhdWRpdGNsaWVudHNlcnZpY2UKICAgICAgdXJsOiBodHRwOi8vb2VzLWF1ZGl0LWNsaWVudDo4MDk4CiAgICBvZXM6CiAgICAgIHVybDogaHR0cDovL29lcy1zYXBvcjo4MDg1CiAgICBhdXRvcGlsb3Q6CiAgICAgIHVybDogaHR0cDovL29lcy1hdXRvcGlsb3Q6ODA5MAogICAgdmlzaWJpbGl0eXNlcnZpY2U6CiAgICAgIHVybDogaHR0cDovL29lcy12aXNpYmlsaXR5OjgwOTYKICAgIGRhc2hib2FyZDoKICAgICAgdXJsOiBodHRwOi8vb2VzLWRhc2hib2FyZDo4MDk0
+kind: Secret
+metadata:
+  labels:
+    app: oes
+    app.kubernetes.io/managed-by: Helm
+    chart: oes-4.0.9
+    component: auditservice
+    heritage: Helm
+  name: oes-audit-service-config-new
+type: Opaque
+---
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    app: oes
+    app.kubernetes.io/managed-by: Helm
+    chart: oes-4.0.9
+    component: auditservice
+    heritage: Helm
+  name: oes-audit-service-new
+spec:
+  internalTrafficPolicy: Cluster
+  ipFamilies:
+  - IPv4
+  ipFamilyPolicy: SingleStack
+  ports:
+  - name: auditservice
+    port: 8097
+    protocol: TCP
+    targetPort: 8097
+  selector:
+    app: oes
+    component: auditservice-new
+  sessionAffinity: None
+  type: ClusterIP
+status:
+  loadBalancer: {}
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: oes
+    app.kubernetes.io/managed-by: Helm
+    chart: oes-4.0.9
+    component: auditservice-new
+    heritage: Helm
+  name: oes-audit-service-new
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: oes
+      component: auditservice-new
+  strategy:
+    rollingUpdate:
+      maxSurge: 25%
+      maxUnavailable: 25%
+    type: RollingUpdate
+  template:
+    metadata:
+      annotations:
+        moniker.spinnaker.io/application: isd
+        prometheus.io/scrape: "false"
+        prometheus_io_path: /mgmt/prometheus
+        prometheus_io_port: "8097"
+      labels:
+        app: oes
+        chart: oes-4.0.9
+        component: auditservice-new
+        heritage: Helm
+    spec:
+      containers:
+      - image: quay.io/opsmxpublic/ubi8-oes-audit-service-migration:v403-v404
+        imagePullPolicy: IfNotPresent
+        livenessProbe:
+          failureThreshold: 3
+          httpGet:
+            path: /mgmt/health
+            port: 8097
+            scheme: HTTP
+          initialDelaySeconds: 60
+          periodSeconds: 60
+          successThreshold: 1
+          timeoutSeconds: 1
+        name: oes-audit-service-new
+        ports:
+        - containerPort: 8097
+          name: backend
+          protocol: TCP
+        readinessProbe:
+          failureThreshold: 3
+          initialDelaySeconds: 60
+          periodSeconds: 10
+          successThreshold: 1
+          tcpSocket:
+            port: 8097
+          timeoutSeconds: 1
+        resources: {}
+        terminationMessagePath: /dev/termination-log
+        terminationMessagePolicy: File
+        volumeMounts:
+        - mountPath: /opsmx/conf/audit-service-local.yml
+          name: audit-config-volume
+          subPath: audit-local.yml
+        - mountPath: /opsmx/conf/bootstrap.yml
+          name: bootstrap-config-volume
+          subPath: bootstrap.yml
+        - mountPath: /opsmx/conf/standard-error-code.csv
+          name: standard-error-conf
+          subPath: standard-error-codes.csv
+      dnsPolicy: ClusterFirst
+      restartPolicy: Always
+      schedulerName: default-scheduler
+      securityContext: {}
+      terminationGracePeriodSeconds: 30
+      volumes:
+      - name: audit-config-volume
+        secret:
+          defaultMode: 420
+          items:
+          - key: audit-local.yml
+            path: audit-local.yml
+          secretName: oes-audit-service-config-new
+      - name: bootstrap-config-volume
+        secret:
+          defaultMode: 420
+          secretName: bootstrap
+      - configMap:
+          defaultMode: 420
+          items:
+          - key: standard-error-codes.csv
+            path: standard-error-codes.csv
+          name: standard-error-codes-config
+        name: standard-error-conf
