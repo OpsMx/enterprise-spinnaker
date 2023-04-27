@@ -15,4 +15,10 @@ https://github.com/OpsMx/enterprise-spinnaker/blob/v4.0.4/scripts/oes-data-migra
 2. Apply the downloaded file to install new audit-service deployment pod
 kubectl apply -f migration_v4.0.3_to_v4.0.4.yaml -n <NAMESPACE> 
 
+Output should be:
+$ k apply -f migrationScript_403_to_404.yaml -n <NAMESPACE>
+secret/oes-audit-service-config-new created
+service/oes-audit-service-new created
+deployment.apps/oes-audit-service-new created
+
 Note: Make sure should see the new pod with name: oes-audit-service-new and should see the migration related logs in the new pod
