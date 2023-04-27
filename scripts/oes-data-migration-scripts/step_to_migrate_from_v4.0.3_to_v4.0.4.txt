@@ -1,0 +1,24 @@
+Instructions to run v4.0.3_to_v4.0.4 migration script:
+
+1. Pre-requisites:
+ a) Should have v4.0.3/v4.0.4.b1/b2/b3 ISD instance and 
+ b) Should have test data loaded
+
+
+Steps to execute the migration script:
+1. Download the migration script from Enterprise Spinnaker - branch: v4.0.4 to your local
+     Script file location: 
+
+https://github.com/OpsMx/enterprise-spinnaker/blob/v4.0.4/scripts/oes-data-migration-scripts/migration_v4.0.3_to_v4.0.4.yaml 
+
+
+2. Apply the downloaded file to install new audit-service deployment pod
+kubectl apply -f migration_v4.0.3_to_v4.0.4.yaml -n <NAMESPACE> 
+
+Output should be:
+$ k apply -f migrationScript_403_to_404.yaml -n <NAMESPACE>
+secret/oes-audit-service-config-new created
+service/oes-audit-service-new created
+deployment.apps/oes-audit-service-new created
+
+Note: Make sure should see the new pod with name: oes-audit-service-new and should see the migration related logs in the new pod
