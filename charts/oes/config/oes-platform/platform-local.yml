@@ -20,14 +20,6 @@ supportedFeatures:
 {{ toYaml .Values.platform.config.supportedFeatures | indent 2 }}
 userGroup:
   superAdminGroups: {{ .Values.global.saporgate.config.adminGroups }}
-fixedDelay:
-  in:
-    milliseconds: 120000
-initialDelay:
-  in:
-    milliseconds: 300000
-scheduler:
-  workerThreads: 50
 user:
   {{- if .Values.gate.config.saml.enabled }}
   source: {{ .Values.gate.config.saml.userSource }}
@@ -42,7 +34,22 @@ ldap:
   groupSearchFilter: {{ .Values.global.ldap.groupSearchFilter }}
   groupRoleAttributes: {{ .Values.global.ldap.groupRoleAttributes }}
   userDnPattern: {{ .Values.global.ldap.userDnPattern }}
-
+dashboard:
+  scheduler:
+    enable: false
+    fixedDelay:
+      in:
+        milliseconds: 120000
+    initialDelay:
+      in:
+        milliseconds: 300000
+    workerThreads: 50
+database:
+  cleanup:
+    scheduler:
+      enabled: {{ .Values.dbcleanup.enabled }}
+      daysInterval: {{ .Values.dbcleanup.daysinterval }}
+      cron: 0 0 0 * * *
 oes:
   sapor:
     url: http://oes-sapor:8085
@@ -57,6 +64,8 @@ oes:
   policyGate:
     url: http://oes-gate:8084
     path: /v1/data/
+  auditservice:
+    url: "http://oes-audit-service:8097"
   ui:
   # Ex: "https://oes-poc.dev.opsmx.org/"
     url: "{{ .Values.global.oesUI.protocol }}://{{ .Values.global.oesUI.host }}/ui"
