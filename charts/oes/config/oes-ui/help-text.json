@@ -1668,7 +1668,8 @@
   },
   "PASSWORD": {
     "TOOLTIP": "Password",
-    "VALIDATION_MESSAGE":{
+    "VALIDATION_MESSAGE": {	
+      "required": "Password cannot be empty"	
     }
   },
   "PASSWORDCOMMAND": {
