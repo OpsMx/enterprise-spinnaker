@@ -568,6 +568,10 @@
         "TOOLTIP": "The duration for which the canary analysis was performed, 1 lifetime hour is equal to 1 hour.",
         "VALIDATION_MESSAGE": {}
       },
+      "LIFETIME_MINUTES": {
+        "TOOLTIP": "Minutes to let the analysis run before making a final determination",
+        "VALIDATION_MESSAGE": {}
+      },
       "RECLASSIFICATION_DURATION": {
         "TOOLTIP": "The time taken to perform reclassification",
         "VALIDATION_MESSAGE": {}
@@ -1664,7 +1668,8 @@
   },
   "PASSWORD": {
     "TOOLTIP": "Password",
-    "VALIDATION_MESSAGE":{
+    "VALIDATION_MESSAGE": {	
+      "required": "Password cannot be empty"	
     }
   },
   "PASSWORDCOMMAND": {
@@ -2170,7 +2175,7 @@
   },
   "CLOUDWATCH":{
     "HEADER": "AWS-CLOUDWATCH",
-    "BODY":"",
+    "BODY":"<span>Amazon CloudWatch Can be used as a monitoring provider in the verification gates</span>",
     "ACCOUNTNAME":{
       "TOOLTIP":"User defined name for the AWS-CLOUDWATCH account",
       "VALIDATION_MESSAGE":{
@@ -2747,7 +2752,7 @@
       "HEADER": "Autopilot",
       "BODY":"",
       "ACCOUNTNAME":{
-        "TOOLTIP":"User-defined account name for your Sonarqube access. ",
+        "TOOLTIP":"User defined name for the Autopilot account",
         "VALIDATION_MESSAGE":{
       "noSpecialCharacters": "Account Name cannot contain special characters other than -",
       "cannotContainSpace":"Account Name cannot contain space",
