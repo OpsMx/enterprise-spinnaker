@@ -4,8 +4,8 @@ apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
   annotations:
-{{- if .Values.ingress.annotations }}
-{{ toYaml .Values.ingress.annotations | indent 4 }}
+{{- if .Values.spinDeck.ingress.annotations }}
+{{ toYaml .Values.global.spinDeck.annotations | indent 4 }}
 {{- end }}
     cert-manager.io/issuer: letsencrypt-prod
     kubernetes.io/ingress.class: nginx
@@ -18,7 +18,7 @@ metadata:
   name: spinnaker-deck-ingress
 spec:
   rules:
-  - host: {{ .Values.spinnaker.ingress.host }}
+  - host: {{ .Values.global.spinDeck.host }}
     http:
       paths:
       - backend:
@@ -30,15 +30,15 @@ spec:
         pathType: ImplementationSpecific
   tls:
   - hosts:
-    - {{ .Values.spinnaker.ingress.host }}
+    - {{ .Values.global.spinDeck.host }}
     secretName: spinnaker-deck-ingress
 ---
 apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
   annotations:
-{{- if .Values.ingressGate.annotations }}
-{{ toYaml .Values.ingressGate.annotations | indent 4 }}
+{{- if .Values.global.spinGate.annotations }}
+{{ toYaml .Values.global.spinGate.annotations | indent 4 }}
 {{- end }}
     cert-manager.io/issuer: letsencrypt-prod
     kubernetes.io/ingress.class: nginx
@@ -51,7 +51,7 @@ metadata:
   name: spinnaker-gate-ingress
 spec:
   rules:
-  - host: {{ tpl .Values.spinnaker.ingressGate.host . }}
+  - host: {{ tpl .Values.global.spinGate.host . }}
     http:
       paths:
       - backend:
@@ -77,7 +77,7 @@ spec:
         pathType: ImplementationSpecific
   tls:
   - hosts:
-    - {{ .Values.spinnaker.ingressGate.host }}
+    - {{ .Values.global.spinGate.host }}
     secretName: spinnaker-gate-ingress
 {{- end }}
 {{- end }}
