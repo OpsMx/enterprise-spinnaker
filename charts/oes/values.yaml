@@ -354,7 +354,7 @@ auditClient:
   ##
   image:
     repository: ubi8-oes-audit-client
-    tag: v4.0.3.1-rc3
+    tag: v4.0.3.1-rc4
     pullPolicy: IfNotPresent
 
   serviceAnnotations: {}
@@ -536,7 +536,7 @@ platform:
   ## Image specific details
   image:
     repository: ubi8-oes-platform
-    tag: v4.0.3.1-rc1
+    tag: v4.0.3.1-rc2
     pullPolicy: IfNotPresent
 
   annotations:
