@@ -332,7 +332,7 @@ audit:
   ##
   image:
     repository: ubi8-oes-audit-service
-    tag: v4.0.3.1-rc3
+    tag: v4.0.3.1-rc5
     pullPolicy: IfNotPresent
 
   serviceAnnotations: {}
