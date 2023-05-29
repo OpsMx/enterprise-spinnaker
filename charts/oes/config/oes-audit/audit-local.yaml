@@ -32,3 +32,6 @@ feign:
       url: http://oes-visibility:8096
     dashboard:
       url: http://oes-dashboard:8094
+db:
+  migration:
+    enabled: true      
