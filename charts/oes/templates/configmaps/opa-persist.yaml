@@ -7,7 +7,6 @@ data:
     kubectl get po -n {{ .Release.Namespace }} -o jsonpath='{range .items[*]}{..metadata.name}{"\t"}{..containerStatuses..ready}{"\n"}{end}' > /tmp/inst.status
     SAPOR=$(grep oes-sapor /tmp/inst.status | awk '{print $2}')
     PLATFORM=$(grep oes-platform /tmp/inst.status | awk '{print $2}')
-
     wait_period=$(($wait_period+10))
 
     if [ "$SAPOR" == "true" ] && [ "$PLATFORM" == "true" ];
@@ -16,7 +15,7 @@ data:
       set -x
       sleep 5
       BASEURL=http://oes-sapor:8085
-      USERPASS="-u ${GATEUSER}:${GATEPASS}"
+      USERPASS="${GATEUSER}"
       curl -H x-spinnaker-user:$USERPASS $BASEURL/oes/policy/list > listofpolicies.json
       #Get the policy NAMES
       [ -s "listofpolicies.json" ] && (cat listofpolicies.json | jq .[] | jq -r .policyName > policies) || sleep infinity
@@ -24,12 +23,10 @@ data:
       while read -e name; do
         #Get content
         curl -H x-spinnaker-user:$USERPASS $BASEURL/oes/policy/$name > tmp.json
-
         #Get Policy ID
         ID=`cat tmp.json|jq .response | jq '.policyId'`
         #Delete Policy ID
         cat tmp.json|jq .response | jq 'del(.policyId)'  > update.json
-
         #update
         curl -H x-spinnaker-user:$USERPASS -X PUT -H "Content-Type: application/json" -d @update.json $BASEURL/oes/v1/policy/$ID
       done <  policies
