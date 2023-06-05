@@ -1,3 +1,6 @@
+ok-http-client:
+  interceptor:
+    skipHeaderCheck: true
 retrofit:
   connectTimeout: 60000
   readTimeout: 60000
