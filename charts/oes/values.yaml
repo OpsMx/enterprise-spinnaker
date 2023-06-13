@@ -395,7 +395,7 @@ dashboard:
   ## Image specific details
   image:
     repository: ubi8-oes-dashboard
-    tag: v4.0.3.1-rc1
+    tag: v4.0.3.1-rc2
     pullPolicy: IfNotPresent
 
   annotations:
@@ -459,7 +459,7 @@ gate:
   ## Image specific details
   image:
     repository: ubi8-gate
-    tag: v4.0.3.1-rc1
+    tag: v4.0.3.1-rc2
     pullPolicy: IfNotPresent
 
   serviceAnnotations: {}
@@ -536,7 +536,7 @@ platform:
   ## Image specific details
   image:
     repository: ubi8-oes-platform
-    tag: v4.0.3.1-rc2
+    tag: v4.0.3.1-rc3
     pullPolicy: IfNotPresent
 
   annotations:
