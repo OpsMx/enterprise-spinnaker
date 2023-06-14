@@ -249,7 +249,7 @@
         }
       },
       "GCP_FILE": {
-        "TOOLTIP": "The path to a JSON service account that Spinnaker will use as credentials. This is only needed if Spinnaker is not deployed on a Google Compute Engine VM, or needs permissions not afforded to the VM it is running on. Refer https://cloud.google.com/compute/docs/access/service-accounts for more information",
+        "TOOLTIP": "Upload the kubeconfig file. By default, it will be under the user’s home directory in the typical .kube/config location",
         "VALIDATION_MESSAGE": {
           "required": "File cannot be empty"
         }
@@ -258,6 +258,12 @@
         "TOOLTIP": "",
         "VALIDATION_MESSAGE": {
           "required": "Please Select AWS Account"
+        }
+      },
+      "PROJECT_NAME": {
+        "TOOLTIP": "Name of your Google Cloud project",
+        "VALIDATION_MESSAGE": {
+          "required": "Project Name cannot be empty"
         }
       }
     },
