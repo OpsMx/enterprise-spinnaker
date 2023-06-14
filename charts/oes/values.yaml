@@ -459,7 +459,7 @@ gate:
   ## Image specific details
   image:
     repository: ubi8-gate
-    tag: v4.0.3.1-rc2
+    tag: v4.0.3.1-rc3
     pullPolicy: IfNotPresent
 
   serviceAnnotations: {}
