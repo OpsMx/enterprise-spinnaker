@@ -332,7 +332,7 @@ audit:
   ##
   image:
     repository: ubi8-oes-audit-service
-    tag: v4.0.3.1-rc5
+    tag: v4.0.3.1-rc6
     pullPolicy: IfNotPresent
 
   serviceAnnotations: {}
@@ -354,7 +354,7 @@ auditClient:
   ##
   image:
     repository: ubi8-oes-audit-client
-    tag: v4.0.3.1-rc5
+    tag: v4.0.3.1-rc8
     pullPolicy: IfNotPresent
 
   serviceAnnotations: {}
@@ -459,7 +459,7 @@ gate:
   ## Image specific details
   image:
     repository: ubi8-gate
-    tag: v4.0.3.1-rc3
+    tag: v4.0.3.1-rc5
     pullPolicy: IfNotPresent
 
   serviceAnnotations: {}
@@ -536,7 +536,7 @@ platform:
   ## Image specific details
   image:
     repository: ubi8-oes-platform
-    tag: v4.0.3.1-rc3
+    tag: v4.0.3.1-rc5
     pullPolicy: IfNotPresent
 
   annotations:
@@ -694,7 +694,7 @@ ui:
   ## Image specific details
   image:
     repository: ubi8-oes-ui
-    tag: v4.0.3.1-rc5
+    tag: v4.0.3.1-rc6
     pullPolicy: IfNotPresent
 
   annotations:
