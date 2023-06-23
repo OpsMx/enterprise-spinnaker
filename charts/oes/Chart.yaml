@@ -2,7 +2,7 @@ apiVersion: v2
 name: oes
 version: 4.0.11
 appVersion: 4.0.3.1
-description: "ISD and Spinnaker with v1.28.4 with Opa,Pipeline template fixes"
+description: "ISD and Spinnaker with v1.28.4 with Peroidic Data Cleanup feature and Opa,Pipeline template fixes"
 icon: https://raw.githubusercontent.com/OpsMx/enterprise-spinnaker/master/img/opsmx.png
 maintainers:
 - email: srinivas@opsmx.io
