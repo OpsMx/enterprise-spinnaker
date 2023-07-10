@@ -31,9 +31,9 @@ spec:
         volumeMounts:
         - mountPath: /tmp/config
           name: github-creation
-      {{- if .Values.imagePullSecret}}
+      {{- if .Values.imagePullSecret }}
       imagePullSecrets:
-      - name: {{ .Values.imagePullSecret}}
+      - name: {{ .Values.imagePullSecret }}
       {{- end }}
       restartPolicy: Never
       volumes:
