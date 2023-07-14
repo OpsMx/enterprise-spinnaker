@@ -346,13 +346,13 @@ configmapReload:
     extraArgs: {}
     ## Additional configmap-reload volume directories
     ##
-    extraVolumeDirs: 
+    extraVolumeDirs:
       - /etc/alerts.d
 
 
     ## Additional configmap-reload mounts
     ##
-    extraConfigmapMounts: 
+    extraConfigmapMounts:
       - name: spinnaker-alerts
         mountPath: /etc/alerts.d
         subPath: ""
@@ -671,7 +671,7 @@ server:
     #   hostPath: /etc/kubernetes/certs
     #   readOnly: true
 
-  extraConfigmapMounts: 
+  extraConfigmapMounts:
     - name: spinnaker-alerts
       mountPath: /etc/alerts.d
       subPath: ""
@@ -1220,7 +1220,7 @@ serverFiles:
       - /etc/config/rules
       - /etc/config/alerts
 
-    # A scrape configuration for Spinnaker services 
+    # A scrape configuration for Spinnaker services
     scrape_configs:
       - job_name: opsmx_spinnaker_metrics
         honor_labels: true

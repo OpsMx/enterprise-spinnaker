@@ -32,7 +32,7 @@ groups:
       summary: Clouddriver-ro-deck Spinnaker service is down
     expr: up{job="opsmx_spinnaker_metrics", service="spin-clouddriver-ro-deck"} == 0
     labels:
-      severity: critical    
+      severity: critical
   - alert: gate-is-down
     annotations:
       description: 'Service {{$labels.service}} with pod name {{$labels.pod}} in namespace {{$labels.namespace}}
@@ -96,7 +96,7 @@ groups:
       summary: Rosco Spinnaker service is down
     expr: up{job="opsmx_spinnaker_metrics", service="spin-rosco"} == 0
     labels:
-      severity: critical        
+      severity: critical
 - name: latency-too-high
   rules:
   - alert: clouddriver-ro-latency-too-high
@@ -130,7 +130,7 @@ groups:
       severity: warning
     annotations:
       description: "Latency of the Service {{$labels.service}} is {{$value}} seconds for {{ $labels }}"
-      summary: Latency of the service {{ $labels.service }} in namespace {{$labels.namespace}} is high    
+      summary: Latency of the service {{ $labels.service }} in namespace {{$labels.namespace}} is high
   - alert: gate-latency-too-high
     expr: sum(rate(gate:controller:invocations__total{service="spin-gate"}[5m])) by (controller, instance, method, success, statusCode, service, namespace)/ sum(rate(gate:controller:invocations__count_total{service="spin-gate"}[5m])) by (controller, instance, method, success, statusCode, service, namespace) > 0.5
     for: 15m
@@ -194,7 +194,7 @@ groups:
       severity: warning
     annotations:
       description: "Latency of the Service {{$labels.service}} is {{$value}} seconds for {{ $labels }}"
-      summary: Latency of the service {{ $labels.service }} in namespace {{$labels.namespace}} is high     
+      summary: Latency of the service {{ $labels.service }} in namespace {{$labels.namespace}} is high
 - name: jvm-too-high
   rules:
   - alert: clouddriver-rw-pod-may-be-evicted-soon
@@ -326,7 +326,7 @@ groups:
       summary: oes-dashboard scrape target is down
     expr: up{component="dashboard"}==0
     labels:
-      severity: critical		  
+      severity: critical
   - alert: oes-platform-scrape-target-is-down
     annotations:
       description: The scrape target endpoint of component {{$labels.component}} in namespace {{$labels.kubernetes_namespace}} is down
@@ -340,7 +340,7 @@ groups:
       summary: oes-sapor scrape target is down
     expr: up{component="sapor"}==0
     labels:
-      severity: critical		  
+      severity: critical
   - alert: oes-visibility-scrape-target-is-down
     annotations:
       description: The scrape target endpoint of component {{$labels.component}} in namespace {{$labels.kubernetes_namespace}} is down
@@ -348,7 +348,7 @@ groups:
     expr: up{component="visibility"}==0
     labels:
       severity: critical
-- name: prometheus-job-down 
+- name: prometheus-job-down
   rules:
   - alert: prometheus-job-is-down
     expr: up{job="prometheus"} == 0
@@ -357,7 +357,7 @@ groups:
       severity: warning
     annotations:
       summary: The Default Prometheus Job is Down (job {{ $labels.job}})
-      description: "Default Prometheus Job is Down LABELS = {{ $labels }}" 
+      description: "Default Prometheus Job is Down LABELS = {{ $labels }}"
 - name: volume-is-almost-full (< 10% left)
   rules:
   - alert: pvc-storage-full
@@ -411,7 +411,7 @@ groups:
       severity: warning
     annotations:
       summary: Latency of the component {{ $labels.component }} in namespace {{$labels.kubernetes_namespace}} is high
-      description: "Latency of the component {{ $labels.component }} is {{ $value }} seconds for {{ $labels }}" 
+      description: "Latency of the component {{ $labels.component }} is {{ $value }} seconds for {{ $labels }}"
   - alert: oes-sapor-latency-too-high
     expr: sum(rate(http_server_requests_seconds_sum{component="sapor"}[2m])) by (kubernetes_pod_name, method, outcome, status, component, kubernetes_namespace, uri)/sum(rate(http_server_requests_seconds_count{component="sapor"}[2m])) by (kubernetes_pod_name, method, outcome, status, component, kubernetes_namespace, uri) > 0.5
     for: 2m
@@ -427,7 +427,7 @@ groups:
       severity: warning
     annotations:
       summary: Latency of the component {{ $labels.component }} in namespace {{$labels.kubernetes_namespace}} is high
-      description: "Latency of the component {{ $labels.component }} is {{ $value }} seconds for {{ $labels }}"        
+      description: "Latency of the component {{ $labels.component }} is {{ $value }} seconds for {{ $labels }}"
 - name: kube-api-server-is-down
   rules:
   - alert: kube-api-server-down
@@ -437,7 +437,7 @@ groups:
       severity: critical
     annotations:
       summary: Kube API Server job {{ $labels.job }} is down
-      description: "Kubernetes API Server service went down LABELS = {{ $labels }}" 
+      description: "Kubernetes API Server service went down LABELS = {{ $labels }}"
 - name: autopilot-component-jvm-errors
   rules:
   - alert: jvm-memory-filling-up-for-oes-audit-client
