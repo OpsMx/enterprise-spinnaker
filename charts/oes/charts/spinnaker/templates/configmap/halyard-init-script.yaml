@@ -383,7 +383,7 @@ data:
         cp /tmp/spinnaker/.hal/decrypted/* /tmp/spinnaker/.hal/
         rm -rf /tmp/spinnaker/.hal/decrypted/
       fi
-    fi  
+    fi
     ############# Auto Configuration for Custom Stages in ORCA #############
 
     if [ -d "/tmp/spinnaker/clusterconfig/" ]
