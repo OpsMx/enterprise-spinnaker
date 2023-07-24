@@ -1626,7 +1626,7 @@ if __name__ == '__main__':
 
     if n != 30:
         print(
-            "Please pass valid 25 arguments <platform_db-name> <platform_host> <oes-db-name> <oes-db-host> <autopilot-db-name> <autopilot-db-host> <audit_db-name> <audit-db-host> <visibility_db-name> <visibility-db-host> "
+            "Please pass valid 29 arguments <platform_db-name> <platform_host> <oes-db-name> <oes-db-host> <autopilot-db-name> <autopilot-db-host> <audit_db-name> <audit-db-host> <visibility_db-name> <visibility-db-host> "
             "<db-port> <user-name> <password> <isd-gate-url> <isd-admin-username> <isd-admin-password> <sapor-host-url> <audit-service-url> <redis/sql/postgres> <redis-host/sql-orca-host/postgres-orca-host> <redis-port/sql-orca-port/postgres-orca-port> <redis-username/sql-orca-username/postgres-orca-username> <redis-password/sql-orca-password/postgres-orca-password> <sql-front50-host/postgres-front50-host> <sql-front50-port/postgres-front50-port> <sql-front50-username/postgres-front50-username> <sql-front50-password/postgres-front50-password> <migration-flag> <isd-platform-url>")
         exit(1)
 
