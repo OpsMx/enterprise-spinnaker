@@ -1550,9 +1550,9 @@ def get_sql_orca_db_conn():
     if spin_db_type == 'sql':
         #Establishing the spinnaker orca sql database connection
         if migrate_data_flag == 'true':
-            sqldb_orca = mysql.connector.connect(database='orca', user=spin_db_username, password=spin_db_password, host=spin_db_host, autocommit = True)
+            sqldb_orca = mysql.connector.connect(database='orca', user=spin_orca_db_username, password=spin_orca_db_password, host=spin_orca_db_host, autocommit = True)
         else:
-            sqldb_orca = mysql.connector.connect(database='orca', user=spin_db_username, password=spin_db_password, host=spin_db_host)
+            sqldb_orca = mysql.connector.connect(database='orca', user=spin_orca_db_username, password=spin_orca_db_password, host=spin_orca_db_host)
         print("Spinnaker orca database connection established successfully")         
         return sqldb_orca
 
@@ -1561,16 +1561,16 @@ def get_sql_front50_db_conn():
     if spin_db_type == 'sql':
         #Establishing the spinnaker front50 sql database connection
         if migrate_data_flag == 'true':
-            sqldb_front50 = mysql.connector.connect(database='front50', user=spin_db_username, password=spin_db_password, host=spin_db_host, autocommit = True)
+            sqldb_front50 = mysql.connector.connect(database='front50', user=spin_front50_db_username, password=spin_front50_db_password, host=spin_front50_db_host, autocommit = True)
         else:
-            sqldb_front50 = mysql.connector.connect(database='front50', user=spin_db_username, password=spin_db_password, host=spin_db_host)
+            sqldb_front50 = mysql.connector.connect(database='front50', user=spin_front50_db_username, password=spin_front50_db_password, host=spin_front50_db_host)
         print("Spinnaker front50 database connection established successfully")         
         return sqldb_front50
 
 def get_postgres_orca_db_conn():
     if spin_db_type == 'postgres':
         #Establishing the spinnaker orca postgres database connection       
-        postgresdb_orca = psycopg2.connect(database='orca', user=spin_db_username, password=spin_db_password, host=spin_db_host,port=spin_db_port)
+        postgresdb_orca = psycopg2.connect(database='orca', user=spin_orca_db_username, password=spin_orca_db_password, host=spin_orca_db_host,port=spin_orca_db_port)
         if migrate_data_flag == 'true':
            postgresdb_orca.autocommit = True
         print("Spinnaker orca database connection established successfully")         
@@ -1579,7 +1579,7 @@ def get_postgres_orca_db_conn():
 def get_postgres_front50_db_conn():
     if spin_db_type == 'postgres':
         #Establishing the spinnaker front50 postgres database connection       
-        postgresdb_front50 = psycopg2.connect(database='front50', user=spin_db_username, password=spin_db_password, host=spin_db_host,port=spin_db_port)
+        postgresdb_front50 = psycopg2.connect(database='front50', user=spin_front50_db_username, password=spin_front50_db_password, host=spin_front50_db_host,port=spin_front50_db_port)
         if migrate_data_flag == 'true':
            postgresdb_front50.autocommit = True
         print("Spinnaker front50 database connection established successfully")         
@@ -1621,20 +1621,20 @@ def verifyDBVersion(version):
 
 if __name__ == '__main__':
 	# This is not working through Job
-    #print("Parameters:\n"+str(sys.argv[1])+" "+ str(sys.argv[2])+" "+str(sys.argv[3])+" "+ str(sys.argv[4])+" "+str(sys.argv[5])+" "+ str(sys.argv[6])+" "+str(sys.argv[7])+" "+ str(sys.argv[8])+" "+str(sys.argv[9])+" "+ str(sys.argv[10])+" "+str(sys.argv[11])+" "+ str(sys.argv[12])+" ***** "+ str(sys.argv[14])+" "+str(sys.argv[15])+" ***** "+str(sys.argv[17])+" "+ str(sys.argv[18])+" "+str(sys.argv[19])+" "+ str(sys.argv[20])+" "+str(sys.argv[21])+" "+ str(sys.argv[22])+" ***** "+ str(sys.argv[24])+" "+ str(sys.argv[25])+'\n')
+    #print("Parameters:\n"+str(sys.argv[1])+" "+ str(sys.argv[2])+" "+str(sys.argv[3])+" "+ str(sys.argv[4])+" "+str(sys.argv[5])+" "+ str(sys.argv[6])+" "+str(sys.argv[7])+" "+ str(sys.argv[8])+" "+str(sys.argv[9])+" "+ str(sys.argv[10])+" "+str(sys.argv[11])+" "+ str(sys.argv[12])+" ***** "+ str(sys.argv[14])+" "+str(sys.argv[15])+" ***** "+str(sys.argv[17])+" "+ str(sys.argv[18])+" "+str(sys.argv[19])+" "+ str(sys.argv[20])+" "+str(sys.argv[21])+" "+ str(sys.argv[22])+" ***** "+ str(sys.argv[24])+" "+str(sys.argv[25])+" "+ str(sys.argv[26])+" ***** "+ str(sys.argv[28])+" "+ str(sys.argv[29])+'\n')
     n = len(sys.argv)
 
-    if n != 26:
+    if n != 30:
         print(
-            "Please pass valid 25 arguments <platform_db-name> <platform_host> <oes-db-name> <oes-db-host> <autopilot-db-name> <autopilot-db-host> <audit_db-name> <audit-db-host> <visibility_db-name> <visibility-db-host> "
-            "<db-port> <user-name> <password> <isd-gate-url> <isd-admin-username> <isd-admin-password> <sapor-host-url> <audit-service-url> <redis/sql/postgres> <redis-host/sql-host/postgres-host> <redis-port/sql-port/postgres-port> <redis-username/sql-username/postgres-username> <redis-password/sql-password/postgres-password> <migration-flag> <isd-platform-url>")
+            "Please pass valid 29 arguments <platform_db-name> <platform_host> <oes-db-name> <oes-db-host> <autopilot-db-name> <autopilot-db-host> <audit_db-name> <audit-db-host> <visibility_db-name> <visibility-db-host> "
+            "<db-port> <user-name> <password> <isd-gate-url> <isd-admin-username> <isd-admin-password> <sapor-host-url> <audit-service-url> <redis/sql/postgres> <redis-host/sql-orca-host/postgres-orca-host> <redis-port/sql-orca-port/postgres-orca-port> <redis-username/sql-orca-username/postgres-orca-username> <redis-password/sql-orca-password/postgres-orca-password> <sql-front50-host/postgres-front50-host> <sql-front50-port/postgres-front50-port> <sql-front50-username/postgres-front50-username> <sql-front50-password/postgres-front50-password> <migration-flag> <isd-platform-url>")
         exit(1)
 
     logging.basicConfig(filename='/tmp/migration_v3.12.x_to_v4.0.x.log', filemode='w',
                         format="%(asctime)s %(levelname)s %(threadName)s %(name)s %(message)s", datefmt='%H:%M:%S',
                         level=logging.INFO)
 
-    logging.info("Parameters:\n"+str(sys.argv[1])+" "+ str(sys.argv[2])+" "+str(sys.argv[3])+" "+ str(sys.argv[4])+" "+str(sys.argv[5])+" "+ str(sys.argv[6])+" "+str(sys.argv[7])+" "+ str(sys.argv[8])+" "+str(sys.argv[9])+" "+ str(sys.argv[10])+" "+str(sys.argv[11])+" "+ str(sys.argv[12])+" ***** "+ str(sys.argv[14])+" "+str(sys.argv[15])+" ***** "+str(sys.argv[17])+" "+ str(sys.argv[18])+" "+str(sys.argv[19])+" "+ str(sys.argv[20])+" "+str(sys.argv[21])+" "+ str(sys.argv[22])+" ***** "+ str(sys.argv[24])+" "+ str(sys.argv[25])+'\n')
+    logging.info("Parameters:\n"+str(sys.argv[1])+" "+ str(sys.argv[2])+" "+str(sys.argv[3])+" "+ str(sys.argv[4])+" "+str(sys.argv[5])+" "+ str(sys.argv[6])+" "+str(sys.argv[7])+" "+ str(sys.argv[8])+" "+str(sys.argv[9])+" "+ str(sys.argv[10])+" "+str(sys.argv[11])+" "+ str(sys.argv[12])+" ***** "+ str(sys.argv[14])+" "+str(sys.argv[15])+" ***** "+str(sys.argv[17])+" "+ str(sys.argv[18])+" "+str(sys.argv[19])+" "+ str(sys.argv[20])+" "+str(sys.argv[21])+" "+ str(sys.argv[22])+" ***** "+ str(sys.argv[24])+" "+str(sys.argv[25])+" "+ str(sys.argv[26])+" ***** "+ str(sys.argv[28])+" "+ str(sys.argv[29])+'\n')
 
     platform_db = sys.argv[1]
     platform_host = sys.argv[2]
@@ -1661,23 +1661,31 @@ if __name__ == '__main__':
     global redis_username
     global redis_password
 
-    global spin_db_host
-    global spin_db_port
-    global spin_db_username
-    global spin_db_password
+    global spin_orca_db_host
+    global spin_orca_db_port
+    global spin_orca_db_username
+    global spin_orca_db_password
+    global spin_front50_db_host
+    global spin_front50_db_port
+    global spin_front50_db_username
+    global spin_front50_db_password
     if spin_db_type == 'redis':     
        redis_host = sys.argv[20]
        redis_port = sys.argv[21]
        redis_username = sys.argv[22]
        redis_password = sys.argv[23]
     else:
-       spin_db_host = sys.argv[20]
-       spin_db_port = sys.argv[21]
-       spin_db_username = sys.argv[22]
-       spin_db_password = sys.argv[23]
+       spin_orca_db_host = sys.argv[20]
+       spin_orca_db_port = sys.argv[21]
+       spin_orca_db_username = sys.argv[22]
+       spin_orca_db_password = sys.argv[23]
+       spin_front50_db_host = sys.argv[24]
+       spin_front50_db_port = sys.argv[25]
+       spin_front50_db_username = sys.argv[26]
+       spin_front50_db_password = sys.argv[27]
 
-    migrate_data_flag = sys.argv[24]
-    platform_host_url = sys.argv[25]
+    migrate_data_flag = sys.argv[28]
+    platform_host_url = sys.argv[29]
 
     # Establishing the platform db connection
     platform_conn = psycopg2.connect(database=platform_db, user=user_name, password=password, host=platform_host,port=port)
