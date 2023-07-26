@@ -1,3 +1,4 @@
+{{- if or (eq .Values.installationMode "OES-AP")  (eq .Values.installationMode "EASY") -}}
 apiVersion: v1
 data:
   feature.yml: |
@@ -13,3 +14,4 @@ metadata:
   labels:
     app: oes
   name: isd-feature-flag-config
+{{- end -}}

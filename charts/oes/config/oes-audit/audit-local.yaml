@@ -34,4 +34,4 @@ feign:
       url: http://oes-dashboard:8094
 db:
   migration:
-    enabled: true      
+    enabled: true
