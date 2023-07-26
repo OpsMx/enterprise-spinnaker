@@ -34,6 +34,9 @@ oes:
   auditservice:
     enabled: true
     url: "http://oes-audit-service:8097"
+  auditclientservice:
+    name: auditclient
+    url: "http://oes-audit-client:8098"
   dashboard:
     url: http://oes-dashboard:8094
   {{- if .Values.global.commonGate.enabled }}
