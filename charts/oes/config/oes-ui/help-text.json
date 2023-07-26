@@ -148,7 +148,7 @@
       "DYNAMIC_ACCOUNT": {
         "TOOLTIP": "If Enabled, this account will be added to the spinnaker using External Account Configuration, which allows you to load the configurations dynamically without requiring redeployment of Clouddriver.",
         "VALIDATION_MESSAGE": {}
-        },         
+        },
       "ACCESS_KEY": {
         "TOOLTIP": "The default access key used to communicate with AWS",
         "VALIDATION_MESSAGE": {
@@ -1136,14 +1136,14 @@
       "startingFromNumber": "Account Name cannot start with numbers"
     }
   },
-  "ENDPOINT":{ 
+  "ENDPOINT":{
     "TOOLTIP":"The base URL of your Artifactory search is reachable at",
     "VALIDATION_MESSAGE":{
       "required":"Endpoint cannot be empty",
       "invalidUrl": "Endpoint URL is invalid"
     }
   },
-  "REPO":{ 
+  "REPO":{
     "TOOLTIP":"The repo in your artifactory to be searched",
     "VALIDATION_MESSAGE":{
       "required":"Repo cannot be empty"
