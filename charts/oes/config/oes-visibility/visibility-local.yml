@@ -1,11 +1,11 @@
 message-broker:
-  enabled: false
-  username: rabbitmq
-  password: Networks123
+  enabled: true
+  username: '{{ .Values.rabbitmq.username }}'
+  password: '{{ .Values.rabbitmq.password }}'
   host: rabbitmq-service
-  port: 5672
+  port: {{ .Values.rabbitmq.port }}
   endpoint:
-   name: rabbitmq #Type of message broker
+    name: rabbitmq
 spring:
   datasource:
 {{- if (eq .Values.secretStore "db") }}

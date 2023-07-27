@@ -447,16 +447,6 @@ stormdriver:
   image:
     repository: quay.io/opsmxpublic/stormdriver
     tag: v1.2.6
-####################################################
-# Create Controller Secret Image
-createcontroller:
-  ## Image specific details
-  image:
-    repository: create-secret
-    tag: v4.0.3.1
-    pullPolicy: IfNotPresent
-###############################################################################
-##
 ## Values of OES Gate
 ##
 gate:
