@@ -1,3 +1,11 @@
+message-broker:
+  enabled: true
+  username: '{{ .Values.rabbitmq.username }}'
+  password: '{{ .Values.rabbitmq.password }}'
+  host: rabbitmq-service
+  port: {{ .Values.rabbitmq.port }}
+  endpoint:
+    name: rabbitmq
 spring:
   datasource:
 {{- if (eq .Values.secretStore "db") }}

@@ -46,7 +46,7 @@
   },
     "CLOUDPROVIDER_CREATION": {
       "HEADER": "Cloud Target",
-      "BODY": "<p>In this page, you can create & manage Cloud Target Accounts</p>",
+      "BODY": "<div><p>Cloud Targets are integrations to cloud platforms you deploy your applications to. In this section, you’ll register credentials for your cloud platforms. Those credentials are known as accounts. ISD allows you to create & manage accounts for different cloud providers such as AWS, GCP, Kubernetes, etc.</p><p>You can create multiple accounts for the same provider.</p> <p>After saving this configuration, click on 'Sync Accounts' button to sync cloud target accounts with CD Tool.</p></div>",
       "AGENT_NAME": {
         "TOOLTIP": "",
         "VALIDATION_MESSAGE": {
@@ -255,7 +255,7 @@
         }
       },
       "AWS_ACCOUNT_NAME": {
-        "TOOLTIP": "",
+        "TOOLTIP": "Please select a valid AWS account. Do note that the Amazon ECS account will use credentials from the corresponding AWS account. If you do not see a valid AWS account in the dropdown, please create one from Cloud targets -> New Account",
         "VALIDATION_MESSAGE": {
           "required": "Please Select AWS Account"
         }
@@ -1630,6 +1630,7 @@
   "DEPLOYMENT":{
     "TOOLTIP":"This Halyard deployment will be used for Account creation / update",
     "VALIDATION_MESSAGE":{
+    
     }
   },
   "AUTHENTICATIONTYPE":{
@@ -1868,7 +1869,7 @@
     }
   },
   "SUBSCRIPTIONNAME": {
-    "TOOLTIP": "The name of the subscription to listen to. This identifier does not include the name of the project, and must already be configured for Spinnaker to work.",
+    "TOOLTIP": "The name of the subscription to listen to and it should have PubsSub Viewer and PubSub Subscriber Roles as mandatory. This identifier does not include the name of the project, and must already be configured for Spinnaker to work.",
     "VALIDATION_MESSAGE":{
       "cannotContainSpace":"Subscription Name cannot contain space",
       "required":"Subscription Name cannot be empty"
@@ -1879,7 +1880,7 @@
     "VALIDATION_MESSAGE": {}
   },
   "TEMPLATEFILE": {
-    "TOOLTIP":"Applicable only for CUSTOM message format",
+    "TOOLTIP": "To translate the Pub/Sub payload into a Spinnaker artifact, you need to create a Jinja template that defines how to transform the payload data. The Jinja template should produce a JSON list of Spinnaker artifacts as its output. You can use any valid Jinja syntax in your template. Example : https://spinnaker.io/docs/guides/user/pipeline/triggers/pubsub/#example",
     "VALIDATION_MESSAGE": {}
   },
   "AUTHENTICATIONTYPE":{
@@ -1902,7 +1903,7 @@
 },
 "GCB":{
   "HEADER": "GCB",
-  "BODY": "",
+  "BODY": "<div><p>This page allows you to connect Google Cloud Build with ISD. Google cloud build can be used as an automated trigger as well as a stage in the pipeline.</p><p>To configure a pipeline to be triggered by a completed GCB build, after this integration is succefully created, go to your application's pipeline menu. Click on the configuration stage of a pipeline, then select Pub/Sub as the automated trigger. Select Pub/Sub System type as Google and select your subscribtion name.</p><p>To run GCB Build as part of a pipeline, create a stage of type Google Cloud Build, select your GCB Account and configure the build definition.In the Produces Artifacts section, you may supply any artifacts that you expect the build to create in order to make these artifacts available to downstream stages</p><p><strong>Fields</strong>:</p><ul class='helpTextUl'><li><strong>Account Name</strong>: The user defined name of this account.<span></span></li><li><strong>Project Name</strong>: <span>The name of the GCP project in which to trigger and monitor builds</span></li><li><strong>Subscription Name</strong>: <span> The name of the PubSub subscription on which to listen for build changes</span></li><li><strong>Authentication Type</strong>: <span>Select how the external resource confirms the user credentials</span></li><li><strong>Json key file (File) </strong>: <span>JSON service account that Spinnaker will use as credentials</span></li><li><strong>Connect to CD</strong>: <span>Switch On this toggle to configure the resource in a gitops enabled CD tool</span></li><li><strong>Permissions</strong>: <span>Authorization for the account</span></li></ul></div>",
   "ACCOUNTNAME":{
     "TOOLTIP":"The name of the account to operate on",
     "VALIDATION_MESSAGE":{
@@ -1920,7 +1921,7 @@
     }
   },
   "SUBSCRIPTIONNAME": {
-    "TOOLTIP": "The name of the PubSub subscription on which to listen for build changes",
+    "TOOLTIP": "The name of the PubSub subscription on which to listen for build changes and it should have PubsSub Viewer and PubSub Subscriber Roles as mandatory.",
     "VALIDATION_MESSAGE":{
       "cannotContainSpace":"Subscription Name cannot contain space",
       "required":"Subscription Name cannot be empty"
@@ -2146,7 +2147,7 @@
   },
   "JIRA":{
     "HEADER": "Jira",
-    "BODY":"",
+    "BODY":"<span><ul><li><strong>Account Name</strong> : User defined name for the Jira account</li><li><strong>Email</strong> : Jira Email Id</li><li><strong>Token</strong> : Jira Personal Access Token</li><li><strong>Host URL</strong> : Jira Host URL</li><li><strong>Connect to CD</strong> : Switch On this toggle to configure the resource in a gitops enabled spinnaker instance</li><li><strong>Permissions</strong> : Authorization for the account</li></ul></span>",
     "ACCOUNTNAME":{
       "TOOLTIP":"User defined name for the Jira account",
       "VALIDATION_MESSAGE":{
@@ -2180,6 +2181,7 @@
       "TOOLTIP":"Switch On this toggle to configure the resource in a gitops enabled Spinnaker instance",
       "VALIDATION_MESSAGE":{}
     }
+    
   },
   "SERVICENOW":{
     "HEADER": "Service Now",
@@ -2219,7 +2221,7 @@
   ,
   "APPDYNAMICS":{
     "HEADER": "APPDYNAMICS",
-    "BODY":"",
+    "BODY":"<span><ul><li><strong>Account Name</strong> : User defined name for the APPDYNAMICS account</li><li><strong>Controller Host</strong> : APPDYNAMICS Controller Host</li><li><strong>Temporary Access Token</strong> : APPDYNAMICS Personal Temporary Access Token</li></ul></span>",
     "ACCOUNTNAME":{
       "TOOLTIP":"User defined name for the APPDYNAMICS account",
       "VALIDATION_MESSAGE":{
@@ -2270,7 +2272,7 @@
   },
   "DATADOG":{
     "HEADER": "DATADOG",
-    "BODY":"",
+    "BODY":"<span><ul><li><strong>Account Name</strong> : User defined name for the DATADOG account</li><li><strong>API Key</strong> : DATADOG API Key</li><li><strong>Application Key</strong> : DATADOG Application Key</li><li><strong>Permissions</strong> : Authorization for the account</li></ul></span>",
     "ACCOUNTNAME":{
       "TOOLTIP":"User defined name for the DATADOG account",
       "VALIDATION_MESSAGE":{
@@ -2295,7 +2297,7 @@
   },
   "DYNATRACE":{
     "HEADER": "Dynatrace",
-    "BODY":"",
+    "BODY":"<span><ul><li><strong>Account Name</strong> : User defined name for the Dynatrace account</li><li><strong>Url</strong> : Dynatrace URL. For example, https://www.dynatrace.com</li><li><strong>Api Token</strong> : Dynatrace Personal Access Token</li><li><strong>Permissions</strong> : Authorization for the account</li></ul></span>",
     "ACCOUNTNAME":{
       "TOOLTIP":"User defined name for the Dynatrace account",
       "VALIDATION_MESSAGE":{
@@ -2397,7 +2399,7 @@
     },
     "GRAYLOG":{
       "HEADER": "GRAYLOG",
-      "BODY":"<span><li><strong>Account Name</strong>: User-defined account name for your Graylog access.</li><li><strong>Endpoint</strong>: Graylog host address, from which you access the Graylog </li><li><strong>Token</strong>: The user's token </li></span>",
+      "BODY":"<span><ul><li><strong>Account Name</strong>: User-defined account name for your Graylog access.</li><li><strong>Endpoint</strong>: Graylog host address, from which you access the Graylog </li><li><strong>Token</strong>: GrayLog Personal Access Token. To generate a token, go to Greylog -> System / Users -> Users Overview, select a user and click on Edit tokens  </li></ul></span>",
       "ACCOUNTNAME":{
         "TOOLTIP":"User-defined account name for your Graylog access.",
         "VALIDATION_MESSAGE":{
@@ -2415,7 +2417,7 @@
         }
       },
       "TOKEN":{
-        "TOOLTIP":"GrayLog Personal Access Token",
+        "TOOLTIP":"GrayLog Personal Access Token. To generate a token, go to Greylog -> System / Users -> Users Overview, select a user and click on Edit tokens",
         "VALIDATION_MESSAGE":{
           "required":"Token cannot be empty"
         }
@@ -2423,7 +2425,7 @@
     },
     "NEWRELIC":{
       "HEADER": "New Relic",
-      "BODY":"<span><li><strong>Account Name</strong>: User-defined account name for your NewRelic access.</li><li><strong>Api Key</strong>: The user's token to authenticate with Newrelic</li><li><strong>Application Key</strong>: The application key identifies which account the incoming data belongs to.</li><li><strong>Account ID</strong>: Provide account ID to identify the account </li><li><strong>Query Key</strong>: Provide a query key to filter the data </li></span>",
+      "BODY":"<span><li><strong>Account Name</strong>: User-defined account name for your NewRelic access.</li><li><strong>API Key</strong>: Provide your Newrelic User Key. This can be generated from New Relic's API keys UI</li><li><strong>Application Key</strong>: The application key identifies which account the incoming data belongs to.</li><li><strong>Account ID</strong>: Provide account ID to identify the account </li><li><strong>Query Key</strong>: Provide a query key to filter the data </li></span>",
       "ACCOUNTNAME":{
         "TOOLTIP":"User-defined account name for your NewRelic access.",
         "VALIDATION_MESSAGE":{
@@ -2434,7 +2436,7 @@
     }
       },
       "APIKEY":{
-        "TOOLTIP":"NewRelic Api Key",
+        "TOOLTIP":"Provide your Newrelic User Key. This can be generated from New Relic's API keys UI",
         "VALIDATION_MESSAGE":{
           "required":"API key cannot be empty"
         }
@@ -2540,7 +2542,7 @@
     },
     "STACKDRIVER":{
       "HEADER": "Stackdriver",
-      "BODY":"",
+      "BODY":"<span><ul><p>Google Cloud's operations suite (formerly Stackdriver) provides Integrated monitoring, logging, and trace managed services for applications and systems running on Google Cloud and beyond.</p><li><strong>Account Name</strong> : User defined name for the Stackdriver account</li><li><strong>Encrypted Key</strong> : Stackdriver Encrypted Key file</li><li><strong>Permissions</strong>: Authorization for the account</li></ul></span>",
       "ACCOUNTNAME":{
         "TOOLTIP":"User defined name for the Stackdriver account",
         "VALIDATION_MESSAGE":{
@@ -2559,7 +2561,7 @@
     },
     "SUMOLOGIC":{
       "HEADER": "Sumo Logic",
-      "BODY":"",
+      "BODY":"<span><ul><li><strong>Account Name</strong>: User defined name for the Sumologic account</li><li><strong>Access ID</strong>: Sumologic Access Id. You can generate Access Id (Administration > Security > Access Keys)</li><li><strong>Access Key</strong>: Sumologic Access Key. You can generate Access Id (Administration > Security > Access Keys)</li><li><strong>Zone</strong>: Sumologic Zone</li></ul></span>",
       "ACCOUNTNAME":{
         "TOOLTIP":"User defined name for the Sumologic account",
         "VALIDATION_MESSAGE":{
@@ -2591,9 +2593,10 @@
     }
       }
     },
+    
     "VMWARETANZU":{
       "HEADER": "VMWare Tanzu Observability",
-      "BODY":"<span><li><strong>Account Name</strong>: User-defined account name for your VMWare Tanzu access</li><li><strong>Endpoint</strong>: VMWare Tanzu host address, from which you access the VMWare Tanzu</li><li><strong>Email</strong>: Provide the user's registered and authorized email</li><li><strong>API token</strong>: The user's API token </li></span>",
+      "BODY":"<span><ul><li><strong>Account Name</strong>: User-defined account name for your VMWare Tanzu access</li><li><strong>Endpoint</strong>: VMWare Tanzu host address, from which you access the VMWare Tanzu</li><li><strong>Email</strong>: Provide the user's registered and authorized email</li><li><strong>API token</strong>: The user's API token. To generate an API token, log in to your instance  as user with the API Tokens permission. Click the gear icon  at the top right of the toolbar and select your user name. On the API Access tab, click Generate. </li></ul></span>",
       "ACCOUNTNAME":{
         "TOOLTIP":"User-defined account name for your VMWare Tanzu access",
         "VALIDATION_MESSAGE":{
@@ -2618,7 +2621,7 @@
         }
       },
       "API_TOKEN":{
-        "TOOLTIP":"The user's API token ",
+        "TOOLTIP":"The user's API token. To generate an API token, log in to your instance  as user with the API Tokens permission. Click the gear icon  at the top right of the toolbar and select your user name. On the API Access tab, click Generate. ",
         "VALIDATION_MESSAGE":{
           "required":"Api Token cannot be empty"
         }
@@ -2824,7 +2827,7 @@
     },
     "AUTOPILOT":{
       "HEADER": "Autopilot",
-      "BODY":"",
+      "BODY": "<div><p>This page allows you to configure autopilot, which can be used as a connector in the approval stage. To include verification information in an approval gate, add a new row in the connector configuration, selct 'Verification' from the connector dropdwon, select your Autopilot account and provide the Canary ID.</p><p><strong>Fields</strong>:</p><ul class='helpTextUl'><li><strong>Account Name</strong>: User defined name for the Autopilot account<span></span></li><li><strong>User Name</strong>: <span>Autopilot (ISD) User Name</span></li><li><strong>Permissions</strong>: <span>Authorization for the account</span></li></ul></div>",
       "ACCOUNTNAME":{
         "TOOLTIP":"User defined name for the Autopilot account",
         "VALIDATION_MESSAGE":{
@@ -3020,22 +3023,22 @@
   },
   "USAGE_INSIGHTS": {
     "APPLICATIONS": {
-      "TOOLTIP": "Application"
+      "TOOLTIP": "Total number of applications and active applications over time"
     },
     "PIPELINES": {
-      "TOOLTIP": "Pipelines"
+      "TOOLTIP": "Total number of pipelines and active pipelines over time"
     },
     "PIPELINES_WITH_INTELLIGENT_GATES": {
-      "TOOLTIP": "Pipelines with Intelligent Gates"
+      "TOOLTIP": "Total number of pipelines and the number pipelines with intelligent gates(approval, policy and verification gates) over time"
     },
     "INTELLIGENT_GATES_BREAKDOWN": {
-      "TOOLTIP": "Intelligent Gates Breakdown"
+      "TOOLTIP": "This graph explains the intelligent gates usage in pipelines over time."
     },
     "GATES_USED": {
-      "TOOLTIP": "Gates Used"
+      "TOOLTIP": "This graph explains the intelligent gates executions over time."
     },
     "USERS": {
-      "TOOLTIP": "Users"
+      "TOOLTIP": "The total number of registered users to this ISD instance Vs the number of active users over time"
     }
   },
   "DELIVERY_INSIGHTS": {
