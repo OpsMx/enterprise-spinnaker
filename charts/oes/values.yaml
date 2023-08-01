@@ -303,7 +303,7 @@ autopilot:
   ## Image specific details
   image:
     repository: ubi8-oes-autopilot
-    tag: v4.0.4-rc4
+    tag: v4.0.4-rc5
     pullPolicy: IfNotPresent
 
   annotations:
@@ -596,7 +596,7 @@ sapor:
   ## Image specific details
   image:
     repository: ubi8-oes-sapor
-    tag: v4.0.4-rc4
+    tag: v4.0.4-rc5
     pullPolicy: IfNotPresent
 
   annotations:
