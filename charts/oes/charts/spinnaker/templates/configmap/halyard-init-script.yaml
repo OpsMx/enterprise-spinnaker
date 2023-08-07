@@ -414,11 +414,12 @@ data:
            JIRA_USER=$(kubectl get secret jira-secret -o jsonpath='{.data.JIRA_USERNAME}' -n ${SPINNAKER_NAMESPACE} | base64 -d)
            JIRA_DNS=$(kubectl get secret jira-secret -o jsonpath='{.data.JIRA_URL}' -n ${SPINNAKER_NAMESPACE} | base64 -d)
            JIRA_TOKN=$(kubectl get secret jira-secret -o jsonpath='{.data.JIRA_TOKEN}' -n ${SPINNAKER_NAMESPACE} | base64 -d)
-           JIRA_BASE64_USR_PASSWD=$(echo -n "$JIRA_USER:$JIRA_TOKN" | base64)
+           JIRA_BASE64_USR_PASSWD=$(echo -n "$JIRA_USER:$JIRA_TOKN" | base64 | tr -d '\n')
            sed -i s%JIRA_URL%${JIRA_DNS}%g /tmp/spinnaker/.hal/default/profiles/orca-local.yml
            sed -i  s/JIRA_BASE64_USR_PASSWD/${JIRA_BASE64_USR_PASSWD}/g /tmp/spinnaker/.hal/default/profiles/orca-local.yml
         else
            echo "Not able to find the ServiceNow secret file"
         fi
      fi
+     echo "Decrypted files are present"
     fi
