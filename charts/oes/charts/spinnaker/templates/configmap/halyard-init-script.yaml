@@ -418,7 +418,7 @@ data:
            sed -i s%JIRA_URL%${JIRA_DNS}%g /tmp/spinnaker/.hal/default/profiles/orca-local.yml
            sed -i  s/JIRA_BASE64_USR_PASSWD/${JIRA_BASE64_USR_PASSWD}/g /tmp/spinnaker/.hal/default/profiles/orca-local.yml
         else
-           echo "Not able to find the ServiceNow secret file"
+           echo "Not able to find the Jira secret file"
         fi
      fi
      echo "Decrypted files are present"
