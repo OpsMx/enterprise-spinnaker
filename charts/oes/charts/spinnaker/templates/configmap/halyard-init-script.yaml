@@ -411,14 +411,29 @@ data:
         if [ -r "/tmp/spinnaker/clusterconfig/jira-secret.yaml" ]
         then
            #### Extracting the JIRA information from secret ####
-           JIRA_USER=$(kubectl get secret jira-secret -o jsonpath='{.data.JIRA_USERNAME}' -n ${SPINNAKER_NAMESPACE} | base64 -d)
-           JIRA_DNS=$(kubectl get secret jira-secret -o jsonpath='{.data.JIRA_URL}' -n ${SPINNAKER_NAMESPACE} | base64 -d)
-           JIRA_TOKN=$(kubectl get secret jira-secret -o jsonpath='{.data.JIRA_TOKEN}' -n ${SPINNAKER_NAMESPACE} | base64 -d)
-           JIRA_BASE64_USR_PASSWD=$(echo -n "$JIRA_USER:$JIRA_TOKN" | base64)
-           sed -i s%JIRA_URL%${JIRA_DNS}%g /tmp/spinnaker/.hal/default/profiles/orca-local.yml
-           sed -i  s/JIRA_BASE64_USR_PASSWD/${JIRA_BASE64_USR_PASSWD}/g /tmp/spinnaker/.hal/default/profiles/orca-local.yml
+           JIRA_TYPE=$(kubectl get secret jira-secret -o jsonpath='{.data.JIRA_TYPE}' -n ${SPINNAKER_NAMESPACE} | base64 -d)
+           if [ "$JIRA_TYPE" == "onPremJira" ];then
+             echo "Using the Jira On Prem Details"
+             JIRA_USER=$(kubectl get secret jira-secret -o jsonpath='{.data.JIRA_USERNAME}' -n ${SPINNAKER_NAMESPACE} | base64 -d)
+             JIRA_DNS=$(kubectl get secret jira-secret -o jsonpath='{.data.JIRA_URL}' -n ${SPINNAKER_NAMESPACE} | base64 -d)
+             JIRA_TOKN=$(kubectl get secret jira-secret -o jsonpath='{.data.JIRA_TOKEN}' -n ${SPINNAKER_NAMESPACE} | base64 -d)
+             JIRA_BASE64_USR_PASSWD=$JIRA_TOKN
+             sed -i s%JIRA_URL%${JIRA_DNS}%g /tmp/spinnaker/.hal/default/profiles/orca-local.yml
+             sed -i 's/Basic JIRA_BASE64_USR_PASSWD/Bearer TOKEN/g' /tmp/spinnaker/.hal/default/profiles/orca-local.yml
+             sed -i s/TOKEN/${JIRA_TOKN}/g /tmp/spinnaker/.hal/default/profiles/orca-local.yml
+           else
+             if [ "$JIRA_TYPE" == "cloudJira" ];then
+               echo "Using the Jira Cloud Details"
+               JIRA_USER=$(kubectl get secret jira-secret -o jsonpath='{.data.JIRA_USERNAME}' -n ${SPINNAKER_NAMESPACE} | base64 -d)
+               JIRA_DNS=$(kubectl get secret jira-secret -o jsonpath='{.data.JIRA_URL}' -n ${SPINNAKER_NAMESPACE} | base64 -d)
+               JIRA_TOKN=$(kubectl get secret jira-secret -o jsonpath='{.data.JIRA_TOKEN}' -n ${SPINNAKER_NAMESPACE} | base64 -d)
+               JIRA_BASE64_USR_PASSWD=$(echo -n "$JIRA_USER:$JIRA_TOKN" | base64 )
+               sed -i s%JIRA_URL%${JIRA_DNS}%g /tmp/spinnaker/.hal/default/profiles/orca-local.yml
+               sed -i s/JIRA_BASE64_USR_PASSWD/${JIRA_BASE64_USR_PASSWD}/g /tmp/spinnaker/.hal/default/profiles/orca-local.yml
+             fi
+           fi
         else
-           echo "Not able to find the ServiceNow secret file"
+          echo "Not able to find the JIRA secret file"
         fi
-     fi
+      fi
     fi
