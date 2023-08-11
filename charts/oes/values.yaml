@@ -453,7 +453,7 @@ gate:
   ## Image specific details
   image:
     repository: ubi8-gate
-    tag: v4.0.4-rc6
+    tag: v4.0.4-rc7
     pullPolicy: IfNotPresent
 
   serviceAnnotations: {}
@@ -530,7 +530,7 @@ platform:
   ## Image specific details
   image:
     repository: ubi8-oes-platform
-    tag: v4.0.4-rc4
+    tag: v4.0.4-rc6
     pullPolicy: IfNotPresent
 
   annotations:
@@ -596,7 +596,7 @@ sapor:
   ## Image specific details
   image:
     repository: ubi8-oes-sapor
-    tag: v4.0.4-rc5
+    tag: v4.0.4-rc6
     pullPolicy: IfNotPresent
 
   annotations:
@@ -688,7 +688,7 @@ ui:
   ## Image specific details
   image:
     repository: ubi8-oes-ui
-    tag: v4.0.4-rc5
+    tag: v4.0.4-rc7
     pullPolicy: IfNotPresent
 
   annotations:
@@ -706,7 +706,7 @@ visibility:
   ## Image specific details
   image:
     repository: ubi8-oes-visibility
-    tag: v4.0.4-rc4
+    tag: v4.0.4-rc5
     pullPolicy: IfNotPresent
 
   annotations:
@@ -865,7 +865,7 @@ spinnaker:
   #### The values below this line apply mainly to non-gitOps Spinnaker, best not changed
   ###############################################################################################
   halyard:
-    spinnakerVersion: 1.26.6
+    spinnakerVersion: 1.30.1
     image:
       repository: quay.io/opsmxpublic/ubi8-spin-halyard
       tag: 1.28.1-v4.0.2
