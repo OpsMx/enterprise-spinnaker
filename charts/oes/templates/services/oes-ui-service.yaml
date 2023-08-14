@@ -23,6 +23,12 @@ spec:
     {{- if eq  .Values.k8sServiceType "NodePort" }}
     nodePort: {{ .Values.global.oesUI.port }}
     {{- end }}
+    {{- if eq .Values.k8sServiceType "LoadBalancer" }}
+  - name: "lbhttp"
+    port: 80
+    targetPort: 8080
+    nodePort: {{ .Values.global.oesUI.port }}
+    {{- end }}
   selector:
     app: oes
     component: ui
