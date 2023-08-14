@@ -18,7 +18,7 @@ groups:
         severity: critical
       annotations:
         summary: 'Container {{ $labels.container }} Memory usage inside POD {{ $labels.pod}} is high in {{ $labels.namespace}}'
-        description: "Container Memory usage is above 80%\n  VALUE = {{ $value }}\n  LABELS = {{ $labels }}"  
+        description: "Container Memory usage is above 80%\n  VALUE = {{ $value }}\n  LABELS = {{ $labels }}"
 - name: node_cpu_greater_than_80
   rules:
     - alert: NODE_CPU_IS_HIGH

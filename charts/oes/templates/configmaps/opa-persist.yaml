@@ -1,3 +1,5 @@
+{{- if or (eq .Values.installationMode "OES-AP")  (eq .Values.installationMode "EASY") -}}
+{{- if .Values.opa.enabled -}}
 apiVersion: v1
 data:
   opa-persist.sh: |
@@ -45,3 +47,5 @@ data:
 kind: ConfigMap
 metadata:
   name: opa-persist
+{{- end -}}
+{{- end -}}

@@ -1,0 +1,5 @@
+1. Download the https://github.com/OpsMx/enterprise-spinnaker/blob/v4.0.4/scripts/migrationscript_v403_to_v404.yaml to your local
+2. Apply the downloaded file to install new audit-service deployment pod
+kubectl apply -f migrationscript_v403_to_v404.yaml -n <NAMESPACE>
+
+Note: Make sure should see the new pod with name: oes-audit-service-new and should see the migration related logs in the new pod

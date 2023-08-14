@@ -320,9 +320,16 @@ data:
       if [ -z $spinnaker_applications ]
       then
         spin application list > app.json
-        spinnaker_app=$(cat app.json | jq -r '[.[].name]| @csv' | sed 's/","/,/g; s/^"\|"$//g')
-        rm -rf app.json
-        get_pipelines_data  $spinnaker_app
+        testappjson=$(cat app.json)
+        if [ "$testappjson" == "null" ]; then
+          echo "ERROR: spin application list , There are no applications"
+          echo "Please check the spin-cli-config secret username and password is valid or not"
+          exit 1
+        else
+          spinnaker_app=$(cat app.json | jq -r '[.[].name]| @csv' | sed 's/","/,/g; s/^"\|"$//g')
+          rm -rf app.json
+          get_pipelines_data  $spinnaker_app
+        fi
       else
         get_pipelines_data  $spinnaker_applications
       fi
@@ -483,9 +490,16 @@ data:
       if [ -z $spinnaker_applications ]
       then
         spin application list > app.json
-        spinnaker_app=$(cat app.json | jq -r '[.[].name]| @csv' | sed 's/","/,/g; s/^"\|"$//g')
-        rm -rf app.json
-        get_pipelines_data $spinnaker_app
+        testappjson=$(cat app.json)
+        if [ "$testappjson" == "null" ]; then
+          echo "ERROR: spin application list , There are no applications"
+          echo "Please check the spin-cli-config secret username and password is valid or not"
+          exit 1
+        else
+          spinnaker_app=$(cat app.json | jq -r '[.[].name]| @csv' | sed 's/","/,/g; s/^"\|"$//g')
+          rm -rf app.json
+          get_pipelines_data  $spinnaker_app
+        fi
       else
         get_pipelines_data $spinnaker_applications
       fi
@@ -520,9 +534,11 @@ data:
     #spinnaker_applications="sampleapp"
     get_app_pipelines(){
       spin pipeline list --application $1  > tmp.json
-      if [ "$?" != "0" ]; then
-        echo "ERROR: spin pipeline list --application $1"
-        return 1
+      testjson=$(cat tmp.json)
+      if [ "$testjson" == "null" ]; then
+        echo "ERROR: spin pipeline list --application $1, There is no pipeline json for the application $1"
+        echo "Please check the spin-cli-config secret username and password is valid or not"
+        exit 1
       fi
       cat tmp.json | jq '.[] | (.name)' | sed 's/\"//g' > pipelines_in_application.list
       cat tmp.json | jq '.[] | (.id)' | sed 's/\"//g' > pipelines_guid.list
@@ -557,9 +573,11 @@ data:
          mkdir -p $sourceApp ; cd $sourceApp
          # Get into the correct directory
          spin -k pipeline list --application $sourceApp  > tmp.json
-         if [ "$?" != "0" ]; then
-           echo "ERROR: spin pipeline list --application $sourceApp"
-           return 1
+         testjson=$(cat tmp.json)
+         if [ "$testjson" == "null" ]; then
+           echo "ERROR: spin pipeline list --application $sourceApp, There is no pipeline json for the application $sourceApp"
+           echo "Please check the spin-cli-config secret username and password is valid or not"
+           exit 1
          fi
          cat tmp.json | jq '.[] | (.name)' | sed 's/\"//g' > live_pipelines_in_application.list
          cat tmp.json | jq '.[] | (.id)' | sed 's/\"//g' > live_pipelines_guid.list

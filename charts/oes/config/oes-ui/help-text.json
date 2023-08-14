@@ -46,7 +46,7 @@
   },
     "CLOUDPROVIDER_CREATION": {
       "HEADER": "Cloud Target",
-      "BODY": "<p>In this page, you can create & manage Cloud Target Accounts</p>",
+      "BODY": "<div><p>Cloud Targets are integrations to cloud platforms you deploy your applications to. In this section, you’ll register credentials for your cloud platforms. Those credentials are known as accounts. ISD allows you to create & manage accounts for different cloud providers such as AWS, GCP, Kubernetes, etc.</p><p>You can create multiple accounts for the same provider.</p> <p>After saving this configuration, click on 'Sync Accounts' button to sync cloud target accounts with CD Tool.</p></div>",
       "AGENT_NAME": {
         "TOOLTIP": "",
         "VALIDATION_MESSAGE": {
@@ -249,15 +249,21 @@
         }
       },
       "GCP_FILE": {
-        "TOOLTIP": "The path to a JSON service account that Spinnaker will use as credentials. This is only needed if Spinnaker is not deployed on a Google Compute Engine VM, or needs permissions not afforded to the VM it is running on. Refer https://cloud.google.com/compute/docs/access/service-accounts for more information",
+        "TOOLTIP": "Upload the kubeconfig file. By default, it will be under the user’s home directory in the typical .kube/config location",
         "VALIDATION_MESSAGE": {
           "required": "File cannot be empty"
         }
       },
       "AWS_ACCOUNT_NAME": {
-        "TOOLTIP": "",
+        "TOOLTIP": "Please select a valid AWS account. Do note that the Amazon ECS account will use credentials from the corresponding AWS account. If you do not see a valid AWS account in the dropdown, please create one from Cloud targets -> New Account",
         "VALIDATION_MESSAGE": {
           "required": "Please Select AWS Account"
+        }
+      },
+      "PROJECT_NAME": {
+        "TOOLTIP": "Name of your Google Cloud project",
+        "VALIDATION_MESSAGE": {
+          "required": "Project Name cannot be empty"
         }
       }
     },
@@ -1071,7 +1077,7 @@
 "INTEGRATION": {
 "AMAZONS3":{
   "HEADER": "Amazon S3",
-  "BODY":"<span><p>Spinnaker can be configured to use AWS S3 bucket as Spinnaker's persistent storage or Artifact source</p><p><strong>Fields</strong>:</p><ul class='helpTextUl'><li><strong>Account Name</strong>: User-defined account name for your AWS S3 access. The account name appears in Spinnaker as an input source for artifact selection.<span class='noBr'></span></li><li><strong>Access Key Id</strong>: AWS IAM user access key who has access to the identified S3 bucket. Not required, If Spinnaker is running in EC2 or EKS with an associated IAM role. In that case, the IAM instance role is used for S3 connectivity.</li><li><strong>Secret Access Key</strong>: AWS IAM user Secret Key. Not required, If Spinnaker is running in EC2 or EKS with an associated IAM role. In that case, the IAM instance role is used for S3 connectivity.</li><li><strong>Region</strong>: AWS region where the AWS S3 bucket is located</li><li><strong>API Region</strong>: AWS S3 API region, only required when using an S3 clone such as Minio</li><li><strong>API Endpoint</strong>: AWS S3 API endpoint, only required when using an S3 clone such as Minio</li><li><strong>Connect to CD</strong>: Toggle on to propagate the change into the CD Tool.</li><li><strong>Permissions</strong>: Enable/disable access to the Amazon S3 account in Autopilot to specific user groups</li></ul></span>",
+  "BODY":"<span><p>Spinnaker can be configured to use AWS S3 bucket as Spinnaker's persistent storage or Artifact source</p><p><strong>Fields</strong>:</p><ul class='helpTextUl'><li><strong>Account Name</strong>: User-defined account name for your AWS S3 access. The account name appears in Spinnaker as an input source for artifact selection.<span class='noBr'></span></li><li><strong>Access Key Id</strong>: AWS IAM user access key who has access to the identified S3 bucket. Not required, If Spinnaker is running in EC2 or EKS with an associated IAM role. In that case, the IAM instance role is used for S3 connectivity.</li><li><strong>Secret Access Key</strong>: AWS IAM user Secret Key. Not required, If Spinnaker is running in EC2 or EKS with an associated IAM role. In that case, the IAM instance role is used for S3 connectivity.</li><li><strong>Region</strong>: AWS region where the AWS S3 bucket is located</li><li><strong>API Region</strong>: AWS S3 API region, only required when using an S3 clone such as Minio</li><li><strong>API Endpoint</strong>: AWS S3 API endpoint, only required when using an S3 clone such as Minio</li><li><strong>Validate</strong>: This button controls the validation of the configuration. If it is on, ISD will check the configuration for errors before saving it. If it is off, ISD will save the configuration as it is, without any validation. We recommend keeping the button on unless you are sure that the configuration is correct and does not need validation.</li><li><strong>Connect to CD</strong>: Toggle on to propagate the change into the CD Tool.</li><li><strong>Permissions</strong>: Enable/disable access to the Amazon S3 account in Autopilot to specific user groups</li></ul></span>",
   "ACCOUNTNAME":{
     "TOOLTIP":"User-defined account name for your AWS S3 access. The account name appears in Spinnaker as an input source for artifact selection.",
     "VALIDATION_MESSAGE":{
@@ -1112,11 +1118,15 @@
   "SPINNAKERTOGGLE":{
     "TOOLTIP":"Switch On this toggle to configure the resource in a gitops enabled Spinnaker instance",
     "VALIDATION_MESSAGE":{}
+  },
+  "VALIDATETOGGLE":{
+    "TOOLTIP":"This button controls the validation of the configuration. If it is on, ISD will check the configuration for errors before saving it. If it is off, ISD will save the configuration as it is, without any validation. We recommend keeping the button on unless you are sure that the configuration is correct and does not need validation.",
+    "VALIDATION_MESSAGE":{}
   }
 },
 "ARTIFACTORY":{
   "HEADER": "Artifactory",
-  "BODY":"<span><p>JFrog Artifactory integration can be used as an Artifact source in Spinnaker and also a Data source for Approval-Gate.</p><p><strong>Fields</strong>:</p><ul class='helpTextUl'><li><strong>Account Name</strong>: User-defined account name for your Jfrog Artifactory access. The account name appears in Spinnaker as an Artifactory trigger type input.</li><li><strong>Endpoint</strong>: The base URL of your Artifactory search is reachable at. <span class='noBr'>(Example: https://xyz.my-jfrog.com)</span></li><li><strong>Repo</strong>: The Artifactory repo which needs to be searched</li><li><strong>Repo Type</strong>: The package type of repo in your Artifactory is to be searched. Default is Maven.</li><li><strong>Group Id</strong>: The group id in your Artifactory is to be searched</li><li><strong>Username</strong>: The Artifactory user's username for authentication</li><li><strong>Password</strong>: The Artifactory user's password for authentication</li><li><strong>Token</strong>: Artifactory personal access token. You can find <a href='https://www.jfrog.com/confluence/display/JFROG/Access+Tokens' target='_blank'>here</a> how to generate personal access tokens. <span class='autolinebreak'>(Example: ZlQDAwMFwvdXNlcnNcL21hZGh1a2FyIiwic2NwIjoiYXBwbGllZC1wZXJtaXNzaW9uc1wvYWRtaW4gYXBpOioiLCJhdWQiOlsiamZydEAqIiwiamZhY0AqIiwiamZldnmbWRAKiJdLCJpc3MiOiJqZmZlQDAAzNzY3MiwiaWF0IjoxNjI5ODY0ODcyLCJqdGkiOiI1ZWFiNjlhYi1hZDY0LTRjOGItOTMyZC0wMDAxMWZiZWU5YWIifQ.tzBgL3fQgZ1dwlLLS2UAT7G)</span></li><li><strong>Connect to Spinnaker</strong>: Toggle on to propagate the change into the CD Tool.</li><li><strong>Permissions</strong>: Enable or disable specific user groups' access to the Artifactory account in ISD.</li></ul></span>",
+  "BODY":"<span><p>JFrog Artifactory integration can be used as an Artifact source in Spinnaker and also a Data source for Approval-Gate.</p><p><strong>Fields</strong>:</p><ul class='helpTextUl'><li><strong>Account Name</strong>: User-defined account name for your Jfrog Artifactory access. The account name appears in Spinnaker as an Artifactory trigger type input.</li><li><strong>Endpoint</strong>: The base URL of your Artifactory search is reachable at. <span class='noBr'>(Example: https://xyz.my-jfrog.com)</span></li><li><strong>Repo</strong>: The Artifactory repo which needs to be searched</li><li><strong>Repo Type</strong>: The package type of repo in your Artifactory is to be searched. Default is Maven.</li><li><strong>Group Id</strong>: The group id in your Artifactory is to be searched</li><li><strong>Username</strong>: The Artifactory user's username for authentication</li><li><strong>Password</strong>: The Artifactory user's password for authentication</li><li><strong>Token</strong>: Artifactory personal access token. You can find <a href='https://www.jfrog.com/confluence/display/JFROG/Access+Tokens' target='_blank'>here</a> how to generate personal access tokens. <span class='autolinebreak'>(Example: ZlQDAwMFwvdXNlcnNcL21hZGh1a2FyIiwic2NwIjoiYXBwbGllZC1wZXJtaXNzaW9uc1wvYWRtaW4gYXBpOioiLCJhdWQiOlsiamZydEAqIiwiamZhY0AqIiwiamZldnmbWRAKiJdLCJpc3MiOiJqZmZlQDAAzNzY3MiwiaWF0IjoxNjI5ODY0ODcyLCJqdGkiOiI1ZWFiNjlhYi1hZDY0LTRjOGItOTMyZC0wMDAxMWZiZWU5YWIifQ.tzBgL3fQgZ1dwlLLS2UAT7G)</span></li><li><strong>Validate</strong>: This button controls the validation of the configuration. If it is on, ISD will check the configuration for errors before saving it. If it is off, ISD will save the configuration as it is, without any validation. We recommend keeping the button on unless you are sure that the configuration is correct and does not need validation.</li><li><strong>Connect to Spinnaker</strong>: Toggle on to propagate the change into the CD Tool.</li><li><strong>Permissions</strong>: Enable or disable specific user groups' access to the Artifactory account in ISD.</li></ul></span>",
   "ACCOUNTNAME":{
     "TOOLTIP":"User-defined account name for your Jfrog Artifactory access. The account name appears in Spinnaker as an Artifactory trigger type input.",
     "VALIDATION_MESSAGE":{
@@ -1176,11 +1186,15 @@
   "SPINNAKERTOGGLE":{
     "TOOLTIP":"Toggle on to propagate the change into the CD Tool.",
     "VALIDATION_MESSAGE":{}
+  },
+  "VALIDATETOGGLE":{
+    "TOOLTIP":"This button controls the validation of the configuration. If it is on, ISD will check the configuration for errors before saving it. If it is off, ISD will save the configuration as it is, without any validation. We recommend keeping the button on unless you are sure that the configuration is correct and does not need validation.",
+    "VALIDATION_MESSAGE":{}
   }
 },
 "BITBUCKET":{
   "HEADER": "Bitbucket Cloud",
-  "BODY":"<span><p>BitBucket Cloud integration can be used as a datasource for Approval Gate as well as to configure Spinnaker for BitBucket Cloud.</p><p><strong>Fields</strong>:</p><ul class='helpTextUl'><li><strong>Account Name</strong>: User-defined account name for your BitBucket Cloud access. <span class='noBr'>(Example: opsmx-bitbucket)</span></li><li><strong>Host URL</strong>: BitBucket Cloud (SaaS) Web URL. <span class='noBr'>It is usually https://bitbucket.org </span></li><li><strong>API URL</strong>: This is needed by Autopilot to access Bitbucket Cloud resources such as accounts & repositories through API calls <span class='noBr'>(Example: https://api.bitbucket.org/2.0/repositories)</span></li><li><strong>Authentication Type</strong>: Select one of the available options. If you are unsure, consult your BitBucket administrator to determine which authentication mechanism is used.</li><li><strong>Anonymous</strong>: No username or password is used. Access identity is anonymous.</li><li><strong>User Name</strong>: The BitBucket Cloud Service username </li><li><strong>Token</strong>: The user's username and access token This token is obtained from the Bitbucket user profile page here. <span class='noBr'>(Example: xCPkVZfxaE9iULmfYYkK)</span></li> <li><strong>Password</strong>: The BitBucket Cloud Service password</li><li><strong>Connect to Spinnaker</strong>: Toggle on to propagate the change into the CD Tool.</li><li><strong>Permissions</strong>: Enable/disable access to the Bitbucket Account in Autopilot to specific user groups</li></ul></span>",
+  "BODY":"<span><p>BitBucket Cloud integration can be used as a datasource for Approval Gate as well as to configure Spinnaker for BitBucket Cloud.</p><p><strong>Fields</strong>:</p><ul class='helpTextUl'><li><strong>Account Name</strong>: User-defined account name for your BitBucket Cloud access. <span class='noBr'>(Example: opsmx-bitbucket)</span></li><li><strong>Host URL</strong>: BitBucket Cloud (SaaS) Web URL. <span class='noBr'>It is usually https://bitbucket.org </span></li><li><strong>API URL</strong>: This is needed by Autopilot to access Bitbucket Cloud resources such as accounts & repositories through API calls <span class='noBr'>(Example: https://api.bitbucket.org/2.0/repositories)</span></li><li><strong>Authentication Type</strong>: Select one of the available options. If you are unsure, consult your BitBucket administrator to determine which authentication mechanism is used.</li><li><strong>Anonymous</strong>: No username or password is used. Access identity is anonymous.</li><li><strong>User Name</strong>: The BitBucket Cloud Service username </li><li><strong>Token</strong>: The user's username and access token This token is obtained from the Bitbucket user profile page here. <span class='noBr'>(Example: xCPkVZfxaE9iULmfYYkK)</span></li> <li><strong>Password</strong>: The BitBucket Cloud Service password</li><li><strong>Validate</strong>: This button controls the validation of the configuration. If it is on, ISD will check the configuration for errors before saving it. If it is off, ISD will save the configuration as it is, without any validation. We recommend keeping the button on unless you are sure that the configuration is correct and does not need validation.</li><li><strong>Connect to Spinnaker</strong>: Toggle on to propagate the change into the CD Tool.</li><li><strong>Permissions</strong>: Enable/disable access to the Bitbucket Account in Autopilot to specific user groups</li></ul></span>",
   "ACCOUNTNAME":{
     "TOOLTIP":"User-defined account name for your BitBucket Cloud access.",
     "VALIDATION_MESSAGE":{
@@ -1231,6 +1245,10 @@
   },
   "SPINNAKERTOGGLE":{
     "TOOLTIP":"Switch On this toggle to configure the resource in a gitops enabled Spinnaker instance",
+    "VALIDATION_MESSAGE":{}
+  },
+  "VALIDATETOGGLE":{
+    "TOOLTIP":"This button controls the validation of the configuration. If it is on, ISD will check the configuration for errors before saving it. If it is off, ISD will save the configuration as it is, without any validation. We recommend keeping the button on unless you are sure that the configuration is correct and does not need validation.",
     "VALIDATION_MESSAGE":{}
   }
 },
@@ -1285,7 +1303,7 @@
 },
 "DOCKERHUB":{
   "HEADER": "Docker Registry",
-  "BODY":"<span><p><strong>Fields</strong>:</p><ul class='helpTextUl'><li><strong>Account Name</strong>: User-defined account name for your Docker registry access.</li><li><strong>Registry URL</strong>: The registry URL from which you want to pull and deploy images. <span class='noBr'> DockerHub example: https://hub.docker.com</span></li><li><strong>Email</strong>: Users docker registry email. If no value is specified, the default value of fake.email@spinnaker.io will be used.</li><li><strong>Repositories</strong>: An optional list of repositories to cache images from. If not provided, Spinnaker will try to read the list of accessible repositories from the registries _catalog endpoint. <span class='noBr'> Example: library/ubuntu (Public repositories are prefixed with library/)</span></li><li><strong>Group Membership</strong>: Select an authentication type that corresponds to the connection credential parameter.</li><li><strong>Connect to Spinnaker</strong>: Toggle on to propagate the change into the CD Tool.</li></ul></span>",
+  "BODY":"<span><p><strong>Fields</strong>:</p><ul class='helpTextUl'><li><strong>Account Name</strong>: User-defined account name for your Docker registry access.</li><li><strong>Registry URL</strong>: The registry URL from which you want to pull and deploy images. <span class='noBr'> DockerHub example: https://hub.docker.com</span></li><li><strong>Email</strong>: Users docker registry email. If no value is specified, the default value of fake.email@spinnaker.io will be used.</li><li><strong>Repositories</strong>: An optional list of repositories to cache images from. If not provided, Spinnaker will try to read the list of accessible repositories from the registries _catalog endpoint. <span class='noBr'> Example: library/ubuntu (Public repositories are prefixed with library/)</span></li><li><strong>Group Membership</strong>: Select an authentication type that corresponds to the connection credential parameter.</li><li><strong>Validate</strong>: This button controls the validation of the configuration. If it is on, ISD will check the configuration for errors before saving it. If it is off, ISD will save the configuration as it is, without any validation. We recommend keeping the button on unless you are sure that the configuration is correct and does not need validation.</li><li><strong>Connect to Spinnaker</strong>: Toggle on to propagate the change into the CD Tool.</li></ul></span>",
   "ACCOUNTNAME":{
     "TOOLTIP":"User-defined account name for your Docker registry access.",
     "VALIDATION_MESSAGE":{
@@ -1345,11 +1363,15 @@
   "SPINNAKERTOGGLE":{
     "TOOLTIP":"Switch On this toggle to configure the resource in a gitops enabled Spinnaker instance",
     "VALIDATION_MESSAGE":{}
+  },
+  "VALIDATETOGGLE":{
+    "TOOLTIP":"This button controls the validation of the configuration. If it is on, ISD will check the configuration for errors before saving it. If it is off, ISD will save the configuration as it is, without any validation. We recommend keeping the button on unless you are sure that the configuration is correct and does not need validation.",
+    "VALIDATION_MESSAGE":{}
   }
 },
 "OCR":{
   "HEADER": "Generic Docker Registries (ACR, Quay, JFrog)",
-  "BODY":"<span><p><strong>Fields</strong>:</p><ul class='helpTextUl'><li><strong>Account Name</strong>: User-defined account name for your GCR Docker registry access.</li><li><strong>Registry URL</strong>: The registry URL from which you want to pull and deploy images. <span class='noBr'> For example: https://quay.io - RedHat quay.io</span></li><li><strong>Email</strong>: Users docker registry email. If no value is specified, the default value of fake.email@spinnaker.io will be used.</li><li><strong>Repositories</strong>: An optional list of repositories to cache images from. If not provided, Spinnaker will try to read the list of accessible repositories from the registries _catalog endpoint. <span class='noBr'> Example: library/ubuntu (Public repositories are prefixed with library/)</span></li><li><strong>Authentication Type</strong>: Select an authentication type that corresponds to the connection credential parameter.</li><li><strong>Connect to Spinnaker</strong>: Toggle on to propagate the change into the CD Tool.</li></ul></span>",
+  "BODY":"<span><p><strong>Fields</strong>:</p><ul class='helpTextUl'><li><strong>Account Name</strong>: User-defined account name for your GCR Docker registry access.</li><li><strong>Registry URL</strong>: The registry URL from which you want to pull and deploy images. <span class='noBr'> For example: https://quay.io - RedHat quay.io</span></li><li><strong>Email</strong>: Users docker registry email. If no value is specified, the default value of fake.email@spinnaker.io will be used.</li><li><strong>Repositories</strong>: An optional list of repositories to cache images from. If not provided, Spinnaker will try to read the list of accessible repositories from the registries _catalog endpoint. <span class='noBr'> Example: library/ubuntu (Public repositories are prefixed with library/)</span></li><li><strong>Authentication Type</strong>: Select an authentication type that corresponds to the connection credential parameter.</li><li><strong>Validate</strong>: This button controls the validation of the configuration. If it is on, ISD will check the configuration for errors before saving it. If it is off, ISD will save the configuration as it is, without any validation. We recommend keeping the button on unless you are sure that the configuration is correct and does not need validation.</li><li><strong>Connect to Spinnaker</strong>: Toggle on to propagate the change into the CD Tool.</li></ul></span>",
   "ACCOUNTNAME":{
     "TOOLTIP":"User-defined account name for your GCR Docker registry access.",
     "VALIDATION_MESSAGE":{
@@ -1415,11 +1437,15 @@
   },
   "SPINNAKERTOGGLE":{
     "TOOLTIP":"Toggle on to propagate the change into the CD Tool."
+  },
+  "VALIDATETOGGLE":{
+    "TOOLTIP":"This button controls the validation of the configuration. If it is on, ISD will check the configuration for errors before saving it. If it is off, ISD will save the configuration as it is, without any validation. We recommend keeping the button on unless you are sure that the configuration is correct and does not need validation.",
+    "VALIDATION_MESSAGE":{}
   }
 },
 "GITHUB":{
   "HEADER": "GitHub",
-  "BODY":"<span><p>GITHUB integration can be used as a datasource for Approval Gate as well as to configure Spinnaker for GitHub.</p><p><strong>Fields</strong>:</p><ul class='helpTextUl'><li><strong>Account Name</strong>: User-defined account name for your GitHub access.<span class='noBr'>(Example: opsmx-github)</span></li><li><strong>URL</strong>: Github's host address, such as https://github.com</li><li><strong>API URL</strong>: Github's API endpoint host address, <span class='noBr'>such as https://api.github.com</span></li><li><strong>Token</strong>: GitHub personal access token. You can find <a href='https://docs.github.com/en/authentication/keeping-your-account-and-data-secure/creating-a-personal-access-token' target='_blank'>here</a> how to generate personal access tokens. <span class='noBr'>(Example: ghp_ln1eJK4yuomnY6JREp72IDJC4Hq6Sm)</span></li><li><strong>User Name</strong>: The GitHub username</li><li><strong>Connect to Spinnaker</strong>: Toggle to configure Spinnaker for GitHub</li><li><strong>Permissions</strong>: Enable/disable access to the GITHUB account in Autopilot to specific user groups</li></ul></span>",
+  "BODY":"<span><p>GITHUB integration can be used as a datasource for Approval Gate as well as to configure Spinnaker for GitHub.</p><p><strong>Fields</strong>:</p><ul class='helpTextUl'><li><strong>Account Name</strong>: User-defined account name for your GitHub access.<span class='noBr'>(Example: opsmx-github)</span></li><li><strong>URL</strong>: Github's host address, such as https://github.com</li><li><strong>API URL</strong>: Github's API endpoint host address, <span class='noBr'>such as https://api.github.com</span></li><li><strong>Token</strong>: GitHub personal access token. You can find <a href='https://docs.github.com/en/authentication/keeping-your-account-and-data-secure/creating-a-personal-access-token' target='_blank'>here</a> how to generate personal access tokens. <span class='noBr'>(Example: ghp_ln1eJK4yuomnY6JREp72IDJC4Hq6Sm)</span></li><li><strong>User Name</strong>: The GitHub username</li><li><strong>Validate</strong>: This button controls the validation of the configuration. If it is on, ISD will check the configuration for errors before saving it. If it is off, ISD will save the configuration as it is, without any validation. We recommend keeping the button on unless you are sure that the configuration is correct and does not need validation.</li><li><strong>Connect to Spinnaker</strong>: Toggle to configure Spinnaker for GitHub</li><li><strong>Permissions</strong>: Enable/disable access to the GITHUB account in Autopilot to specific user groups</li></ul></span>",
   "ACCOUNTNAME":{
     "TOOLTIP":"User-defined account name for your GitHub access.",
     "VALIDATION_MESSAGE":{
@@ -1461,11 +1487,15 @@
   "SPINNAKERTOGGLE":{
     "TOOLTIP":"Switch On this toggle to configure the resource in a gitops enabled Spinnaker instance",
     "VALIDATION_MESSAGE":{}
+  },
+  "VALIDATETOGGLE":{
+    "TOOLTIP":"This button controls the validation of the configuration. If it is on, ISD will check the configuration for errors before saving it. If it is off, ISD will save the configuration as it is, without any validation. We recommend keeping the button on unless you are sure that the configuration is correct and does not need validation.",
+    "VALIDATION_MESSAGE":{}
   }
 },
 "GITLAB":{
   "HEADER": "GitLab",
-  "BODY":"<span><li><strong>Account Name</strong>: User-defined account name for your GitLab access.</li><li><strong>Host URL</strong>: GitLab's host address, such as https://gitlab.com</li><li><strong>Username</strong>: The GitLab server username </li><li><strong>Token</strong>: The user's personal access token. Please refer <a href='https://docs.gitlab.com/ee/user/profile/personal_access_tokens.html' target='_blank'>this document</a> for generating tokens.</li></span>",
+  "BODY":"<span><li><strong>Account Name</strong>: User-defined account name for your GitLab access.</li><li><strong>Host URL</strong>: GitLab's host address, such as https://gitlab.com</li><li><strong>Username</strong>: The GitLab server username </li><li><strong>Token</strong>: The user's personal access token. Please refer <a href='https://docs.gitlab.com/ee/user/profile/personal_access_tokens.html' target='_blank'>this document</a> for generating tokens.</li><li><strong>Validate</strong>: This button controls the validation of the configuration. If it is on, ISD will check the configuration for errors before saving it. If it is off, ISD will save the configuration as it is, without any validation. We recommend keeping the button on unless you are sure that the configuration is correct and does not need validation.</li></span>",
   "ACCOUNTNAME":{
     "TOOLTIP":"User-defined account name for your GitLab access.",
     "VALIDATION_MESSAGE":{
@@ -1505,11 +1535,15 @@
   },
   "USERNAME":{
     "TOOLTIP":"The GitLab server username"
+  },
+  "VALIDATETOGGLE":{
+    "TOOLTIP":"This button controls the validation of the configuration. If it is on, ISD will check the configuration for errors before saving it. If it is off, ISD will save the configuration as it is, without any validation. We recommend keeping the button on unless you are sure that the configuration is correct and does not need validation.",
+    "VALIDATION_MESSAGE":{}
   }
 },
 "GITREPO":{
   "HEADER": "Git Repo",
-  "BODY": "<span><li><strong>Account Name</strong>: User-defined account name for your Git Repo access.</li><li><strong>API URL</strong>: The API URL of the Git repository URL.<p><strong>Examples</strong>:</p><ul><li>https://api.github.com</li><li>https://api.bitbucket.org/2.0/respositories</li><li>https://gitlab.com/api/v4/</li></ul></li><li><strong>Authentication Type</strong>: Select an authentication type that corresponds to the connection credential parameter. Recommended using the user token method.</li></span>",
+  "BODY": "<span><li><strong>Account Name</strong>: User-defined account name for your Git Repo access.</li><li><strong>API URL</strong>: The API URL of the Git repository URL.<p><strong>Examples</strong>:</p><ul><li>https://api.github.com</li><li>https://api.bitbucket.org/2.0/respositories</li><li>https://gitlab.com/api/v4/</li></ul></li><li><strong>Authentication Type</strong>: Select an authentication type that corresponds to the connection credential parameter. Recommended using the user token method.</li><li><strong>Validate</strong>: This button controls the validation of the configuration. If it is on, ISD will check the configuration for errors before saving it. If it is off, ISD will save the configuration as it is, without any validation. We recommend keeping the button on unless you are sure that the configuration is correct and does not need validation.</li></span>",
   "ACCOUNTNAME":{
     "TOOLTIP":"User-defined account name for your Git Repo access.",
     "VALIDATION_MESSAGE":{
@@ -1568,11 +1602,15 @@
   "SPINNAKERTOGGLE":{
     "TOOLTIP":"Switch On this toggle to configure the resource in a gitops enabled Spinnaker instance",
     "VALIDATION_MESSAGE":{}
+  },
+  "VALIDATETOGGLE":{
+    "TOOLTIP":"This button controls the validation of the configuration. If it is on, ISD will check the configuration for errors before saving it. If it is off, ISD will save the configuration as it is, without any validation. We recommend keeping the button on unless you are sure that the configuration is correct and does not need validation.",
+    "VALIDATION_MESSAGE":{}
   }
 },
 "HELM":{
   "HEADER": "Helm",
-  "BODY": "<span><li><strong>Account Name</strong>: User-defined account name for target Helm repository access.</li><li><strong>Repository</strong>: Helm Chart Repository’s HTTP endpoint.</li><li><strong>Authentication Type</strong>: Select an authentication type that corresponds to the connection credential parameter.</li><li><strong>Connect to Spinnaker</strong>: Toggle ON to propagate the change to Spinnaker Toggle on to propagate the change into the CD Tool.</li></span>",
+  "BODY": "<span><li><strong>Account Name</strong>: User-defined account name for target Helm repository access.</li><li><strong>Repository</strong>: Helm Chart Repository’s HTTP endpoint.</li><li><strong>Authentication Type</strong>: Select an authentication type that corresponds to the connection credential parameter.</li><li><strong>Validate</strong>: This button controls the validation of the configuration. If it is on, ISD will check the configuration for errors before saving it. If it is off, ISD will save the configuration as it is, without any validation. We recommend keeping the button on unless you are sure that the configuration is correct and does not need validation.</li><li><strong>Connect to Spinnaker</strong>: Toggle ON to propagate the change to Spinnaker Toggle on to propagate the change into the CD Tool.</li></span>",
   "ACCOUNTNAME":{
     "TOOLTIP":"User-defined account name for target Helm repository access",
     "VALIDATION_MESSAGE":{
@@ -1592,6 +1630,7 @@
   "DEPLOYMENT":{
     "TOOLTIP":"This Halyard deployment will be used for Account creation / update",
     "VALIDATION_MESSAGE":{
+    
     }
   },
   "AUTHENTICATIONTYPE":{
@@ -1632,11 +1671,15 @@
   "SPINNAKERTOGGLE":{
     "TOOLTIP":"Toggle on to propagate the change into the CD Tool.",
     "VALIDATION_MESSAGE":{}
+  },
+  "VALIDATETOGGLE":{
+    "TOOLTIP":"This button controls the validation of the configuration. If it is on, ISD will check the configuration for errors before saving it. If it is off, ISD will save the configuration as it is, without any validation. We recommend keeping the button on unless you are sure that the configuration is correct and does not need validation.",
+    "VALIDATION_MESSAGE":{}
   }
 },
 "HTTP":{
   "HEADER": "Http",
-  "BODY": "<span><li><strong>Account Name</strong>: User-defined account name for HTTP protocol-based artifacts</li><li><strong>Authentication Type</strong>: Select an authentication type that corresponds to the connection credential parameter.</li><li><strong>Connect to Spinnaker</strong>: Toggle on to propagate the change into the CD Tool.</li></span>",
+  "BODY": "<span><li><strong>Account Name</strong>: User-defined account name for HTTP protocol-based artifacts</li><li><strong>Authentication Type</strong>: Select an authentication type that corresponds to the connection credential parameter.</li><li><strong>Validate</strong>: This button controls the validation of the configuration. If it is on, ISD will check the configuration for errors before saving it. If it is off, ISD will save the configuration as it is, without any validation. We recommend keeping the button on unless you are sure that the configuration is correct and does not need validation.</li><li><strong>Connect to Spinnaker</strong>: Toggle on to propagate the change into the CD Tool.</li></span>",
   "ACCOUNTNAME":{
     "TOOLTIP":"User-defined account name for HTTP protocol-based artifacts",
     "VALIDATION_MESSAGE":{
@@ -1668,8 +1711,8 @@
   },
   "PASSWORD": {
     "TOOLTIP": "Password",
-    "VALIDATION_MESSAGE": {	
-      "required": "Password cannot be empty"	
+    "VALIDATION_MESSAGE":{
+      "required" : "Password cannot be empty"
     }
   },
   "PASSWORDCOMMAND": {
@@ -1685,11 +1728,15 @@
   "SPINNAKERTOGGLE":{
     "TOOLTIP":"Toggle on to propagate the change into the CD Tool.",
     "VALIDATION_MESSAGE":{}
+  },
+  "VALIDATETOGGLE":{
+    "TOOLTIP":"This button controls the validation of the configuration. If it is on, ISD will check the configuration for errors before saving it. If it is off, ISD will save the configuration as it is, without any validation. We recommend keeping the button on unless you are sure that the configuration is correct and does not need validation.",
+    "VALIDATION_MESSAGE":{}
   }
 },
 "GCS":{
   "HEADER": "GCS",
-  "BODY": "<span><p><strong>Fields</strong>:</p><ul class='helpTextUl'></ul><li><strong>Account Name</strong>: User-defined account name for your Google Cloud Storage access.</li><li><strong>Authentication Type</strong>: Select an authentication type that corresponds to the connection credential parameter. </li><li><strong>Json-Key file</strong>: Configures Google service account’s json file </li><li><strong>Connect to Spinnaker</strong>: Toggle on to propagate the change into the CD Tool. </li></ul></span>",
+  "BODY": "<span><p><strong>Fields</strong>:</p><ul class='helpTextUl'></ul><li><strong>Account Name</strong>: User-defined account name for your Google Cloud Storage access.</li><li><strong>Authentication Type</strong>: Select an authentication type that corresponds to the connection credential parameter. </li><li><strong>Json-Key file</strong>: Configures Google service account’s json file </li><li><strong>Validate</strong>: This button controls the validation of the configuration. If it is on, ISD will check the configuration for errors before saving it. If it is off, ISD will save the configuration as it is, without any validation. We recommend keeping the button on unless you are sure that the configuration is correct and does not need validation.</li><li><strong>Connect to Spinnaker</strong>: Toggle on to propagate the change into the CD Tool. </li></ul></span>",
   "ACCOUNTNAME":{
     "TOOLTIP":"User-defined account name for your Google Cloud Storage access.",
     "VALIDATION_MESSAGE":{
@@ -1711,11 +1758,15 @@
   "SPINNAKERTOGGLE":{
     "TOOLTIP":"Toggle on to propagate the change into the CD Tool.",
     "VALIDATION_MESSAGE":{}
+  },
+  "VALIDATETOGGLE":{
+    "TOOLTIP":"This button controls the validation of the configuration. If it is on, ISD will check the configuration for errors before saving it. If it is off, ISD will save the configuration as it is, without any validation. We recommend keeping the button on unless you are sure that the configuration is correct and does not need validation.",
+    "VALIDATION_MESSAGE":{}
   }
 },
 "ECR":{
   "HEADER": "ECR",
-  "BODY": "<span><p><strong>Fields</strong>:</p><ul class='helpTextUl'><li><strong>Account Name</strong>: User-defined account name for your ECR Docker registry access.</li><li><strong>Registry URL</strong>: The registry URL from which you want to pull and deploy images. <span class='noBr'> For example:https://aws_account_id.dkr.ecr.region.amazonaws.com</span></li><li><strong>Email</strong>: Users docker registry email. If no value is specified, the default value of fake.email@spinnaker.io will be used.</li><li><strong>Repositories</strong>: An optional list of repositories to cache images from. If not provided, Spinnaker will try to read the list of accessible repositories from the registries _catalog endpoint. <span class='noBr'> Example: library/ubuntu (Public repositories are prefixed with library/)</span></li><li><strong>Authentication Type</strong>: Select an authentication type that corresponds to the connection credential parameter.</li><li><strong>Connect to Spinnaker</strong>: Toggle on to propagate the change into the CD Tool.</li></ul></span>",
+  "BODY": "<span><p><strong>Fields</strong>:</p><ul class='helpTextUl'><li><strong>Account Name</strong>: User-defined account name for your ECR Docker registry access.</li><li><strong>Registry URL</strong>: The registry URL from which you want to pull and deploy images. <span class='noBr'> For example:https://aws_account_id.dkr.ecr.region.amazonaws.com</span></li><li><strong>Email</strong>: Users docker registry email. If no value is specified, the default value of fake.email@spinnaker.io will be used.</li><li><strong>Repositories</strong>: An optional list of repositories to cache images from. If not provided, Spinnaker will try to read the list of accessible repositories from the registries _catalog endpoint. <span class='noBr'> Example: library/ubuntu (Public repositories are prefixed with library/)</span></li><li><strong>Authentication Type</strong>: Select an authentication type that corresponds to the connection credential parameter.</li><li><strong>Validate</strong>: This button controls the validation of the configuration. If it is on, ISD will check the configuration for errors before saving it. If it is off, ISD will save the configuration as it is, without any validation. We recommend keeping the button on unless you are sure that the configuration is correct and does not need validation.</li><li><strong>Connect to Spinnaker</strong>: Toggle on to propagate the change into the CD Tool.</li></ul></span>",
   "ACCOUNTNAME":{
     "TOOLTIP":"User-defined account name for your ECR Docker registry access.",
     "VALIDATION_MESSAGE":{
@@ -1792,11 +1843,15 @@
   "SPINNAKERTOGGLE":{
     "TOOLTIP":"Toggle on to propagate the change into the CD Tool.",
     "VALIDATION_MESSAGE":{}
+  },
+  "VALIDATETOGGLE":{
+    "TOOLTIP":"This button controls the validation of the configuration. If it is on, ISD will check the configuration for errors before saving it. If it is off, ISD will save the configuration as it is, without any validation. We recommend keeping the button on unless you are sure that the configuration is correct and does not need validation.",
+    "VALIDATION_MESSAGE":{}
   }
 },
 "PUBSUB":{
   "HEADER": "PUBSUB",
-  "BODY": "<span><li><strong>Account Name</strong>: User-defined account name for your Google Cloud Pub/Sub access.</li></span>",
+  "BODY": "<span><li><strong>Account Name</strong>: User-defined account name for your Google Cloud Pub/Sub access.</li><li><strong>Validate</strong>: This button controls the validation of the configuration. If it is on, ISD will check the configuration for errors before saving it. If it is off, ISD will save the configuration as it is, without any validation. We recommend keeping the button on unless you are sure that the configuration is correct and does not need validation.</li></span>",
   "ACCOUNTNAME":{
     "TOOLTIP":"User-defined account name for your Google Cloud Pub/Sub access.",
     "VALIDATION_MESSAGE":{
@@ -1814,7 +1869,7 @@
     }
   },
   "SUBSCRIPTIONNAME": {
-    "TOOLTIP": "The name of the subscription to listen to. This identifier does not include the name of the project, and must already be configured for Spinnaker to work.",
+    "TOOLTIP": "The name of the subscription to listen to and it should have PubsSub Viewer and PubSub Subscriber Roles as mandatory. This identifier does not include the name of the project, and must already be configured for Spinnaker to work.",
     "VALIDATION_MESSAGE":{
       "cannotContainSpace":"Subscription Name cannot contain space",
       "required":"Subscription Name cannot be empty"
@@ -1825,7 +1880,7 @@
     "VALIDATION_MESSAGE": {}
   },
   "TEMPLATEFILE": {
-    "TOOLTIP":"Applicable only for CUSTOM message format",
+    "TOOLTIP": "To translate the Pub/Sub payload into a Spinnaker artifact, you need to create a Jinja template that defines how to transform the payload data. The Jinja template should produce a JSON list of Spinnaker artifacts as its output. You can use any valid Jinja syntax in your template. Example : https://spinnaker.io/docs/guides/user/pipeline/triggers/pubsub/#example",
     "VALIDATION_MESSAGE": {}
   },
   "AUTHENTICATIONTYPE":{
@@ -1840,11 +1895,15 @@
   "SPINNAKERTOGGLE":{
     "TOOLTIP":"Switch On this toggle to configure the resource in a gitops enabled Spinnaker instance",
     "VALIDATION_MESSAGE":{}
+  },
+  "VALIDATETOGGLE":{
+    "TOOLTIP":"This button controls the validation of the configuration. If it is on, ISD will check the configuration for errors before saving it. If it is off, ISD will save the configuration as it is, without any validation. We recommend keeping the button on unless you are sure that the configuration is correct and does not need validation.",
+    "VALIDATION_MESSAGE":{}
   }
 },
 "GCB":{
   "HEADER": "GCB",
-  "BODY": "",
+  "BODY": "<div><p>This page allows you to connect Google Cloud Build with ISD. Google cloud build can be used as an automated trigger as well as a stage in the pipeline.</p><p>To configure a pipeline to be triggered by a completed GCB build, after this integration is succefully created, go to your application's pipeline menu. Click on the configuration stage of a pipeline, then select Pub/Sub as the automated trigger. Select Pub/Sub System type as Google and select your subscribtion name.</p><p>To run GCB Build as part of a pipeline, create a stage of type Google Cloud Build, select your GCB Account and configure the build definition.In the Produces Artifacts section, you may supply any artifacts that you expect the build to create in order to make these artifacts available to downstream stages</p><p><strong>Fields</strong>:</p><ul class='helpTextUl'><li><strong>Account Name</strong>: The user defined name of this account.<span></span></li><li><strong>Project Name</strong>: <span>The name of the GCP project in which to trigger and monitor builds</span></li><li><strong>Subscription Name</strong>: <span> The name of the PubSub subscription on which to listen for build changes</span></li><li><strong>Authentication Type</strong>: <span>Select how the external resource confirms the user credentials</span></li><li><strong>Json key file (File) </strong>: <span>JSON service account that Spinnaker will use as credentials</span></li><li><strong>Connect to CD</strong>: <span>Switch On this toggle to configure the resource in a gitops enabled CD tool</span></li><li><strong>Permissions</strong>: <span>Authorization for the account</span></li></ul></div>",
   "ACCOUNTNAME":{
     "TOOLTIP":"The name of the account to operate on",
     "VALIDATION_MESSAGE":{
@@ -1862,7 +1921,7 @@
     }
   },
   "SUBSCRIPTIONNAME": {
-    "TOOLTIP": "The name of the PubSub subscription on which to listen for build changes",
+    "TOOLTIP": "The name of the PubSub subscription on which to listen for build changes and it should have PubsSub Viewer and PubSub Subscriber Roles as mandatory.",
     "VALIDATION_MESSAGE":{
       "cannotContainSpace":"Subscription Name cannot contain space",
       "required":"Subscription Name cannot be empty"
@@ -1894,11 +1953,15 @@
   "SPINNAKERTOGGLE":{
     "TOOLTIP":"Switch On this toggle to configure the resource in a gitops enabled Spinnaker instance",
     "VALIDATION_MESSAGE":{}
+  },
+  "VALIDATETOGGLE":{
+    "TOOLTIP":"This button controls the validation of the configuration. If it is on, ISD will check the configuration for errors before saving it. If it is off, ISD will save the configuration as it is, without any validation. We recommend keeping the button on unless you are sure that the configuration is correct and does not need validation.",
+    "VALIDATION_MESSAGE":{}
   }
 },
 "GCR":{
   "HEADER": "GCR",
-  "BODY": "<span><p><strong>Fields</strong>:</p><ul class='helpTextUl'><li><strong>Account Name</strong>: User-defined account name for your GCR Docker registry access.</li><li><strong>Registry URL</strong>: The registry URL from which you want to pull and deploy images. <span class='noBr'> For example: https://gcr.io - Global GCR, https://[us|eu|asia].gcr.io - Regional GCR</span></li><li><strong>Email</strong>: Users docker registry email. If no value is specified, the default value of fake.email@spinnaker.io will be used.</li><li><strong>Repositories</strong>: An optional list of repositories to cache images from. If not provided, Spinnaker will try to read the list of accessible repositories from the registries _catalog endpoint. <span class='noBr'> Example: library/ubuntu (Public repositories are prefixed with library/)</span></li><li><strong>Authentication Type</strong>: Select an authentication type that corresponds to the connection credential parameter.</li><li><strong>Connect to Spinnaker</strong>: Toggle on to propagate the change into the CD Tool.</li></ul></span>",
+  "BODY": "<span><p><strong>Fields</strong>:</p><ul class='helpTextUl'><li><strong>Account Name</strong>: User-defined account name for your GCR Docker registry access.</li><li><strong>Registry URL</strong>: The registry URL from which you want to pull and deploy images. <span class='noBr'> For example: https://gcr.io - Global GCR, https://[us|eu|asia].gcr.io - Regional GCR</span></li><li><strong>Email</strong>: Users docker registry email. If no value is specified, the default value of fake.email@spinnaker.io will be used.</li><li><strong>Repositories</strong>: An optional list of repositories to cache images from. If not provided, Spinnaker will try to read the list of accessible repositories from the registries _catalog endpoint. <span class='noBr'> Example: library/ubuntu (Public repositories are prefixed with library/)</span></li><li><strong>Authentication Type</strong>: Select an authentication type that corresponds to the connection credential parameter.</li><li><strong>Validate</strong>: This button controls the validation of the configuration. If it is on, ISD will check the configuration for errors before saving it. If it is off, ISD will save the configuration as it is, without any validation. We recommend keeping the button on unless you are sure that the configuration is correct and does not need validation.</li><li><strong>Connect to Spinnaker</strong>: Toggle on to propagate the change into the CD Tool.</li></ul></span>",
   "ACCOUNTNAME":{
     "TOOLTIP":"User-defined account name for your GCR Docker registry access.",
     "VALIDATION_MESSAGE":{
@@ -1974,6 +2037,10 @@
   "SPINNAKERTOGGLE":{
     "TOOLTIP":"Toggle on to propagate the change into the CD Tool.",
     "VALIDATION_MESSAGE":{}
+  },
+  "VALIDATETOGGLE":{
+    "TOOLTIP":"This button controls the validation of the configuration. If it is on, ISD will check the configuration for errors before saving it. If it is off, ISD will save the configuration as it is, without any validation. We recommend keeping the button on unless you are sure that the configuration is correct and does not need validation.",
+    "VALIDATION_MESSAGE":{}
   }
 },
 "BAMBOO":{
@@ -2023,7 +2090,7 @@
   },
   "JENKINS":{
     "HEADER":"Jenkins",
-    "BODY":"<span><p>Jenkins integration can be used as a datasource for Approval Gate as well as to configure Spinnaker for Jenkins.</p><p><strong>Fields</strong>:</p><ul class='helpTextUl'><li><strong>Account Name</strong>: User-defined account name for your Jenkins access. <span class='noBr'>(Example: opsmx-jenkins)</span></li><li><strong>Host URL</strong>: Jenkins host address, <span class='noBr'>such as https://jenkins.opsmx.net</span></li><li><strong>Authentication Type</strong>: Select an authentication type that corresponds to the connection credential parameter. It is preferable to use token authentication with username and token. </li><li><strong>Token</strong>: Jenkins personal access token. You can find <a href='https://www.jenkins.io/doc/book/using/using-credentials/' target='_blank'>here</a> how to generate personal access tokens. <span>(Example: 77d67609a841b1811a114b7fbfa109b3c2)</span></li><li><strong>CSRF</strong>: Recommended to toggle on the CSRF (Cross-Site Request Forgery) flag</li><li><strong>User Name</strong>: Jenkins User Name</li><li><strong>Password</strong>: Jenkins Password</li><li><strong>Connect to Spinnaker</strong>: Toggle to configure Spinnaker for Jenkins</li><li><strong>Permissions</strong>: Enable/disable access to the Jenkins account in Autopilot to specific user groups</li></ul></span>",
+    "BODY":"<span><p>Jenkins integration can be used as a datasource for Approval Gate as well as to configure Spinnaker for Jenkins.</p><p><strong>Fields</strong>:</p><ul class='helpTextUl'><li><strong>Account Name</strong>: User-defined account name for your Jenkins access. <span class='noBr'>(Example: opsmx-jenkins)</span></li><li><strong>Host URL</strong>: Jenkins host address, <span class='noBr'>such as https://jenkins.opsmx.net</span></li><li><strong>Authentication Type</strong>: Select an authentication type that corresponds to the connection credential parameter. It is preferable to use token authentication with username and token. </li><li><strong>Token</strong>: Jenkins personal access token. You can find <a href='https://www.jenkins.io/doc/book/using/using-credentials/' target='_blank'>here</a> how to generate personal access tokens. <span>(Example: 77d67609a841b1811a114b7fbfa109b3c2)</span></li><li><strong>CSRF</strong>: Recommended to toggle on the CSRF (Cross-Site Request Forgery) flag</li><li><strong>User Name</strong>: Jenkins User Name</li><li><strong>Password</strong>: Jenkins Password</li><li><strong>Validate</strong>: This button controls the validation of the configuration. If it is on, ISD will check the configuration for errors before saving it. If it is off, ISD will save the configuration as it is, without any validation. We recommend keeping the button on unless you are sure that the configuration is correct and does not need validation.</li><li><strong>Connect to Spinnaker</strong>: Toggle to configure Spinnaker for Jenkins</li><li><strong>Permissions</strong>: Enable/disable access to the Jenkins account in Autopilot to specific user groups</li></ul></span>",
     "ACCOUNTNAME":{
       "TOOLTIP":"User-defined account name for your Jenkins access.",
       "VALIDATION_MESSAGE":{
@@ -2072,11 +2139,15 @@
     "SPINNAKERTOGGLE":{
       "TOOLTIP":"Switch On this toggle to configure the resource in a gitops enabled Spinnaker instance",
       "VALIDATION_MESSAGE":{}
-    }
+    },
+  "VALIDATETOGGLE":{
+    "TOOLTIP":"This button controls the validation of the configuration. If it is on, ISD will check the configuration for errors before saving it. If it is off, ISD will save the configuration as it is, without any validation. We recommend keeping the button on unless you are sure that the configuration is correct and does not need validation.",
+    "VALIDATION_MESSAGE":{}
+  }
   },
   "JIRA":{
     "HEADER": "Jira",
-    "BODY":"",
+    "BODY":"<span><ul><li><strong>Account Name</strong> : User defined name for the Jira account</li><li><strong>Email</strong> : Jira Email Id</li><li><strong>Token</strong> : Jira Personal Access Token</li><li><strong>Host URL</strong> : Jira Host URL</li><li><strong>Connect to CD</strong> : Switch On this toggle to configure the resource in a gitops enabled spinnaker instance</li><li><strong>Permissions</strong> : Authorization for the account</li></ul></span>",
     "ACCOUNTNAME":{
       "TOOLTIP":"User defined name for the Jira account",
       "VALIDATION_MESSAGE":{
@@ -2110,6 +2181,7 @@
       "TOOLTIP":"Switch On this toggle to configure the resource in a gitops enabled Spinnaker instance",
       "VALIDATION_MESSAGE":{}
     }
+    
   },
   "SERVICENOW":{
     "HEADER": "Service Now",
@@ -2149,7 +2221,7 @@
   ,
   "APPDYNAMICS":{
     "HEADER": "APPDYNAMICS",
-    "BODY":"",
+    "BODY":"<span><ul><li><strong>Account Name</strong> : User defined name for the APPDYNAMICS account</li><li><strong>Controller Host</strong> : APPDYNAMICS Controller Host</li><li><strong>Temporary Access Token</strong> : APPDYNAMICS Personal Temporary Access Token</li></ul></span>",
     "ACCOUNTNAME":{
       "TOOLTIP":"User defined name for the APPDYNAMICS account",
       "VALIDATION_MESSAGE":{
@@ -2200,7 +2272,7 @@
   },
   "DATADOG":{
     "HEADER": "DATADOG",
-    "BODY":"",
+    "BODY":"<span><ul><li><strong>Account Name</strong> : User defined name for the DATADOG account</li><li><strong>API Key</strong> : DATADOG API Key</li><li><strong>Application Key</strong> : DATADOG Application Key</li><li><strong>Permissions</strong> : Authorization for the account</li></ul></span>",
     "ACCOUNTNAME":{
       "TOOLTIP":"User defined name for the DATADOG account",
       "VALIDATION_MESSAGE":{
@@ -2225,7 +2297,7 @@
   },
   "DYNATRACE":{
     "HEADER": "Dynatrace",
-    "BODY":"",
+    "BODY":"<span><ul><li><strong>Account Name</strong> : User defined name for the Dynatrace account</li><li><strong>Url</strong> : Dynatrace URL. For example, https://www.dynatrace.com</li><li><strong>Api Token</strong> : Dynatrace Personal Access Token</li><li><strong>Permissions</strong> : Authorization for the account</li></ul></span>",
     "ACCOUNTNAME":{
       "TOOLTIP":"User defined name for the Dynatrace account",
       "VALIDATION_MESSAGE":{
@@ -2327,7 +2399,7 @@
     },
     "GRAYLOG":{
       "HEADER": "GRAYLOG",
-      "BODY":"<span><li><strong>Account Name</strong>: User-defined account name for your Graylog access.</li><li><strong>Endpoint</strong>: Graylog host address, from which you access the Graylog </li><li><strong>Token</strong>: The user's token </li></span>",
+      "BODY":"<span><ul><li><strong>Account Name</strong>: User-defined account name for your Graylog access.</li><li><strong>Endpoint</strong>: Graylog host address, from which you access the Graylog </li><li><strong>Token</strong>: GrayLog Personal Access Token. To generate a token, go to Greylog -> System / Users -> Users Overview, select a user and click on Edit tokens  </li></ul></span>",
       "ACCOUNTNAME":{
         "TOOLTIP":"User-defined account name for your Graylog access.",
         "VALIDATION_MESSAGE":{
@@ -2345,7 +2417,7 @@
         }
       },
       "TOKEN":{
-        "TOOLTIP":"GrayLog Personal Access Token",
+        "TOOLTIP":"GrayLog Personal Access Token. To generate a token, go to Greylog -> System / Users -> Users Overview, select a user and click on Edit tokens",
         "VALIDATION_MESSAGE":{
           "required":"Token cannot be empty"
         }
@@ -2353,7 +2425,7 @@
     },
     "NEWRELIC":{
       "HEADER": "New Relic",
-      "BODY":"<span><li><strong>Account Name</strong>: User-defined account name for your NewRelic access.</li><li><strong>Api Key</strong>: The user's token to authenticate with Newrelic</li><li><strong>Application Key</strong>: The application key identifies which account the incoming data belongs to.</li><li><strong>Account ID</strong>: Provide account ID to identify the account </li><li><strong>Query Key</strong>: Provide a query key to filter the data </li></span>",
+      "BODY":"<span><li><strong>Account Name</strong>: User-defined account name for your NewRelic access.</li><li><strong>API Key</strong>: Provide your Newrelic User Key. This can be generated from New Relic's API keys UI</li><li><strong>Application Key</strong>: The application key identifies which account the incoming data belongs to.</li><li><strong>Account ID</strong>: Provide account ID to identify the account </li><li><strong>Query Key</strong>: Provide a query key to filter the data </li></span>",
       "ACCOUNTNAME":{
         "TOOLTIP":"User-defined account name for your NewRelic access.",
         "VALIDATION_MESSAGE":{
@@ -2364,7 +2436,7 @@
     }
       },
       "APIKEY":{
-        "TOOLTIP":"NewRelic Api Key",
+        "TOOLTIP":"Provide your Newrelic User Key. This can be generated from New Relic's API keys UI",
         "VALIDATION_MESSAGE":{
           "required":"API key cannot be empty"
         }
@@ -2470,7 +2542,7 @@
     },
     "STACKDRIVER":{
       "HEADER": "Stackdriver",
-      "BODY":"",
+      "BODY":"<span><ul><p>Google Cloud's operations suite (formerly Stackdriver) provides Integrated monitoring, logging, and trace managed services for applications and systems running on Google Cloud and beyond.</p><li><strong>Account Name</strong> : User defined name for the Stackdriver account</li><li><strong>Encrypted Key</strong> : Stackdriver Encrypted Key file</li><li><strong>Permissions</strong>: Authorization for the account</li></ul></span>",
       "ACCOUNTNAME":{
         "TOOLTIP":"User defined name for the Stackdriver account",
         "VALIDATION_MESSAGE":{
@@ -2489,7 +2561,7 @@
     },
     "SUMOLOGIC":{
       "HEADER": "Sumo Logic",
-      "BODY":"",
+      "BODY":"<span><ul><li><strong>Account Name</strong>: User defined name for the Sumologic account</li><li><strong>Access ID</strong>: Sumologic Access Id. You can generate Access Id (Administration > Security > Access Keys)</li><li><strong>Access Key</strong>: Sumologic Access Key. You can generate Access Id (Administration > Security > Access Keys)</li><li><strong>Zone</strong>: Sumologic Zone</li></ul></span>",
       "ACCOUNTNAME":{
         "TOOLTIP":"User defined name for the Sumologic account",
         "VALIDATION_MESSAGE":{
@@ -2521,9 +2593,10 @@
     }
       }
     },
+    
     "VMWARETANZU":{
       "HEADER": "VMWare Tanzu Observability",
-      "BODY":"<span><li><strong>Account Name</strong>: User-defined account name for your VMWare Tanzu access</li><li><strong>Endpoint</strong>: VMWare Tanzu host address, from which you access the VMWare Tanzu</li><li><strong>Email</strong>: Provide the user's registered and authorized email</li><li><strong>API token</strong>: The user's API token </li></span>",
+      "BODY":"<span><ul><li><strong>Account Name</strong>: User-defined account name for your VMWare Tanzu access</li><li><strong>Endpoint</strong>: VMWare Tanzu host address, from which you access the VMWare Tanzu</li><li><strong>Email</strong>: Provide the user's registered and authorized email</li><li><strong>API token</strong>: The user's API token. To generate an API token, log in to your instance  as user with the API Tokens permission. Click the gear icon  at the top right of the toolbar and select your user name. On the API Access tab, click Generate. </li></ul></span>",
       "ACCOUNTNAME":{
         "TOOLTIP":"User-defined account name for your VMWare Tanzu access",
         "VALIDATION_MESSAGE":{
@@ -2548,7 +2621,7 @@
         }
       },
       "API_TOKEN":{
-        "TOOLTIP":"The user's API token ",
+        "TOOLTIP":"The user's API token. To generate an API token, log in to your instance  as user with the API Tokens permission. Click the gear icon  at the top right of the toolbar and select your user name. On the API Access tab, click Generate. ",
         "VALIDATION_MESSAGE":{
           "required":"Api Token cannot be empty"
         }
@@ -2560,7 +2633,7 @@
     },
     "SLACK":{
       "HEADER": "Slack",
-      "BODY":"<span><li><strong>Account Name</strong>: User-defined account name for your Slack access.</li><li><strong>BotName</strong>: Provide the bot name where you want to receive notifications in slack</li><li><strong>Token</strong>: The user's token to authenticate with slack.</li></span>",
+      "BODY":"<span><li><strong>Account Name</strong>: User-defined account name for your Slack access.</li><li><strong>BotName</strong>: Provide the bot name where you want to receive notifications in slack</li><li><strong>Token</strong>: The user's token to authenticate with slack.</li><li><strong>Validate</strong>: This button controls the validation of the configuration. If it is on, ISD will check the configuration for errors before saving it. If it is off, ISD will save the configuration as it is, without any validation. We recommend keeping the button on unless you are sure that the configuration is correct and does not need validation.</li></span>",
       "ACCOUNTNAME":{
         "TOOLTIP":"User defined name for the Slack account",
         "VALIDATION_MESSAGE":{
@@ -2588,7 +2661,11 @@
       "SPINNAKERTOGGLE":{
         "TOOLTIP":"Switch On this toggle to configure the resource in a gitops enabled Spinnaker instance",
         "VALIDATION_MESSAGE":{}
-      }
+      },
+  "VALIDATETOGGLE":{
+    "TOOLTIP":"This button controls the validation of the configuration. If it is on, ISD will check the configuration for errors before saving it. If it is off, ISD will save the configuration as it is, without any validation. We recommend keeping the button on unless you are sure that the configuration is correct and does not need validation.",
+    "VALIDATION_MESSAGE":{}
+  }
     },
     "OPA":{
       "HEADER": "OPA",
@@ -2750,7 +2827,7 @@
     },
     "AUTOPILOT":{
       "HEADER": "Autopilot",
-      "BODY":"",
+      "BODY": "<div><p>This page allows you to configure autopilot, which can be used as a connector in the approval stage. To include verification information in an approval gate, add a new row in the connector configuration, selct 'Verification' from the connector dropdwon, select your Autopilot account and provide the Canary ID.</p><p><strong>Fields</strong>:</p><ul class='helpTextUl'><li><strong>Account Name</strong>: User defined name for the Autopilot account<span></span></li><li><strong>User Name</strong>: <span>Autopilot (ISD) User Name</span></li><li><strong>Permissions</strong>: <span>Authorization for the account</span></li></ul></div>",
       "ACCOUNTNAME":{
         "TOOLTIP":"User defined name for the Autopilot account",
         "VALIDATION_MESSAGE":{
@@ -2946,22 +3023,22 @@
   },
   "USAGE_INSIGHTS": {
     "APPLICATIONS": {
-      "TOOLTIP": "Application"
+      "TOOLTIP": "Total number of applications and active applications over time"
     },
     "PIPELINES": {
-      "TOOLTIP": "Pipelines"
+      "TOOLTIP": "Total number of pipelines and active pipelines over time"
     },
     "PIPELINES_WITH_INTELLIGENT_GATES": {
-      "TOOLTIP": "Pipelines with Intelligent Gates"
+      "TOOLTIP": "Total number of pipelines and the number pipelines with intelligent gates(approval, policy and verification gates) over time"
     },
     "INTELLIGENT_GATES_BREAKDOWN": {
-      "TOOLTIP": "Intelligent Gates Breakdown"
+      "TOOLTIP": "This graph explains the intelligent gates usage in pipelines over time."
     },
     "GATES_USED": {
-      "TOOLTIP": "Gates Used"
+      "TOOLTIP": "This graph explains the intelligent gates executions over time."
     },
     "USERS": {
-      "TOOLTIP": "Users"
+      "TOOLTIP": "The total number of registered users to this ISD instance Vs the number of active users over time"
     }
   },
   "DELIVERY_INSIGHTS": {

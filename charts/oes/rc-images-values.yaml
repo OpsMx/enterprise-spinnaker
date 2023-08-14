@@ -8,7 +8,7 @@ global:
 
   gitea:
     enabled: false
-    standardrepoBranch: v4.0.3
+    standardrepoBranch: v4.0.4
 
   spinnakerUrl: false
 
@@ -39,33 +39,30 @@ spinnaker:
       token: git/stash_token
       branch: master
 
-autopilot:
-  image:
-    tag: v4.0.3-rc3
-audit:
-  image:
-    tag: v4.0.3-rc3
 auditClient:
   image:
-    tag: v4.0.3-rc3
-datascience:
+    tag: v4.0.4.b3
+autopilot:
   image:
-    tag: v4.0.3-rc3
-dashboard:
-  image:
-    tag: v4.0.3-rc3
+    tag: v4.0.4.b3
 gate:
   image:
-    tag: v4.0.3-rc3
+    tag: v4.0.4.b2
 platform:
   image:
-    tag: v4.0.3-rc3
+    tag: v4.0.4.b3
+dashboard:
+  image:
+    tag: v4.0.4.b3
 sapor:
   image:
-    tag: v4.0.3-rc3
+    tag: v4.0.4.b3
 ui:
   image:
-    tag: v4.0.3-rc3
+    tag: v4.0.4.b3
+datascience:
+  image:
+    tag: v4.0.4.b3
 visibility:
   image:
-    tag: v4.0.3-rc3
+    tag: v4.0.4.b3

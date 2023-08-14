@@ -232,6 +232,11 @@ data:
     if [ -f /tmp/spinnaker/.hal/halyard.yaml ]; then
     cp /tmp/spinnaker/.hal/halyard.yaml /tmp/config
     fi
+    {{- if .Values.global.commonGate.spinnakerpipelineRBAC }}
+    yq -i e '.pipeline.rbac = true' /tmp/spinnaker/.hal/default/profiles/orca-local.yml
+    yq -i e '.pipeline.rbac = true' /tmp/spinnaker/.hal/default/profiles/front50-local.yml
+    yq -i e '.pipeline.rbac = true' /tmp/spinnaker/.hal/default/profiles/fiat-local.yml
+    {{- end }}
     {{- if and .Values.global.auth.saml (not .Values.global.spinnakerUrl) .Values.global.commonGate.enabled }}
     kubectl get secret oes-gate-config -o jsonpath='{.data.*}' -n ${SPINNAKER_NAMESPACE} | base64 -d > /tmp/gate1.yml
     oesuihost=$(yq e '.saml.redirectHostname' /tmp/gate1.yml)
@@ -253,6 +258,7 @@ data:
     jq --argjson toolConnectorParameteres ''"$replace"'' '.deploymentConfigurations[].security.authn.saml += $toolConnectorParameteres' /tmp/spinnaker/.hal/config.json > /tmp/spinnaker/.hal/config1.json
     yq eval -P /tmp/spinnaker/.hal/config1.json > /tmp/spinnaker/.hal/finalconfig.json
     mv /tmp/spinnaker/.hal/finalconfig.json /tmp/spinnaker/.hal/config
+    rm -rf /tmp/spinnaker/.hal/config1.json
     yq -i e '.deploymentConfigurations.[].security.authn.saml.enabled = "true"' /tmp/spinnaker/.hal/config
     sleep 30s
     kubectl delete secret oes-gate-config -n ${SPINNAKER_NAMESPACE}
@@ -405,14 +411,29 @@ data:
         if [ -r "/tmp/spinnaker/clusterconfig/jira-secret.yaml" ]
         then
            #### Extracting the JIRA information from secret ####
-           JIRA_USER=$(kubectl get secret jira-secret -o jsonpath='{.data.JIRA_USERNAME}' -n ${SPINNAKER_NAMESPACE} | base64 -d)
-           JIRA_DNS=$(kubectl get secret jira-secret -o jsonpath='{.data.JIRA_URL}' -n ${SPINNAKER_NAMESPACE} | base64 -d)
-           JIRA_TOKN=$(kubectl get secret jira-secret -o jsonpath='{.data.JIRA_TOKEN}' -n ${SPINNAKER_NAMESPACE} | base64 -d)
-           JIRA_BASE64_USR_PASSWD=$(echo -n "$JIRA_USER:$JIRA_TOKN" | base64)
-           sed -i s%JIRA_URL%${JIRA_DNS}%g /tmp/spinnaker/.hal/default/profiles/orca-local.yml
-           sed -i  s/JIRA_BASE64_USR_PASSWD/${JIRA_BASE64_USR_PASSWD}/g /tmp/spinnaker/.hal/default/profiles/orca-local.yml
+           JIRA_TYPE=$(kubectl get secret jira-secret -o jsonpath='{.data.JIRA_TYPE}' -n ${SPINNAKER_NAMESPACE} | base64 -d)
+           if [ "$JIRA_TYPE" == "onPremJira" ];then
+             echo "Using the Jira On Prem Details"
+             JIRA_USER=$(kubectl get secret jira-secret -o jsonpath='{.data.JIRA_USERNAME}' -n ${SPINNAKER_NAMESPACE} | base64 -d)
+             JIRA_DNS=$(kubectl get secret jira-secret -o jsonpath='{.data.JIRA_URL}' -n ${SPINNAKER_NAMESPACE} | base64 -d)
+             JIRA_TOKN=$(kubectl get secret jira-secret -o jsonpath='{.data.JIRA_TOKEN}' -n ${SPINNAKER_NAMESPACE} | base64 -d)
+             JIRA_BASE64_USR_PASSWD=$JIRA_TOKN
+             sed -i s%JIRA_URL%${JIRA_DNS}%g /tmp/spinnaker/.hal/default/profiles/orca-local.yml
+             sed -i 's/Basic JIRA_BASE64_USR_PASSWD/Bearer TOKEN/g' /tmp/spinnaker/.hal/default/profiles/orca-local.yml
+             sed -i s/TOKEN/${JIRA_TOKN}/g /tmp/spinnaker/.hal/default/profiles/orca-local.yml
+           else
+             if [ "$JIRA_TYPE" == "cloudJira" ];then
+               echo "Using the Jira Cloud Details"
+               JIRA_USER=$(kubectl get secret jira-secret -o jsonpath='{.data.JIRA_USERNAME}' -n ${SPINNAKER_NAMESPACE} | base64 -d)
+               JIRA_DNS=$(kubectl get secret jira-secret -o jsonpath='{.data.JIRA_URL}' -n ${SPINNAKER_NAMESPACE} | base64 -d)
+               JIRA_TOKN=$(kubectl get secret jira-secret -o jsonpath='{.data.JIRA_TOKEN}' -n ${SPINNAKER_NAMESPACE} | base64 -d)
+               JIRA_BASE64_USR_PASSWD=$(echo -n "$JIRA_USER:$JIRA_TOKN" | base64 )
+               sed -i s%JIRA_URL%${JIRA_DNS}%g /tmp/spinnaker/.hal/default/profiles/orca-local.yml
+               sed -i s/JIRA_BASE64_USR_PASSWD/${JIRA_BASE64_USR_PASSWD}/g /tmp/spinnaker/.hal/default/profiles/orca-local.yml
+             fi
+           fi
         else
-           echo "Not able to find the ServiceNow secret file"
+          echo "Not able to find the JIRA secret file"
         fi
-     fi
+      fi
     fi

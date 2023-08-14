@@ -1,3 +1,4 @@
+{{- if or (eq .Values.installationMode "OES-AP")  (eq .Values.installationMode "EASY") -}}
 apiVersion: v1
 data:
   standard-error-codes.csv: |-
@@ -24,6 +25,7 @@ data:
     standardErrorCodesMapping.ISD-DoesNotExist-404-03 = ISD-DoesNotExist-404-03 : {0} - {1} does not exist {2}.
     standardErrorCodesMapping.ISD-IsNotFound-404-04 = ISD-IsNotFound-404-04 : {0} - {1} not found {2}.
     standardErrorCodesMapping.ISD-AlreadyExists-409-01 = ISD-AlreadyExists-409-01 : {0} - {1} already exists: {2}
+    standardErrorCodesMapping.ISD-Disconnected-409-02 = ISD-Disconnected-409-02 : {0} - {1}
     standardErrorCodesMapping.ISD-FailedToDelete-412-01 = ISD-FailedToDelete-412-01 : {0} - Unable to delete {1} as {1} is already in use !
     standardErrorCodesMapping.ISD-FailedToDeletePolicy-412-02 = ISD-FailedToDeletePolicy-412-02 : {0} - Unable to delete policy as it is already in use for {1} gate !
     standardErrorCodesMapping.ISD-FailedToUpdate-412-03 = ISD-FailedToUpdate-412-03 : {0} - Unable to update {1} as {1} is already in use !
@@ -67,3 +69,4 @@ metadata:
   labels:
     app: oes
   name: standard-error-codes-config
+{{- end -}}

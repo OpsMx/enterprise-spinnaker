@@ -1,5 +1,5 @@
-{{- if and (.Values.installSpinnaker) (not .Values.global.createIngress) }}
-{{- if not (.Values.spinnaker.gitopsHalyard.mTLS.enabled) }}
+{{- if not (.Values.global.createIngress) }}
+{{- if not (.Values.gitopsHalyard.mTLS.enabled) }}
 apiVersion: v1
 kind: Service
 metadata:
@@ -57,7 +57,7 @@ spec:
     cluster: spin-gate
 {{- end }}
 ---
-{{- if (.Values.spinnaker.gitopsHalyard.gatex509.enabled) }}
+{{- if (.Values.gitopsHalyard.gatex509.enabled) }}
 apiVersion: v1
 kind: Service
 metadata:

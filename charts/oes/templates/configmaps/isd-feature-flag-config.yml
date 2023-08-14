@@ -1,3 +1,4 @@
+{{- if or (eq .Values.installationMode "OES-AP")  (eq .Values.installationMode "EASY") -}}
 apiVersion: v1
 data:
   feature.yml: |
@@ -7,9 +8,10 @@ data:
          jira: OP-18050
        db-cleanup:
          flag: true
-         jira: OP-19921         
+         jira: OP-19921
 kind: ConfigMap
 metadata:
   labels:
     app: oes
   name: isd-feature-flag-config
+{{- end -}}

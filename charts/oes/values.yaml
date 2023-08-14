@@ -29,6 +29,17 @@ k8sServiceType: ClusterIP
 #extraEnvVars:
 #  - name: JAVA_OPTS
 #    value: -Dhttps.proxyHost=proxy.server.local -Dhttps.proxyPort=3128
+#  - name: JAVA_OPTS
+#    value: -Xmx512m
+
+#####################################################
+## Set to true if user want to clean up the ISD Data;default is false
+dbcleanup:
+  enabled: false
+  ## Change the days interval value if user wants to delete older than 180days data
+  daysinterval: 180
+
+####################################################
 
 #####################################################
 ## Set to true if user want to clean up the ISD Data;default is false
@@ -63,6 +74,7 @@ global:
   commonGate:
     enabled: true
     spinnakerRBAC: false  # Set to true if RBAC is enabled in Spinnaker
+    spinnakerpipelineRBAC: false
     spinnakerKayanta: false
 
   # Set to true if user need to access Spinnaker seperately
@@ -92,7 +104,7 @@ global:
 
   gitea:
     enabled: true
-    standardrepoBranch: v4.0.3.1
+    standardrepoBranch: v4.0.4
     admin:
       existingSecret: gitea-secret
       username: opsmx
@@ -299,7 +311,7 @@ autopilot:
   ## Image specific details
   image:
     repository: ubi8-oes-autopilot
-    tag: v4.0.3.1
+    tag: v4.0.4-rc4
     pullPolicy: IfNotPresent
 
   annotations:
@@ -332,7 +344,7 @@ audit:
   ##
   image:
     repository: ubi8-oes-audit-service
-    tag: v4.0.3.1
+    tag: v4.0.4-rc4
     pullPolicy: IfNotPresent
 
   serviceAnnotations: {}
@@ -354,7 +366,7 @@ auditClient:
   ##
   image:
     repository: ubi8-oes-audit-client
-    tag: v4.0.3.1
+    tag: v4.0.4-rc4
     pullPolicy: IfNotPresent
 
   serviceAnnotations: {}
@@ -376,7 +388,7 @@ datascience:
   ##
   image:
     repository: ubi8-oes-datascience
-    tag: v4.0.3.1
+    tag: v4.0.4-rc4
     pullPolicy: IfNotPresent
 
   serviceAnnotations: {}
@@ -395,7 +407,7 @@ dashboard:
   ## Image specific details
   image:
     repository: ubi8-oes-dashboard
-    tag: v4.0.3.1
+    tag: v4.0.4-rc4
     pullPolicy: IfNotPresent
 
   annotations:
@@ -443,23 +455,26 @@ stormdriver:
   image:
     repository: quay.io/opsmxpublic/stormdriver
     tag: v1.2.6
+
 ####################################################
 # Create Controller Secret Image
 createcontroller:
   ## Image specific details
   image:
     repository: create-secret
-    tag: v4.0.3.1
+    tag: v4.0.4
     pullPolicy: IfNotPresent
 ###############################################################################
 ##
+
+
 ## Values of OES Gate
 ##
 gate:
   ## Image specific details
   image:
     repository: ubi8-gate
-    tag: v4.0.3.1
+    tag: v4.0.4-rc6
     pullPolicy: IfNotPresent
 
   serviceAnnotations: {}
@@ -536,7 +551,7 @@ platform:
   ## Image specific details
   image:
     repository: ubi8-oes-platform
-    tag: v4.0.3.1
+    tag: v4.0.4-rc4
     pullPolicy: IfNotPresent
 
   annotations:
@@ -602,7 +617,7 @@ sapor:
   ## Image specific details
   image:
     repository: ubi8-oes-sapor
-    tag: v4.0.3.1
+    tag: v4.0.4-rc4
     pullPolicy: IfNotPresent
 
   annotations:
@@ -694,7 +709,7 @@ ui:
   ## Image specific details
   image:
     repository: ubi8-oes-ui
-    tag: v4.0.3.1
+    tag: v4.0.4-rc5
     pullPolicy: IfNotPresent
 
   annotations:
@@ -712,7 +727,7 @@ visibility:
   ## Image specific details
   image:
     repository: ubi8-oes-visibility
-    tag: v4.0.3.1
+    tag: v4.0.4-rc4
     pullPolicy: IfNotPresent
 
   annotations:

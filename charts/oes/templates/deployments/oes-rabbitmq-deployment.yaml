@@ -1,3 +1,4 @@
+{{- if or (eq .Values.installationMode "OES-AP")  (eq .Values.installationMode "EASY") -}}
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -29,6 +30,10 @@ spec:
       - image: {{ .Values.rabbitmq.image.registry }}:{{ .Values.rabbitmq.image.repository }}
         imagePullPolicy: IfNotPresent
         name: rabbitmq
+        env:
+        {{- if .Values.extraEnvVars }}
+        {{- include "tplvalues.render" (dict "value" .Values.extraEnvVars "context" $) | nindent 8 }}
+        {{- end }}
         ports:
         - containerPort: {{ .Values.rabbitmq.port }}
           protocol: TCP
@@ -59,4 +64,4 @@ spec:
       tolerations:
 {{ toYaml .Values.global.tolerations | indent 8 }}
       {{- end }}
-
+{{- end -}}
