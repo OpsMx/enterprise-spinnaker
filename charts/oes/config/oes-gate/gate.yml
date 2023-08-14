@@ -206,7 +206,7 @@ security:
   contentSecurityPolicy: "object-src 'none'; script-src 'unsafe-eval' 'unsafe-inline' https: http:;"
   basic:
     enabled: true
-  user: {}
+user: {}
 
 saml:
 {{ toYaml .Values.gate.config.saml | indent 2 }}
@@ -281,7 +281,7 @@ spinnaker:
           url: file:///opt/spinnaker/plugins/plugins.json
           #url: https://raw.githubusercontent.com/OpsMx/spinnakerPluginRepository/v3.10.0/plugins.json
 {{- end }}
-
+spring.cloud.vault.enabled: {{ .Values.vault.enterpriseEdition }}
 allowUnauthenticatedAccess:
   agentAPI: {{ .Values.gate.config.agentAPI }}
   webhooks: {{ .Values.gate.config.webhooks }}
