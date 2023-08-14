@@ -175,7 +175,7 @@ services:
     baseUrl: http://spin-rosco:8087
     enabled: true
 {{- end }}
-  user: {}
+user: {}
 cors:
   {{- if .Values.global.commonGate.enabled }}
   allowed-origins-pattern: ^https?://(?:localhost|{{ .Values.global.oesUI.host }}|{{ .Values.global.spinDeck.host }}|opsmx.com)(?::[1-9]\d*)?/?
