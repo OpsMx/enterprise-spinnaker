@@ -759,7 +759,7 @@ spinnaker:
       enabled: false
       type: git  # git, s3, stash
       gitConfig: "git config --global http.sslVerify false"
-      organization: project_name  # Also called "project" in some repos
+      organization: OpsMx, <PersonalRepoName>, or project_name  # Also called "project" in some repos
       repository: repo_name  # bucket name in case of S3
       rootFolder: pipeline/
       ##### ONLY In case of S3
