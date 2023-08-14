@@ -63,8 +63,10 @@ spec:
           subPath: help-text.json
         - mountPath: /etc/nginx/nginx.conf
           name: nginx-config
-          {{- if .Values.installSpinnaker  }}
+          {{- if and (.Values.installSpinnaker) (not .Values.global.gitea.enabled) }}
           subPath: nginx.conf
+          {{- else if and (.Values.global.gitea.enabled) (.Values.installSpinnaker) }}
+          subPath: nginx-quick-install.conf
           {{- else }}
           subPath: nginx-ap-only.conf
           {{- end }}
