@@ -179,6 +179,16 @@ Return the proper Opa image name
 {{- printf "%s/%s:%s" $registryName $repositoryName $tag -}}
 {{- end -}}
 
+{{/*
+Return the proper Create Controller Image
+*/}}
+{{- define "createcontroller.image" -}}
+{{- $registryName := .Values.imageCredentials.registry -}}
+{{- $repositoryName := .Values.createcontroller.image.repository -}}
+{{- $tag := .Values.createcontroller.image.tag | toString -}}
+{{- printf "%s/%s:%s" $registryName $repositoryName $tag -}} 
+{{- end -}}
+
 {{/* vim: set filetype=mustache: */}}
 {{/*
 Renders a value that contains template.

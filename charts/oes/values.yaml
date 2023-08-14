@@ -41,6 +41,14 @@ dbcleanup:
 
 ####################################################
 
+#####################################################
+## Set to true if user want to clean up the ISD Data;default is false
+dbcleanup:
+  enabled: false
+  ## Change the days interval value if user wants to delete older than 180days data
+  daysinterval: 180
+
+####################################################
 # Global variables can be accessed across all the charts including sub-charts
 global:
   # Custom Images registry where all the OSS and customized images used in the helm chart are stored
@@ -447,6 +455,19 @@ stormdriver:
   image:
     repository: quay.io/opsmxpublic/stormdriver
     tag: v1.2.6
+
+####################################################
+# Create Controller Secret Image
+createcontroller:
+  ## Image specific details
+  image:
+    repository: create-secret
+    tag: v4.0.4
+    pullPolicy: IfNotPresent
+###############################################################################
+##
+
+
 ## Values of OES Gate
 ##
 gate:
