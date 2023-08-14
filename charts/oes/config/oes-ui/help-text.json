@@ -1495,7 +1495,7 @@
 },
 "GITLAB":{
   "HEADER": "GitLab",
-  "BODY":"<span><li><strong>Account Name</strong>: User-defined account name for your GitLab access.</li><li><strong>Host URL</strong>: GitLab's host address, such as https://gitlab.com</li><li><strong>Username</strong>: The GitLab server username </li><li><strong>Token</strong>: The user's personal access token. Please refer <a href='https://docs.gitlab.com/ee/user/profile/personal_access_tokens.html' target='_blank'>this document</a> for generating tokens.</li><li><strong>Validate</strong>: This button controls the validation of the configuration. If it is on, ISD will check the configuration for errors before saving it. If it is off, ISD will save the configuration as it is, without any validation. We recommend keeping the button on unless you are sure that the configuration is correct and does not need validation.</li></span>",
+  "BODY":"<span><ul><li><strong>Account Name</strong>: User-defined account name for your GitLab access.</li><li><strong>Host URL</strong>: GitLab's host address, such as https://gitlab.com</li><li><strong>Token</strong>: The user's personal access token. Please refer <a href='https://docs.gitlab.com/ee/user/profile/personal_access_tokens.html' target='_blank'>this document</a> for generating tokens.</li><li><strong>Validate</strong>: This button controls the validation of the configuration. If it is on, ISD will check the configuration for errors before saving it. If it is off, ISD will save the configuration as it is, without any validation. We recommend keeping the button on unless you are sure that the configuration is correct and does not need validation.</li><li><strong>Connect to CD</strong>: Switch On this toggle to configure the resource in a gitops enabled Spinnaker instance</li><li><strong>Permissions</strong>: Configure specific user groups’ access to this integration.</li></ul></span>",
   "ACCOUNTNAME":{
     "TOOLTIP":"User-defined account name for your GitLab access.",
     "VALIDATION_MESSAGE":{
@@ -1532,9 +1532,6 @@
   "SPINNAKERTOGGLE":{
     "TOOLTIP":"Switch On this toggle to configure the resource in a gitops enabled Spinnaker instance",
     "VALIDATION_MESSAGE":{}
-  },
-  "USERNAME":{
-    "TOOLTIP":"The GitLab server username"
   },
   "VALIDATETOGGLE":{
     "TOOLTIP":"This button controls the validation of the configuration. If it is on, ISD will check the configuration for errors before saving it. If it is off, ISD will save the configuration as it is, without any validation. We recommend keeping the button on unless you are sure that the configuration is correct and does not need validation.",
@@ -1903,7 +1900,7 @@
 },
 "GCB":{
   "HEADER": "GCB",
-  "BODY": "<div><p>This page allows you to connect Google Cloud Build with ISD. Google cloud build can be used as an automated trigger as well as a stage in the pipeline.</p><p>To configure a pipeline to be triggered by a completed GCB build, after this integration is succefully created, go to your application's pipeline menu. Click on the configuration stage of a pipeline, then select Pub/Sub as the automated trigger. Select Pub/Sub System type as Google and select your subscribtion name.</p><p>To run GCB Build as part of a pipeline, create a stage of type Google Cloud Build, select your GCB Account and configure the build definition.In the Produces Artifacts section, you may supply any artifacts that you expect the build to create in order to make these artifacts available to downstream stages</p><p><strong>Fields</strong>:</p><ul class='helpTextUl'><li><strong>Account Name</strong>: The user defined name of this account.<span></span></li><li><strong>Project Name</strong>: <span>The name of the GCP project in which to trigger and monitor builds</span></li><li><strong>Subscription Name</strong>: <span> The name of the PubSub subscription on which to listen for build changes</span></li><li><strong>Authentication Type</strong>: <span>Select how the external resource confirms the user credentials</span></li><li><strong>Json key file (File) </strong>: <span>JSON service account that Spinnaker will use as credentials</span></li><li><strong>Connect to CD</strong>: <span>Switch On this toggle to configure the resource in a gitops enabled CD tool</span></li><li><strong>Permissions</strong>: <span>Authorization for the account</span></li></ul></div>",
+  "BODY": "<div><p>This page allows you to connect Google Cloud Build with ISD. Google cloud build can be used as an automated trigger as well as a stage in the pipeline.</p><p>To configure a pipeline to be triggered by a completed GCB build, after this integration is succefully created, go to your application's pipeline menu. Click on the configuration stage of a pipeline, then select Pub/Sub as the automated trigger. Select Pub/Sub System type as Google and select your subscribtion name.</p><p>To run GCB Build as part of a pipeline, create a stage of type Google Cloud Build, select your GCB Account and configure the build definition.In the Produces Artifacts section, you may supply any artifacts that you expect the build to create in order to make these artifacts available to downstream stages</p><p><strong>Fields</strong>:</p><ul class='helpTextUl'><li><strong>Account Name</strong>: The user defined name of this account.<span></span></li><li><strong>Project Name</strong>: <span>The name of the GCP project in which to trigger and monitor builds</span></li><li><strong>Subscription Name</strong>: <span> The name of the PubSub subscription on which to listen for build changes</span></li><li><strong>Authentication Type</strong>: <span>Select how the external resource confirms the user credentials</span></li><li><strong>Json key file (File) </strong>: <span>JSON service account that Spinnaker will use as credentials</span></li><li><strong>Validate</strong>: This button controls the validation of the configuration. If it is on, ISD will check the configuration for errors before saving it. If it is off, ISD will save the configuration as it is, without any validation. We recommend keeping the button on unless you are sure that the configuration is correct and does not need validation.</li><li><strong>Connect to CD</strong>: <span>Switch On this toggle to configure the resource in a gitops enabled CD tool</span></li><li><strong>Permissions</strong>: <span>Configure specific user groups’ access to this integration.</li></ul></div>",
   "ACCOUNTNAME":{
     "TOOLTIP":"The name of the account to operate on",
     "VALIDATION_MESSAGE":{
@@ -2177,11 +2174,15 @@
         "invalidUrl": "Host URL is invalid"
       }
     },
+    "ACCOUNTTYPE":{
+      "TOOLTIP": "Cloud Jira: Please use this option if you are using cloud instance of Jira. On-Prem Jira: Please use this option if you are using Jira on-prem",
+      "VALIDATION_MESSAGE": {
+      }
+    },
     "SPINNAKERTOGGLE":{
       "TOOLTIP":"Switch On this toggle to configure the resource in a gitops enabled Spinnaker instance",
       "VALIDATION_MESSAGE":{}
     }
-    
   },
   "SERVICENOW":{
     "HEADER": "Service Now",
@@ -2247,7 +2248,7 @@
   },
   "CLOUDWATCH":{
     "HEADER": "AWS-CLOUDWATCH",
-    "BODY":"<span>Amazon CloudWatch Can be used as a monitoring provider in the verification gates</span>",
+    "BODY":"<span><p>Amazon CloudWatch Can be used as a monitoring provider in the verification gates</p><p><strong>Fields</strong>:</p><ul class='helpTextUl'><li><strong>Account Name</strong>: User defined name for the AWS-CLOUDWATCH account</li><li><strong>Access Key Id</strong>: AWS-CLOUDWATCH Access Key Id</li><li><strong>Secret Access Key</strong>: AWS-CLOUDWATCH Secret Access Key</li><li><strong>Permissions</strong>: Configure specific user groups’ access to this integration.</li></ul></span>",
     "ACCOUNTNAME":{
       "TOOLTIP":"User defined name for the AWS-CLOUDWATCH account",
       "VALIDATION_MESSAGE":{
@@ -3318,3 +3319,4 @@
     }
   }
 }
+

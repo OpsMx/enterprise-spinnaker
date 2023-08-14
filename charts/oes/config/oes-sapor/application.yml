@@ -24,7 +24,7 @@ secretManagement:
   encryption: true
 oes:
   rbac:
-    enabled: true
+    enabled: {{ .Values.global.commonGate.spinnakerRBAC }}
   admin:
     user: admin
   platform:
