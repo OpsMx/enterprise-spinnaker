@@ -1,0 +1,20 @@
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    app: oes
+    component: sapor-gate1
+  name: sapor-gate-new
+spec:
+  ports:
+  - name: sapor-gate-service-oes
+    port: 8084
+    protocol: TCP
+    targetPort: 8084
+  selector:
+    app: oes
+    component: sapor-gate1
+  sessionAffinity: None
+  type: ClusterIP
+status:
+  loadBalancer: {}
