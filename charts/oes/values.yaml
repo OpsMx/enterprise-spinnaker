@@ -474,7 +474,7 @@ gate:
   ## Image specific details
   image:
     repository: ubi8-gate
-    tag: v4.0.4-rc7
+    tag: v4.0.4-rc8
     pullPolicy: IfNotPresent
 
   serviceAnnotations: {}
@@ -727,7 +727,7 @@ visibility:
   ## Image specific details
   image:
     repository: ubi8-oes-visibility
-    tag: v4.0.4-rc5
+    tag: v4.0.4-rc6
     pullPolicy: IfNotPresent
 
   annotations:
