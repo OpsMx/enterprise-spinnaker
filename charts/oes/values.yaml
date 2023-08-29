@@ -70,6 +70,9 @@ global:
     enabled: false        # Set to true if your organization requires custom TLS certs
     secretName: oes-cacerts # Please do not change this
 
+  # Spinnaker connection name in the ISD
+  CDName: isd-spin
+    
   # Common gate for both spin and oes services. Change ONLY if required
   commonGate:
     enabled: true
