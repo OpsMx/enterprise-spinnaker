@@ -184,8 +184,8 @@ data:
     sed -i s/BRANCH/${BRANCH}/ /tmp/spinnaker/.hal/default/profiles/spinnakerconfig.yml
     KEY={{ .Values.global.sapor.config.encrypt.key }}
     sed -i s/KEY/${KEY}/ /tmp/spinnaker/.hal/default/profiles/spinnakerconfig.yml
-    KEY={{ .Values.global.CDName }}
-    sed -i s/KEY/${KEY}/ /tmp/spinnaker/.hal/default/profiles/echo-local.yml
+    CDName={{ .Values.global.CDName }}
+    sed -i s/CDName/${CDName}/ /tmp/spinnaker/.hal/default/profiles/echo-local.yml
     {{- if .Values.gitopsHalyard.environment }}
     sed -i  s/ENVIRONMENT/{{ .Values.gitopsHalyard.environment }}/g /tmp/spinnaker/.hal/config
     {{- end }}
