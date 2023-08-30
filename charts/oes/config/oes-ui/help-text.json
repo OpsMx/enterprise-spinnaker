@@ -457,7 +457,8 @@
       "VALIDATION_MESSAGE": {
         "required": "Name cannot be empty",
         "cannotContainSpace": "Name cannot contain space",
-        "exists": "Name already exists"
+        "exists": "Name already exists",
+        "enablerestriction": "Keywords 'allow' and 'deny' cannot be used as policy name."
       }
     },
     "POLICY_DETAILS": {
