@@ -709,7 +709,7 @@ ui:
   ## Image specific details
   image:
     repository: ubi8-oes-ui
-    tag: v4.0.4-rc11
+    tag: v4.0.4-rc12
     pullPolicy: IfNotPresent
 
   annotations:
