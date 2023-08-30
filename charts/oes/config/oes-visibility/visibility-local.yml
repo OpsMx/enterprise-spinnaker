@@ -14,17 +14,30 @@ spring:
     password: '{{ .Values.db.password }}'
     #sslmode: require
 {{- end }}
-  visiblity:
-    connectors:
-      configured: JIRA,GIT,AUTOPILOT,SONARQUBE,JENKINS,AQUAWAVE
-  logging:
-    level:
-      io:
-        swagger:
-          models:
-            parameters:
-              AbstractSerializableParameter: ERROR
-
+logging:
+  level:
+    io:
+      swagger:
+        models:
+          parameters:
+            AbstractSerializableParameter: ERROR
+visiblity:
+  connectors:
+    configured:
+      - name: "JIRA"
+        displayName: "Jira"
+      - name: "GITHUB"
+        displayName: "GitHub"
+      - name: "AUTOPILOT"
+        displayName: "Autopilot"
+      - name: "SONARQUBE"
+        displayName: "SonarQube"
+      - name: "JENKINS"
+        displayName: "Jenkins"
+      - name: "AQUAWAVE"
+        displayName: "Aqua Wave"
+      - name: "APPSCAN"
+        displayName: "HCL AppScan"
 management:
   endpoints:
     web:
