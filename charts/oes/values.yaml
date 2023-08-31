@@ -71,7 +71,7 @@ global:
     secretName: oes-cacerts # Please do not change this
 
   # Spinnaker connection name in the ISD
-  CDName: isd-spin
+  CDName: preview-saas
     
   # Common gate for both spin and oes services. Change ONLY if required
   commonGate:
