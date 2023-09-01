@@ -46,14 +46,9 @@ data:
     if [ $READY == 1 ];
     then
         echo "Spinnaker and OES is Installed and ready"
-        mkdir -p /tmp/config/git/
-        git -c {{ .Values.gitopsHalyard.repo.configArgs }} clone https://github.com/OpsMx/sample-pipelines.git /tmp/config/git/
-        if [[ $? != 0 ]]; then
-        echo "ERROR: Failed while cloning the repo https://github.com/OpsMx/sample-pipelines.git"
-          exit 1
-        fi
         echo "processing.........."
         sleep 100
+        cp -r sample-pipelines/* /tmp/config/git/
         cd /tmp/config/git
         cp -p /tmp/config/spin/config .
         ### remove commected line in file

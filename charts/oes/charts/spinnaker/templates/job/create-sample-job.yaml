@@ -48,7 +48,7 @@ spec:
         - bash
         - /tmp/config/spin-pipeline-import.sh
         name: sample-pipeline-install
-        image: {{ .Values.global.customImages.registry }}/spin-sample-pipeline:1.0
+        image: {{ .Values.global.customImages.registry }}/spin-sample-pipeline:v1.0.1
         volumeMounts:         
         - name: spin-pipeline-config
           mountPath: /tmp/config/git
