@@ -199,7 +199,6 @@ ldap:
   enabled: false
 {{- end }}
 {{- end }}
-{{- if .Values.gate.config.saml.enabled }}
 pipeline:
   rbac: {{ .Values.global.commonGate.spinnakerpipelineRBAC }}
 security:
