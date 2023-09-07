@@ -145,7 +145,7 @@ spec:
               fieldPath: metadata.namespace
         {{- if .Values.global.openshift }}
         - name: HOME
-          value: /tmp/
+          value: /tmp/spinnaker
         {{- end }}
         {{- end }}
         {{- end }}
@@ -178,8 +178,14 @@ spec:
               key: s3region
         {{- if .Values.global.openshift }}
         - name: HOME
-          value: /tmp/
+          value: /tmp/spinnaker
         {{- end }}
+        {{- end }}
+        {{- if .Values.global.securityContext }}
+        securityContext:
+{{ toYaml .Values.global.securityContext | indent 10 }}
+        {{- else }}
+        securityContext: {{ default "{}" }}
         {{- end }}
         volumeMounts:
         {{- if .Values.gitopsHalyard.repo.sshkeysecret }}
@@ -218,11 +224,17 @@ spec:
         {{- if .Values.global.openshift }}
         env:
         - name: HOME
-          value: /tmp/
+          value: /tmp/spinnaker
         {{- end }}
         image: {{ .Values.global.customImages.registry }}/k8s-decoder:hal
         imagePullPolicy: IfNotPresent
         resources: {}
+        {{- if .Values.global.securityContext }}
+        securityContext:
+{{ toYaml .Values.global.securityContext | indent 10 }}
+        {{- else }}
+        securityContext: {{ default "{}" }}
+        {{- end }}
         volumeMounts:
         - name: halyard-home
           mountPath: /tmp/spinnaker
@@ -242,11 +254,17 @@ spec:
               fieldPath: status.hostIP
         {{- if .Values.global.openshift }}
         - name: HOME
-          value: /tmp/
+          value: /tmp/spinnaker
         {{- end }}
         image: {{ .Values.global.customImages.registry }}/bitnami-kubectl:1.18.5
         imagePullPolicy: IfNotPresent
         resources: {}
+        {{- if .Values.global.securityContext }}
+        securityContext:
+{{ toYaml .Values.global.securityContext | indent 10 }}
+        {{- else }}
+        securityContext: {{ default "{}" }}
+        {{- end }}
         volumeMounts:
         - name: halyard-config
           mountPath: /tmp/config
