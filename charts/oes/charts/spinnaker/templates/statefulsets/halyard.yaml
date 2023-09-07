@@ -143,6 +143,10 @@ spec:
           valueFrom:
             fieldRef:
               fieldPath: metadata.namespace
+        {{- if .Values.global.openshift }}
+        - name: HOME
+          value: /tmp/spinnaker
+        {{- end }}
         {{- end }}
         {{- end }}
         {{- end }}
@@ -172,6 +176,10 @@ spec:
             secretKeyRef:
               name: {{ .Values.gitopsHalyard.secretName }}
               key: s3region
+        {{- if .Values.global.openshift }}
+        - name: HOME
+          value: /tmp/spinnaker
+        {{- end }}
         {{- end }}
         volumeMounts:
         {{- if .Values.gitopsHalyard.repo.sshkeysecret }}
@@ -207,6 +215,11 @@ spec:
         command:
         - sh
         - /tmp/akv2k8s/run.sh
+        {{- if .Values.global.openshift }}
+        env:
+        - name: HOME
+          value: /tmp/spinnaker
+        {{- end }}
         image: {{ .Values.global.customImages.registry }}/k8s-decoder:hal
         imagePullPolicy: IfNotPresent
         resources: {}
@@ -227,6 +240,10 @@ spec:
             fieldRef:
               apiVersion: v1
               fieldPath: status.hostIP
+        {{- if .Values.global.openshift }}
+        - name: HOME
+          value: /tmp/spinnaker
+        {{- end }}
         image: {{ .Values.global.customImages.registry }}/bitnami-kubectl:1.18.5
         imagePullPolicy: IfNotPresent
         resources: {}
