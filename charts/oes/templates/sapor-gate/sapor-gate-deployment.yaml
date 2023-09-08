@@ -1,4 +1,3 @@
-{{- if or (eq .Values.installationMode "OES-AP")  (eq .Values.installationMode "EASY") -}}
 {{- if .Values.saporgate.enabled }}
 apiVersion: apps/v1
 kind: Deployment
@@ -86,5 +85,4 @@ spec:
       - name: sapor-gate-files
         secret:
           secretName: sapor-gate-files
-{{- end -}}
 {{- end -}}
