@@ -286,10 +286,12 @@ spec:
         configMap:
           name: {{ template "spinnaker.fullname" . }}-halyard-overrideurl
       {{- end }}
-      {{- if and (.Values.gitopsHalyard.enabled) (eq .Values.gitopsHalyard.repo.type "git") }}
+      {{- if .Values.gitopsHalyard.enabled }}
+      {{- if or (eq .Values.gitopsHalyard.repo.type "git") (eq .Values.gitopsHalyard.repo.type "s3") }}
       - name: secret-decoder
         configMap:
           name: {{ template "spinnaker.fullname" . }}-spin-secret-decoder
+      {{- end }}
       {{- end }}
       {{- if .Values.gitopsHalyard.mTLS.enabled }}
       - name: sslcerts
