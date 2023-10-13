@@ -29,7 +29,7 @@ visiblity:
       - name: "GITHUB"
         displayName: "GitHub"
       - name: "AUTOPILOT"
-        displayName: "Autopilot"
+        displayName: "Verification"
       - name: "SONARQUBE"
         displayName: "SonarQube"
       - name: "JENKINS"
