@@ -20,6 +20,10 @@ feign:
       name: visibilityservice
       url: http://oes-visibility:8096
 
+active:
+  session: 30  # Session timeout in minutes
+  noDays: 30  # Users not logged in for this duration (in days) are shown with status INACTIVE
+
 fixedDelay:
   in:
     milliseconds: 120000
