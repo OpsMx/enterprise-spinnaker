@@ -288,12 +288,12 @@ allowUnauthenticatedAccess:
 
 message-broker:
   enabled: true
-  username: 'rabbitmq'
-  password: 'Networks123'
+  username: '{{ .Values.rabbitmq.username }}'
+  password: '{{ .Values.rabbitmq.password }}'
   host: rabbitmq-service
-  port: 5672
+  port: {{ .Values.rabbitmq.port }}
   endpoint:
-    name: rabbitmq  
+    name: rabbitmq
 
 logging:
   level:
