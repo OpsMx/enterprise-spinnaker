@@ -286,6 +286,15 @@ allowUnauthenticatedAccess:
   agentAPI: {{ .Values.gate.config.agentAPI }}
   webhooks: {{ .Values.gate.config.webhooks }}
 
+message-broker:
+  enabled: true
+  username: '{{ .Values.rabbitmq.username }}'
+  password: '{{ .Values.rabbitmq.password }}'
+  host: rabbitmq-service
+  port: {{ .Values.rabbitmq.port }}
+  endpoint:
+    name: rabbitmq
+
 logging:
   level:
     com.netflix.spinnaker.gate.security: INFO
