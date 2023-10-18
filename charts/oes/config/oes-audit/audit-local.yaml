@@ -34,6 +34,6 @@ feign:
       url: http://oes-dashboard:8094
 db:
   migration:
-    enabled: true
+    enabled: {{ .Values.dbmigration.enable }}
     version:
-      from: 4.0.4
+      from: {{ .Values.dbmigration.versionFrom }}
