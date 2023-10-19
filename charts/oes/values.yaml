@@ -582,8 +582,8 @@ platform:
 
 ############################### DB Migration configuration################################################
 dbmigration:
-  enable: true
-  versionFrom: 4.0.4 ## We need to update this flag if we want to run migration from other ISD versions. For eg: versionFrom: 4.0.3.1
+  enable: false
+  versionFrom: 4.0.4 ## We need to update this version if we want to run migration from other ISD versions. For eg: versionFrom: 4.0.3.1
 
 ################################################################################
 ## Details of rabbitmq message bus image for OES
