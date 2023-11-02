@@ -1265,6 +1265,15 @@ serverFiles:
         static_configs:
           - targets:
             - localhost:9090
+      - job_name: isd-opentelemetry-metrics-exporter
+        honor_timestamps: true
+        scrape_interval: 15s
+        scrape_timeout: 10s
+        metrics_path: /metrics
+        scheme: http
+        static_configs:
+          - targets:
+            - SERVICE_NAME.NAMESPACE.svc.cluster.local:19090
 
       # A scrape configuration for running Prometheus on a Kubernetes cluster.
       # This uses separate scrape configs for cluster components (i.e. API server, node)
