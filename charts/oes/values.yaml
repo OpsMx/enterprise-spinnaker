@@ -5,9 +5,9 @@
 
 ## Info related to registry where OES images are stored
 imageCredentials:
-  repoUrl: https://quay.io/
+  repoUrl: https://docker.io/
   # Update this is using a private repo such as ACR, ECR, GCR, JFrog, etc.
-  registry: quay.io/opsmxpublic
+  registry: docker.io/opsmx11
 
 ####################################################
 ## Option to skip installation of OpsMx Spinnaker
@@ -45,7 +45,7 @@ global:
   # Custom Images registry where all the OSS and customized images used in the helm chart are stored
   # Only update this is using a private repo such as ACR, ECR, GCR, JFrog, etc.
   customImages:
-    registry: quay.io/opsmxpublic
+    registry: docker.io/opsmx11
 
   # when this flag is set to false; UI will be accessible over http instead of https
   ssl:
@@ -98,7 +98,7 @@ global:
 
   gitea:
     enabled: true
-    standardrepoBranch: v4.0.4.1
+    standardrepoBranch: v4.0.4.2
     admin:
       existingSecret: gitea-secret
       username: opsmx
@@ -304,8 +304,8 @@ db:
 autopilot:
   ## Image specific details
   image:
-    repository: ubi8-oes-autopilot
-    tag: v4.0.4.1
+    repository: oes-autopilot
+    tag: v4.0.4.2-rc1
     pullPolicy: IfNotPresent
 
   annotations:
@@ -337,8 +337,8 @@ audit:
   ## Image specific details
   ##
   image:
-    repository: ubi8-oes-audit-service
-    tag: v4.0.4.1
+    repository: oes-audit-service
+    tag: v4.0.4.2-rc1
     pullPolicy: IfNotPresent
 
   serviceAnnotations: {}
@@ -359,8 +359,8 @@ auditClient:
   ## Image specific details
   ##
   image:
-    repository: ubi8-oes-audit-client
-    tag: v4.0.4.1
+    repository: oes-audit-client
+    tag: v4.0.4.2-rc1
     pullPolicy: IfNotPresent
 
   serviceAnnotations: {}
@@ -381,8 +381,8 @@ datascience:
   ## Image specific details
   ##
   image:
-    repository: ubi8-oes-datascience
-    tag: v4.0.4.1
+    repository: oes-datascience
+    tag: v4.0.4.2-rc1
     pullPolicy: IfNotPresent
 
   serviceAnnotations: {}
@@ -400,8 +400,8 @@ datascience:
 dashboard:
   ## Image specific details
   image:
-    repository: ubi8-oes-dashboard
-    tag: v4.0.4.1
+    repository: oes-dashboard
+    tag: v4.0.4.2-rc1
     pullPolicy: IfNotPresent
 
   annotations:
@@ -467,8 +467,8 @@ createcontroller:
 gate:
   ## Image specific details
   image:
-    repository: ubi8-gate
-    tag: v4.0.4.1
+    repository: gate
+    tag: v4.0.4.2-rc1
     pullPolicy: IfNotPresent
 
   serviceAnnotations: {}
@@ -544,8 +544,8 @@ gate:
 platform:
   ## Image specific details
   image:
-    repository: ubi8-oes-platform
-    tag: v4.0.4.1
+    repository: oes-platform
+    tag: v4.0.4.2-rc1
     pullPolicy: IfNotPresent
 
   annotations:
@@ -615,8 +615,8 @@ rabbitmq:
 sapor:
   ## Image specific details
   image:
-    repository: ubi8-oes-sapor
-    tag: v4.0.4.1
+    repository: oes-sapor
+    tag: v4.0.4.2-rc1
     pullPolicy: IfNotPresent
 
   annotations:
@@ -707,8 +707,8 @@ saporgate:
 ui:
   ## Image specific details
   image:
-    repository: ubi8-oes-ui
-    tag: v4.0.4.1
+    repository: oes-ui
+    tag: v4.0.4.2-rc1
     pullPolicy: IfNotPresent
 
   annotations:
@@ -725,8 +725,8 @@ ui:
 visibility:
   ## Image specific details
   image:
-    repository: ubi8-oes-visibility
-    tag: v4.0.4.1
+    repository: oes-visibility
+    tag: v4.0.4.2-rc1
     pullPolicy: IfNotPresent
 
   annotations:

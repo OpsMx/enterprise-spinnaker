@@ -53,6 +53,9 @@ spec:
         - containerPort: 8097
           name: backend
           protocol: TCP
+        - containerPort: 19090
+          name: opentelemetry
+          protocol: TCP
         livenessProbe:
           failureThreshold: 3
           httpGet:

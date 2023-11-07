@@ -17,6 +17,10 @@ spec:
     port: 8097
     protocol: TCP
     targetPort: 8097
+  - name: opentelemetry
+    protocol: TCP
+    port: 19090
+    targetPort: 19090
   selector:
     app: oes
     component: auditservice
