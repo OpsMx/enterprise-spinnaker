@@ -210,7 +210,8 @@ spec:
           subPath: cacerts
           name: cacerts
         {{- end }}
-      {{- if and (.Values.gitopsHalyard.enabled) (eq .Values.gitopsHalyard.repo.type "git") }}
+      {{- if .Values.gitopsHalyard.enabled }}
+      {{- if or (eq .Values.gitopsHalyard.repo.type "git") (eq .Values.gitopsHalyard.repo.type "s3") }}
       - name: "halyardconfig-update"
         command:
         - sh
@@ -228,6 +229,7 @@ spec:
           mountPath: /tmp/spinnaker
         - name: secret-decoder
           mountPath: /tmp/akv2k8s
+        {{- end }}
         {{- end }}
       {{- if .Values.gitopsHalyard.enabled }}
       - name: "halyard-overrideurl"
@@ -284,10 +286,12 @@ spec:
         configMap:
           name: {{ template "spinnaker.fullname" . }}-halyard-overrideurl
       {{- end }}
-      {{- if and (.Values.gitopsHalyard.enabled) (eq .Values.gitopsHalyard.repo.type "git") }}
+      {{- if .Values.gitopsHalyard.enabled }}
+      {{- if or (eq .Values.gitopsHalyard.repo.type "git") (eq .Values.gitopsHalyard.repo.type "s3") }}
       - name: secret-decoder
         configMap:
           name: {{ template "spinnaker.fullname" . }}-spin-secret-decoder
+      {{- end }}
       {{- end }}
       {{- if .Values.gitopsHalyard.mTLS.enabled }}
       - name: sslcerts
