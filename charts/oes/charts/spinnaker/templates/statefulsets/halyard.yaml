@@ -211,7 +211,7 @@ spec:
           name: cacerts
         {{- end }}
       {{- if .Values.gitopsHalyard.enabled }}
-      {{- if or (eq .Values.gitopsHalyard.repo.type "git") (eq .Values.gitopsHalyard.repo.type "s3") }}      
+      {{- if or (eq .Values.gitopsHalyard.repo.type "git") (eq .Values.gitopsHalyard.repo.type "s3") }}
       - name: "halyardconfig-update"
         command:
         - sh
@@ -287,7 +287,7 @@ spec:
           name: {{ template "spinnaker.fullname" . }}-halyard-overrideurl
       {{- end }}
       {{- if .Values.gitopsHalyard.enabled }}
-      {{- if or (eq .Values.gitopsHalyard.repo.type "git") (eq .Values.gitopsHalyard.repo.type "s3") }}      
+      {{- if or (eq .Values.gitopsHalyard.repo.type "git") (eq .Values.gitopsHalyard.repo.type "s3") }}  
       - name: secret-decoder
         configMap:
           name: {{ template "spinnaker.fullname" . }}-spin-secret-decoder
