@@ -1,19 +1,6 @@
-Thank you for installing Intelligent Software Delivery (ISD) platform from OpsMx
-#### Instructions for Accessing the UI in your browser
-{{- if .Values.global.createIngress }}
+{{- if or (eq .Values.installationMode "OES-AP")  (eq .Values.installationMode "EASY") -}}
 
-  Once the service is up and running, connect using below url
-      {{ .Values.global.oesUI.protocol }}://{{ .Values.global.oesUI.host }}
+  Thank you for installing Intelligent Software Delivery (ISD) platform from OpsMx
 {{- else }}
 
-  Once the service is up and running, issue this command in a terminal:
-      kubectl -n opsmx-isd  port-forward svc/oes-ui 8080
-
-  and navigate to http://localhost:8080
-  
-{{- end }}
-    You can login with admin/opsmxadmin123
-
-You will need to complete a few post-installation steps before using ISD:
-Create kubernetes account named "default" that is allowed to deploy to the namespace where ISD is installed
-   by navigating to setup->Cloud Providers->New Account and uploading the kubeconfig file
+  Thank you for installing Spinnaker from OpsMx
