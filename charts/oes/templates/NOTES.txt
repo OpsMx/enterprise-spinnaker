@@ -4,3 +4,4 @@
 {{- else }}
 
   Thank you for installing Spinnaker from OpsMx
+{{- end }}
