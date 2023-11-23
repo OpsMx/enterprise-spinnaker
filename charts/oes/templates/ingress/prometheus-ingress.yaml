@@ -1,0 +1,31 @@
+{{- if and (.Values.enableCentralMonitoring) (.Values.global.prometheus.enabled) -}}
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  annotations:
+{{- if .Values.global.certManager.installed }}
+    acme.cert-manager.io/http01-edit-in-place: "true"
+    cert-manager.io/issue-temporary-certificate: "true"
+    cert-manager.io/issuer: letsencrypt-{{ .Release.Namespace }}-oes
+    kubernetes.io/tls-acme: "true"
+{{- end }}
+  name: prometheus-ingress
+spec:
+  rules:
+  - host: {{ .Values.global.prometheus.host }}
+    http:
+      paths:
+      - backend:
+          service:
+            name: prometheus
+            port:
+              number: 80
+        path: /
+        pathType: ImplementationSpecific
+{{- if .Values.global.ssl.enabled }}
+  tls:
+  - hosts:
+    - {{ .Values.global.prometheus.host }}
+{{ toYaml .Values.global.prometheus.tls | indent 4 }}
+{{- end }}
+{{- end }}

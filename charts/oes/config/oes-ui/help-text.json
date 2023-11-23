@@ -451,7 +451,7 @@
   },
   "USERS__AUDIT_LISTING": {
     "HEADER": "User information not found!",
-    "BODY": "<div><p>This page displays user information, including their login details and current user status, which is determined based on their activities within the system over a specific time period.</p> <ul class='helpTextUl'><li>User ID: The unique identifier of the user.</li><li>Status: The current user status, which can be one of the following: ACTIVE, AWAY, INACTIVE, or LOGGED OUT.</li><li>Last Login: The timestamp of the user's most recent login.</li><li>Last Session Duration: The duration of the last session during their login.</li></div>"
+    "BODY": "<div><p>This page displays user information, including their login details and current user status, which is determined based on their activities within the system over a specific time period.</p><ul class='helpTextUl'><li>ACTIVE - The user is currently logged in and has performed an action within the last 30 minutes.</li><li>AWAY - The user is logged in and has not performed any actions within 30 minutes.</li><li>LOGGED OUT - The user has either been logged out or the session has timed out due to inactivity.</li><li>INACTIVE - The user hasn’t logged in for 30 days.</li></ul></div>"
   },
   "POLICY_CREATION": {
     "HEADER": "Policy",

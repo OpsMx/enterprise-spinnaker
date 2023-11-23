@@ -153,7 +153,7 @@
               "uid": "a3de564f-60de-46ec-89b2-a46f169a3823"
             },
             "editorMode": "code",
-            "expr": "sum by (status)(changes(pipelines_execution_count_counter_total{appName=~\"$application\", status=~\"SUCCEEDED|TERMINAL\"}[$timeFilter] offset $offsetDuration))",
+            "expr": "sum by (status)(changes(pipelines_execution_count_counter_total{appName=~\"$application\", status=~\"SUCCEEDED|TERMINAL\",sourceName=~\"$cdName\"}[$__rate_interval] offset $offsetDuration) + 1)",
             "instant": false,
             "interval": "",
             "legendFormat": "__auto",
@@ -215,13 +215,7 @@
               }
             },
             "decimals": 0,
-            "links": [
-              {
-                "targetBlank": true,
-                "title": "",
-                "url": "https://rahul404new.isd-dev.opsmx.net/deck/#/applications/"
-              }
-            ],
+            "links": [],
             "mappings": [],
             "noValue": "0",
             "thresholds": {
@@ -268,7 +262,7 @@
             },
             "editorMode": "code",
             "exemplar": false,
-            "expr": "sum(currently_executing_pipelines_new_ratio{sourceName=~\"$cdName\",appName=~\"$application\"} + 1) > 0 ",
+            "expr": "sum(currently_executing_pipelines_new_ratio{sourceName=~\"$cdName\",appName=~\"$application\",sourceName=~\"$cdName\"} + 1) > 0 ",
             "instant": false,
             "legendFormat": "__auto",
             "range": true,
@@ -365,7 +359,7 @@
               "uid": "a3de564f-60de-46ec-89b2-a46f169a3823"
             },
             "editorMode": "code",
-            "expr": "sum(changes(new_pipelines_added_count_total[$timeFilter]))",
+            "expr": "sum(changes(new_pipelines_added_count_total[$__rate_interval]) + 1)",
             "instant": true,
             "legendFormat": "__auto",
             "range": true,
@@ -459,12 +453,12 @@
           },
           "showUnfilled": true,
           "text": {
-            "titleSize": 10,
-            "valueSize": 10
+            "titleSize": 12,
+            "valueSize": 12
           },
           "valueMode": "text"
         },
-        "pluginVersion": "10.2.1",
+        "pluginVersion": "10.2.2",
         "targets": [
           {
             "datasource": {
@@ -473,7 +467,7 @@
             },
             "editorMode": "code",
             "exemplar": false,
-            "expr": "pipelines_execution_duration_counter_total{appName=~\"$application\"} >= $startTime <= $endTime",
+            "expr": "pipelines_execution_duration_counter_total{appName=~\"$application\",sourceName=~\"$cdName\"} >= $startTime <= $endTime",
             "format": "table",
             "instant": false,
             "legendFormat": "__auto",
@@ -657,12 +651,12 @@
           },
           "showUnfilled": true,
           "text": {
-            "titleSize": 10,
-            "valueSize": 10
+            "titleSize": 12,
+            "valueSize": 11
           },
           "valueMode": "text"
         },
-        "pluginVersion": "10.2.1",
+        "pluginVersion": "10.2.2",
         "targets": [
           {
             "datasource": {
@@ -671,7 +665,7 @@
             },
             "editorMode": "code",
             "exemplar": false,
-            "expr": "pipelines_execution_duration_counter_total{appName=~\"$application\"}  >= $startTime <= $endTime ",
+            "expr": "pipelines_execution_duration_counter_total{appName=~\"$application\",sourceName=~\"$cdName\"}  >= $startTime <= $endTime ",
             "format": "table",
             "instant": false,
             "legendFormat": "__auto",
@@ -760,7 +754,15 @@
           },
           {
             "id": "convertFieldType",
-            "options": {}
+            "options": {
+              "conversions": [
+                {
+                  "destinationType": "enum",
+                  "targetField": "srcBaseUrl"
+                }
+              ],
+              "fields": {}
+            }
           }
         ],
         "type": "bargauge"
@@ -823,12 +825,12 @@
           },
           "showUnfilled": true,
           "text": {
-            "titleSize": 10,
-            "valueSize": 10
+            "titleSize": 12,
+            "valueSize": 12
           },
           "valueMode": "text"
         },
-        "pluginVersion": "10.2.1",
+        "pluginVersion": "10.2.2",
         "targets": [
           {
             "datasource": {
@@ -837,7 +839,7 @@
             },
             "editorMode": "code",
             "exemplar": false,
-            "expr": "topk($numberOfBar,changes(pipelines_execution_count_counter_total{status=~\"SUCCEEDED\",appName=~\"$application\"}[$timeFilter] offset $offsetDuration) > 0)",
+            "expr": "topk($numberOfBar,changes(pipelines_execution_count_counter_total{status=~\"SUCCEEDED\",appName=~\"$application\",sourceName=~\"$cdName\"}[$timeFilter] offset $offsetDuration) + 1)",
             "format": "time_series",
             "instant": true,
             "legendFormat": "{{appName}}  - {{pipelineName}} ",
@@ -864,7 +866,7 @@
               {
                 "targetBlank": true,
                 "title": "Go to Spinnaker pipelines executions",
-                "url": "${__field.labels.srcBaseUrl}/deck/#/applications/${__field.labels.appName}/executions?pipeline=${__field.labels.pipelineName}"
+                "url": "${__field.labels.srcBaseUrl}/deck/#/applications/${__field.labels.appName}/executions?pipeline=${__field.labels.pipelineName}&status=TERMINAL"
               }
             ],
             "mappings": [],
@@ -908,12 +910,12 @@
           },
           "showUnfilled": true,
           "text": {
-            "titleSize": 10,
-            "valueSize": 10
+            "titleSize": 12,
+            "valueSize": 12
           },
           "valueMode": "text"
         },
-        "pluginVersion": "10.2.1",
+        "pluginVersion": "10.2.2",
         "targets": [
           {
             "datasource": {
@@ -922,7 +924,7 @@
             },
             "editorMode": "code",
             "exemplar": false,
-            "expr": "topk($numberOfBar, changes(pipelines_execution_count_counter_total{status=~\"TERMINAL\",appName=~\"$application\"}[$timeFilter] offset $offsetDuration) > 0)",
+            "expr": "topk($numberOfBar, changes(pipelines_execution_count_counter_total{status=~\"TERMINAL\",appName=~\"$application\",sourceName=~\"$cdName\"}[$timeFilter] offset $offsetDuration) + 1)",
             "format": "time_series",
             "instant": true,
             "legendFormat": "{{appName}}  - {{pipelineName}}",
@@ -949,6 +951,7 @@
               "cellOptions": {
                 "type": "auto"
               },
+              "filterable": true,
               "inspect": false
             },
             "mappings": [],
@@ -999,7 +1002,7 @@
           ]
         },
         "gridPos": {
-          "h": 8,
+          "h": 9,
           "w": 12,
           "x": 0,
           "y": 36
@@ -1009,15 +1012,16 @@
           "cellHeight": "sm",
           "footer": {
             "countRows": false,
+            "enablePagination": true,
             "fields": "",
             "reducer": [
               "sum"
             ],
-            "show": false
+            "show": true
           },
           "showHeader": true
         },
-        "pluginVersion": "10.2.1",
+        "pluginVersion": "10.2.2",
         "targets": [
           {
             "datasource": {
@@ -1026,7 +1030,7 @@
             },
             "editorMode": "code",
             "exemplar": false,
-            "expr": "sum by(pipelineName,appName,stageName,sourceName,srcBaseUrl)(currently_executing_pipelines_new_ratio{appName=~\"$application\"} + 1) > 0",
+            "expr": "sum by(pipelineName,appName,stageName,sourceName,srcBaseUrl)(currently_executing_pipelines_new_ratio{appName=~\"$application\",sourceName=~\"$vcdName\"} + 1) > 0",
             "format": "table",
             "instant": true,
             "legendFormat": "",
@@ -1073,9 +1077,143 @@
           }
         ],
         "type": "table"
+      },
+      {
+        "datasource": {
+          "type": "prometheus",
+          "uid": "a3de564f-60de-46ec-89b2-a46f169a3823"
+        },
+        "fieldConfig": {
+          "defaults": {
+            "color": {
+              "mode": "thresholds"
+            },
+            "custom": {
+              "align": "auto",
+              "cellOptions": {
+                "type": "auto"
+              },
+              "inspect": false
+            },
+            "mappings": [],
+            "thresholds": {
+              "mode": "absolute",
+              "steps": [
+                {
+                  "color": "green"
+                },
+                {
+                  "color": "red",
+                  "value": 80
+                }
+              ]
+            }
+          },
+          "overrides": [
+            {
+              "matcher": {
+                "id": "byName",
+                "options": "executionId"
+              },
+              "properties": [
+                {
+                  "id": "custom.width",
+                  "value": 252
+                },
+                {
+                  "id": "links",
+                  "value": [
+                    {
+                      "targetBlank": true,
+                      "title": "Go to Spinnaker detailed execution",
+                      "url": "${__data.fields.srcBaseUrl}/deck/#/applications/${__data.fields.appName}/executions/${__data.fields.executionId}?pipeline=${__data.fields.pipelineName}"
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        "gridPos": {
+          "h": 9,
+          "w": 12,
+          "x": 12,
+          "y": 36
+        },
+        "id": 36,
+        "options": {
+          "cellHeight": "sm",
+          "footer": {
+            "countRows": false,
+            "enablePagination": true,
+            "fields": "",
+            "reducer": [
+              "sum"
+            ],
+            "show": false
+          },
+          "showHeader": true,
+          "sortBy": []
+        },
+        "pluginVersion": "10.2.2",
+        "targets": [
+          {
+            "datasource": {
+              "type": "prometheus",
+              "uid": "fe31101e-e45a-4df2-926e-eb362b288510"
+            },
+            "editorMode": "code",
+            "exemplar": false,
+            "expr": "sum by(executionId, appName,pipelineName,srcBaseUrl)(pipelines_execution_duration_milliseconds_sum{appName=~\"$application\"}) > 120000",
+            "format": "table",
+            "instant": true,
+            "legendFormat": "",
+            "range": false,
+            "refId": "A"
+          }
+        ],
+        "title": "Pipeline Executions that took more than 2 mins",
+        "transformations": [
+          {
+            "id": "organize",
+            "options": {
+              "excludeByName": {
+                "Time": true
+              },
+              "indexByName": {
+                "Time": 0,
+                "Value": 5,
+                "appName": 1,
+                "executionId": 4,
+                "pipelineName": 2,
+                "stageName": 3
+              },
+              "renameByName": {
+                "Value": "Duration in ms",
+                "appName": "Application",
+                "executionId": "Execution Id",
+                "pipelineName": "Pipeline",
+                "stageName": "Stage"
+              }
+            }
+          },
+          {
+            "id": "sortBy",
+            "options": {
+              "fields": {},
+              "sort": [
+                {
+                  "desc": true,
+                  "field": "duration in millisecs"
+                }
+              ]
+            }
+          }
+        ],
+        "type": "table"
       }
     ],
-    "refresh": "5s",
+    "refresh": "",
     "schemaVersion": 38,
     "tags": [],
     "templating": {
@@ -1264,7 +1402,7 @@
             "text": "2h",
             "value": "2h"
           },
-          "hide": 2,
+          "hide": 0,
           "includeAll": false,
           "label": "offset",
           "multi": false,
@@ -1346,6 +1484,6 @@
     "timezone": "",
     "title": "PipeInsight",
     "uid": "cdc08946-b140-4ee1-a769-7705bd",
-    "version": 148,
+    "version": 183,
     "weekStart": ""
   }

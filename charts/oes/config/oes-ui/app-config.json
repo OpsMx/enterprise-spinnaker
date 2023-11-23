@@ -2,4 +2,14 @@
     "endPointUrl": "/gate/",
     "setApplicationInterval": {{ .Values.ui.config.setApplicationRefreshInterval }},
     "triggerPipeline": false
+    "multi_cd_enabled" : true,
+    "hide_accessManagement": true,
+    "hide_agent" : true,
+    "hide_cd_integration": false,
+    "hide_cloud_targets": true,
+    "hide_integrations": true,
+    "hide_pipelineTemplates": true,
+    "hide_policies": true,
+    "hide_users": true,
+    "grafanaEndPointUrl": {{ .Values.global.grafana.host }}
 }

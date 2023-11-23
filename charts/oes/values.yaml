@@ -161,6 +161,38 @@ global:
       tls:
         secretName: oes-gate-ingress
 
+#Grafana URL configuration; url overwhich grafana will be accessed
+  grafana:
+    enabled: false
+    protocol: http
+    host: grafana.example.ops.com
+    tls: 
+      secretName: grafana-ingress
+    datasources:
+      datasources.yaml:
+        apiVersion: 1
+        datasources:
+          - name: Prometheus
+            type: prometheus
+            access: proxy
+            orgId: 1
+            url: http://prometheus-server
+            isDefault: true
+    dashboards:
+      default:
+        pipelineinsights:
+          url: "https://raw.githubusercontent.com/OpsMx/enterprise-spinnaker/v4.0.4.2/charts/oes/charts/grafana/dashboards/pipelineinsights-dashboard.json"
+        stageinsights:
+          url: "https://raw.githubusercontent.com/OpsMx/enterprise-spinnaker/v4.0.4.2/charts/oes/charts/grafana/dashboards/stageinsights-dashboard.json"
+
+#Prometheus URL configuration; url overwhich Prometheus will be accessed
+  prometheus:
+    enabled: false
+    protocol: http
+    host: prometheus.example.ops.com
+    tls: 
+      secretName: prometheus-ingress
+
   ###############################################################################
   # A trial LDAP is installed by default, with users: admin, user1,2,3 with user1password, user2pa...
   # Set it to false if own LDAP is to be configured
@@ -256,11 +288,6 @@ global:
       # to fetch External Load Balancer IP of oes-gate and vice versa
       externalIpCheckDelay: 180
 
-#####################################################
-# Centralized Monitoring
-#####################################################
-  enableCentralMonitoring: false
-
 ###############################################################################
 # AutoPilot, Sapor, Platform, Visibility and DS services use a Postgress DB for backend. A DB is automatically installed
 # Values of OES Database
@@ -305,7 +332,7 @@ autopilot:
   ## Image specific details
   image:
     repository: ubi8-oes-autopilot
-    tag: v4.0.4.2-rc1
+    tag: v4.0.4.2-rc2
     pullPolicy: IfNotPresent
 
   annotations:
@@ -338,7 +365,7 @@ audit:
   ##
   image:
     repository: ubi8-oes-audit-service
-    tag: v4.0.4.2-rc1
+    tag: v4.0.4.2-rc2
     pullPolicy: IfNotPresent
 
   serviceAnnotations: {}
@@ -360,7 +387,7 @@ auditClient:
   ##
   image:
     repository: ubi8-oes-audit-client
-    tag: v4.0.4.2-rc1
+    tag: v4.0.4.2-rc2
     pullPolicy: IfNotPresent
 
   serviceAnnotations: {}
@@ -382,7 +409,7 @@ datascience:
   ##
   image:
     repository: ubi8-oes-datascience
-    tag: v4.0.4.2-rc1
+    tag: v4.0.4.2-rc2
     pullPolicy: IfNotPresent
 
   serviceAnnotations: {}
@@ -401,7 +428,7 @@ dashboard:
   ## Image specific details
   image:
     repository: ubi8-oes-dashboard
-    tag: v4.0.4.2-rc1
+    tag: v4.0.4.2-rc2
     pullPolicy: IfNotPresent
 
   annotations:
@@ -468,7 +495,7 @@ gate:
   ## Image specific details
   image:
     repository: ubi8-gate
-    tag: v4.0.4.2-rc1
+    tag: v4.0.4.2-rc2
     pullPolicy: IfNotPresent
 
   serviceAnnotations: {}
@@ -545,7 +572,7 @@ platform:
   ## Image specific details
   image:
     repository: ubi8-oes-platform
-    tag: v4.0.4.2-rc1
+    tag: v4.0.4.2-rc2
     pullPolicy: IfNotPresent
 
   annotations:
@@ -616,7 +643,7 @@ sapor:
   ## Image specific details
   image:
     repository: ubi8-oes-sapor
-    tag: v4.0.4.2-rc1
+    tag: v4.0.4.2-rc2
     pullPolicy: IfNotPresent
 
   annotations:
@@ -708,7 +735,7 @@ ui:
   ## Image specific details
   image:
     repository: ubi8-oes-ui
-    tag: v4.0.4.2-rc1
+    tag: v4.0.4.2-rc2
     pullPolicy: IfNotPresent
 
   annotations:
@@ -726,7 +753,7 @@ visibility:
   ## Image specific details
   image:
     repository: ubi8-oes-visibility
-    tag: v4.0.4.2-rc1
+    tag: v4.0.4.2-rc2
     pullPolicy: IfNotPresent
 
   annotations:
@@ -1333,12 +1360,14 @@ openldap:
       member: cn=user2,dc=example,dc=org
       member: cn=user3,dc=example,dc=org
 
+####################################################
+# Centralized Monitoring Configuration
+enableCentralMonitoring: false
 #####################################################
 # Centralized Logging Configuration
 ####################################################
 # Set to true to install Elastic and Kibana
 enableCentralLogging: false
-
 elasticsearch:
   replicas: 1
   minimumMasterNodes: 1
