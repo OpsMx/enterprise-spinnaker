@@ -166,8 +166,12 @@ global:
     enabled: false
     protocol: http
     host: grafana.example.ops.com
-    tls: 
-      secretName: grafana-ingress
+
+    ingress:
+      annotations:
+        kubernetes.io/ingress.class: nginx
+      tls: 
+        secretName: grafana-ingress
     datasources:
       datasources.yaml:
         apiVersion: 1
@@ -190,8 +194,11 @@ global:
     enabled: false
     protocol: http
     host: prometheus.example.ops.com
-    tls: 
-      secretName: prometheus-ingress
+    ingress:
+      annotations:
+        kubernetes.io/ingress.class: nginx
+      tls: 
+        secretName: prometheus-ingress
 
   ###############################################################################
   # A trial LDAP is installed by default, with users: admin, user1,2,3 with user1password, user2pa...

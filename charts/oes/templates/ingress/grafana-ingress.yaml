@@ -9,6 +9,9 @@ metadata:
     cert-manager.io/issuer: letsencrypt-{{ .Release.Namespace }}-oes
     kubernetes.io/tls-acme: "true"
 {{- end }}
+{{- if .Values.global.oesUI.ingress.annotations }}
+{{ tpl (toYaml .Values.global.grafana.ingress.annotations) . | indent 4 }}
+{{- end }}
   name: grafana-ingress
 spec:
   rules:
@@ -17,7 +20,7 @@ spec:
       paths:
       - backend:
           service:
-            name: grafana
+            name: {{ .Release.Name }}-grafana
             port:
               number: 8094
         path: /
@@ -26,6 +29,6 @@ spec:
   tls:
   - hosts:
     - {{ .Values.global.grafana.host }}
-{{ toYaml .Values.global.grafana.tls | indent 4 }}
+{{ toYaml .Values.global.grafana.ingress.tls | indent 4 }}
 {{- end }}
 {{- end }}

@@ -9,6 +9,9 @@ metadata:
     cert-manager.io/issuer: letsencrypt-{{ .Release.Namespace }}-oes
     kubernetes.io/tls-acme: "true"
 {{- end }}
+{{- if .Values.global.oesUI.ingress.annotations }}
+{{ tpl (toYaml .Values.global.prometheus.ingress.annotations) . | indent 4 }}
+{{- end }}
   name: prometheus-ingress
 spec:
   rules:
@@ -17,7 +20,7 @@ spec:
       paths:
       - backend:
           service:
-            name: prometheus
+            name: {{ .Release.Name }}-prometheus-server
             port:
               number: 80
         path: /
@@ -26,6 +29,6 @@ spec:
   tls:
   - hosts:
     - {{ .Values.global.prometheus.host }}
-{{ toYaml .Values.global.prometheus.tls | indent 4 }}
+{{ toYaml .Values.global.prometheus.ingress.tls | indent 4 }}
 {{- end }}
 {{- end }}
