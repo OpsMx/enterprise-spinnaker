@@ -22,7 +22,7 @@ spec:
           service:
             name: {{ .Release.Name }}-grafana
             port:
-              number: 8094
+              number: 80
         path: /
         pathType: ImplementationSpecific
 {{- if .Values.global.ssl.enabled }}
