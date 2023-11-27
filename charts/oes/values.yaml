@@ -742,7 +742,7 @@ ui:
   ## Image specific details
   image:
     repository: ubi8-oes-ui
-    tag: v4.0.4.2-rc2
+    tag: v4.0.4.2-rc3
     pullPolicy: IfNotPresent
 
   annotations:
