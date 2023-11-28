@@ -142,17 +142,6 @@ Return the appropriate apiVersion for ingress.
 {{- end -}}
 
 {{/*
-Return the appropriate apiVersion for podSecurityPolicy.
-*/}}
-{{- define "grafana.podSecurityPolicy.apiVersion" -}}
-  {{- if and (.Capabilities.APIVersions.Has "policy/v1") (semverCompare ">= 1.16-0" .Capabilities.KubeVersion.Version) -}}
-    {{- print "policy/v1beta1" -}}
-  {{- else -}}
-    {{- print "extensions/v1beta1" -}}
-  {{- end -}}
-{{- end -}}
-
-{{/*
 Return the appropriate apiVersion for podDisruptionBudget.
 */}}
 {{- define "grafana.podDisruptionBudget.apiVersion" -}}

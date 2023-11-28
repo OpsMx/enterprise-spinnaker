@@ -2,4 +2,16 @@
     "endPointUrl": "/gate/",
     "setApplicationInterval": {{ .Values.ui.config.setApplicationRefreshInterval }},
     "triggerPipeline": false
+    "multi_cd_enabled" : false,
+    "hide_accessManagement": true,
+    "hide_agent" : true,
+    "hide_cd_integration": false,
+    "hide_cloud_targets": true,
+    "hide_integrations": true,
+    "hide_pipelineTemplates": true,
+    "hide_policies": true,
+    "hide_users": true,
+    "grafana_enabled": false,
+    "grafanaPipelineInsightsEndpoint": {{ .Values.global.grafana.host }}/d/cdc08946-b140-4ee1-a769-7705bd/pipelineinsights,
+    "grafanaStageInsightsEndpoint": {{ .Values.global.grafana.host }}/d/cdc08946-b140-4ee1-a769-7705ed/stageinsights
 }
