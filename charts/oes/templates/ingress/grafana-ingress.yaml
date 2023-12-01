@@ -9,7 +9,7 @@ metadata:
     cert-manager.io/issuer: letsencrypt-{{ .Release.Namespace }}-oes
     kubernetes.io/tls-acme: "true"
 {{- end }}
-{{- if .Values.global.oesUI.ingress.annotations }}
+{{- if .Values.global.grafana.ingress.annotations }}
 {{ tpl (toYaml .Values.global.grafana.ingress.annotations) . | indent 4 }}
 {{- end }}
   name: grafana-ingress

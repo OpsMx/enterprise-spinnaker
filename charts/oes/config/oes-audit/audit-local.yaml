@@ -33,9 +33,9 @@ feign:
     dashboard:
       url: http://oes-dashboard:8094
 open-telemetry:
-  enabled: true // should be true if we want enable grafana prometheus insights to the customer
-  baseUrl: <PROTOCOL>://<ISD-URL> // isd url
-  saporUrl: http://sapor-gate:8084 // sapor gate url
+  enabled: true
+  baseUrl: <PROTOCOL>://<ISD-URL>
+  saporUrl: http://sapor-gate:8084
 db:
   migration:
     enabled: {{ .Values.dbmigration.enable }}
