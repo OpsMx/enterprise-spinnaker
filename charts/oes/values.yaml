@@ -166,6 +166,8 @@ global:
     enabled: false
     protocol: http
     host: grafana.example.ops.com
+    pipelineinsightsid: cdc08946-b140-4ee1-a769-7705bd #Please provide the pipelineinsights dasboard uid
+    stageinsightsid: cdc08946-b140-4ee1-a769-7705ed #Please provide the stageinsights dasboard uid
 
     ingress:
       annotations:
