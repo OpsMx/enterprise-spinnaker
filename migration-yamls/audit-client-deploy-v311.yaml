@@ -1,0 +1,101 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: oes
+    component: auditclient-new
+  name: oes-audit-client-v311
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: oes
+      component: auditclient-v311
+  strategy:
+    rollingUpdate:
+      maxSurge: 25%
+      maxUnavailable: 25%
+    type: RollingUpdate
+  template:
+    metadata:
+      labels:
+        app: oes
+        component: auditclient-v311
+    spec:
+      containers:
+      - image: ${auditclient-image}
+        imagePullPolicy: IfNotPresent
+        name: oes-audit-client-v311
+        ports:
+        - containerPort: 8098
+          name: backend
+          protocol: TCP
+        livenessProbe:
+          failureThreshold: 3
+          httpGet:
+            path: /mgmt/health
+            port: 8098
+            scheme: HTTP
+          initialDelaySeconds: 60
+          periodSeconds: 60
+          successThreshold: 1
+          timeoutSeconds: 1
+        readinessProbe:
+          failureThreshold: 3
+          initialDelaySeconds: 60
+          periodSeconds: 10
+          successThreshold: 1
+          tcpSocket:
+            port: 8098
+          timeoutSeconds: 1
+        resources:
+          limits:
+            cpu: 1000m
+            memory: 1000Mi
+          requests:
+            cpu: 500m
+            memory: 500Mi
+        terminationMessagePath: /dev/termination-log
+        terminationMessagePolicy: File
+        volumeMounts:
+        - mountPath: /opsmx/conf/audit-client-local.yml
+          name: audit-config-volume
+          subPath: audit-local.yml
+        - mountPath: /opsmx/conf/bootstrap.yml
+          name: bootstrap-config-volume
+          subPath: bootstrap.yml
+      dnsPolicy: ClusterFirst
+      imagePullSecrets:
+      - name: opsmxdev-secret
+      - name: opsmx11-secret
+      initContainers:
+      - command:
+        - /bin/bash
+        - -c
+        - sleep 30;echo Waiting for oes-db to be up and running; pg_isready -h oes-db
+          -p 5432 && echo PostgreSQL DB is ready to receive connections
+        image: postgres:9.6.5
+        imagePullPolicy: IfNotPresent
+        name: db-check
+        resources: {}
+        terminationMessagePath: /dev/termination-log
+        terminationMessagePolicy: File
+      restartPolicy: Always
+      schedulerName: default-scheduler
+      securityContext: {}
+      terminationGracePeriodSeconds: 30
+      volumes:
+      - secret:
+          defaultMode: 420
+          items:
+          - key: audit-local.yml
+            path: audit-local.yml
+          secretName: oes-audit-client-config-v311
+        name: audit-config-volume
+      - secret:
+          defaultMode: 420
+          items:
+          - key: bootstrap.yml
+            path: bootstrap.yml
+          secretName: bootstrap
+        name: bootstrap-config-volume
