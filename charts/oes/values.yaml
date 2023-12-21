@@ -160,37 +160,7 @@ global:
         kubernetes.io/ingress.class: nginx
       tls:
         secretName: oes-gate-ingress
-
-#Grafana URL configuration; url overwhich grafana will be accessed
-  grafana:
-    enabled: false
-    protocol: http
-    host: grafana.example.ops.com
-    pipelineinsightsid: cdc08946-b140-4ee1-a769-7705bd #Please provide the pipelineinsights dasboard uid
-    stageinsightsid: cdc08946-b140-4ee1-a769-7705ed #Please provide the stageinsights dasboard uid
-
-    ingress:
-      annotations:
-        kubernetes.io/ingress.class: nginx
-      tls: 
-        secretName: grafana-ingress
-    datasources:
-      datasources.yaml:
-        apiVersion: 1
-        datasources:
-          - name: Prometheus
-            type: prometheus
-            access: proxy
-            orgId: 1
-            url: http://prometheus-server
-            isDefault: true
-    dashboards:
-      default:
-        pipelineinsights:
-          url: "https://raw.githubusercontent.com/OpsMx/enterprise-spinnaker/v4.0.4.2/charts/oes/charts/grafana/dashboards/pipelineinsights-dashboard.json"
-        stageinsights:
-          url: "https://raw.githubusercontent.com/OpsMx/enterprise-spinnaker/v4.0.4.2/charts/oes/charts/grafana/dashboards/stageinsights-dashboard.json"
-
+    
 #Prometheus URL configuration; url overwhich Prometheus will be accessed
   prometheus:
     enabled: false
@@ -341,7 +311,7 @@ autopilot:
   ## Image specific details
   image:
     repository: ubi8-oes-autopilot
-    tag: v4.0.4.2-rc2
+    tag: v4.0.4.2-rc3
     pullPolicy: IfNotPresent
 
   annotations:
@@ -374,7 +344,7 @@ audit:
   ##
   image:
     repository: ubi8-oes-audit-service
-    tag: v4.0.4.2-rc2
+    tag: v4.0.4.2-rc3
     pullPolicy: IfNotPresent
 
   serviceAnnotations: {}
@@ -396,7 +366,7 @@ auditClient:
   ##
   image:
     repository: ubi8-oes-audit-client
-    tag: v4.0.4.2-rc2
+    tag: v4.0.4.2-rc3
     pullPolicy: IfNotPresent
 
   serviceAnnotations: {}
@@ -418,7 +388,7 @@ datascience:
   ##
   image:
     repository: ubi8-oes-datascience
-    tag: v4.0.4.2-rc2
+    tag: v4.0.4.2-rc3
     pullPolicy: IfNotPresent
 
   serviceAnnotations: {}
@@ -437,7 +407,7 @@ dashboard:
   ## Image specific details
   image:
     repository: ubi8-oes-dashboard
-    tag: v4.0.4.2-rc2
+    tag: v4.0.4.2-rc3
     pullPolicy: IfNotPresent
 
   annotations:
@@ -504,7 +474,7 @@ gate:
   ## Image specific details
   image:
     repository: ubi8-gate
-    tag: v4.0.4.2-rc2
+    tag: v4.0.4.2-rc3
     pullPolicy: IfNotPresent
 
   serviceAnnotations: {}
@@ -581,7 +551,7 @@ platform:
   ## Image specific details
   image:
     repository: ubi8-oes-platform
-    tag: v4.0.4.2-rc2
+    tag: v4.0.4.2-rc3
     pullPolicy: IfNotPresent
 
   annotations:
@@ -652,7 +622,7 @@ sapor:
   ## Image specific details
   image:
     repository: ubi8-oes-sapor
-    tag: v4.0.4.2-rc2
+    tag: v4.0.4.2-rc3
     pullPolicy: IfNotPresent
 
   annotations:
@@ -744,7 +714,7 @@ ui:
   ## Image specific details
   image:
     repository: ubi8-oes-ui
-    tag: v4.0.4.2-rc3
+    tag: v4.0.4.2-rc4
     pullPolicy: IfNotPresent
 
   annotations:
@@ -762,7 +732,7 @@ visibility:
   ## Image specific details
   image:
     repository: ubi8-oes-visibility
-    tag: v4.0.4.2-rc2
+    tag: v4.0.4.2-rc3
     pullPolicy: IfNotPresent
 
   annotations:
@@ -1404,3 +1374,23 @@ kibana:
             sleep 60;
             curl https://raw.githubusercontent.com/OpsMx/enterprise-spinnaker/master/scripts/kibana/kibana_objects.ndjson > /tmp/kibana_objects.ndjson;
             curl -X POST "localhost:5601/api/saved_objects/_import?overwrite=true" -H "kbn-xsrf: true" --form file=@/tmp/kibana_objects.ndjson 2>&1 1> /tmp/postStart.out;
+#Grafana URL configuration; url overwhich grafana will be accessed
+####################################
+grafana:
+  grafana.ini:
+    server:
+      domain: PROVIDE.YOUR.ISD.URL
+      root_url: https://<PROVIDE.YOUR.ISD.URL>/grafana
+      serve_from_sub_path: true
+  username: nonadminuser   #Non-admin username for Grafana UI access
+  password: opsmxpassword123  #Non-admin password for Grafana UI acess
+  grafana:
+    enabled: false
+    protocol: http
+    host: grafana.example.ops.com
+
+    ingress:
+      annotations:
+        kubernetes.io/ingress.class: nginx
+      tls: 
+        secretName: grafana-ingress

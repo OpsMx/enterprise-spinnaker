@@ -8,9 +8,9 @@ spring:
 
 message-broker:
   enabled: true
-  username: '{{ .Values.rabbitmq.username }}'
-  password: '{{ .Values.rabbitmq.password }}'
-  host: rabbitmq-service
+  username: {{ .Values.rabbitmq.username }}
+  password: {{ .Values.rabbitmq.password }}
+  host: {{ .Values.rabbitmq.url }}
   port: {{ .Values.rabbitmq.port }}
   endpoint:
     name: rabbitmq

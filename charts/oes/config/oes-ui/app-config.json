@@ -1,5 +1,6 @@
 {
     "endPointUrl": "/gate/",
+    "policyUrl": "http://oes-sapor:8085/",
     "setApplicationInterval": {{ .Values.ui.config.setApplicationRefreshInterval }},
     "triggerPipeline": false,
     "cdTool": "Spinnaker",
@@ -12,7 +13,7 @@
     "hide_pipelineTemplates": true,
     "hide_policies": true,
     "hide_users": true,
-    "grafana_enabled": false,
-    "grafanaPipelineInsightsEndpoint": {{ .Values.global.grafana.host }}/d/{{ .Values.global.grafana.pipelineinsightsid}}/pipelineinsights,
-    "grafanaStageInsightsEndpoint": {{ .Values.global.grafana.host }}/d/{{ .Values.global.grafana.stageinsightsid}}/stageinsights
+    "grafana_enabled": true,
+    "grafanaPipelineInsightsEndpoint": {{ .Values.global.oesUI.protocol }}/{{ .Values.global.oesUI.host }}/grafana/d/pipeline-insight/pipeinsights,
+    "grafanaStageInsightsEndpoint": {{ .Values.global.oesUI.protocol }}/{{ .Values.global.oesUI.host }}/grafana/d/stage-insight/stageinsights
 }
