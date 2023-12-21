@@ -6,7 +6,7 @@ metadata:
 {{- if .Values.global.certManager.installed }}
     acme.cert-manager.io/http01-edit-in-place: "true"
     cert-manager.io/issue-temporary-certificate: "true"
-    cert-manager.io/issuer: letsencrypt-{{ .Release.Namespace }}-oes
+    cert-manager.io/issuer: letsencrypt-{{ .Release.Namespace }}-spin
     kubernetes.io/tls-acme: "true"
 {{- end }}
 {{- if .Values.global.prometheus.ingress.annotations }}

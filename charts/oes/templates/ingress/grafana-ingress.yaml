@@ -1,4 +1,4 @@
-{{- if and (.Values.enableCentralMonitoring) (.Values.global.grafana.enabled) -}}
+{{- if and (.Values.enableCentralMonitoring) (.Values.grafana.grafana.enabled) -}}
 apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
@@ -6,16 +6,16 @@ metadata:
 {{- if .Values.global.certManager.installed }}
     acme.cert-manager.io/http01-edit-in-place: "true"
     cert-manager.io/issue-temporary-certificate: "true"
-    cert-manager.io/issuer: letsencrypt-{{ .Release.Namespace }}-oes
+    cert-manager.io/issuer: letsencrypt-{{ .Release.Namespace }}-spin
     kubernetes.io/tls-acme: "true"
 {{- end }}
-{{- if .Values.global.grafana.ingress.annotations }}
-{{ tpl (toYaml .Values.global.grafana.ingress.annotations) . | indent 4 }}
+{{- if .Values.grafana.grafana.ingress.annotations }}
+{{ tpl (toYaml .Values.grafana.grafana.ingress.annotations) . | indent 4 }}
 {{- end }}
   name: grafana-ingress
 spec:
   rules:
-  - host: {{ .Values.global.grafana.host }}
+  - host: {{ .Values.grafana.grafana.host }}
     http:
       paths:
       - backend:
@@ -28,7 +28,7 @@ spec:
 {{- if .Values.global.ssl.enabled }}
   tls:
   - hosts:
-    - {{ .Values.global.grafana.host }}
-{{ toYaml .Values.global.grafana.ingress.tls | indent 4 }}
+    - {{ .Values.grafana.grafana.host }}
+{{ toYaml .Values.grafana.grafana.ingress.tls | indent 4 }}
 {{- end }}
 {{- end }}

@@ -6,6 +6,12 @@
 {{- end }}
 */}}
 
+{{- define "grafanaSecret" }}
+{{- with .Values.grafana }}
+{{- printf "%s:%s" .username .password | b64enc }}
+{{- end }}
+{{- end }}
+
 {{/*
 Extract spinnaker version in the format major.minor for sapor configuration
 */}}
