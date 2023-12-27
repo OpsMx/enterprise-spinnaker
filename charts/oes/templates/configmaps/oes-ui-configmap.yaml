@@ -1,9 +1,15 @@
 {{ if or (eq .Values.installationMode "OES-AP")  (eq .Values.installationMode "EASY") }}
 apiVersion: v1
 data:
+{{ if (.Values.grafana.grafana.enabled) }}
+{{ (tpl (.Files.Glob "config/oes-ui/app-config2.json").AsConfig . ) | indent 2 }}
+{{ (tpl (.Files.Glob "config/oes-ui/help-text.json").AsConfig . ) | indent 2 }}
+{{ (tpl (.Files.Glob "config/oes-ui/nginx.conf").AsConfig . ) | indent 2 }}
+{{ else }}
 {{ (tpl (.Files.Glob "config/oes-ui/app-config.json").AsConfig . ) | indent 2 }}
 {{ (tpl (.Files.Glob "config/oes-ui/help-text.json").AsConfig . ) | indent 2 }}
 {{ (tpl (.Files.Glob "config/oes-ui/nginx.conf").AsConfig . ) | indent 2 }}
+{{ end }}
 kind: ConfigMap
 metadata:
   name: oes-ui-config
