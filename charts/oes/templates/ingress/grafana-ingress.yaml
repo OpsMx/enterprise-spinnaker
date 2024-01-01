@@ -20,9 +20,9 @@ spec:
       paths:
       - backend:
           service:
-            name: {{ .Release.Name }}-grafana
+            name: grafana
             port:
-              number: 80
+              number: 3000
         path: /
         pathType: ImplementationSpecific
 {{- if .Values.global.ssl.enabled }}

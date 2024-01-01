@@ -1382,6 +1382,8 @@ grafana:
       domain: PROVIDE.YOUR.ISD.URL
       root_url: https://<PROVIDE.YOUR.ISD.URL>/grafana
       serve_from_sub_path: true
+    security:
+      allow_embedding: true
   username: nonadminuser   #Non-admin username for Grafana UI access
   password: opsmxpassword123  #Non-admin password for Grafana UI acess
   grafana:
