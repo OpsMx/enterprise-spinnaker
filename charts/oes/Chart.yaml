@@ -38,7 +38,7 @@ dependencies:
     version: 11.16.2
     condition: global.enableCentralMonitoring
   - name: grafana
-    version: 6.31.0
+    version: 7.0.19
     condition: global.enableCentralMonitoring  
   - name: gitea
     version: 5.0.1
