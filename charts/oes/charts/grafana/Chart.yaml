@@ -1,22 +1,33 @@
 apiVersion: v2
-appVersion: 9.0.1
-description: The leading tool for querying and visualizing time series and metrics.
-home: https://grafana.net
-icon: https://raw.githubusercontent.com/grafana/grafana/master/public/img/logo_transparent_400x.png
-kubeVersion: ^1.8.0-0
-maintainers:
-- email: zanhsieh@gmail.com
-  name: zanhsieh
-- email: rluckie@cisco.com
-  name: rtluckie
-- email: maor.friedman@redhat.com
-  name: maorfr
-- email: miroslav.hadzhiev@gmail.com
-  name: Xtigyro
-- email: mail@torstenwalter.de
-  name: torstenwalter
 name: grafana
+version: 7.0.19
+appVersion: 10.2.2
+kubeVersion: "^1.8.0-0"
+description: The leading tool for querying and visualizing time series and metrics.
+home: https://grafana.com
+icon: https://artifacthub.io/image/b4fed1a7-6c8f-4945-b99d-096efa3e4116
 sources:
-- https://github.com/grafana/grafana
+  - https://github.com/grafana/grafana
+  - https://github.com/grafana/helm-charts
+annotations:
+  "artifacthub.io/license": AGPL-3.0-only
+  "artifacthub.io/links": |
+    - name: Chart Source
+      url: https://github.com/grafana/helm-charts
+    - name: Upstream Project
+      url: https://github.com/grafana/grafana
+maintainers:
+  - name: zanhsieh
+    email: zanhsieh@gmail.com
+  - name: rtluckie
+    email: rluckie@cisco.com
+  - name: maorfr
+    email: maor.friedman@redhat.com
+  - name: Xtigyro
+    email: miroslav.hadzhiev@gmail.com
+  - name: torstenwalter
+    email: mail@torstenwalter.de
 type: application
-version: 6.31.0
+keywords:
+  - monitoring
+  - metric
