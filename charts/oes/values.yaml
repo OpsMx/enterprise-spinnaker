@@ -172,6 +172,8 @@ global:
       tls: 
         secretName: prometheus-ingress
 
+  ############################################
+  openTelemetry: false #Set this to true for displaying metrics data in grafana
   ###############################################################################
   # A trial LDAP is installed by default, with users: admin, user1,2,3 with user1password, user2pa...
   # Set it to false if own LDAP is to be configured
