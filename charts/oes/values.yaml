@@ -1396,3 +1396,37 @@ grafana:
         kubernetes.io/ingress.class: nginx
       tls: 
         secretName: grafana-ingress
+
+  datasources:
+    datasources.yaml:
+      apiVersion: 1
+      datasources:
+        - name: Prometheus
+          type: prometheus
+          access: proxy
+          orgId: 1
+          url: PROVIDE.YOUR.PROMETHEUS.URL
+          isDefault: true
+          uid: datasource-uid-for-isd-insights
+
+  dashboardProviders:
+    dashboardproviders.yaml:
+      apiVersion: 1
+      providers:
+      - name: 'promethues'
+        orgId: 1
+        folder: ''
+        type: file
+        updateIntervalSeconds: 10
+        disableDeletion: true
+        editable: true
+        options:
+          path: /var/lib/grafana/dashboards/prometheus
+
+  dashboards:
+    prometheus:
+      pipelineinsights-dashboard:
+        file: dashboards/pipelineinsights-dashboard.json
+      stageinsights-dashboard:
+        file: dashboards/stageinsights-dashboard.json
+        datasource: Prometheus
