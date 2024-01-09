@@ -1379,6 +1379,8 @@ kibana:
 #Grafana URL configuration; url overwhich grafana will be accessed
 ####################################
 grafana:
+  adminUser: admin
+  adminPassword: opsmxadmin123
   grafana.ini:
     server:
       domain: PROVIDE.YOUR.ISD.URL
