@@ -1314,7 +1314,7 @@ serverFiles:
         scheme: http
         static_configs:
           - targets:
-            - SERVICE_NAME.NAMESPACE.svc.cluster.local:19090
+            - oes-audit-service:19090
 
       # A scrape configuration for running Prometheus on a Kubernetes cluster.
       # This uses separate scrape configs for cluster components (i.e. API server, node)
