@@ -1,0 +1,191 @@
+#####################################################
+# OpsMx AutoPilot and Integrated Spinnaker Delivery
+# This file contains configurations for AP as well as Spinnaker
+####################################################
+# Global variables can be accessed across all the charts including sub-charts
+global:
+  # Custom Images registry where all the OSS and customized images used in the helm chart are stored
+  # Only update this is using a private repo such as ACR, ECR, GCR, JFrog, etc.
+  customImages:
+    registry: quay.io/opsmxpublic
+
+  # when this flag is set to false; UI will be accessible over http instead of https
+  ssl:
+    enabled: true
+
+  # If cert-manager is installed, TLS secrets will created automatically, as an 'Issuer' will be created
+  # Else, the TLS secrets will need to created manually
+  certManager:
+    installed: true
+
+  # Spinnaker connection name in the ISD
+  CDName: preview-saas
+    
+  # Common gate for both spin and oes services. Change ONLY if required
+  commonGate:
+    enabled: true
+    spinnakerRBAC: false  # Set to true if RBAC is enabled in Spinnaker
+    spinnakerpipelineRBAC: false
+    spinnakerKayanta: false
+
+  # Set to true if user need to access Spinnaker seperately
+  spinnakerUrl: false
+
+  # Set to true if user wants to bookmark the ISD url for Saml/OpenLdap
+  # Mandatory .Values.global.spinnakerUrl must be set to true
+  bookmarkISDUrl: false
+
+  ## Set to true to expose oes-ui, oes-gate services over ingress
+  createIngress: true
+
+
+  ## Set to false only if user uses gitops style and user dont want the repo to be created automatically in github.com
+  githubcreationHook: true
+
+  gitea:
+    enabled: false
+    standardrepoBranch: v4.0.4.2
+    admin:
+      existingSecret: gitea-secret
+      username: opsmx
+      password: opsmxadmin123
+      email: "support@opsmx.com"
+
+  ## OES-UI url configuration
+  oesUI:
+    protocol: http
+    host: oes.example.ops.com
+    # Use below port when hostname above is an external IP instead of a hostname
+    #port: 31466
+
+    ingress:
+      annotations:
+        kubernetes.io/ingress.class: nginx
+      tls:
+        secretName: oes-ui-ingress
+    
+#Prometheus URL configuration; url overwhich Prometheus will be accessed
+  prometheus:
+    enabled: true
+    protocol: http
+    host: prometheus.example.ops.com
+    ingress:
+      annotations:
+        kubernetes.io/ingress.class: nginx
+      tls: 
+        secretName: prometheus-ingress
+        
+  ############################################
+  openTelemetry: true   #Set this to true for displaying metrics data in grafana
+  ###############################################################################
+  # A trial LDAP is installed by default, with users: admin, user1,2,3 with user1password, user2pa...
+  # Set it to false if own LDAP is to be configured
+  installOpenLdap: true
+
+  ## ldap configuration used in oes-gate, oes-platform and spinnaker gate for authentication and authorization
+  ldap:
+    enabled: true
+    url: ldap://{{ .Release.Name }}-openldap:389
+    managerDn: cn=admin,dc=example,dc=org
+    managerPassword: opsmxadmin123
+    groupSearchBase: ou=groups,dc=example,dc=org
+    groupSearchFilter: member={0}
+    groupRoleAttributes: cn
+    userDnPattern: cn={0},dc=example,dc=org
+
+#####################################################
+# Spinnaker instance configuration
+#####################################################
+spinnaker:
+  autoInstallSampleApps: true   # Set this to FALSE if upgrading
+  # Initialize gitOps style Halyard
+  gitopsHalyard:
+    enabled: true
+    secretName: opsmx-gitops-auth  # No need to change this
+    repo:
+      type: git # git, s3, stash(bitbucket server) use a different sample values file for s3/bitbuck-stash
+      configArgs: "http.sslVerify=false"
+      ## Configure below fields only if repo type is git/stash. Skip to s3 section if type is s3
+      baseUrlHostName: github.com    # Specify the Base FQDN of your repository without the protocol
+      organization: OpsMx
+      projectName: ""                # Specify project name only if repo is under a project
+      repository: standard-gitops-repo # repo name for GitOps Halyard (Sample Reference: https://github.com/OpsMx/sample-gitops-repo.git).
+      halConfigBranch: master # Branch under which halyard config is present under above repository
+      halConfigPath: / #relative path from repository root folder
+      dynamicAccRepository: standard-gitops-repo # Please provide the repo name of the GitOps Dynamic Accounts Directory. Can be same as Hal repo.
+      dynAccntConfigPath: / #relative path from repository root folder
+      username: git/stash_username  # Username to authenticate with git/stash repo
+      token: git/stash_token  # Token corresponding to above username
+      usermailid: user@mail.com # Enter a valid email address for the above repo
+###############################################################################################
+## Installation mode, available modes OES-AP, None (do not install AP (previously called OES)
+installationMode: OES-AP
+
+####################################################
+# Centralized Monitoring Configuration
+enableCentralMonitoring: true
+
+#Grafana URL configuration; url overwhich grafana will be accessed
+####################################
+grafana:
+  adminUser: admin      #Admin username for Grafana UI access
+  adminPassword: opsmxadmin123   #Admin password for Grafana UI access
+  grafana.ini:
+    server:
+      domain: PROVIDE.YOUR.ISD.URL
+      root_url: https://<PROVIDE.YOUR.ISD.URL>/grafana
+      serve_from_sub_path: true
+    security:
+      allow_embedding: true
+  username: nonadminuser   #Non-admin username for Grafana UI access
+  password: opsmxpassword123  #Non-admin password for Grafana UI acess
+  persistence:
+    enabled: true
+    accessModes:
+      - ReadWriteOnce
+    size: 10Gi
+  ## Below is the block of code for Ingress
+  grafana:
+    enabled: true
+    protocol: http
+    host: <PROVIDE.GRAFANA.URL>
+
+    ingress:
+      annotations:
+        kubernetes.io/ingress.class: nginx
+      tls:
+        secretName: grafana-ingress
+
+  datasources:
+    datasources.yaml:
+      apiVersion: 1
+      datasources:
+        - name: Prometheus
+          type: prometheus
+          access: proxy
+          orgId: 1
+          url: https://<PROVIDE.YOUR.PROMETHEUS.URL>
+          isDefault: true
+          uid: datasource-uid-for-isd-insights
+
+  dashboardProviders:
+    dashboardproviders.yaml:
+      apiVersion: 1
+      providers:
+      - name: 'promethues'
+        orgId: 1
+        folder: ''
+        type: file
+        updateIntervalSeconds: 10
+        disableDeletion: true
+        editable: true
+        options:
+          path: /var/lib/grafana/dashboards/prometheus
+
+  dashboards:
+    prometheus:
+      pipelineinsights-dashboard:
+        file: dashboards/pipelineinsights-dashboard.json
+      stageinsights-dashboard:
+        file: dashboards/stageinsights-dashboard.json
+        datasource: Prometheus

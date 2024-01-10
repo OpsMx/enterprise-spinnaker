@@ -895,8 +895,8 @@ spinnaker:
   halyard:
     spinnakerVersion: 1.30.1
     image:
-      repository: quay.io/opsmxpublic/ubi8-spin-halyard
-      tag: 1.28.1-v4.0.2
+      repository: quay.io/opsmxpublic/ubi8-halyard-cve
+      tag: f9c4b85-1107
     # Set to false to disable persistence data volume for halyard
     persistence:
       enabled: true
@@ -1415,7 +1415,7 @@ grafana:
           type: prometheus
           access: proxy
           orgId: 1
-          url: PROVIDE.YOUR.PROMETHEUS.URL
+          url: https://<PROVIDE.YOUR.PROMETHEUS.URL>
           isDefault: true
           uid: datasource-uid-for-isd-insights
 
