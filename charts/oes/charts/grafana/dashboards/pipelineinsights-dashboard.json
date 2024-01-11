@@ -261,7 +261,7 @@
             "uid": "datasource-uid-for-isd-insights"
           },
           "editorMode": "code",
-          "expr": "increase(new_pipelines_count_total{type=\"application\",appName=~\"$application\",sourceName=~\"$cdName\"}[5m])",
+          "expr": "increase(new_pipelines_created_count_total{sourceName=~\"$cdName\"}[5m])",
           "instant": true,
           "legendFormat": "__auto",
           "range": true,
@@ -838,7 +838,8 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "green"
+                "color": "green",
+                "value": null
               },
               {
                 "color": "green",
@@ -922,7 +923,8 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "dark-red"
+                "color": "dark-red",
+                "value": null
               },
               {
                 "color": "dark-red",
@@ -1110,8 +1112,8 @@
       {
         "current": {
           "selected": false,
-          "text": "preview-saas",
-          "value": "preview-saas"
+          "text": "spinnaker-onlyspin",
+          "value": "spinnaker-onlyspin"
         },
         "datasource": {
           "type": "prometheus",
@@ -1170,8 +1172,8 @@
       {
         "current": {
           "selected": false,
-          "text": "2h",
-          "value": "2h"
+          "text": "1s",
+          "value": "1s"
         },
         "hide": 2,
         "includeAll": false,
@@ -1180,7 +1182,7 @@
         "name": "offsetDuration",
         "options": [
           {
-            "selected": true,
+            "selected": false,
             "text": "2h",
             "value": "2h"
           },
@@ -1195,7 +1197,7 @@
             "value": "1d"
           },
           {
-            "selected": false,
+            "selected": true,
             "text": "1s",
             "value": "1s"
           }
@@ -1207,8 +1209,8 @@
       {
         "current": {
           "selected": false,
-          "text": "1699936005163",
-          "value": "1699936005163"
+          "text": "1704181517000",
+          "value": "1704181517000"
         },
         "hide": 2,
         "includeAll": false,
@@ -1217,7 +1219,7 @@
         "name": "startTime",
         "options": [
           {
-            "selected": true,
+            "selected": false,
             "text": "1699936005163",
             "value": "1699936005163"
           }
@@ -1230,8 +1232,8 @@
       {
         "current": {
           "selected": false,
-          "text": "1699936305250",
-          "value": "1699936305250"
+          "text": "1704699917000",
+          "value": "1704699917000"
         },
         "hide": 2,
         "includeAll": false,
@@ -1240,7 +1242,7 @@
         "name": "endTime",
         "options": [
           {
-            "selected": true,
+            "selected": false,
             "text": "1699936305250",
             "value": "1699936305250"
           }
@@ -1253,13 +1255,13 @@
     ]
   },
   "time": {
-    "from": "now-2d",
+    "from": "now-7d",
     "to": "now"
   },
   "timepicker": {},
   "timezone": "",
   "title": "PipeInsights",
   "uid": "pipeline-insight",
-  "version": 12,
+  "version": 14,
   "weekStart": ""
 }
