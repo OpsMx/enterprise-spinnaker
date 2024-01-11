@@ -390,7 +390,7 @@ datascience:
   ##
   image:
     repository: ubi8-oes-datascience
-    tag: v4.0.4.2-rc3
+    tag: v4.0.4.2-rc4
     pullPolicy: IfNotPresent
 
   serviceAnnotations: {}
