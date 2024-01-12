@@ -1428,7 +1428,7 @@ grafana:
         folder: ''
         type: file
         updateIntervalSeconds: 10
-        disableDeletion: true
+        disableDeletion: false
         editable: true
         options:
           path: /var/lib/grafana/dashboards/prometheus
