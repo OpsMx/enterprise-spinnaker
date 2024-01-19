@@ -36,10 +36,10 @@ dependencies:
     condition: enableCentralLogging
   - name: prometheus
     version: 11.16.2
-    condition: global.enableCentralMonitoring
+    condition: enableCentralMonitoring
   - name: grafana
-    version: 6.31.0
-    condition: global.enableCentralMonitoring  
+    version: 7.0.19
+    condition: enableCentralMonitoring  
   - name: gitea
     version: 5.0.1
     condition: global.gitea.enabled

@@ -33,8 +33,8 @@ feign:
     dashboard:
       url: http://oes-dashboard:8094
 open-telemetry:
-  enabled: false
-  baseUrl: {{ .Values.global.oesUI.protocol }}/{{ .Values.global.oesUI.host }} 
+  enabled: {{ .Values.global.openTelemetry }}
+  baseUrl: {{ .Values.global.oesUI.protocol }}://{{ .Values.global.oesUI.host }}
   saporUrl: http://sapor-gate:8084
 db:
   migration:

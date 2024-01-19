@@ -172,6 +172,8 @@ global:
       tls: 
         secretName: prometheus-ingress
 
+  ############################################
+  openTelemetry: false #Set this to true for displaying metrics data in grafana
   ###############################################################################
   # A trial LDAP is installed by default, with users: admin, user1,2,3 with user1password, user2pa...
   # Set it to false if own LDAP is to be configured
@@ -344,7 +346,7 @@ audit:
   ##
   image:
     repository: ubi8-oes-audit-service
-    tag: v4.0.4.2-rc3
+    tag: v4.0.4.2-rc4
     pullPolicy: IfNotPresent
 
   serviceAnnotations: {}
@@ -366,7 +368,7 @@ auditClient:
   ##
   image:
     repository: ubi8-oes-audit-client
-    tag: v4.0.4.2-rc4
+    tag: v4.0.4.2-rc5
     pullPolicy: IfNotPresent
 
   serviceAnnotations: {}
@@ -388,7 +390,7 @@ datascience:
   ##
   image:
     repository: ubi8-oes-datascience
-    tag: v4.0.4.2-rc3
+    tag: v4.0.4.2-rc4
     pullPolicy: IfNotPresent
 
   serviceAnnotations: {}
@@ -551,7 +553,7 @@ platform:
   ## Image specific details
   image:
     repository: ubi8-oes-platform
-    tag: v4.0.4.2-rc4
+    tag: v4.0.4.2-rc5
     pullPolicy: IfNotPresent
 
   annotations:
@@ -714,7 +716,7 @@ ui:
   ## Image specific details
   image:
     repository: ubi8-oes-ui
-    tag: v4.0.4.2-rc5
+    tag: v4.0.4.2-rc6
     pullPolicy: IfNotPresent
 
   annotations:
@@ -893,8 +895,8 @@ spinnaker:
   halyard:
     spinnakerVersion: 1.30.1
     image:
-      repository: quay.io/opsmxpublic/ubi8-spin-halyard
-      tag: 1.28.1-v4.0.2
+      repository: quay.io/opsmxpublic/ubi8-halyard-cve
+      tag: f9c4b85-1107
     # Set to false to disable persistence data volume for halyard
     persistence:
       enabled: true
@@ -1377,6 +1379,8 @@ kibana:
 #Grafana URL configuration; url overwhich grafana will be accessed
 ####################################
 grafana:
+  adminUser: admin
+  adminPassword: opsmxadmin123
   grafana.ini:
     server:
       domain: PROVIDE.YOUR.ISD.URL
@@ -1386,13 +1390,19 @@ grafana:
       allow_embedding: true
   username: nonadminuser   #Non-admin username for Grafana UI access
   password: opsmxpassword123  #Non-admin password for Grafana UI acess
+  persistence:
+    enabled: true
+    accessModes:
+      - ReadWriteOnce
+    size: 10Gi
+  ## Below is the block of code for Ingress
   grafana:
     enabled: false
     protocol: http
-    host: grafana.example.ops.com
+    host: PROVIDE.GRAFANA.URL
 
     ingress:
       annotations:
         kubernetes.io/ingress.class: nginx
-      tls: 
+      tls:
         secretName: grafana-ingress
