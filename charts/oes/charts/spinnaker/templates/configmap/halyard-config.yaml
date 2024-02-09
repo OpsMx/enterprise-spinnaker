@@ -155,6 +155,9 @@ data:
     {{- if .Values.enableHA }}
     $HAL_COMMAND config deploy ha clouddriver enable
     $HAL_COMMAND config deploy ha echo enable
+    {{- else }}
+    $HAL_COMMAND config deploy ha clouddriver disable
+    $HAL_COMMAND config deploy ha echo disable
     {{- end }}
 
     # Enable Authentication by default
