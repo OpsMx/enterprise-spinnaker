@@ -42,3 +42,13 @@ services:
     baseUrl: http://oes-platform:8095
     userGroupApiPath: /platformservice/v1/users/{username}/usergroups/importAndCache
     enabled: true
+  auditservice:
+    baseUrl: http://oes-audit-service:8097
+  dashboard:
+    baseUrl: http://oes-dashboard:8094
+spring:
+  cloud:
+    vault:
+      enabled: false
+    kv:
+      enabled: false
