@@ -18,6 +18,6 @@
     "hide_stage_insights": true,  
     "hide_user_insights": false,
     "grafanaPipelineInsightsEndpoint": "{{ .Values.global.oesUI.protocol }}://{{ .Values.global.oesUI.host }}/grafana/d/pipeline-insight/pipeinsights",
-    "grafanaStageInsightsEndpoint": "{{ .Values.global.oesUI.protocol }}://{{ .Values.global.oesUI.host }}/grafana/d/stage-insight/stageinsights"
+    "grafanaStageInsightsEndpoint": "{{ .Values.global.oesUI.protocol }}://{{ .Values.global.oesUI.host }}/grafana/d/stage-insight/stageinsights",
     "grafanaUserInsightsEndpoint": "{{ .Values.global.oesUI.protocol }}://{{ .Values.global.oesUI.host }}/grafana/d/user-insights/user-insights" 
 }
