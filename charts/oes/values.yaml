@@ -1,4 +1,4 @@
-#####################################################
+s#####################################################
 # OpsMx AutoPilot and Integrated Spinnaker Delivery
 # This file contains configurations for AP as well as Spinnaker
 #####################################################
@@ -513,20 +513,23 @@ gate:
     # kubectl create secret generic oesmetadataxml --from-file=oesmetadata.xml -n <namespace>
     # kubectl create secret generic oessamljks --from-file=oessaml.jks -n <namespace>
     # kubectl create secret generic samljks-password --from-literal password=changeit -n <namespace>
-    saml:
-      enabled: false
-      userSource: gate  # Groups will be obtained from SAML
-      keyStore: /opt/spinnaker/saml/oessaml.jks  # The key in this secret must be oessaml.jks
-      keyStorePassword: changeit
-      keyStoreAliasName: saml
-      metadataUrl: /opt/spinnaker/saml/oesmetadata.xml # The key in this secret must be oesmetadata.xml
-      redirectProtocol: https
-      redirectHostname: oes-gate.ryzon7-gitops.opsmx.org  # OES gate host name
-      redirectBasePath: /
-      issuerId: ryzonoesgate
-      jksSecretName: oessamljks
-      metadataSecretName: oesmetadataxml
-
+    spring:
+      security:
+        saml2:
+          enabled: true
+          userSource: gate
+          relyingparty:
+            registration:
+              spinnaker:
+                assertingparty:
+                  metadata-uri: https://dev-80355908.okta.com/app/exk99cr0pwOqZk5HB5d7/sso/saml/metadata
+                signing:
+                  credentials:
+                  - private-key-location: file:/opt/saml/certs/key.pem
+                    certificate-location: file:/opt/saml/certs/cert.pem
+          user-attribute-mapping:
+            roles: 
+              attributeName: memberOf
     #####################################################
     #OAUTH2 Authentication for GitHub
     #####################################################
