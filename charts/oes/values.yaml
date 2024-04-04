@@ -508,11 +508,6 @@ gate:
     #####################################################
     # SAML AUthentication
     #####################################################
-    # keytool -genkey -v -keystore oessaml.jks -alias saml -keyalg RSA -keysize 2048 -validity 10000
-    # oessaml.jks and oesmetadata.xml are mounted as secrets, create them as follows
-    # kubectl create secret generic oesmetadataxml --from-file=oesmetadata.xml -n <namespace>
-    # kubectl create secret generic oessamljks --from-file=oessaml.jks -n <namespace>
-    # kubectl create secret generic samljks-password --from-literal password=changeit -n <namespace>
     spring:
       security:
         saml2:
