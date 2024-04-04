@@ -516,7 +516,7 @@ gate:
     spring:
       security:
         saml2:
-          enabled: true
+          enabled: false
           userSource: gate
           relyingparty:
             registration:
