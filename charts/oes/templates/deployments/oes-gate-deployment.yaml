@@ -65,19 +65,6 @@ spec:
         - mountPath: /opt/spinnaker/config/bootstrap.yml
           name: bootstrap-volume
           subPath: bootstrap.yml
-        {{- if .Values.gate.config.saml.enabled }}
-        - mountPath: {{ .Values.gate.config.saml.keyStore }}
-          name: saml-jks
-          subPath: oessaml.jks
-        - mountPath: {{ .Values.gate.config.saml.metadataUrl }}
-          name: metadata-xml
-          subPath: oesmetadata.xml
-        {{- end }}
-        {{- if .Values.global.customCerts.enabled }}
-        - mountPath: /etc/pki/ca-trust/extracted/java/cacerts
-          subPath: cacerts
-          name: cacerts
-        {{- end }}
         readinessProbe:
           tcpSocket:
             port: 8084
@@ -119,22 +106,6 @@ spec:
 {{ toYaml .Values.global.tolerations | indent 8 }}
       {{- end }}
       volumes:
-      {{- if .Values.gate.config.saml.enabled }}
-      - secret:
-          secretName: {{ .Values.gate.config.saml.jksSecretName }}
-        name: saml-jks
-      - secret:
-          secretName: {{ .Values.gate.config.saml.metadataSecretName }}
-        name: metadata-xml
-      {{- end }}
-      {{- if .Values.global.customCerts.enabled }}
-      - name: cacerts
-        secret:
-          secretName: {{ .Values.global.customCerts.secretName }}
-          items:
-          - key: cacerts
-            path: cacerts
-      {{- end }}
       {{- if .Values.global.autoConfiguration.enabled }}
       - secret:
           secretName: oes-gate-config
