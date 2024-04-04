@@ -4,7 +4,7 @@ data:
 {{- if and (.Values.enableCentralMonitoring) (.Values.installSpinnaker) (not .Values.global.gitea.enabled) }}
 {{ (tpl (.Files.Glob "config/oes-ui/nginx-grafana.conf").AsConfig . ) | indent 2 }}
 {{- else }}
-{{- if and (.Values.installSpinnaker) (not .Values.global.gitea.enabled)  }}
+{{- if (not .Values.global.gitea.enabled)  }}
 {{ (tpl (.Files.Glob "config/oes-ui/nginx.conf").AsConfig . ) | indent 2 }}
 {{- else }}
 {{- if and (.Values.global.gitea.enabled) (.Values.installSpinnaker ) }}

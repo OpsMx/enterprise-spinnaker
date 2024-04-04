@@ -199,7 +199,7 @@ ldap:
   enabled: false
 {{- end }}
 {{- end }}
-{{- if .Values.gate.config.saml.enabled }}
+{{- if .Values.gate.config.spring.security.saml2.enabled  }}
 pipeline:
   rbac: {{ .Values.global.commonGate.spinnakerpipelineRBAC }}
 security:
@@ -208,8 +208,10 @@ security:
     enabled: true
 user: {}
 
-saml:
-{{ toYaml .Values.gate.config.saml | indent 2 }}
+spring:
+  security:
+    saml2:
+{{ toYaml .Values.gate.config.spring.security.saml2 | indent 2 }}
 {{- end }}
 {{- if .Values.gate.config.oauth2.enabled }}
 security:
