@@ -177,10 +177,10 @@ global:
   ###############################################################################
   # A trial LDAP is installed by default, with users: admin, user1,2,3 with user1password, user2pa...
   # Set it to false if own LDAP is to be configured
-  installOpenLdap: true
+  installOpenLdap: false
 
   auth:
-    saml: false
+    saml: true
     oauth2: false
 
   ## Valid admin details for ISD authorization
@@ -199,7 +199,7 @@ global:
 
   ## ldap configuration used in oes-gate, oes-platform and spinnaker gate for authentication and authorization
   ldap:
-    enabled: true
+    enabled: false
     url: ldap://{{ .Release.Name }}-openldap:389
     managerDn: cn=admin,dc=example,dc=org
     managerPassword: opsmxadmin123
@@ -513,7 +513,7 @@ gate:
     spring:
       security:
         saml2:
-          enabled: false
+          enabled: true
           registration-id: SSO #change this to the application name in OKTA
           relyingparty:
             registration:
