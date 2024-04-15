@@ -16,7 +16,7 @@ services:
     enabled: true
   platform:
     baseUrl: http://oes-platform:8095
-    GroupApiPath: /platformservice/v1/users/{username}/usergroups/importAndCache
+    userGroupApiPath: /platformservice/v1/users/{username}/usergroups/importAndCache
     enabled: true
   dashboard:
     baseUrl: http://oes-dashboard:8094
