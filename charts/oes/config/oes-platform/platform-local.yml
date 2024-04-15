@@ -26,7 +26,7 @@ userGroup:
   superAdminGroups: {{ .Values.global.saporgate.config.adminGroups }}
 user:
   {{- if .Values.gate.config.spring.security.saml2.enabled  }}
-  source: {{ .Values.gate.config.spring.security.saml2.enabled  }}
+  source: {{ .Values.gate.config.spring.security.saml2.userSource  }}
   {{- else }}
   source: {{ .Values.platform.config.userSource }}
   {{- end }}

@@ -16,7 +16,7 @@ services:
     enabled: true
   platform:
     baseUrl: http://oes-platform:8095
-    userGroupApiPath: /platformservice/v1/users/{username}/usergroups/importAndCache
+    GroupApiPath: /platformservice/v1/users/{username}/usergroups/importAndCache
     enabled: true
   dashboard:
     baseUrl: http://oes-dashboard:8094
@@ -206,12 +206,11 @@ security:
   contentSecurityPolicy: "object-src 'none'; script-src 'unsafe-eval' 'unsafe-inline' https: http:;"
   basic:
     enabled: true
-user: {}
 
 spring:
   security:
     saml2:
-{{ toYaml .Values.gate.config.spring.security.saml2 | indent 2 }}
+{{ toYaml .Values.gate.config.spring.security.saml2 | indent 6 }}
 {{- end }}
 {{- if .Values.gate.config.oauth2.enabled }}
 security:
