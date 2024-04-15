@@ -65,6 +65,11 @@ spec:
         - mountPath: /opt/spinnaker/config/bootstrap.yml
           name: bootstrap-volume
           subPath: bootstrap.yml
+{{- if .Values.gate.config.spring.security.saml2.enabled  }}
+        - name: samlcerts
+          mountPath: /opt/saml/certs
+          readOnly: true
+{{- end }}
         readinessProbe:
           tcpSocket:
             port: 8084
@@ -123,4 +128,14 @@ spec:
             path: bootstrap.yml
           secretName: bootstrap
         name: bootstrap-volume
+{{- end -}}
+{{- if .Values.gate.config.spring.security.saml2.enabled  }}
+      - name: samlcerts
+        secret:
+          secretName: samlcerts
+          items:
+            - key: key.pem
+              path: key.pem
+            - key: cert.pem
+              path: cert.pem      
 {{- end -}}

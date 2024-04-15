@@ -206,12 +206,11 @@ security:
   contentSecurityPolicy: "object-src 'none'; script-src 'unsafe-eval' 'unsafe-inline' https: http:;"
   basic:
     enabled: true
-user: {}
 
 spring:
   security:
     saml2:
-{{ toYaml .Values.gate.config.spring.security.saml2 | indent 2 }}
+{{ toYaml .Values.gate.config.spring.security.saml2 | indent 6 }}
 {{- end }}
 {{- if .Values.gate.config.oauth2.enabled }}
 security:

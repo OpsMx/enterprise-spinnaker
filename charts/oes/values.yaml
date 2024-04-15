@@ -313,7 +313,7 @@ autopilot:
   ## Image specific details
   image:
     repository: ubi8-oes-autopilot
-    tag: v4.0.4.2
+    tag: v4.0.4.3
     pullPolicy: IfNotPresent
 
   annotations:
@@ -346,7 +346,7 @@ audit:
   ##
   image:
     repository: ubi8-oes-audit-service
-    tag: v4.0.4.2
+    tag: v4.0.4.3
     pullPolicy: IfNotPresent
 
   serviceAnnotations: {}
@@ -368,7 +368,7 @@ auditClient:
   ##
   image:
     repository: ubi8-oes-audit-client
-    tag: v4.0.4.2
+    tag: v4.0.4.3
     pullPolicy: IfNotPresent
 
   serviceAnnotations: {}
@@ -390,7 +390,7 @@ datascience:
   ##
   image:
     repository: ubi8-oes-datascience
-    tag: v4.0.4.2
+    tag: v4.0.4.3
     pullPolicy: IfNotPresent
 
   serviceAnnotations: {}
@@ -409,7 +409,7 @@ dashboard:
   ## Image specific details
   image:
     repository: ubi8-oes-dashboard
-    tag: v4.0.4.2
+    tag: v4.0.4.3
     pullPolicy: IfNotPresent
 
   annotations:
@@ -476,7 +476,7 @@ gate:
   ## Image specific details
   image:
     repository: ubi8-gate
-    tag: v4.0.4.2
+    tag: v4.0.4.3
     pullPolicy: IfNotPresent
 
   serviceAnnotations: {}
@@ -508,23 +508,37 @@ gate:
     #####################################################
     # SAML AUthentication
     #####################################################
+    # openssl req -newkey rsa:2048 -nodes -keyout key.pem -x509 -days 365 -out cert.pem
+    # kubectl create secret generic samlcerts --from-file key.pem --from-file cert.pem -n namespace
     spring:
       security:
         saml2:
           enabled: false
-          userSource: gate
+          registration-id: SSO #change this to the application name in OKTA
           relyingparty:
             registration:
-              spinnaker:
+              SSO:   #change this to the application name in OKTA
+                entity-id: saml-dev #change this to the Okta SP entity id
+                acs:
+                  location: https://<isd.opsmx.net>/saml/SSO  #Update ISD URL here
                 assertingparty:
-                  metadata-uri: https://dev-80355908.okta.com/app/exk99cr0pwOqZk5HB5d7/sso/saml/metadata
-                signing:
+                  metadata-uri: https://dev.okta.com/app/exkf6qovkumombT5p5d7/sso/saml/metadata  #Update metadata URL here 
+                decryption: 
                   credentials:
-                  - private-key-location: file:/opt/saml/certs/key.pem
-                    certificate-location: file:/opt/saml/certs/cert.pem
+                    - private-key-location: file:/opt/saml/certs/key.pem  
+                      certificate-location: file:/opt/saml/certs/cert.pem
+                  singlesignon.sign-request: true
           user-attribute-mapping:
-            roles: 
-              attributeName: memberOf
+            firstName: firstName
+            lastName: lastName
+            roles:
+              attributeName: memberOf  # Update attributeName here
+              sortRoles: true
+              forceLowercaseRoles: true
+              rolesDelimiter: ","
+            email: email
+          signatureDigest: SHA256
+          userSource: gate
     #####################################################
     #OAUTH2 Authentication for GitHub
     #####################################################
@@ -551,7 +565,7 @@ platform:
   ## Image specific details
   image:
     repository: ubi8-oes-platform
-    tag: v4.0.4.2
+    tag: v4.0.4.3
     pullPolicy: IfNotPresent
 
   annotations:
@@ -574,7 +588,7 @@ platform:
 
     ## Source of groups for authorization
     ## Supported sources:- ldap, file, gate. In general, use "gate" for SAML
-    userSource: ldap
+    userSource: ldap  #If saml then change to gate
 
     ## List of features to be supported by OES, please do not change
     supportedFeatures:
@@ -622,7 +636,7 @@ sapor:
   ## Image specific details
   image:
     repository: ubi8-oes-sapor
-    tag: v4.0.4.2
+    tag: v4.0.4.3
     pullPolicy: IfNotPresent
 
   annotations:
@@ -688,7 +702,7 @@ saporgate:
   enabled: true
   image:
     repository: ubi8-oes-spin-gate
-    tag: v3.12.0-saporgate
+    tag: v4.0.4.3-saporgate
     pullPolicy: IfNotPresent
 
   annotations:
@@ -714,7 +728,7 @@ ui:
   ## Image specific details
   image:
     repository: ubi8-oes-ui
-    tag: v4.0.4.2
+    tag: v4.0.4.3
     pullPolicy: IfNotPresent
 
   annotations:
@@ -732,7 +746,7 @@ visibility:
   ## Image specific details
   image:
     repository: ubi8-oes-visibility
-    tag: v4.0.4.2
+    tag: v4.0.4.3
     pullPolicy: IfNotPresent
 
   annotations:
@@ -894,7 +908,7 @@ spinnaker:
     spinnakerVersion: 1.30.1
     image:
       repository: quay.io/opsmxpublic/ubi8-halyard-cve
-      tag: f9c4b85-1107
+      tag: 1.55.1-f1911d0-202403190813
     # Set to false to disable persistence data volume for halyard
     persistence:
       enabled: true
