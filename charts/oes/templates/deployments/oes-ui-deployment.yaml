@@ -66,7 +66,7 @@ spec:
           {{- if and (.Values.enableCentralMonitoring) (.Values.installSpinnaker) (not .Values.global.gitea.enabled) }}
           subPath: nginx-grafana.conf
           {{- else }}
-          {{- if and (.Values.installSpinnaker) (not .Values.global.gitea.enabled) }}
+          {{- if not .Values.global.gitea.enabled }}
           subPath: nginx.conf
           {{- else if and (.Values.global.gitea.enabled) (.Values.installSpinnaker) }}
           subPath: nginx-quick-install.conf
