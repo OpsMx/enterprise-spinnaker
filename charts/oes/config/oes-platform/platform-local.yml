@@ -89,3 +89,8 @@ logging:
 
 standardErrorCodes:
   filePath: /opsmx/conf/standard-error-code.csv
+db:
+  migration:
+    enabled: {{ .Values.dbmigration.enable }}
+    version:
+      from: {{ .Values.dbmigration.versionFrom }}
