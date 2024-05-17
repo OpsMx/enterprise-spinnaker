@@ -31,8 +31,35 @@ spec:
       {{- if (eq .Values.db.enabled true) }}
       initContainers:
       - name: db-check
-        image: {{ .Values.global.customImages.registry }}/postgres:9.6.5
-        command: ['/bin/bash', '-c', "sleep 30;echo Waiting for oes-db to be up and running; pg_isready -h oes-db -p 5432 && echo PostgreSQL DB is ready to receive connections"]
+        image: {{ .Values.global.customImages.registry }}/pgchecker:v1
+        command:
+          - sh
+          - -c
+          - |
+            echo 'Waiting for OES-DB to become ready...'
+            until printf "." && nc -z -w 2 oes-db 5432; do
+               sleep 2;
+            done;
+            echo 'OESDB OK ✓'
+            sed -e "s@PGPASSWORD@$OPSMX_POSTGRESQL_PASS@g" /opsmx/conf/visibility-local.yml > /tmp/conf/visibility-local.yml
+            sed -i "s@RABBITMQPASSWORD@$RABBITMQ_DEFAULT_PASS@g" /tmp/conf/visibility-local.yml
+            echo success
+        env:
+        - name: OPSMX_POSTGRESQL_PASS
+          valueFrom:
+            secretKeyRef:
+              key: pgpassword
+              name: oes-db
+        - name: RABBITMQ_DEFAULT_PASS
+          valueFrom:
+            secretKeyRef:
+              key: rabbitmqpassword
+              name: rabbitmq
+        volumeMounts:
+        - mountPath: /opsmx/conf/
+          name: visibility-config
+        - mountPath: /tmp/conf/
+          name: visibility-config-volume
       {{- end }}
       containers:
       - image: {{ template "visibility.image" . }}
@@ -47,7 +74,7 @@ spec:
        {{- end }}
         volumeMounts:
         - mountPath: /opsmx/conf/visibility-local.yml
-          name: visibility-config
+          name: visibility-config-volume
           subPath: visibility-local.yml
         - mountPath: /opsmx/conf/bootstrap.yml
           name: bootstrap-config-volume

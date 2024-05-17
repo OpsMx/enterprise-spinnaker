@@ -37,13 +37,37 @@ spec:
         name: gate-autoconfig
         command: ["/home/config_endpoint.sh"]
         args: ["oes-gate"]
-        volumeMounts:
-        - mountPath: /config/gate.yml
-          name: config-temp
-          subPath: gate.yml
-        - mountPath: /opt/spinnaker/config
-          name: gate-volume
       {{- end }}
+      - name: db-check
+        image: {{ .Values.global.customImages.registry }}/pgchecker:v1
+        command:
+          - sh
+          - -c
+          - |
+            echo 'Waiting for OES-DB to become ready...'
+            until printf "." && nc -z -w 2 oes-db 5432; do
+               sleep 2;
+            done;
+            echo 'OESDB OK ✓'
+            sed -e "s@PGPASSWORD@$OPSMX_POSTGRESQL_PASS@g" /opsmx/conf/gate.yml > /tmp/conf/gate.yml
+            sed -i "s@REDISPASSWORD@$OPSMX_REDIS_PASS@g" /tmp/conf/gate.yml
+            echo success        
+        env:
+        - name: OPSMX_POSTGRESQL_PASS
+          valueFrom:
+            secretKeyRef:
+              key: pgpassword
+              name: oes-db
+        - name: OPSMX_REDIS_PASS
+          valueFrom:
+            secretKeyRef:
+              key: redis-password
+              name: oes-redis
+        volumeMounts:
+        - mountPath: /opsmx/conf/
+          name: config-volume
+        - mountPath: /tmp/conf/
+          name: gate-volume
       containers:
       - image: {{ template "gate.image" . }}
         name: oes-gate
