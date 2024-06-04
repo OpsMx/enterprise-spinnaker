@@ -206,7 +206,6 @@ security:
   contentSecurityPolicy: "object-src 'none'; script-src 'unsafe-eval' 'unsafe-inline' https: http:;"
   basic:
     enabled: true
-user: {}
 
 saml:
 {{ toYaml .Values.gate.config.saml | indent 2 }}
