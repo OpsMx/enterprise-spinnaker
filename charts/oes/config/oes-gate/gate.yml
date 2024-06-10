@@ -256,7 +256,7 @@ security:
   contentSecurityPolicy: "object-src 'none'; script-src 'unsafe-eval' 'unsafe-inline' https: http:;"
 {{- end }}
 
-{{- if .Values.global.commonGate.enabled }}
+{{- if and  (.Values.global.commonGate.enabled) (not .Values.customPlugins.enabled) }}
 spinnaker:
   extensibility:
     plugins:
@@ -279,6 +279,9 @@ spinnaker:
         opsmx-repo:
           url: file:///opt/spinnaker/plugins/plugins.json
           #url: https://raw.githubusercontent.com/OpsMx/spinnakerPluginRepository/v3.10.0/plugins.json
+{{- else }}
+spinnaker:
+{{ toYaml .Values.customPlugins.spinnaker | indent 2 }}
 {{- end }}
 spring.cloud.vault.enabled: {{ .Values.vault.enterpriseEdition }}
 allowUnauthenticatedAccess:

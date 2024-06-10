@@ -1406,3 +1406,68 @@ grafana:
         kubernetes.io/ingress.class: nginx
       tls:
         secretName: grafana-ingress
+###############CUSTOM PLUGIN CONFIGURATION####################################
+customPlugins: 
+  enabled: false
+  spinnaker:
+    extensibility:
+      plugins: null
+      deck-proxy:
+        enabled: true
+        plugins:
+          Armory.ObservabilityPlugin:
+            enabled: true
+            config.metrics:
+              additionalTags:
+                vendorName: <VENDOR_NAME>
+                envName: <ENV_NAME>
+                svcName: <SVC_NAME>
+                spinnakerInstance: <INSTANCE_NAME>
+              datadog:
+                enabled: true
+                apiKey: encrypted:datadog-api-key:datadog-api-key
+                applicationKey: encrypted:datadog-app-key:datadog-app-key
+                meterRegistryConfig.armoryRecommendedFiltersEnabled: true
+          Opsmx.VerificationGatePlugin:
+            enabled: true
+            version: 1.0.1
+          Opsmx.TestVerificationGatePlugin:
+            enabled: true
+            version: 1.0.1
+          Opsmx.PolicyGatePlugin:
+            enabled: true
+            version: 1.0.1
+          Opsmx.VisibilityApprovalPlugin:
+            enabled: true
+            version: 1.0.1
+          Zendesk.BuddyPlugin:
+            enabled: true
+            version: 8.13.0
+          Zendesk.CustomBannerPlugin:
+            enabled: true
+            version: 8.13.0
+          Zendesk.OnDemandJenkinsPlugin:
+            enabled: true
+            version: 8.13.0
+          Zendesk.SmokeTestPlugin:
+            enabled: true
+            version: 8.13.0
+          Zendesk.WebhooksPlugin:
+            enabled: true
+            version: 8.13.0
+          Opsmx.CustomStagePlugin:
+            enabled: true
+            version: 1.0.1
+      repositories:
+          opsmx-repo:
+            url: file:///opt/spinnaker/plugins/plugins.json
+          buddy:
+            url: https://zendesk-spinnaker-plugins-production.s3.amazonaws.com/monorepo-plugins/buddy/plugins.json
+          spinnaker-smoke-test:
+            url: https://zendesk-spinnaker-plugins-production.s3.amazonaws.com/monorepo-plugins/smoke-test/plugins.json
+          webhooks:
+            url: https://zendesk-spinnaker-plugins-production.s3.amazonaws.com/monorepo-plugins/webhooks/plugins.json
+          custom-banner:
+            url: https://zendesk-spinnaker-plugins-production.s3.amazonaws.com/monorepo-plugins/custom-banner/plugins.json
+          jenkins:
+            url: https://zendesk-spinnaker-plugins-production.s3.amazonaws.com/monorepo-plugins/on-demand-jenkins/plugins.json
