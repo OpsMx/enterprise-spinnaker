@@ -106,7 +106,7 @@ global:
   githubcreationHook: true
 
   gitea:
-    enabled: true
+    enabled: false
     standardrepoBranch: v4.0.4.2
     admin:
       existingSecret: gitea-secret
