@@ -46,7 +46,16 @@ global:
   # Only update this is using a private repo such as ACR, ECR, GCR, JFrog, etc.
   customImages:
     registry: quay.io/opsmxpublic
-
+############################################################
+  deck:
+    service:
+      enabled: false
+      redirectHostPattern: '(?:deploy-companion|isd|spinnaker|spinnaker-opsmx).staging-zende.sk'
+#############################################################
+  cors:
+    service:
+      enabled: false
+      allowedOriginsPattern: ^https?://(?:localhost|isd-staging.zende.sk|spinnaker-staging.zende.sk|spinnaker-staging-api.zende.sk|spinnaker-opsmx.staging-zende.sk|spinnaker-opsmx.staging.zende.sk|deploy-companion-staging.zende.sk|opsmx.com)(?::[1-9]\d*)?/?
   # when this flag is set to false; UI will be accessible over http instead of https
   ssl:
     enabled: false

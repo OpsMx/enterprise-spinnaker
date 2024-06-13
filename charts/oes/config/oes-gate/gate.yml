@@ -88,7 +88,9 @@ services:
   deck:
     host: 0.0.0.0
     port: 9000
-    {{- if .Values.global.spinnakerUrl }}
+    {{- if .Values.global.deck.service.enabled }}
+    redirect-host-pattern: {{ .Values.global.deck.service.redirectHostPattern }}
+    {{- else if .Values.global.spinnakerUrl }}
     baseUrl: {{ .Values.global.spinDeck.protocol }}://{{ .Values.global.spinDeck.host }}
     {{- else }}
     baseUrl: {{ .Values.global.oesUI.protocol }}://{{ .Values.global.oesUI.host }}
@@ -177,7 +179,9 @@ services:
 {{- end }}
 user: {}
 cors:
-  {{- if .Values.global.commonGate.enabled }}
+  {{- if .Values.global.cors.service.enabled }}
+  allowed-origins-pattern: {{ .Values.global.cors.service.allowedOriginsPattern }}
+  {{- else if .Values.global.commonGate.enabled }}
   allowed-origins-pattern: ^https?://(?:localhost|{{ .Values.global.oesUI.host }}|{{ .Values.global.spinDeck.host }}|opsmx.com)(?::[1-9]\d*)?/?
   {{ else }}
   allowed-origins-pattern: ^https?://(?:localhost|{{ .Values.global.oesUI.host }}|opsmx.com)(?::[1-9]\d*)?/?
