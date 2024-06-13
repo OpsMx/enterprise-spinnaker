@@ -86,14 +86,16 @@ services:
     enabled: true
     {{- end }}
   deck:
+    enabled: true
     host: 0.0.0.0
     port: 9000
-    {{- if .Values.global.spinnakerUrl }}
+    {{- if .Values.global.deck.service.enabled }}
+    redirect-host-pattern: {{ .Values.global.deck.service.redirectHostPattern }}
+    {{- else if .Values.global.spinnakerUrl }}
     baseUrl: {{ .Values.global.spinDeck.protocol }}://{{ .Values.global.spinDeck.host }}
     {{- else }}
     baseUrl: {{ .Values.global.oesUI.protocol }}://{{ .Values.global.oesUI.host }}
     {{- end }}
-    enabled: true
   echo:
     host: 0.0.0.0
     port: 8089
@@ -177,7 +179,9 @@ services:
 {{- end }}
 user: {}
 cors:
-  {{- if .Values.global.commonGate.enabled }}
+  {{- if .Values.global.cors.service.enabled }}
+  allowed-origins-pattern: {{ .Values.global.cors.service.allowedOriginsPattern }}
+  {{- else if .Values.global.commonGate.enabled }}
   allowed-origins-pattern: ^https?://(?:localhost|{{ .Values.global.oesUI.host }}|{{ .Values.global.spinDeck.host }}|opsmx.com)(?::[1-9]\d*)?/?
   {{ else }}
   allowed-origins-pattern: ^https?://(?:localhost|{{ .Values.global.oesUI.host }}|opsmx.com)(?::[1-9]\d*)?/?
@@ -206,7 +210,6 @@ security:
   contentSecurityPolicy: "object-src 'none'; script-src 'unsafe-eval' 'unsafe-inline' https: http:;"
   basic:
     enabled: true
-user: {}
 
 saml:
 {{ toYaml .Values.gate.config.saml | indent 2 }}
@@ -257,7 +260,7 @@ security:
   contentSecurityPolicy: "object-src 'none'; script-src 'unsafe-eval' 'unsafe-inline' https: http:;"
 {{- end }}
 
-{{- if .Values.global.commonGate.enabled }}
+{{- if and  (.Values.global.commonGate.enabled) (not .Values.customPlugins.enabled) }}
 spinnaker:
   extensibility:
     plugins:
@@ -280,6 +283,9 @@ spinnaker:
         opsmx-repo:
           url: file:///opt/spinnaker/plugins/plugins.json
           #url: https://raw.githubusercontent.com/OpsMx/spinnakerPluginRepository/v3.10.0/plugins.json
+{{- else }}
+spinnaker:
+{{ toYaml .Values.customPlugins.spinnaker | indent 2 }}
 {{- end }}
 spring.cloud.vault.enabled: {{ .Values.vault.enterpriseEdition }}
 allowUnauthenticatedAccess:

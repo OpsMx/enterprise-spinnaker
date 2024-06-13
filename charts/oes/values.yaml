@@ -46,7 +46,16 @@ global:
   # Only update this is using a private repo such as ACR, ECR, GCR, JFrog, etc.
   customImages:
     registry: quay.io/opsmxpublic
-
+############################################################
+  deck:
+    service:
+      enabled: false
+      redirectHostPattern: '(?:deploy-companion|isd|spinnaker|spinnaker-opsmx).staging-zende.sk'
+#############################################################
+  cors:
+    service:
+      enabled: false
+      allowedOriginsPattern: ^https?://(?:localhost|isd-staging.zende.sk|spinnaker-staging.zende.sk|spinnaker-staging-api.zende.sk|spinnaker-opsmx.staging-zende.sk|spinnaker-opsmx.staging.zende.sk|deploy-companion-staging.zende.sk|opsmx.com)(?::[1-9]\d*)?/?
   # when this flag is set to false; UI will be accessible over http instead of https
   ssl:
     enabled: false
@@ -97,7 +106,7 @@ global:
   githubcreationHook: true
 
   gitea:
-    enabled: true
+    enabled: false
     standardrepoBranch: v4.0.4.2
     admin:
       existingSecret: gitea-secret
@@ -1406,3 +1415,68 @@ grafana:
         kubernetes.io/ingress.class: nginx
       tls:
         secretName: grafana-ingress
+###############CUSTOM PLUGIN CONFIGURATION####################################
+customPlugins: 
+  enabled: false
+  spinnaker:
+    extensibility:
+      plugins: null
+      deck-proxy:
+        enabled: true
+        plugins:
+          Armory.ObservabilityPlugin:
+            enabled: true
+            config.metrics:
+              additionalTags:
+                vendorName: <VENDOR_NAME>
+                envName: <ENV_NAME>
+                svcName: <SVC_NAME>
+                spinnakerInstance: <INSTANCE_NAME>
+              datadog:
+                enabled: true
+                apiKey: encrypted:datadog-api-key:datadog-api-key
+                applicationKey: encrypted:datadog-app-key:datadog-app-key
+                meterRegistryConfig.armoryRecommendedFiltersEnabled: true
+          Opsmx.VerificationGatePlugin:
+            enabled: true
+            version: 1.0.1
+          Opsmx.TestVerificationGatePlugin:
+            enabled: true
+            version: 1.0.1
+          Opsmx.PolicyGatePlugin:
+            enabled: true
+            version: 1.0.1
+          Opsmx.VisibilityApprovalPlugin:
+            enabled: true
+            version: 1.0.1
+          Zendesk.BuddyPlugin:
+            enabled: true
+            version: 8.13.0
+          Zendesk.CustomBannerPlugin:
+            enabled: true
+            version: 8.13.0
+          Zendesk.OnDemandJenkinsPlugin:
+            enabled: true
+            version: 8.13.0
+          Zendesk.SmokeTestPlugin:
+            enabled: true
+            version: 8.13.0
+          Zendesk.WebhooksPlugin:
+            enabled: true
+            version: 8.13.0
+          Opsmx.CustomStagePlugin:
+            enabled: true
+            version: 1.0.1
+      repositories:
+          opsmx-repo:
+            url: file:///opt/spinnaker/plugins/plugins.json
+          buddy:
+            url: https://zendesk-spinnaker-plugins-production.s3.amazonaws.com/monorepo-plugins/buddy/plugins.json
+          spinnaker-smoke-test:
+            url: https://zendesk-spinnaker-plugins-production.s3.amazonaws.com/monorepo-plugins/smoke-test/plugins.json
+          webhooks:
+            url: https://zendesk-spinnaker-plugins-production.s3.amazonaws.com/monorepo-plugins/webhooks/plugins.json
+          custom-banner:
+            url: https://zendesk-spinnaker-plugins-production.s3.amazonaws.com/monorepo-plugins/custom-banner/plugins.json
+          jenkins:
+            url: https://zendesk-spinnaker-plugins-production.s3.amazonaws.com/monorepo-plugins/on-demand-jenkins/plugins.json
