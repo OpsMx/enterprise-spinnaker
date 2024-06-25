@@ -10,7 +10,7 @@ metadata:
     component: autopilot
 {{ include "oes.standard-labels" . | indent 4 }}
 spec:
-  replicas: 1
+  replicas: {{ .Values.autopilot.replicas }}
   selector:
     matchLabels:
       app: oes
