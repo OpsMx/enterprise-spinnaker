@@ -319,6 +319,7 @@ db:
 ## Values of OES Autopilot
 ##
 autopilot:
+  replicas: 1
   ## Image specific details
   image:
     repository: ubi8-oes-autopilot
@@ -351,6 +352,7 @@ autopilot:
 ## Values of OES auditservice
 ##
 audit:
+  replicas: 1
   ## Image specific details
   ##
   image:
@@ -373,6 +375,7 @@ audit:
 ## Values of OES auditclient
 ##
 auditClient:
+  replicas: 1
   ## Image specific details
   ##
   image:
@@ -395,6 +398,7 @@ auditClient:
 ## Values of OES datascience
 ##
 datascience:
+  replicas: 1
   ## Image specific details
   ##
   image:
@@ -415,6 +419,7 @@ datascience:
 ###############################################################################
 ## Values of OES Dashboard
 dashboard:
+  replicas: 1
   ## Image specific details
   image:
     repository: ubi8-oes-dashboard
@@ -482,6 +487,7 @@ createcontroller:
 ## Values of OES Gate
 ##
 gate:
+  replicas: 1
   ## Image specific details
   image:
     repository: ubi8-gate
@@ -559,6 +565,7 @@ gate:
 ###############################################################################
 ## Values of OES Platform
 platform:
+  replicas: 1
   ## Image specific details
   image:
     repository: ubi8-oes-platform
@@ -606,6 +613,7 @@ dbmigration:
 ## Details of rabbitmq message bus image for OES
 ##
 rabbitmq:
+  replicas: 1
   ## rabbitmq  endpoint that is used by oes-gate and oes-platform for caching;
   ## Change this to custom URL if installRedis is set to false
   ## url: rabbitmq-service
@@ -630,6 +638,7 @@ rabbitmq:
 ###############################################################################
 ## Values of OES Sapor (Security Audit Policy Onboarding & Release)
 sapor:
+  replicas: 1
   ## Image specific details
   image:
     repository: ubi8-oes-sapor
@@ -722,6 +731,7 @@ saporgate:
 ###############################################################################
 ## Values of OES UI
 ui:
+  replicas: 1
   ## Image specific details
   image:
     repository: ubi8-oes-ui
@@ -740,6 +750,7 @@ ui:
 ###################################################################################
 ## Values of OES Visibility
 visibility:
+  replicas: 1
   ## Image specific details
   image:
     repository: ubi8-oes-visibility
@@ -1221,6 +1232,7 @@ rbac:
 # AP integrates with OPA and installs an OPA server
 # Leave it as true, even if not using OPA
 opa:
+  replicas: 1
   enabled: true
   image:
     repository: opa

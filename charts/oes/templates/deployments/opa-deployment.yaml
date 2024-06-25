@@ -10,7 +10,7 @@ metadata:
 {{ include "oes.standard-labels" . | indent 4 }}
   name: opa
 spec:
-  replicas: 1
+  replicas: {{ .Values.opa.replicas }}
   selector:
     matchLabels:
       app: opa
