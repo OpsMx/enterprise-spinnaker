@@ -5,16 +5,14 @@ metadata:
   annotations:
 {{ include "isd.standard-annotations" . | indent 4 }}
   labels:
-    app: oes
-    component: visibility
+{{ toYaml .Values.visibility.labels | indent 4 }}
 {{ include "oes.standard-labels" . | indent 4 }}
   name: oes-visibility
 spec:
   replicas: {{ .Values.visibility.replicas }}
   selector:
     matchLabels:
-      app: oes
-      component: visibility
+{{ toYaml .Values.visibility.labels | indent 6 }}
   strategy: {}
   template:
     metadata:
@@ -24,8 +22,7 @@ spec:
         {{ toYaml .Values.visibility.annotations | nindent 8 }}
 {{- end }}
       labels:
-        app: oes
-        component: visibility
+{{ toYaml .Values.visibility.labels | indent 8 }}
 {{ include "oes.standard-labels" . | indent 8 }}
     spec:
       {{- if (eq .Values.db.enabled true) }}
@@ -45,6 +42,8 @@ spec:
       containers:
       - image: {{ template "visibility.image" . }}
         name: oes-visibility
+        resources:
+{{ toYaml .Values.visibility.resources | indent 10 }}
         ports:
         - containerPort: 8096
           protocol: TCP
@@ -68,8 +67,6 @@ spec:
           subPath: cacerts
           name: cacerts
         {{- end }}
-        resources:
-{{ toYaml .Values.visibility.resources | indent 12 }}
         readinessProbe:
           tcpSocket:
             port: 8096

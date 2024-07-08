@@ -5,16 +5,14 @@ metadata:
   annotations:
 {{ include "isd.standard-annotations" . | indent 4 }}
   labels:
-    app: oes
-    component: sapor-gate
+{{ toYaml .Values.saporgate.labels | indent 4 }}
 {{ include "oes.standard-labels" . | indent 4 }}
   name: sapor-gate
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: oes
-      component: sapor-gate
+{{ toYaml .Values.saporgate.labels | indent 6 }}
   template:
     metadata:
       annotations:
@@ -23,8 +21,7 @@ spec:
         {{ toYaml .Values.saporgate.annotations | nindent 8 }}
 {{- end }}
       labels:
-        app: oes
-        component: sapor-gate
+{{ toYaml .Values.saporgate.labels | indent 8 }}
 {{ include "oes.standard-labels" . | indent 8 }}
     spec:
       containers:
@@ -39,7 +36,7 @@ spec:
         - containerPort: 8084
           protocol: TCP
         resources:
-{{ toYaml .Values.saporgate.resources | indent 12 }}
+{{ toYaml .Values.saporgate.resources | indent 10 }}
         volumeMounts:
         - mountPath: /opt/spinnaker/config
           name: sapor-gate-files

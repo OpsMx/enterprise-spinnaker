@@ -331,15 +331,19 @@ autopilot:
     prometheus_io_path: /mgmt/prometheus
     prometheus_io_port: "8090"
     prometheus.io/scrape: "true"
+  
+  labels:  #If Required,Add Customer-specific labels as well
+    app: oes
+    component: autopilot
 
   serviceAnnotations: {}
-  resources: {}
-  #  requests:
-  #    memory: 2Gi
-  #    cpu: 1
-  #  limits:
-  #    memory: 8Gi
-  #    cpu: 2
+  resources:
+    requests:
+      memory: 2Gi
+      cpu: 1
+    limits:
+      memory: 8Gi
+      cpu: 2
 
   config:
     ## Build Analysis
@@ -367,7 +371,16 @@ audit:
     prometheus_io_path: /mgmt/prometheus
     prometheus_io_port: "8097"
     prometheus.io/scrape: "false"
-  resources: {}
+  labels:  #If Required,Add Customer-specific labels as well
+    app: oes
+    component: auditservice
+  resources:
+    requests:
+      memory: 2Gi
+      cpu: 1
+    limits:
+      memory: 8Gi
+      cpu: 2
   config: {}
 
 ###############################################################################
@@ -384,13 +397,22 @@ auditClient:
     pullPolicy: IfNotPresent
 
   serviceAnnotations: {}
-
+  labels:  #If Required,Add Customer-specific labels as well
+    app: oes
+    component: auditclient
   annotations:
     moniker.spinnaker.io/application: isd
     prometheus_io_path: /mgmt/prometheus
     prometheus_io_port: "8098"
     prometheus.io/scrape: "true"
-  resources: {}
+
+  resources:
+    requests:
+      memory: 2Gi
+      cpu: 1
+    limits:
+      memory: 8Gi
+      cpu: 2
   config: {}
 
 ###############################################################################
@@ -407,13 +429,21 @@ datascience:
     pullPolicy: IfNotPresent
 
   serviceAnnotations: {}
-
+  labels:  #If Required,Add Customer-specific labels as well
+    app: oes
+    component: datascience
   annotations:
     moniker.spinnaker.io/application: isd
     prometheus_io_path: /mgmt/prometheus
     prometheus_io_port: "5005"
     prometheus.io/scrape: "false"
-  resources: {}
+  resources:
+    requests:
+      memory: 2Gi
+      cpu: 1
+    limits:
+      memory: 8Gi
+      cpu: 2
   config: {}
 
 ###############################################################################
@@ -431,15 +461,17 @@ dashboard:
     prometheus_io_path: /mgmt/prometheus
     prometheus_io_port: "8094"
     prometheus.io/scrape: "true"
-
+  labels:  #If Required,Add Customer-specific labels as well
+    app: oes
+    component: dashboard
   serviceAnnotations: {}
-  resources: {}
-  #  requests:
-  #    memory: 500Mi
-  #    cpu: 500m
-  #  limits:
-  #    memory: 1000Mi
-  #    cpu: 1500m
+  resources:
+    requests:
+      memory: 500Mi
+      cpu: 500m
+    limits:
+      memory: 1000Mi
+      cpu: 1500m
 
   config:
     app:
@@ -495,19 +527,21 @@ gate:
     pullPolicy: IfNotPresent
 
   serviceAnnotations: {}
-
+  labels:  #If Required,Add Customer-specific labels as well
+    app: oes
+    component: gate
   annotations:
     moniker.spinnaker.io/application: isd
     prometheus_io_path: /mgmt/prometheus
     prometheus_io_port: "8084"
     prometheus.io/scrape: "false"
-  resources: {}
-  #  requests:
-  #    memory: 500Mi
-  #    cpu: 500m
-  #  limits:
-  #    memory: 1500Mi
-  #    cpu: 1500m
+  resources:
+    requests:
+      memory: 500Mi
+      cpu: 500m
+    limits:
+      memory: 1500Mi
+      cpu: 1500m
 
   config:
     ## Set it to true to disable LDAP authentication and enable file based authentication
@@ -571,20 +605,22 @@ platform:
     repository: ubi8-oes-platform
     tag: v4.0.4.2
     pullPolicy: IfNotPresent
-
+  labels:  #If Required,Add Customer-specific labels as well
+    app: oes
+    component: platform
   annotations:
     moniker.spinnaker.io/application: isd
     prometheus_io_path: /mgmt/prometheus
     prometheus_io_port: "8095"
     prometheus.io/scrape: "true"
   serviceAnnotations: {}
-  resources: {}
-  #  requests:
-  #    memory: 500Mi
-  #    cpu: 500m
-  #  limits:
-  #    memory: 1500Mi
-  #    cpu: 1500m
+  resources:
+    requests:
+      memory: 500Mi
+      cpu: 500m
+    limits:
+      memory: 1500Mi
+      cpu: 1500m
 
   config:
     ##  groups defined here will have superAdmin priviledges in AP
@@ -644,20 +680,22 @@ sapor:
     repository: ubi8-oes-sapor
     tag: v4.0.4.2
     pullPolicy: IfNotPresent
-
+  labels:  #If Required,Add Customer-specific labels as well
+    app: oes
+    component: sapor
   annotations:
     moniker.spinnaker.io/application: isd
     prometheus_io_path: /mgmt/prometheus
     prometheus_io_port: "8085"
     prometheus.io/scrape: "true"
   serviceAnnotations: {}
-  resources: {}
-  #  requests:
-  #    memory: 100Mi
-  #    cpu: 500m
-  #  limits:
-  #    memory: 2000Mi
-  #    cpu: 1500m
+  resources:
+    requests:
+      memory: 100Mi
+      cpu: 500m
+    limits:
+      memory: 2000Mi
+      cpu: 1500m
 
   config:
     ## Use OSS if sapor needs to be connected to Open Source Spinnaker
@@ -713,16 +751,18 @@ saporgate:
 
   annotations:
     moniker.spinnaker.io/application: "isd"
-
+  labels:  #If Required,Add Customer-specific labels as well
+    app: oes
+    component: sapor-gate
   serviceAnnotations: {}
 
-  resources: {}
-  #  requests:
-  #    memory: 500Mi
-  #    cpu: 500m
-  #  limits:
-  #    memory: 1500Mi
-  #    cpu: 1500m
+  resources:
+    requests:
+      memory: 500Mi
+      cpu: 500m
+    limits:
+      memory: 1500Mi
+      cpu: 1500m
 
   #config:
   #  username: admin      # User name with admin permissions and belonging to admin groups defined in platform service
@@ -742,10 +782,20 @@ ui:
     moniker.spinnaker.io/application: "isd"
 
   serviceAnnotations: {}
-
+  labels:  #If Required,Add Customer-specific labels as well
+    app: oes
+    component: ui
   config:
     ## Interval, in millsecs, at which UI refreshes application dashboard
     setApplicationRefreshInterval: 300000
+  serviceAnnotations: {}
+  resources:
+    requests:
+      memory: 2Gi
+      cpu: 1
+    limits:
+      memory: 8Gi
+      cpu: 2
 
 ###################################################################################
 ## Values of OES Visibility
@@ -762,15 +812,17 @@ visibility:
     prometheus_io_path: /mgmt/prometheus
     prometheus_io_port: "8096"
     prometheus.io/scrape: "true"
-
+  labels:  #If Required,Add Customer-specific labels as well
+    app: oes
+    component: visibility
   serviceAnnotations: {}
-  resources: {}
-  #  requests:
-  #    memory: 500Mi
-  #    cpu: 500m
-  #  limits:
-  #    memory: 1000Mi
-  #    cpu: 1500m
+  resources:
+    requests:
+      memory: 500Mi
+      cpu: 500m
+    limits:
+      memory: 1000Mi
+      cpu: 1500m
 
   config:
     ## Autopilot integration options

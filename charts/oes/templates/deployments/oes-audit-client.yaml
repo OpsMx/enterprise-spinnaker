@@ -5,16 +5,14 @@ metadata:
   annotations:
 {{ include "isd.standard-annotations" . | indent 4 }}
   labels:
-    app: oes
-    component: auditclient
+{{ toYaml .Values.auditClient.labels | indent 4 }}
 {{ include "oes.standard-labels" . | indent 4 }}
   name: oes-audit-client
 spec:
   replicas: {{ .Values.auditClient.replicas }}
   selector:
     matchLabels:
-      app: oes
-      component: auditclient
+{{ toYaml .Values.auditClient.labels | indent 6 }}
   template:
     metadata:
       annotations:
@@ -23,8 +21,7 @@ spec:
         {{ toYaml .Values.auditClient.annotations | nindent 8 }}
 {{- end }}
       labels:
-        app: oes
-        component: auditclient
+{{ toYaml .Values.auditClient.labels | indent 8 }}
 {{ include "oes.standard-labels" . | indent 8 }}
     spec:
       {{- if (eq .Values.db.enabled true) }}
@@ -49,6 +46,8 @@ spec:
        {{- if .Values.extraEnvVars }}
        {{- include "tplvalues.render" (dict "value" .Values.extraEnvVars "context" $) | nindent 8 }}
        {{- end }}
+        resources:
+{{ toYaml .Values.auditClient.resources | indent 10 }}
         ports:
         - containerPort: 8098
           name: backend
