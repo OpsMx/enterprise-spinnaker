@@ -5,14 +5,16 @@ metadata:
   annotations:
 {{ include "isd.standard-annotations" . | indent 4 }}
   labels:
-{{ toYaml .Values.saporgate.labels | indent 4 }}
+    app: oes
+    component: sapor-gate
 {{ include "oes.standard-labels" . | indent 4 }}
   name: sapor-gate
 spec:
   replicas: 1
   selector:
     matchLabels:
-{{ toYaml .Values.saporgate.labels | indent 6 }}
+      app: oes
+      component: sapor-gate
   template:
     metadata:
       annotations:

@@ -5,14 +5,16 @@ metadata:
   annotations:
 {{ include "isd.standard-annotations" . | indent 4 }}
   labels:
-{{ toYaml .Values.dashboard.labels | indent 4 }}
+    app: oes
+    component: dashboard
 {{ include "oes.standard-labels" . | indent 4 }}
   name: oes-dashboard
 spec:
   replicas: {{ .Values.dashboard.replicas }}
   selector:
     matchLabels:
-{{ toYaml .Values.dashboard.labels | indent 6 }}
+      app: oes
+      component: dashboard
   strategy: {}
   template:
     metadata:

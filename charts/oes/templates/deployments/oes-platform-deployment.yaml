@@ -3,7 +3,8 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   annotations:
-{{ include "isd.standard-annotations" . | indent 4 }}
+    app: oes
+    component: platform
   labels:
 {{ toYaml .Values.platform.labels | indent 4 }}
 {{ include "oes.standard-labels" . | indent 4 }}
@@ -12,7 +13,8 @@ spec:
   replicas: {{ .Values.platform.replicas }}
   selector:
     matchLabels:
-{{ toYaml .Values.platform.labels | indent 6 }}
+      app: oes
+      component: platform
   strategy: {}
   template:
     metadata:

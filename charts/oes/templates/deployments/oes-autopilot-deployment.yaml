@@ -6,13 +6,15 @@ metadata:
 {{ include "isd.standard-annotations" . | indent 4 }}
   name: oes-autopilot
   labels:
-{{ toYaml .Values.autopilot.labels | indent 4 }}
+    app: oes
+    component: autopilot
 {{ include "oes.standard-labels" . | indent 4 }}
 spec:
   replicas: {{ .Values.autopilot.replicas }}
   selector:
     matchLabels:
-{{ toYaml .Values.autopilot.labels | indent 6 }}
+      app: oes
+      component: autopilot
   template:
     metadata:
       annotations:

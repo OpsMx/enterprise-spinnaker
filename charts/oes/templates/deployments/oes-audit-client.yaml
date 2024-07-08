@@ -5,14 +5,16 @@ metadata:
   annotations:
 {{ include "isd.standard-annotations" . | indent 4 }}
   labels:
-{{ toYaml .Values.auditClient.labels | indent 4 }}
+    app: oes
+    component: auditclient
 {{ include "oes.standard-labels" . | indent 4 }}
   name: oes-audit-client
 spec:
   replicas: {{ .Values.auditClient.replicas }}
   selector:
     matchLabels:
-{{ toYaml .Values.auditClient.labels | indent 6 }}
+      app: oes
+      component: auditclient
   template:
     metadata:
       annotations:

@@ -5,14 +5,16 @@ metadata:
   annotations:
 {{ include "isd.standard-annotations" . | indent 4 }}
   labels:
-{{ toYaml .Values.gate.labels | indent 4 }}
+    app: oes
+    component: gate
 {{ include "oes.standard-labels" . | indent 4 }}
   name: oes-gate
 spec:
   replicas: {{ .Values.gate.replicas }}
   selector:
     matchLabels:
-{{ toYaml .Values.gate.labels | indent 6 }}
+      app: oes
+      component: gate
   template:
     metadata:
       annotations:

@@ -1,0 +1,265 @@
+imageCredentials:
+  repoUrl: https://713408432298.dkr.ecr.us-west-2.amazonaws.com/
+  # Update this is using a private repo such as ACR, ECR, GCR, JFrog, etc.
+  registry: 713408432298.dkr.ecr.us-west-2.amazonaws.com/dev/zendesk/dockerhub-images/quay.io/opsmxpublic
+
+forwarder:
+  enabled: false
+
+dbcleanup:
+  enabled: true
+  ## Change the days interval value if user wants to delete older than 180days data
+  daysinterval: 275
+
+global:
+  # Set to true if user need to access Spinnaker seperately
+  spinnakerUrl: true
+  ## URL that will be used to access ISD. MUST BE CHANGED
+  ## Ensure that this URL is reachable from your browser. Either DNS name server record must exist or "hosts" file must be updated
+  oesUI:
+    protocol: https # Set to https if global.certManager and global.ssl is true
+    host: isd-staging.zende.sk # Replace the ISD URL
+    ############################################################
+  deck:
+    service:
+      enabled: true
+      redirectHostPattern: "'(?:deploy-companion|spinnaker)-staging(-api)?.zende.sk'"
+  #############################################################
+  cors:
+    service:
+      enabled: true
+      #allowedOriginsPattern: "'(?:localhost|isd-staging.zende.sk|spinnaker-staging.zende.sk|spinnaker-staging-api.zende.sk|deploy-companion-staging.zende.sk)'"
+      allowedOriginsPattern: "'^https?://(?:localhost|isd-staging.zende.sk|spinnaker-staging.zende.sk|spinnaker-staging-api.zende.sk|deploy-companion-staging.zende.sk)?/?'"
+      #allowedOriginsPattern: "'^https?://(?:localhost|isd-staging.zende.sk|spinnaker-staging.zende.sk|spinnaker-staging-api.zende.sk|deploy-companion-staging.zende.sk)(?::[1-9]\d*)?/?'"
+
+  spinDeck:
+    protocol: https # Set to https if global.certManager and global.ssl is true
+    host: spinnaker-staging.zende.sk # Replace the Spinnaker URL
+
+  # Set to true if you are using the saml/Okta for Spinnaker
+  auth:
+    saml: true
+
+  ssl:
+    enabled: true # Set to true if using "httpS" urls. TLS certificates must be generated for the above URL
+
+  certManager:
+    installed: false # Set to true if you have cert-manager installed in the cluster, the URL must be accessible from the internet
+
+  commonGate:
+    spinnakerRBAC: true
+
+  ## nginx ingress objects are created if set to true. Set to false if using LoadBalancer or any other ingress
+  ## The cluster MUST have nginx ingress controller already installed
+  createIngress: false
+
+  #Only for trial purposes, pod-baesd git is installed and automatically configured
+  gitea:
+    enabled: false # Set to true for trial-install only
+
+  ###############################################################################
+  # A trial LDAP is installed by default, with users: admin, user1,2,3 with user1password, user2pa...
+  # Set it to false if own LDAP is to be configured
+  installOpenLdap: false
+
+  ## ldap configuration used in oes-gate, oes-platform and spinnaker gate for authentication and authorization
+  ldap:
+    enabled: false
+    managerPassword: encrypted:ldappassword:ldappassword
+
+    ## Valid admin details for ISD authorization
+  saporgate:
+    config:
+      username: hanumesh.kumar@zendesk.com #Name of the valid user in your service provider
+      adminGroups: okta:role:spinnaker-superadmin #Name of the valid admin group in your service provider
+      password: encrypted:saporpassword:saporpassword #password for the saporgate
+
+  minio:
+    enabled: false
+    accessKey: encrypted:minio-access-key:minio-access-key
+    secretKey: encrypted:minio-secret-key:minio-secret-key
+
+####################################################
+spinnaker:
+  gitopsHalyard: # A repo with appropriate contents used for configuring Spinnaker
+    pipelinePromotion:
+      enabled: true
+      token: encrypted:gittoken:gittoken
+      approverToken: encrypted:gittoken:gittoken
+    repo:
+      type: git # git, s3, stash(bitbucket server) use a different sample values file for s3/bitbuck-stash
+      ## Git repo details, https://<baseUrlHostName>/<organization>/<repository>
+      organization: zendesk
+      repository: spin-staging # repo name for GitOps Halyard, will be created if "githubcreationHook" is set to true
+      username: zd-svc-spinnaker-staging # Username to authenticate with git/stash repo
+      dynamicAccRepository: spin-staging # Repo name of the GitOps Dynamic Accounts Directory, Can be same as "repository"
+
+      ########################################################################################
+      ## Additional git-repo parameters, typically no need to be change
+      ########################################################################################
+
+      configArgs: "http.sslVerify=false" # Extra arguments to the git clone command
+      ## Configure below fields only if repo type is git/stash.
+      baseUrlHostName: github.com # Change only if using enterprise git or another repo-type
+      projectName: "" # Specify project name only if repo is under a project
+      halConfigBranch: main # Branch for the "repository", recommend to keep "main"
+      halConfigPath: / #relative path from repository root folder
+      dynAccntConfigPath: / #relative path from repository root folder
+      token: encrypted:gittoken:gittoken # Token corresponding to spinnaker.gitopsHalyard.repo.username
+
+  ########################################################################################
+  # Lines below this do not need to be changed except where external SSO and DBs are used
+  ########################################################################################
+
+  ## Here basic ldap auth is used by default; everything under spinCli will be pasted in ~/.spin/config
+  spinCli:
+    auth:
+      basic:
+        username: hanumesh.kumar@zendesk.com # Use credentials corresponding to saporgate.config.username
+        password: encrypted:saporpassword:saporpassword # Use credentials corresponding to saporgate.config.password
+
+####################################################
+gate:
+  replicas: 2
+  annotations:
+    moniker.spinnaker.io/application: spin
+  config:
+    saml:
+      enabled: true
+      userSource: gate # Groups will be obtained from SAML
+      keyStore: encryptedFile:oessamljks:oessaml.jks # The key in this secret must be oessaml.jks
+      keyStorePassword: encrypted:keystorepassword:keystorepassword
+      keyStoreAliasName: saml
+      metadataUrl: encryptedFile:oesmetadataxml:oesmetadata.xml # The key in this secret must be oesmetadata.xml
+      redirectProtocol: https
+      redirectHostname: isd-staging.zende.sk
+      redirectBasePath: /
+      issuerId: io.zendesk.isd.staging
+      jksSecretName: oessamljks
+      metadataSecretName: oesmetadataxml
+  resources:
+    limits:
+      cpu: 2
+      memory: 8Gi
+    requests:
+      cpu: 2
+      memory: 8Gi
+  labels:  #If Required,Add Customer-specific labels as well
+    workload-rebalancing.compute.zende.sk/enabled: "false"
+
+
+ui:
+  replicas: 2
+  labels:  #If Required,Add Customer-specific labels as well
+    workload-rebalancing.compute.zende.sk/enabled: "false"
+#######################################################################################
+# Lines below this do not need to be changed except where external Redis and DBs is used
+########################################################################################
+redis:
+  url: redis://:encrypted:redispassword:redispassword@{{ .Release.Name }}-redis-master
+  password: encrypted:redispassword:redispassword
+  master:
+    persistence:
+      enabled: false
+    affinity: {}
+    tolerations: []
+    podAnnotations:
+      moniker.spinnaker.io/application: spin
+    resources:
+      limits:
+        cpu: "4"
+        memory: "6Gi"
+      requests:
+        cpu: "4"
+        memory: "6Gi"
+#####################################################
+db:
+  enabled: false
+  url: jdbc:postgresql://opsmx-spinnaker-postgres-1.cdswufymuxfo.us-east-1.rds.amazonaws.com:5432
+  username: spinnaker
+  password: encrypted:postgresql-admin-password:postgresql-admin-password
+########################################################################################
+# Do not change the below parameter leave it as it is
+########################################################################################
+############################### DB Migration configuration################################################
+dbmigration:
+  enable: false ### By default it's set to FALSE; if you are upgrading the ISD from 4.0.3.1 or 4.0.4, we need to set this flag to 'true'
+  versionFrom: 4.0.4 ## We need to update this version if we want to run migration from other ISD versions. For eg: versionFrom: 4.0.3.1
+########################################################################################
+rabbitmq:
+  username: rabbitmq
+  password: encrypted:rabbitmqpassword:rabbitmqpassword
+#####################################################
+# OpenLDAP custom configuration; will override default configuration of openldap helm chart
+openldap:
+  adminPassword: encrypted:ldappassword:ldappassword
+  configPassword: encrypted:ldapconfigpassword:ldapconfigpassword
+####################################################
+customPlugins:
+  enabled: true
+  spinnaker:
+    extensibility:
+      deck-proxy:
+        enabled: true
+        plugins:
+          Opsmx.CustomStagePlugin:
+            enabled: true
+            version: 1.0.1
+          Opsmx.PolicyGatePlugin:
+            enabled: true
+            version: 1.0.1
+          Opsmx.TestVerificationGatePlugin:
+            enabled: true
+            version: 1.0.1
+          Opsmx.VerificationGatePlugin:
+            enabled: true
+            version: 1.0.1
+          Opsmx.VisibilityApprovalPlugin:
+            enabled: true
+            version: 1.0.1
+          Zendesk.BuddyPlugin:
+            enabled: true
+            version: 8.16.0
+          Zendesk.CustomBannerPlugin:
+            enabled: true
+            version: 8.16.0
+          Zendesk.OnDemandJenkinsPlugin:
+            enabled: true
+            version: 8.16.0
+          Zendesk.SmokeTestPlugin:
+            enabled: true
+            version: 8.16.0
+          Zendesk.WebhooksPlugin:
+            enabled: true
+            version: 8.16.0
+      repositories:
+        buddy:
+          url: https://zendesk-spinnaker-plugins-production.s3.amazonaws.com/monorepo-plugins/buddy/plugins.json
+        custom-banner:
+          url: https://zendesk-spinnaker-plugins-production.s3.amazonaws.com/monorepo-plugins/custom-banner/plugins.json
+        jenkins:
+          url: https://zendesk-spinnaker-plugins-production.s3.amazonaws.com/monorepo-plugins/on-demand-jenkins/plugins.json
+        opsmx-repo:
+          url: file:///opt/spinnaker/plugins/plugins.json
+        spinnaker-smoke-test:
+          url: https://zendesk-spinnaker-plugins-production.s3.amazonaws.com/monorepo-plugins/smoke-test/plugins.json
+        webhooks:
+          url: https://zendesk-spinnaker-plugins-production.s3.amazonaws.com/monorepo-plugins/webhooks/plugins.json
+        armory-observability-plugin-releases:
+          url: https://raw.githubusercontent.com/opsmx-public/newspinplugin/oes-gate-datadog/oes-gate/plugins.json
+      plugins-root-path: /opt/gate/plugins
+      plugins:
+        Armory.ObservabilityPlugin:
+          config.metrics:
+            additionalTags:
+              envName: staging
+              svcName: gate
+              customerEnvName: staging
+              vendorName: opsmx
+            datadog:
+              apiKey: encrypted:datadog-api-key:datadog-api-key
+              applicationKey: encrypted:datadog-app-key:datadog-app-key
+              enabled: true
+              meterRegistryConfig.armoryRecommendedFiltersEnabled: true
+              meterRegistryConfig.defaultTagsDisabled: false
+          enabled: true
