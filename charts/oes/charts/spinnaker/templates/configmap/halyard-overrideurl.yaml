@@ -157,4 +157,4 @@ data:
 
 kind: ConfigMap
 metadata:
-  name: {{ template "spinnaker.fullname" . }}-halyard-overrideurl
+  name: {{ template "spinnaker.fullname" . }}-hal-override-url
