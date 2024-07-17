@@ -10,7 +10,7 @@ metadata:
 {{ include "oes.standard-labels" . | indent 4 }}
   name: oes-platform
 spec:
-  replicas: 1
+  replicas: {{ .Values.platform.replicas }}
   selector:
     matchLabels:
       app: oes

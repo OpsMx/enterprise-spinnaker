@@ -10,7 +10,7 @@ metadata:
 {{ include "oes.standard-labels" . | indent 4 }}
   name: oes-audit-service
 spec:
-  replicas: 1
+  replicas: {{ .Values.audit.replicas }}
   selector:
     matchLabels:
       app: oes
