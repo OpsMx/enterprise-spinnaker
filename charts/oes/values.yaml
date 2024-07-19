@@ -46,7 +46,17 @@ global:
   # Only update this is using a private repo such as ACR, ECR, GCR, JFrog, etc.
   customImages:
     registry: quay.io/opsmxpublic
-
+############################################################
+  deck:
+    service:
+      enabled: false
+      redirectHostPattern: '(?:deploy-companion|isd|spinnaker|spinnaker-opsmx).staging-zende.sk'
+#############################################################
+  cors:
+    service:
+      enabled: false
+      allowedOriginsPattern: ^https?://(?:localhost|isd-staging.zende.sk|spinnaker-staging.zende.sk|spinnaker-staging-api.zende.sk|spinnaker-opsmx.staging-zende.sk|spinnaker-opsmx.staging.zende.sk|deploy-companion-staging.zende.sk|opsmx.com)(?::[1-9]\d*)?/?    
+#############################################################
   # when this flag is set to false; UI will be accessible over http instead of https
   ssl:
     enabled: false
@@ -97,7 +107,7 @@ global:
   githubcreationHook: true
 
   gitea:
-    enabled: true
+    enabled: false
     standardrepoBranch: v4.0.4.2
     admin:
       existingSecret: gitea-secret
@@ -310,6 +320,7 @@ db:
 ## Values of OES Autopilot
 ##
 autopilot:
+  replicas: 1
   ## Image specific details
   image:
     repository: ubi8-oes-autopilot
@@ -342,6 +353,7 @@ autopilot:
 ## Values of OES auditservice
 ##
 audit:
+  replicas: 1
   ## Image specific details
   ##
   image:
@@ -364,6 +376,7 @@ audit:
 ## Values of OES auditclient
 ##
 auditClient:
+  replicas: 1
   ## Image specific details
   ##
   image:
@@ -386,6 +399,7 @@ auditClient:
 ## Values of OES datascience
 ##
 datascience:
+  replicas: 1
   ## Image specific details
   ##
   image:
@@ -406,6 +420,7 @@ datascience:
 ###############################################################################
 ## Values of OES Dashboard
 dashboard:
+  replicas: 1
   ## Image specific details
   image:
     repository: ubi8-oes-dashboard
@@ -473,6 +488,7 @@ createcontroller:
 ## Values of OES Gate
 ##
 gate:
+  replicas: 1
   ## Image specific details
   image:
     repository: ubi8-gate
@@ -562,6 +578,7 @@ gate:
 ###############################################################################
 ## Values of OES Platform
 platform:
+  replicas: 1
   ## Image specific details
   image:
     repository: ubi8-oes-platform
@@ -609,6 +626,7 @@ dbmigration:
 ## Details of rabbitmq message bus image for OES
 ##
 rabbitmq:
+  replicas: 1
   ## rabbitmq  endpoint that is used by oes-gate and oes-platform for caching;
   ## Change this to custom URL if installRedis is set to false
   ## url: rabbitmq-service
@@ -633,6 +651,7 @@ rabbitmq:
 ###############################################################################
 ## Values of OES Sapor (Security Audit Policy Onboarding & Release)
 sapor:
+  replicas: 1
   ## Image specific details
   image:
     repository: ubi8-oes-sapor
@@ -725,6 +744,7 @@ saporgate:
 ###############################################################################
 ## Values of OES UI
 ui:
+  replicas: 1
   ## Image specific details
   image:
     repository: ubi8-oes-ui
@@ -743,6 +763,7 @@ ui:
 ###################################################################################
 ## Values of OES Visibility
 visibility:
+  replicas: 1
   ## Image specific details
   image:
     repository: ubi8-oes-visibility
@@ -1224,6 +1245,7 @@ rbac:
 # AP integrates with OPA and installs an OPA server
 # Leave it as true, even if not using OPA
 opa:
+  replicas: 1
   enabled: true
   image:
     repository: opa
@@ -1418,3 +1440,45 @@ grafana:
         kubernetes.io/ingress.class: nginx
       tls:
         secretName: grafana-ingress
+###############CUSTOM PLUGIN CONFIGURATION####################################
+customPlugins: 
+  enabled: false #set to true if you use custom plugins
+  spinnaker:
+    extensibility:
+      plugins: null
+      deck-proxy:
+        enabled: true
+        plugins:
+          Armory.ObservabilityPlugin:
+            enabled: true
+            config.metrics:
+              additionalTags:
+                vendorName: <VENDOR_NAME>
+                envName: <ENV_NAME>
+                svcName: <SVC_NAME>
+                spinnakerInstance: <INSTANCE_NAME>
+              datadog:
+                enabled: true
+                apiKey: encrypted:datadog-api-key:datadog-api-key
+                applicationKey: encrypted:datadog-app-key:datadog-app-key
+                meterRegistryConfig.armoryRecommendedFiltersEnabled: true
+          Opsmx.VerificationGatePlugin:
+            enabled: true
+            version: 1.0.1
+          Opsmx.TestVerificationGatePlugin:
+            enabled: true
+            version: 1.0.1
+          Opsmx.PolicyGatePlugin:
+            enabled: true
+            version: 1.0.1
+          Opsmx.VisibilityApprovalPlugin:
+            enabled: true
+            version: 1.0.1
+          Opsmx.CustomStagePlugin:
+            enabled: true
+            version: 1.0.1
+      repositories:
+          opsmx-repo:
+            url: file:///opt/spinnaker/plugins/plugins.json
+         
+
