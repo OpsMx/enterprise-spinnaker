@@ -59,7 +59,7 @@ spec:
         - mountPath: /opsmx/conf/
           name: config-volume
         - mountPath: /tmp/conf/
-          name: apor-config-volume
+          name: sapor-config-volume
       {{- end }}
       containers:
       - image: {{ template "sapor.image" . }}
