@@ -41,6 +41,35 @@ spec:
                sleep 2;
             done;
             echo 'OESDB OK ✓'
+            sed -e "s@OPSMX_POSTGRESQL_PASS@$OPSMX_POSTGRESQL_PASS@g" /opsmx/conf/platform-local.yml > /tmp/conf/platform-local.yml
+            sed -i "s@REDISPASSWORD@$OPSMX_REDIS_PASS@g" /tmp/conf/platform-local.yml
+            {{- if .Values.global.ldap.enabled }}
+            sed -i "s@LDAP_MANAGER_PASSWORD@$LDAP_MANAGER_PASSWORD@g" /tmp/conf/platform-local.yml
+            {{- end }}
+            echo success
+        env:
+        - name: OPSMX_POSTGRESQL_PASS
+          valueFrom:
+            secretKeyRef:
+              key: OPSMX_POSTGRESQL_PASS
+              name: opsmx_postgresql_pass
+        - name: OPSMX_REDIS_PASS
+          valueFrom:
+            secretKeyRef:
+              key: redis-password
+              name: oes-redis
+        {{- if .Values.global.ldap.enabled }}
+        - name: LDAP_MANAGER_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              key: LDAP_MANAGER_PASSWORD
+              name: ldap_manager_password
+        {{- end }}
+        volumeMounts:
+        - mountPath: /opsmx/conf/
+          name: config-volume
+        - mountPath: /tmp/conf/
+          name: platform-config-volume
       {{- end }}
       containers:
       - image: {{ template "platform.image" . }}
@@ -121,7 +150,7 @@ spec:
           - key: cacerts
             path: cacerts
       {{- end }}
-      - name: platform-config-volume
+      - name: config-volume
         secret:
           secretName: oes-platform-config
       - secret:

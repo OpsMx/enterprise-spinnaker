@@ -28,7 +28,7 @@ spec:
 {{- end }}
     spec:
       volumes:
-        - name: autopilot-config-volume
+        - name: config-volume
           secret:
             secretName: oes-autopilot-config
         - secret:
@@ -94,6 +94,19 @@ spec:
                sleep 2;
             done;
             echo 'OESDB OK ✓'
+            sed -e "s@PGPASSWORD@$OPSMX_POSTGRESQL_PASS@g" /opsmx/conf/autopilot.properties > /tmp/conf/autopilot.properties
+            echo success
+        env:
+        - name: OPSMX_POSTGRESQL_PASS
+          valueFrom:
+            secretKeyRef:
+              key: pgpassword
+              name: oes-db
+        volumeMounts:
+        - mountPath: /opsmx/conf/
+          name: config-volume
+        - mountPath: /tmp/conf/
+          name: autopilot-config-volume
       {{- end }}
       containers:
         - image: {{ template "autopilot.image" . }}

@@ -214,7 +214,7 @@ global:
     enabled: true
     url: ldap://{{ .Release.Name }}-openldap:389
     managerDn: cn=admin,dc=example,dc=org
-    managerPassword: opsmxadmin123
+    managerPassword: LDAP_MANAGER_PASSWORD
     groupSearchBase: ou=groups,dc=example,dc=org
     groupSearchFilter: member={0}
     groupRoleAttributes: cn
@@ -292,7 +292,7 @@ db:
   ## Below url and credentials are used by Autopilot & Sapor
   url: jdbc:postgresql://oes-db:5432
   username: postgres
-  password: networks123
+  password: OPSMX_POSTGRESQL_PASS
 
   ## Image specific details
   image:
@@ -636,7 +636,7 @@ rabbitmq:
   url: rabbitmq-service
   port: 5672
   username: rabbitmq
-  password: Networks123
+  password: RABBITMQ_DEFAULT_PASS
   image:
     registry: quay.io/opsmxpublic/rabbitmq
     repository: 3-management
@@ -800,12 +800,12 @@ redis:
   ## Redis endpoint that is used by oes-gate and oes-platform for caching;
   ## Change this to custom URL if installRedis is set to false
   ## url: redis://{{ .Release.Name }}-redis-master:6379
-  url: redis://:password@{{ .Release.Name }}-redis-master
+  url: redis://:OPSMX_REDIS_PASS@{{ .Release.Name }}-redis-master
   port: 6379
   image:
     registry: quay.io/opsmxpublic
     repository: bitnami-redis
-  password: password
+  password: OPSMX_REDIS_PASS
   cluster:
     enabled: false
  #The flag is set to true by default.Mandatory change to false only if global.openshift is true and change fsGroups and runAsUser if required
@@ -1010,7 +1010,7 @@ spinnaker:
                 url: ldap://RELEASE_NAME-openldap:389
 
                 managerDn: cn=admin,dc=example,dc=org
-                managerPassword: opsmxadmin123
+                managerPassword: LDAP_MANAGER_PASSWORD
                 groupSearchBase: ou=groups,dc=example,dc=org
                 groupSearchFilter: member={0}
                 groupRoleAttributes: cn

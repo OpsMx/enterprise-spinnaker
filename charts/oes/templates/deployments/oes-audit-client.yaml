@@ -40,6 +40,19 @@ spec:
                sleep 2;
             done;
             echo 'OESDB OK ✓'
+             sed -e "s@PGPASSWORD@$OPSMX_POSTGRESQL_PASS@g" /opsmx/conf/audit-local.yml > /tmp/conf/audit-local.yml
+            echo success
+        env:
+        - name: OPSMX_POSTGRESQL_PASS
+          valueFrom:
+            secretKeyRef:
+              key: pgpassword
+              name: oes-db
+        volumeMounts:
+        - mountPath: /opsmx/conf/
+          name: config-volume
+        - mountPath: /tmp/conf/
+          name: audit-config-volume
       {{- end }}
       containers:
       - image: {{ template "auditclient.image" . }}
@@ -123,7 +136,7 @@ spec:
           - key: audit-local.yml
             path: audit-local.yml
           secretName: oes-audit-client-config
-        name: audit-config-volume
+        name: config-volume
       - name: bootstrap-config-volume
         secret:
           defaultMode: 420

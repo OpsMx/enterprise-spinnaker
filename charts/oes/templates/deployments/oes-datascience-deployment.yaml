@@ -40,6 +40,25 @@ spec:
                sleep 2;
             done;
             echo 'OESDB OK ✓'
+            sed -e "s@PGPASSWORD@$OPSMX_POSTGRESQL_PASS@g" /opsmx/conf/app-config.yml > /tmp/conf/app-config.yml
+            sed -i "s@RABBITMQPASSWORD@$RABBITMQ_DEFAULT_PASS@g" /tmp/conf/application.yml
+            echo success
+        env:
+        - name: OPSMX_POSTGRESQL_PASS
+          valueFrom:
+            secretKeyRef:
+              key: pgpassword
+              name: oes-db
+        - name: RABBITMQ_DEFAULT_PASS
+          valueFrom:
+            secretKeyRef:
+              key: rabbitmqpassword
+              name: rabbitmq
+        volumeMounts:
+        - mountPath: /opsmx/conf/
+          name: config-volume
+        - mountPath: /tmp/conf/
+          name: datascience-config-volume
       {{- end }}
       containers:
       - image: {{ template "datascience.image" . }}
@@ -95,5 +114,5 @@ spec:
       {{- end }}
       - secret:
           secretName: oes-datascience-config
-        name: datascience-config-volume
+        name: config-volume
 {{- end -}}

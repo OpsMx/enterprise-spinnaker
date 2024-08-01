@@ -41,6 +41,25 @@ spec:
                sleep 2;
             done;
             echo 'OESDB OK ✓'
+            sed -e "s@PGPASSWORD@$OPSMX_POSTGRESQL_PASS@g" /opsmx/conf/application.yml > /tmp/conf/application.yml
+            sed -i "s@RABBITMQPASSWORD@$RABBITMQ_DEFAULT_PASS@g" /tmp/conf/application.yml
+            echo success
+        env:
+        - name: OPSMX_POSTGRESQL_PASS
+          valueFrom:
+            secretKeyRef:
+              key: pgpassword
+              name: oes-db
+        - name: RABBITMQ_DEFAULT_PASS
+          valueFrom:
+            secretKeyRef:
+              key: rabbitmqpassword
+              name: rabbitmq
+        volumeMounts:
+        - mountPath: /opsmx/conf/
+          name: config-volume
+        - mountPath: /tmp/conf/
+          name: sapor-config-volume
       {{- end }}
       containers:
       - image: {{ template "sapor.image" . }}
@@ -146,7 +165,7 @@ spec:
       {{- end }}
       - secret:
           secretName: oes-sapor-config
-        name: sapor-config-volume
+        name: config-volume
       - secret:
           items:
           - key: bootstrap.yml
