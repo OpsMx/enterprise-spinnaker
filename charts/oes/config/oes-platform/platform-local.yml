@@ -32,8 +32,8 @@ user:
   {{- end }}
 app:
   dashboard:
-    adminuser: {{ .Values.global.saporgate.config.adminGroup }}
-includeAllGroupsForAdminEnabled: {{ .Values.includeAllGroupsForAdminEnabled.enabled }} 
+    adminuser: {{ .Values.global.saporgate.config.adminuser }}
+includeAllGroupsForAdminEnabled: {{ .Values.includeAllGroupsForAdminEnabled }} 
 ldap:
   enabled: {{ .Values.global.ldap.enabled }}
   url: {{ tpl .Values.global.ldap.url . }}
