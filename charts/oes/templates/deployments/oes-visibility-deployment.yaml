@@ -28,7 +28,7 @@ spec:
         component: visibility
 {{ include "oes.standard-labels" . | indent 8 }}
     spec:
-      {{- if .Values.db.enabled ) }}
+      {{- if .Values.db.enabled }}
       initContainers:
       - name: db-check
         image: {{ .Values.global.customImages.registry }}/pgchecker:v1
@@ -72,7 +72,7 @@ spec:
        {{- include "tplvalues.render" (dict "value" .Values.extraEnvVars "context" $) | nindent 8 }}
        {{- end }}
         volumeMounts:
-        {{- if not .Values.db.enabled ) }}
+        {{- if not .Values.db.enabled }}
         - mountPath: /opsmx/conf/visibility-local.yml
           name: visibility-config
           subPath: visibility-local.yml        
