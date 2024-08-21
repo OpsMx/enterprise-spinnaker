@@ -40,7 +40,6 @@ spec:
         - name: EXTERNAL_IP_CHECK_DELAY
           value: "{{ .Values.global.autoConfiguration.initContainer.externalIpCheckDelay}}"    
       {{- end }}
-      {{- if (eq .Values.db.enabled true) }}
       - name: db-check
         image: {{ .Values.global.customImages.registry }}/pgchecker:v1
         command:
@@ -53,6 +52,7 @@ spec:
             done;
             echo 'OESDB OK ✓'
             sed -e "s@PGPASSWORD@$OPSMX_POSTGRESQL_PASS@g" /opsmx/conf/gate.yml > /tmp/conf/gate.yml
+            mv /tmp/conf/gate.yml /opsmx/conf/gate.yml
             sed -i "s@REDISPASSWORD@$OPSMX_REDIS_PASS@g" /tmp/conf/gate.yml
             echo success        
         env:
@@ -68,10 +68,7 @@ spec:
               name: oes-redis
         volumeMounts:
         - mountPath: /opsmx/conf/
-          name: config-volume
-        - mountPath: /tmp/conf/
           name: gate-volume
-      {{- end }} 
       containers:
       - image: {{ template "gate.image" . }}
         name: oes-gate
@@ -87,17 +84,14 @@ spec:
         resources:
 {{ toYaml .Values.gate.resources | indent 12 }}
         volumeMounts:
-        - name: gate-volume
-          mountPath: /opt/spinnaker/config/gate.yml
-          subPath: gate.yml
         - mountPath: /opt/spinnaker/config/bootstrap.yml
           name: bootstrap-volume
           subPath: bootstrap.yml
-        {{- if .Values.gate.config.spring.security.saml2.enabled  }}
+{{- if .Values.gate.config.spring.security.saml2.enabled  }}
         - name: samlcerts
           mountPath: /opt/saml/certs
           readOnly: true
-        {- end }}
+{{- end }}
         readinessProbe:
           tcpSocket:
             port: 8084
@@ -144,9 +138,9 @@ spec:
           secretName: oes-gate-config
         name: config-temp
       - emptyDir: {}
-        name: config-volume
+        name: gate-volume
       {{- else }}
-      - name: config-volume
+      - name: gate-volume
         secret:
           secretName: oes-gate-config
       {{- end }}
