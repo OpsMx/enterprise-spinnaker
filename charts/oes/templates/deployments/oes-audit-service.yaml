@@ -27,6 +27,7 @@ spec:
         component: auditservice
 {{ include "oes.standard-labels" . | indent 8 }}
     spec:
+      {{- if .Values.db.enabled ) }}
       initContainers:
       - name: db-check
         image: {{ .Values.global.customImages.registry }}/pgchecker:v1
@@ -39,9 +40,9 @@ spec:
                sleep 2;
             done;
             echo 'OESDB OK ✓'
-            sed -e "s@PGPASSWORD@$OPSMX_POSTGRESQL_PASS@g" /opsmx/conf/audit-local.yml > /tmp/conf/audit-local.yml
-            mv /tmp/conf/audit-local.yml /opsmx/conf/audit-local.yml
+            sed -e "s@PGPASSWORD@$OPSMX_POSTGRESQL_PASS@g" /opsmx/conf/audit-local.yml > /tmp/conf/audit-local.yml            
             sed -i "s@RABBITMQPASSWORD@$RABBITMQ_DEFAULT_PASS@g" /tmp/conf/audit-local.yml
+            mv /tmp/conf/audit-local.yml /opsmx/conf/audit-local.yml
             echo success
         env:
         - name: OPSMX_POSTGRESQL_PASS
@@ -57,6 +58,7 @@ spec:
         volumeMounts:
         - mountPath: /opsmx/conf/
           name: audit-config-volume
+        {{- end }}  
       containers:
       - image: {{ template "auditservice.image" . }}
         imagePullPolicy: IfNotPresent
@@ -91,6 +93,11 @@ spec:
             port: 8097
           timeoutSeconds: 1
         volumeMounts:
+        {{- if not .Values.db.enabled ) }}
+        - mountPath: /opsmx/conf/audit-service-local.yml
+          name: audit-config-volume
+          subPath: audit-local.yml 
+        {{- end }} 
         - mountPath: /opsmx/conf/bootstrap.yml
           name: bootstrap-config-volume
           subPath: bootstrap.yml

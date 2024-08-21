@@ -27,6 +27,7 @@ spec:
         component: datascience
 {{ include "oes.standard-labels" . | indent 8 }}
     spec:
+      {{- if .Values.db.enabled ) }}
       initContainers:
       - name: db-check
         image: {{ .Values.global.customImages.registry }}/pgchecker:v1
@@ -39,9 +40,9 @@ spec:
                sleep 2;
             done;
             echo 'OESDB OK ✓'
-            sed -e "s@PGPASSWORD@$OPSMX_POSTGRESQL_PASS@g" /opsmx/conf/app-config.yml > /tmp/conf/app-config.yml
-            mv /tmp/conf/app-config.yml /opsmx/conf/app-config.yml
+            sed -e "s@PGPASSWORD@$OPSMX_POSTGRESQL_PASS@g" /opsmx/conf/app-config.yml > /tmp/conf/app-config.yml            
             sed -i "s@RABBITMQPASSWORD@$RABBITMQ_DEFAULT_PASS@g" /tmp/conf/application.yml
+            mv /tmp/conf/app-config.yml /opsmx/conf/app-config.yml
             echo success
         env:
         - name: OPSMX_POSTGRESQL_PASS
@@ -57,6 +58,7 @@ spec:
         volumeMounts:
         - mountPath: /opsmx/conf/
           name: datascience-config-volume
+        {{- end }}  
       containers:
       - image: {{ template "datascience.image" . }}
         imagePullPolicy: IfNotPresent
@@ -78,9 +80,15 @@ spec:
             port: 5005
           timeoutSeconds: 1
         volumeMounts:
+        {{- if not .Values.db.enabled ) }}
         - mountPath: /home/ubuntu/datascience/app_config.yaml
           name: datascience-config-volume
           subPath: app-config.yml
+        {{- end }}            
+        - mountPath: /home/ubuntu/.aws/credentials
+          name: datascience-config-volume
+          subPath: minio-credentials                  
+
       {{- if .Values.imagePullSecret}}
       imagePullSecrets:
       - name: {{ .Values.imagePullSecret}}

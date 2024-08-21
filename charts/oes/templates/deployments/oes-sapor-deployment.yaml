@@ -28,6 +28,7 @@ spec:
         component: sapor
 {{ include "oes.standard-labels" . | indent 8 }}
     spec:
+     {{- if .Values.db.enabled ) }}
       initContainers:
       - name: db-check
         image: {{ .Values.global.customImages.registry }}/pgchecker:v1
@@ -40,9 +41,9 @@ spec:
                sleep 2;
             done;
             echo 'OESDB OK ✓'
-            sed -e "s@PGPASSWORD@$OPSMX_POSTGRESQL_PASS@g" /opsmx/conf/application.yml > /tmp/conf/application.yml
-            mv /tmp/conf/application.yml /opsmx/conf/application.yml
+            sed -e "s@PGPASSWORD@$OPSMX_POSTGRESQL_PASS@g" /opsmx/conf/application.yml > /tmp/conf/application.yml            
             sed -i "s@RABBITMQPASSWORD@$RABBITMQ_DEFAULT_PASS@g" /tmp/conf/application.yml
+            mv /tmp/conf/application.yml /opsmx/conf/application.yml
             echo success
         env:
         - name: OPSMX_POSTGRESQL_PASS
@@ -58,6 +59,7 @@ spec:
         volumeMounts:
         - mountPath: /opsmx/conf/
           name: sapor-config-volume
+      {{- end }}
       containers:
       - image: {{ template "sapor.image" . }}
         name: oes-sapor
@@ -80,9 +82,11 @@ spec:
           name: certs-volume
           subPath: tls.key
         {{- end }}
+        {{- if not .Values.db.enabled ) }}
         - name: sapor-config-volume
           mountPath: /opt/opsmx/application.yml
           subPath: application.yml
+        {{- end }}  
         - mountPath: /opt/opsmx/bootstrap.yml
           name: bootstrap-config-volume
           subPath: bootstrap.yml

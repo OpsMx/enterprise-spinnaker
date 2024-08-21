@@ -28,6 +28,7 @@ spec:
         component: visibility
 {{ include "oes.standard-labels" . | indent 8 }}
     spec:
+      {{- if .Values.db.enabled ) }}
       initContainers:
       - name: db-check
         image: {{ .Values.global.customImages.registry }}/pgchecker:v1
@@ -40,9 +41,9 @@ spec:
                sleep 2;
             done;
             echo 'OESDB OK ✓'
-            sed -e "s@PGPASSWORD@$OPSMX_POSTGRESQL_PASS@g" /opsmx/conf/visibility-local.yml > /tmp/conf/visibility-local.yml
-            mv /tmp/conf/visibility-local.yml /opsmx/conf/visibility-local.yml
+            sed -e "s@PGPASSWORD@$OPSMX_POSTGRESQL_PASS@g" /opsmx/conf/visibility-local.yml > /tmp/conf/visibility-local.yml            
             sed -i "s@RABBITMQPASSWORD@$RABBITMQ_DEFAULT_PASS@g" /tmp/conf/visibility-local.yml
+            mv /tmp/conf/visibility-local.yml /opsmx/conf/visibility-local.yml
             echo success
         env:
         - name: OPSMX_POSTGRESQL_PASS
@@ -58,6 +59,7 @@ spec:
         volumeMounts:
         - mountPath: /opsmx/conf/
           name: visibility-config-volume
+      {{- end }}    
       containers:
       - image: {{ template "visibility.image" . }}
         name: oes-visibility
@@ -70,6 +72,11 @@ spec:
        {{- include "tplvalues.render" (dict "value" .Values.extraEnvVars "context" $) | nindent 8 }}
        {{- end }}
         volumeMounts:
+        {{- if not .Values.db.enabled ) }}
+        - mountPath: /opsmx/conf/visibility-local.yml
+          name: visibility-config
+          subPath: visibility-local.yml        
+        {{- end }}              
         - mountPath: /opsmx/conf/bootstrap.yml
           name: bootstrap-config-volume
           subPath: bootstrap.yml

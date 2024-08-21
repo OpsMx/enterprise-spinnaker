@@ -81,6 +81,7 @@ spec:
       tolerations:
 {{ toYaml .Values.global.tolerations | indent 8 }}
       {{- end }}
+      {{- if .Values.db.enabled ) }}
       initContainers:
       - name: db-check
         image: {{ .Values.global.customImages.registry }}/pgchecker:v1
@@ -105,6 +106,7 @@ spec:
         volumeMounts:
         - mountPath: /opsmx/conf/
           name: autopilot-config-volume
+        {{- end }}  
       containers:
         - image: {{ template "autopilot.image" . }}
           imagePullPolicy: {{ .Values.autopilot.image.pullPolicy }}
@@ -123,6 +125,11 @@ spec:
               name: metricfetcher
               protocol: TCP
           volumeMounts:
+          {{- if not .Values.db.enabled ) }}
+          - name: autopilot-config-volume
+            mountPath: /opsmx/conf/autopilot.properties
+            subPath: autopilot.properties
+          {{- end }} 
           - mountPath: /opsmx/conf/bootstrap.yml
             name: bootstrap-config-volume
             subPath: bootstrap.yml

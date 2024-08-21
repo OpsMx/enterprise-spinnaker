@@ -27,9 +27,7 @@ spec:
         component: gate
 {{ include "oes.standard-labels" . | indent 8 }}
     spec:
-      {{- if or .Values.global.autoConfiguration.enabled .Values.db.enabled }}
       initContainers:
-      {{- end }}
       {{- if .Values.global.autoConfiguration.enabled }}
       - name: gate-autoconfig
         image: {{ .Values.global.autoConfiguration.initContainer.image}}
@@ -39,36 +37,32 @@ spec:
         env:      
         - name: EXTERNAL_IP_CHECK_DELAY
           value: "{{ .Values.global.autoConfiguration.initContainer.externalIpCheckDelay}}"    
-      {{- end }}
-      - name: db-check
+      {{- end }}      
+      - name: password-check
         image: {{ .Values.global.customImages.registry }}/pgchecker:v1
         command:
-          - sh
-          - -c
-          - |
-            echo 'Waiting for OES-DB to become ready...'
-            until printf "." && nc -z -w 2 oes-db 5432; do
-               sleep 2;
-            done;
-            echo 'OESDB OK ✓'
-            sed -e "s@PGPASSWORD@$OPSMX_POSTGRESQL_PASS@g" /opsmx/conf/gate.yml > /tmp/conf/gate.yml
-            mv /tmp/conf/gate.yml /opsmx/conf/gate.yml
-            sed -i "s@REDISPASSWORD@$OPSMX_REDIS_PASS@g" /tmp/conf/gate.yml
+            sed -i "s@REDISPASSWORD@$OPSMX_REDIS_PASS@g" /opt/spinnaker/config/gate.yml > /tmp/conf/gate.yml
+            {{- if .Values.global.ldap.enabled }}
+            sed -i "s@LDAP_MANAGER_PASSWORD@$LDAP_MANAGER_PASSWORD@g" /tmp/conf/gate.yml
+            {{- end }}                   
+            mv /tmp/conf/gate.yml /opt/spinnaker/config/gate.yml 
             echo success        
         env:
-        - name: OPSMX_POSTGRESQL_PASS
-          valueFrom:
-            secretKeyRef:
-              key: pgpassword
-              name: oes-db
         - name: OPSMX_REDIS_PASS
           valueFrom:
             secretKeyRef:
               key: redis-password
               name: oes-redis
+        - name: LDAP_MANAGER_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              key: LDAP_MANAGER_PASSWORD
+              name: ldap_manager_password
+        {{- end }}              
         volumeMounts:
-        - mountPath: /opsmx/conf/
+        - mountPath: /opt/spinnaker/config
           name: gate-volume
+      {{- end }}    
       containers:
       - image: {{ template "gate.image" . }}
         name: oes-gate
@@ -83,7 +77,7 @@ spec:
           protocol: TCP
         resources:
 {{ toYaml .Values.gate.resources | indent 12 }}
-        volumeMounts:
+        volumeMounts:    
         - mountPath: /opt/spinnaker/config/bootstrap.yml
           name: bootstrap-volume
           subPath: bootstrap.yml
