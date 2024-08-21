@@ -28,7 +28,7 @@ spec:
 {{- end }}
     spec:
       volumes:
-        - name: config-volume
+        - name: autopilot-config-volume
           secret:
             secretName: oes-autopilot-config
         - secret:
@@ -81,7 +81,6 @@ spec:
       tolerations:
 {{ toYaml .Values.global.tolerations | indent 8 }}
       {{- end }}
-      {{- if (eq .Values.db.enabled true) }}
       initContainers:
       - name: db-check
         image: {{ .Values.global.customImages.registry }}/pgchecker:v1
@@ -95,6 +94,7 @@ spec:
             done;
             echo 'OESDB OK ✓'
             sed -e "s@PGPASSWORD@$OPSMX_POSTGRESQL_PASS@g" /opsmx/conf/autopilot.properties > /tmp/conf/autopilot.properties
+            mv /tmp/conf/autopilot.properties /opsmx/conf/autopilot.properties
             echo success
         env:
         - name: OPSMX_POSTGRESQL_PASS
@@ -104,10 +104,7 @@ spec:
               name: oes-db
         volumeMounts:
         - mountPath: /opsmx/conf/
-          name: config-volume
-        - mountPath: /tmp/conf/
           name: autopilot-config-volume
-      {{- end }}
       containers:
         - image: {{ template "autopilot.image" . }}
           imagePullPolicy: {{ .Values.autopilot.image.pullPolicy }}
@@ -126,9 +123,6 @@ spec:
               name: metricfetcher
               protocol: TCP
           volumeMounts:
-          - name: autopilot-config-volume
-            mountPath: /opsmx/conf/autopilot.properties
-            subPath: autopilot.properties
           - mountPath: /opsmx/conf/bootstrap.yml
             name: bootstrap-config-volume
             subPath: bootstrap.yml
