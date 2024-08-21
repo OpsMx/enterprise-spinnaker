@@ -28,7 +28,7 @@ spec:
         component: sapor
 {{ include "oes.standard-labels" . | indent 8 }}
     spec:
-     {{- if .Values.db.enabled ) }}
+     {{- if .Values.db.enabled }}
       initContainers:
       - name: db-check
         image: {{ .Values.global.customImages.registry }}/pgchecker:v1
@@ -82,7 +82,7 @@ spec:
           name: certs-volume
           subPath: tls.key
         {{- end }}
-        {{- if not .Values.db.enabled ) }}
+        {{- if not .Values.db.enabled }}
         - name: sapor-config-volume
           mountPath: /opt/opsmx/application.yml
           subPath: application.yml

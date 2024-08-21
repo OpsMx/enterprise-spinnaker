@@ -27,7 +27,7 @@ spec:
         component: auditservice
 {{ include "oes.standard-labels" . | indent 8 }}
     spec:
-      {{- if .Values.db.enabled ) }}
+      {{- if .Values.db.enabled }}
       initContainers:
       - name: db-check
         image: {{ .Values.global.customImages.registry }}/pgchecker:v1
@@ -93,7 +93,7 @@ spec:
             port: 8097
           timeoutSeconds: 1
         volumeMounts:
-        {{- if not .Values.db.enabled ) }}
+        {{- if not .Values.db.enabled }}
         - mountPath: /opsmx/conf/audit-service-local.yml
           name: audit-config-volume
           subPath: audit-local.yml 
