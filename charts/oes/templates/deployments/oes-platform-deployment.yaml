@@ -28,7 +28,6 @@ spec:
         component: platform
 {{ include "oes.standard-labels" . | indent 8 }}
     spec:
-      {{- if (eq .Values.db.enabled true) }}
       initContainers:
       - name: db-check
         image: {{ .Values.global.customImages.registry }}/pgchecker:v1
@@ -42,6 +41,7 @@ spec:
             done;
             echo 'OESDB OK ✓'
             sed -e "s@OPSMX_POSTGRESQL_PASS@$OPSMX_POSTGRESQL_PASS@g" /opsmx/conf/platform-local.yml > /tmp/conf/platform-local.yml
+            mv /tmp/conf/platform-local.yml /opsmx/conf/platform-local.yml
             sed -i "s@REDISPASSWORD@$OPSMX_REDIS_PASS@g" /tmp/conf/platform-local.yml
             {{- if .Values.global.ldap.enabled }}
             sed -i "s@LDAP_MANAGER_PASSWORD@$LDAP_MANAGER_PASSWORD@g" /tmp/conf/platform-local.yml
@@ -67,10 +67,7 @@ spec:
         {{- end }}
         volumeMounts:
         - mountPath: /opsmx/conf/
-          name: config-volume
-        - mountPath: /tmp/conf/
           name: platform-config-volume
-      {{- end }}
       containers:
       - image: {{ template "platform.image" . }}
         name: oes-platform
@@ -95,9 +92,6 @@ spec:
           initialDelaySeconds: 60
           periodSeconds: 60
         volumeMounts:
-        - mountPath: /opsmx/conf/platform-local.yml
-          name: platform-config-volume
-          subPath: platform-local.yml
         - mountPath: /opsmx/conf/bootstrap.yml
           name: bootstrap-config-volume
           subPath: bootstrap.yml
@@ -150,7 +144,7 @@ spec:
           - key: cacerts
             path: cacerts
       {{- end }}
-      - name: config-volume
+      - name: platform-config-volume
         secret:
           secretName: oes-platform-config
       - secret:
