@@ -27,7 +27,6 @@ spec:
         component: auditclient
 {{ include "oes.standard-labels" . | indent 8 }}
     spec:
-      {{- if (eq .Values.db.enabled true) }}
       initContainers:
       - name: db-check
         image: {{ .Values.global.customImages.registry }}/pgchecker:v1
@@ -40,7 +39,8 @@ spec:
                sleep 2;
             done;
             echo 'OESDB OK ✓'
-             sed -e "s@PGPASSWORD@$OPSMX_POSTGRESQL_PASS@g" /opsmx/conf/audit-local.yml > /tmp/conf/audit-local.yml
+            sed -e "s@PGPASSWORD@$OPSMX_POSTGRESQL_PASS@g" /opsmx/conf/audit-local.yml > /tmp/conf/audit-local.yml
+            mv /tmp/conf/audit-local.yml /opsmx/conf/audit-local.yml
             echo success
         env:
         - name: OPSMX_POSTGRESQL_PASS
@@ -50,10 +50,7 @@ spec:
               name: oes-db
         volumeMounts:
         - mountPath: /opsmx/conf/
-          name: config-volume
-        - mountPath: /tmp/conf/
           name: audit-config-volume
-      {{- end }}
       containers:
       - image: {{ template "auditclient.image" . }}
         imagePullPolicy: IfNotPresent
@@ -84,9 +81,6 @@ spec:
           tcpSocket:
             port: 8098
         volumeMounts:
-        - mountPath: /opsmx/conf/audit-client-local.yml
-          name: audit-config-volume
-          subPath: audit-local.yml
         - mountPath: /opsmx/conf/bootstrap.yml
           name: bootstrap-config-volume
           subPath: bootstrap.yml
@@ -136,7 +130,7 @@ spec:
           - key: audit-local.yml
             path: audit-local.yml
           secretName: oes-audit-client-config
-        name: config-volume
+        name: audit-config-volume
       - name: bootstrap-config-volume
         secret:
           defaultMode: 420
