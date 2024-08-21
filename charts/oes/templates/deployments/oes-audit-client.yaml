@@ -27,6 +27,7 @@ spec:
         component: auditclient
 {{ include "oes.standard-labels" . | indent 8 }}
     spec:
+      {{- if .Values.db.enabled ) }}
       initContainers:
       - name: db-check
         image: {{ .Values.global.customImages.registry }}/pgchecker:v1
@@ -51,6 +52,7 @@ spec:
         volumeMounts:
         - mountPath: /opsmx/conf/
           name: audit-config-volume
+      {{- end }}    
       containers:
       - image: {{ template "auditclient.image" . }}
         imagePullPolicy: IfNotPresent
@@ -81,6 +83,11 @@ spec:
           tcpSocket:
             port: 8098
         volumeMounts:
+        {{- if not .Values.db.enabled ) }}  
+        - mountPath: /opsmx/conf/audit-client-local.yml
+          name: audit-config-volume
+          subPath: audit-local.yml
+        {{- end }}
         - mountPath: /opsmx/conf/bootstrap.yml
           name: bootstrap-config-volume
           subPath: bootstrap.yml
