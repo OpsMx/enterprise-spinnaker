@@ -41,9 +41,12 @@ spec:
       - name: password-check
         image: {{ .Values.global.customImages.registry }}/pgchecker:v1
         command:
+          - sh
+          - -c
+          - |
             sed -i "s@REDISPASSWORD@$OPSMX_REDIS_PASS@g" /opt/spinnaker/config/gate.yml > /tmp/conf/gate.yml
             {{- if .Values.global.ldap.enabled }}
-            sed -i "s@LDAP_MANAGER_PASSWORD@$LDAP_MANAGER_PASSWORD@g" /tmp/conf/gate.yml
+            sed -i "s@LDAPMANAGERPASSWORD@$LDAP_MANAGER_PASSWORD@g" /tmp/conf/gate.yml
             {{- end }}                   
             mv /tmp/conf/gate.yml /opt/spinnaker/config/gate.yml 
             echo success        
@@ -51,18 +54,18 @@ spec:
         - name: OPSMX_REDIS_PASS
           valueFrom:
             secretKeyRef:
-              key: redis-password
+              key: redispassword
               name: oes-redis
+        {{- if .Values.global.ldap.enabled }}
         - name: LDAP_MANAGER_PASSWORD
           valueFrom:
             secretKeyRef:
-              key: LDAP_MANAGER_PASSWORD
+              key: ldapmanagerpassword
               name: ldap_manager_password
         {{- end }}              
         volumeMounts:
         - mountPath: /opt/spinnaker/config
-          name: gate-volume
-      {{- end }}    
+          name: gate-volume 
       containers:
       - image: {{ template "gate.image" . }}
         name: oes-gate
