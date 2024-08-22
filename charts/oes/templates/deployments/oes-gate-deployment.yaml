@@ -61,7 +61,7 @@ spec:
           valueFrom:
             secretKeyRef:
               key: ldapmanagerpassword
-              name: ldap_manager_password
+              name: ldap-manager-password
         {{- end }}              
         volumeMounts:
         - mountPath: /opt/spinnaker/config
