@@ -30,21 +30,26 @@ spec:
     spec:
       {{- if .Values.db.enabled }}
       initContainers:
+
       - name: db-check
         image: {{ .Values.global.customImages.registry }}/pgchecker:v1
         command:
           - sh
           - -c
           - |
+            {{- if .Values.db.enabled }} 
             echo 'Waiting for OES-DB to become ready...'
             until printf "." && nc -z -w 2 oes-db 5432; do
                sleep 2;
             done;
             echo 'OESDB OK ✓'
-            sed -e "s@OPSMX_POSTGRESQL_PASS@$OPSMX_POSTGRESQL_PASS@g" /opsmx/conf/platform-local.yml > /tmp/conf/platform-local.yml            
+            sed -e "s@PGPASSWORD@$OPSMX_POSTGRESQL_PASS@g" /opsmx/conf/platform-local.yml > /tmp/conf/platform-local.yml              
             sed -i "s@REDISPASSWORD@$OPSMX_REDIS_PASS@g" /tmp/conf/platform-local.yml
+            {{- else }}
+            sed -i "s@REDISPASSWORD@$OPSMX_REDIS_PASS@g" /opsmx/conf/platform-local.yml > /tmp/conf/platform-local.yml
+            {{- end }}
             {{- if .Values.global.ldap.enabled }}
-            sed -i "s@LDAP_MANAGER_PASSWORD@$LDAP_MANAGER_PASSWORD@g" /tmp/conf/platform-local.yml
+            sed -i "s@LDAPMANAGERPASSWORD@$LDAP_MANAGER_PASSWORD@g" /tmp/conf/platform-local.yml
             {{- end }}
             mv /tmp/conf/platform-local.yml /opsmx/conf/platform-local.yml
             echo success
@@ -52,18 +57,18 @@ spec:
         - name: OPSMX_POSTGRESQL_PASS
           valueFrom:
             secretKeyRef:
-              key: OPSMX_POSTGRESQL_PASS
-              name: opsmx_postgresql_pass
+              key: pgpassword
+              name: oes-db
         - name: OPSMX_REDIS_PASS
           valueFrom:
             secretKeyRef:
-              key: redis-password
+              key: redispassword
               name: oes-redis
         {{- if .Values.global.ldap.enabled }}
         - name: LDAP_MANAGER_PASSWORD
           valueFrom:
             secretKeyRef:
-              key: LDAP_MANAGER_PASSWORD
+              key: ldapmanagerpassword
               name: ldap_manager_password
         {{- end }}
         volumeMounts:
