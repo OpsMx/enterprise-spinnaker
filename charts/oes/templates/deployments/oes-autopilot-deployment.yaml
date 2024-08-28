@@ -28,15 +28,15 @@ spec:
 {{- end }}
     spec:
       volumes:
-        - name: autopilot-config-volume
-          secret:
-            secretName: oes-autopilot-config
         - secret:
             items:
             - key: bootstrap.yml
               path: bootstrap.yml
             secretName: bootstrap
           name: bootstrap-config-volume
+        - name: autopilot-config-volume
+          configMap:
+            name: oes-autopilot-config          
         - configMap:
             defaultMode: 420
             items:
@@ -44,6 +44,8 @@ spec:
               path: standard-error-codes.csv
             name: standard-error-codes-config
           name: standard-error-conf
+        - emptyDir: {}
+          name: autopilot-config
         {{- if .Values.global.customCerts.enabled }}
         - name: cacerts
           secret:
@@ -80,8 +82,7 @@ spec:
       {{- if .Values.global.tolerations }}
       tolerations:
 {{ toYaml .Values.global.tolerations | indent 8 }}
-      {{- end }}
-      {{- if .Values.db.enabled }}
+      {{- end }}      
       initContainers:
       - name: db-check
         image: {{ .Values.global.customImages.registry }}/pgchecker:v1
@@ -89,24 +90,38 @@ spec:
           - sh
           - -c
           - |
+            RABBITMQ_DEFAULT_PASS=`echo $RABBITMQ_DEFAULT_PASS | sed 's/ *$//g'`
+        {{- if .Values.db.enabled }}
             echo 'Waiting for OES-DB to become ready...'
             until printf "." && nc -z -w 2 oes-db 5432; do
                sleep 2;
             done;
             echo 'OESDB OK ✓'
-            sed -e "s@PGPASSWORD@$OPSMX_POSTGRESQL_PASS@g" /opsmx/conf/autopilot.properties > /tmp/conf/autopilot.properties
-            mv /tmp/conf/autopilot.properties /opsmx/conf/autopilot.properties
+            OPSMX_POSTGRESQL_PASS=`echo $OPSMX_POSTGRESQL_PASS | sed 's/ *$//g'`            
+            sed -e s/OPSMX_POSTGRESQL_PASS/${OPSMX_POSTGRESQL_PASS}/g /tmp/autopilot.properties > /tmp/config/autopilot.properties
+        {{- else }}
+            cp /tmp/autopilot.properties > /tmp/config/autopilot.properties
+        {{- end }}
+            sed -i s/RABBITMQ_DEFAULT_PASS/${RABBITMQ_DEFAULT_PASS}/g /tmp/config/autopilot.properties
             echo success
         env:
+        {{- if .Values.db.enabled }}
         - name: OPSMX_POSTGRESQL_PASS
           valueFrom:
             secretKeyRef:
               key: pgpassword
               name: oes-db
+         {{- end }}
+        - name: RABBITMQ_DEFAULT_PASS
+          valueFrom:
+            secretKeyRef:
+              key: rabbitmqpassword
+              name: rabbitmq              
         volumeMounts:
-        - mountPath: /opsmx/conf/
+        - mountPath: /tmp
           name: autopilot-config-volume
-        {{- end }}  
+        - mountPath: /tmp/config
+          name: autopilot-config         
       containers:
         - image: {{ template "autopilot.image" . }}
           imagePullPolicy: {{ .Values.autopilot.image.pullPolicy }}
@@ -125,11 +140,8 @@ spec:
               name: metricfetcher
               protocol: TCP
           volumeMounts:
-          {{- if not .Values.db.enabled }}
-          - name: autopilot-config-volume
-            mountPath: /opsmx/conf/autopilot.properties
-            subPath: autopilot.properties
-          {{- end }} 
+          - mountPath: /opsmx/conf
+            name: autopilot-config            
           - mountPath: /opsmx/conf/bootstrap.yml
             name: bootstrap-config-volume
             subPath: bootstrap.yml

@@ -44,13 +44,21 @@ spec:
           - sh
           - -c
           - |
-            sed -i "s@REDISPASSWORD@$OPSMX_REDIS_PASS@g" /opt/spinnaker/config/gate.yml > /tmp/conf/gate.yml
+            RABBITMQ_DEFAULT_PASS=`echo $RABBITMQ_DEFAULT_PASS | sed 's/ *$//g'`
+            OPSMX_REDIS_PASS=`echo $OPSMX_REDIS_PASS | sed 's/ *$//g'`
+            sed -e s/RABBITMQ_DEFAULT_PASS/${RABBITMQ_DEFAULT_PASS}/g /tmp/gate.yml > /tmp/config/gate.yml
+            sed -i s/OPSMX_REDIS_PASS/${OPSMX_REDIS_PASS}/g /tmp/config/gate.yml
             {{- if .Values.global.ldap.enabled }}
-            sed -i "s@LDAPMANAGERPASSWORD@$LDAP_MANAGER_PASSWORD@g" /tmp/conf/gate.yml
-            {{- end }}                   
-            mv /tmp/conf/gate.yml /opt/spinnaker/config/gate.yml 
+            LDAP_MANAGER_PASSWORD=`echo $LDAP_MANAGER_PASSWORD | sed 's/ *$//g'`
+            sed -i s/LDAP_MANAGER_PASSWORD/${LDAP_MANAGER_PASSWORD}/g /tmp/config/gate.yml
+            {{- end }}            
             echo success        
         env:
+        - name: RABBITMQ_DEFAULT_PASS
+          valueFrom:
+            secretKeyRef:
+              key: rabbitmqpassword
+              name: rabbitmq
         - name: OPSMX_REDIS_PASS
           valueFrom:
             secretKeyRef:
@@ -64,8 +72,10 @@ spec:
               name: ldap-manager-password
         {{- end }}              
         volumeMounts:
-        - mountPath: /opt/spinnaker/config
-          name: gate-volume 
+        - mountPath: /tmp
+          name: gate-config-volume
+        - mountPath: /tmp/config
+          name: gate-config
       containers:
       - image: {{ template "gate.image" . }}
         name: oes-gate
@@ -80,7 +90,9 @@ spec:
           protocol: TCP
         resources:
 {{ toYaml .Values.gate.resources | indent 12 }}
-        volumeMounts:    
+        volumeMounts: 
+        - mountPath: /opt/spinnaker/config
+          name: gate-config
         - mountPath: /opt/spinnaker/config/bootstrap.yml
           name: bootstrap-volume
           subPath: bootstrap.yml
@@ -130,17 +142,6 @@ spec:
 {{ toYaml .Values.global.tolerations | indent 8 }}
       {{- end }}
       volumes:
-      {{- if .Values.global.autoConfiguration.enabled }}
-      - secret:
-          secretName: oes-gate-config
-        name: config-temp
-      - emptyDir: {}
-        name: gate-volume
-      {{- else }}
-      - name: gate-volume
-        secret:
-          secretName: oes-gate-config
-      {{- end }}
       - secret:
           items:
           - key: bootstrap.yml
@@ -156,5 +157,18 @@ spec:
               path: key.pem
             - key: cert.pem
               path: cert.pem
-      {{- end }}                    
+      {{- end }}
+      {{- if .Values.global.autoConfiguration.enabled }}
+      - configMap:
+          name: oes-gate-config
+        name: config-temp
+      - emptyDir: {}
+        name: gate-config-volume
+      {{- else }}
+      - configMap:
+          name: oes-gate-config
+        name: gate-config-volume
+      {{- end }}
+      - emptyDir: {}
+        name: gate-config                          
 {{- end -}}
