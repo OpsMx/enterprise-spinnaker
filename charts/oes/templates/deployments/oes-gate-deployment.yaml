@@ -91,8 +91,9 @@ spec:
         resources:
 {{ toYaml .Values.gate.resources | indent 12 }}
         volumeMounts: 
-        - mountPath: /opt/spinnaker/config
+        - mountPath: /opt/spinnaker/config/gate.yml
           name: gate-config
+          subPath: gate.yml
         - mountPath: /opt/spinnaker/config/bootstrap.yml
           name: bootstrap-volume
           subPath: bootstrap.yml
@@ -170,5 +171,5 @@ spec:
         name: gate-config-volume
       {{- end }}
       - emptyDir: {}
-        name: gate-config                          
+        name: gate-config
 {{- end -}}

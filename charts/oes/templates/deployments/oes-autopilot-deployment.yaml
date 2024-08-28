@@ -34,9 +34,11 @@ spec:
               path: bootstrap.yml
             secretName: bootstrap
           name: bootstrap-config-volume
-        - name: autopilot-config-volume
-          configMap:
-            name: oes-autopilot-config          
+        - emptyDir: {}
+          name: autopilot-config
+        - configMap:
+            name: oes-autopilot-config
+          name: autopilot-config-volume  
         - configMap:
             defaultMode: 420
             items:
@@ -44,8 +46,6 @@ spec:
               path: standard-error-codes.csv
             name: standard-error-codes-config
           name: standard-error-conf
-        - emptyDir: {}
-          name: autopilot-config
         {{- if .Values.global.customCerts.enabled }}
         - name: cacerts
           secret:
@@ -97,7 +97,7 @@ spec:
                sleep 2;
             done;
             echo 'OESDB OK ✓'
-            OPSMX_POSTGRESQL_PASS=`echo $OPSMX_POSTGRESQL_PASS | sed 's/ *$//g'`            
+            OPSMX_POSTGRESQL_PASS=`echo $OPSMX_POSTGRESQL_PASS | sed 's/ *$//g'`
             sed -e s/OPSMX_POSTGRESQL_PASS/${OPSMX_POSTGRESQL_PASS}/g /tmp/autopilot.properties > /tmp/config/autopilot.properties
         {{- else }}
             cp /tmp/autopilot.properties > /tmp/config/autopilot.properties
@@ -116,12 +116,12 @@ spec:
           valueFrom:
             secretKeyRef:
               key: rabbitmqpassword
-              name: rabbitmq              
+              name: rabbitmq
         volumeMounts:
         - mountPath: /tmp
           name: autopilot-config-volume
         - mountPath: /tmp/config
-          name: autopilot-config         
+          name: autopilot-config
       containers:
         - image: {{ template "autopilot.image" . }}
           imagePullPolicy: {{ .Values.autopilot.image.pullPolicy }}
@@ -140,8 +140,9 @@ spec:
               name: metricfetcher
               protocol: TCP
           volumeMounts:
-          - mountPath: /opsmx/conf
-            name: autopilot-config            
+          - mountPath: /opsmx/conf/autopilot.properties
+            name: autopilot-config
+            subPath: autopilot.properties
           - mountPath: /opsmx/conf/bootstrap.yml
             name: bootstrap-config-volume
             subPath: bootstrap.yml

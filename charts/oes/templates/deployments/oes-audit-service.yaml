@@ -41,15 +41,15 @@ spec:
                sleep 2;
             done;
             echo 'OESDB OK ✓'
-            OPSMX_POSTGRESQL_PASS=`echo $OPSMX_POSTGRESQL_PASS | sed 's/ *$//g'`            
-            sed -e s/OPSMX_POSTGRESQL_PASS/${OPSMX_POSTGRESQL_PASS}/g /tmp/audit-local.yml > /tmp/config/audit-service-local.yml            
+            OPSMX_POSTGRESQL_PASS=`echo $OPSMX_POSTGRESQL_PASS | sed 's/ *$//g'`
+            sed -e s/OPSMX_POSTGRESQL_PASS/${OPSMX_POSTGRESQL_PASS}/g /tmp/audit-local.yml > /tmp/config/audit-service-local.yml
           {{- else }}
             cp /tmp/audit-local.yml > /tmp/config/audit-service-local.yml
           {{- end }}
             sed -i s/RABBITMQ_DEFAULT_PASS/${RABBITMQ_DEFAULT_PASS}/g /tmp/config/audit-service-local.yml
             echo success
         env:
-        {{- if .Values.db.enabled }}   
+        {{- if .Values.db.enabled }}
         - name: OPSMX_POSTGRESQL_PASS
           valueFrom:
             secretKeyRef:
@@ -100,8 +100,9 @@ spec:
             port: 8097
           timeoutSeconds: 1
         volumeMounts:
-        - mountPath: /opsmx/conf         
+        - mountPath: /opsmx/conf/audit-service-local.yml
           name: audit-service-config
+          subPath: audit-service-local.yml
         - mountPath: /opsmx/conf/bootstrap.yml
           name: bootstrap-config-volume
           subPath: bootstrap.yml
@@ -154,13 +155,13 @@ spec:
       - emptyDir: {}
         name: audit-service-config
       - configMap:
+          name: oes-audit-service-config
+        name: audit-config-volume
+      - configMap:
           defaultMode: 420
           items:
           - key: standard-error-codes.csv
             path: standard-error-codes.csv
           name: standard-error-codes-config
         name: standard-error-conf
-      - configMap:
-          name: oes-audit-service-config
-        name: audit-config-volume       
 {{- end -}}

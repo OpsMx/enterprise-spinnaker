@@ -50,13 +50,13 @@ spec:
             sed -i s/RABBITMQ_DEFAULT_PASS/${RABBITMQ_DEFAULT_PASS}/g /tmp/config/visibility-local.yml
             echo success
         env:
-        {{- if .Values.db.enabled }}  
+        {{- if .Values.db.enabled }}
         - name: OPSMX_POSTGRESQL_PASS
           valueFrom:
             secretKeyRef:
               key: pgpassword
               name: oes-db
-        {{- end}}      
+        {{- end}}
         - name: RABBITMQ_DEFAULT_PASS
           valueFrom:
             secretKeyRef:
@@ -66,7 +66,7 @@ spec:
         - mountPath: /tmp
           name: visibility-config-volume
         - mountPath: /tmp/config
-          name: visibility-config         
+          name: visibility-config
       
       containers:
       - image: {{ template "visibility.image" . }}
@@ -80,8 +80,9 @@ spec:
        {{- include "tplvalues.render" (dict "value" .Values.extraEnvVars "context" $) | nindent 8 }}
        {{- end }}
         volumeMounts:        
-        - mountPath: /opsmx/conf
+        - mountPath: /opsmx/conf/visibility-local.yml
           name: visibility-config
+          subPath: visibility-local.yml
         - mountPath: /opsmx/conf/bootstrap.yml
           name: bootstrap-config-volume
           subPath: bootstrap.yml
@@ -138,7 +139,7 @@ spec:
           secretName: bootstrap
         name: bootstrap-config-volume
       - emptyDir: {}
-        name: visibility-config        
+        name: visibility-config
       - configMap:
           name: oes-visibility-config
         name: visibility-config-volume

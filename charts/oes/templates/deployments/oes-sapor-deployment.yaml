@@ -48,7 +48,7 @@ spec:
           {{- else }}
             cp /tmp/application.yml > /tmp/config/application.yml
           {{- end }}
-            sed -i s/RABBITMQ_DEFAULT_PASS/${RABBITMQ_DEFAULT_PASS}/g /tmp/config/application.yml            
+            sed -i s/RABBITMQ_DEFAULT_PASS/${RABBITMQ_DEFAULT_PASS}/g /tmp/config/application.yml
             echo success
         env:
         {{- if .Values.db.enabled }}          
@@ -98,7 +98,7 @@ spec:
           subPath: standard-error-codes.csv
         - mountPath: /opt/opsmx/application.yml
           name: sapor-config
-          subPath: application.yml         
+          subPath: application.yml
         {{- if .Values.global.customCerts.enabled }}
         - mountPath: /etc/pki/ca-trust/extracted/java/cacerts
           subPath: cacerts
@@ -176,11 +176,11 @@ spec:
             path: bootstrap.yml
           secretName: sapor-bootstrap
         name: bootstrap-config-volume
-      - emptyDir: {}       
+      - emptyDir: {}
         name: sapor-config
       - configMap:
           name: oes-sapor-config
-        name: sapor-config-volume  
+        name: sapor-config-volume
       - configMap:
           defaultMode: 420
           items:

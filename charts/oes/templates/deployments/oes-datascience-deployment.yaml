@@ -49,7 +49,7 @@ spec:
             sed -i s/RABBITMQ_DEFAULT_PASS/${RABBITMQ_DEFAULT_PASS}/g  /tmp/config/app-config.yml
             echo success
         env:
-        {{- if .Values.db.enabled }}  
+        {{- if .Values.db.enabled }}
         - name: OPSMX_POSTGRESQL_PASS
           valueFrom:
             secretKeyRef:
@@ -65,7 +65,7 @@ spec:
         - mountPath: /tmp
           name: datascience-config-volume
         - mountPath: /tmp/config
-          name: datascience-config 
+          name: datascience-config
       containers:
       - image: {{ template "datascience.image" . }}
         imagePullPolicy: IfNotPresent

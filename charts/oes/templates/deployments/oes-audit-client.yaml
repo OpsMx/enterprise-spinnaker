@@ -47,7 +47,7 @@ spec:
             cp /tmp/audit-local.yml > /tmp/config/audit-client-local.yml
         {{- end }}
             echo success
-       {{- if .Values.db.enabled }}     
+       {{- if .Values.db.enabled }}
         env:
         - name: OPSMX_POSTGRESQL_PASS
           valueFrom:
@@ -90,8 +90,9 @@ spec:
           tcpSocket:
             port: 8098
         volumeMounts:
-        - mountPath: /opsmx/conf 
+        - mountPath: /opsmx/conf/audit-client-local.yml 
           name: audit-client-config
+          subPath: audit-client-local.yml
         - mountPath: /opsmx/conf/bootstrap.yml
           name: bootstrap-config-volume
           subPath: bootstrap.yml
@@ -140,11 +141,11 @@ spec:
         secret:
           defaultMode: 420
           secretName: bootstrap
-      - configmap:
-          name: oes-audit-client-config
-        name: audit-config-volume
       - emptyDir: {}
         name: audit-client-config
+      - configMap:
+          name: oes-audit-client-config
+        name: audit-config-volume
       - configMap:
           defaultMode: 420
           items:
