@@ -90,14 +90,15 @@ spec:
           name: certs-volume
           subPath: tls.key
         {{- end }}
-        - mountPath: /opt/opsmx
-          name: sapor-config
         - mountPath: /opt/opsmx/bootstrap.yml
           name: bootstrap-config-volume
           subPath: bootstrap.yml
         - mountPath: /opsmx/conf/standard-error-code.csv
           name: standard-error-conf
           subPath: standard-error-codes.csv
+        - mountPath: /opt/opsmx/application.yml
+          name: sapor-config
+          subPath: application.yml         
         {{- if .Values.global.customCerts.enabled }}
         - mountPath: /etc/pki/ca-trust/extracted/java/cacerts
           subPath: cacerts
