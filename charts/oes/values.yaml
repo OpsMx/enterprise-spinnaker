@@ -805,8 +805,7 @@ redis:
   image:
     registry: quay.io/opsmxpublic
     repository: bitnami-redis
-  password: password
-  passwordkey: OPSMX_REDIS_PASS
+  password: OPSMX_REDIS_PASS
   cluster:
     enabled: false
  #The flag is set to true by default.Mandatory change to false only if global.openshift is true and change fsGroups and runAsUser if required
