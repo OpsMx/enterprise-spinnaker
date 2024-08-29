@@ -800,12 +800,13 @@ redis:
   ## Redis endpoint that is used by oes-gate and oes-platform for caching;
   ## Change this to custom URL if installRedis is set to false
   ## url: redis://{{ .Release.Name }}-redis-master:6379
-  url: redis://:OPSMX_REDIS_PASS@{{ .Release.Name }}-redis-master
+  url: redis://:password@{{ .Release.Name }}-redis-master
   port: 6379
   image:
     registry: quay.io/opsmxpublic
     repository: bitnami-redis
-  password: OPSMX_REDIS_PASS
+  password: password
+  passwordkey: OPSMX_REDIS_PASS
   cluster:
     enabled: false
  #The flag is set to true by default.Mandatory change to false only if global.openshift is true and change fsGroups and runAsUser if required
