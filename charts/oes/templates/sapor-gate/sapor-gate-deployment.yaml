@@ -65,9 +65,9 @@ spec:
         - mountPath: /opt/spinnaker/config/gate.yml
           name: sapor-gate-files
           subPath: gate.yml
-        - mountPath: /opt/spinnaker/config/gate-lcoal.yml
+        - mountPath: /opt/spinnaker/config/gate-local.yml
           name: sapor-gate-files
-          subPath: gate-lcoal.yml
+          subPath: gate-local.yml
         - mountPath: /opt/spinnaker/config/gate-overrides.yml
           name: sapor-gate-files
           subPath: gate-overrides.yml
