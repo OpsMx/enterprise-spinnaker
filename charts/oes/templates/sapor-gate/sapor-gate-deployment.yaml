@@ -27,6 +27,28 @@ spec:
         component: sapor-gate
 {{ include "oes.standard-labels" . | indent 8 }}
     spec:
+      initContainers:
+      - name: password-check
+        image: {{ .Values.global.customImages.registry }}/pgchecker:v1
+        command:
+          - sh
+          - -c
+          - |
+            OPSMX_REDIS_PASS=`echo $OPSMX_REDIS_PASS | sed 's/ *$//g'`            
+            sed -e s/OPSMX_REDIS_PASS/${OPSMX_REDIS_PASS}/g /tmp/spinnaker.yml > /tmp/config/spinnaker.yml           
+            echo success        
+        env:
+        - name: OPSMX_REDIS_PASS
+          valueFrom:
+            secretKeyRef:
+              key: redispassword
+              name: oes-redis            
+        volumeMounts:
+        - mountPath: /tmp/spinnaker.yml
+          name: sapor-gate-files
+          subPath: spinnaker.yml
+        - mountPath: /tmp/config
+          name: sapor-gate-config        
       containers:
       - image: {{ template "saporgate.image" . }}
         name: sapor-gate
@@ -43,6 +65,9 @@ spec:
         volumeMounts:
         - mountPath: /opt/spinnaker/config
           name: sapor-gate-files
+        - mountPath: /opt/spinnaker/config/spinnaker.yml
+          name: sapor-gate-config
+          subPath: spinnaker.yml
         readinessProbe:
           failureThreshold: 3
           httpGet:
@@ -85,4 +110,6 @@ spec:
       - name: sapor-gate-files
         secret:
           secretName: sapor-gate-files
+      - emptyDir: {}
+        name: sapor-gate-config    
 {{- end -}}
