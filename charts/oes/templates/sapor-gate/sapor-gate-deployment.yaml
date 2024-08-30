@@ -44,7 +44,7 @@ spec:
               key: redispassword
               name: oes-redis            
         volumeMounts:
-        - mountPath: /tmp/spinnaker.yml
+        - mountPath: /tmp
           name: sapor-gate-files
           subPath: spinnaker.yml
         - mountPath: /tmp/config
@@ -63,8 +63,18 @@ spec:
         resources:
 {{ toYaml .Values.saporgate.resources | indent 12 }}
         volumeMounts:
-        - mountPath: /opt/spinnaker/config
+        - mountPath: /opt/spinnaker/config/gate.yml
           name: sapor-gate-files
+          subPath: gate.yml
+        - mountPath: /opt/spinnaker/config/gate-lcoal.yml
+          name: sapor-gate-files
+          subPath: gate-lcoal.yml
+        - mountPath: /opt/spinnaker/config/gate-overrides.yml
+          name: sapor-gate-files
+          subPath: gate-overrides.yml
+        - mountPath: /opt/spinnaker/config/spinnakerconfig.yml
+          name: sapor-gate-files
+          subPath: spinnakerconfig.yml
         - mountPath: /opt/spinnaker/config/spinnaker.yml
           name: sapor-gate-config
           subPath: spinnaker.yml
@@ -107,9 +117,9 @@ spec:
 {{ toYaml .Values.global.tolerations | indent 8 }}
       {{- end }}
       volumes:
-      - name: sapor-gate-files
-        secret:
-          secretName: sapor-gate-files
+      - configMap:
+          name: sapor-gate-files
+        name: sapor-gate-config
       - emptyDir: {}
-        name: sapor-gate-config    
+        name: sapor-gate-config   
 {{- end -}}
