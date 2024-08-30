@@ -23,7 +23,7 @@ image:
   pullPolicy: IfNotPresent
 
 # Spcifies an existing secret to be used for admin and config user passwords
-existingSecret: ""
+existingSecret: ldap-manager-password
 
 # settings for enabling TLS
 tls:
