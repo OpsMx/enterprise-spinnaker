@@ -46,7 +46,6 @@ spec:
         volumeMounts:
         - mountPath: /tmp
           name: sapor-gate-files
-          subPath: spinnaker.yml
         - mountPath: /tmp/config
           name: sapor-gate-config        
       containers:
@@ -119,7 +118,7 @@ spec:
       volumes:
       - configMap:
           name: sapor-gate-files
-        name: sapor-gate-config
+        name: sapor-gate-files
       - emptyDir: {}
         name: sapor-gate-config   
 {{- end -}}
