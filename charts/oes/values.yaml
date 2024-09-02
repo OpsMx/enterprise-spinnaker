@@ -326,7 +326,7 @@ autopilot:
   ## Image specific details
   image:
     repository: ubi8-oes-autopilot
-    tag: v4.0.4.3
+    tag: isd-spin-2024.06.00-202408281051
     pullPolicy: IfNotPresent
 
   annotations:
@@ -360,7 +360,7 @@ audit:
   ##
   image:
     repository: ubi8-oes-audit-service
-    tag: v4.0.4.3
+    tag: isd-spin-2024.06.00-202407180744
     pullPolicy: IfNotPresent
 
   serviceAnnotations: {}
@@ -383,7 +383,7 @@ auditClient:
   ##
   image:
     repository: ubi8-oes-audit-client
-    tag: v4.0.4.3
+    tag: isd-spin-2024.06.00-202407180748
     pullPolicy: IfNotPresent
 
   serviceAnnotations: {}
@@ -406,7 +406,7 @@ datascience:
   ##
   image:
     repository: ubi8-oes-datascience
-    tag: v4.0.4.3
+    tag: isd-spin-2024.06.00-202407121255
     pullPolicy: IfNotPresent
 
   serviceAnnotations: {}
@@ -426,7 +426,7 @@ dashboard:
   ## Image specific details
   image:
     repository: ubi8-oes-dashboard
-    tag: v4.0.4.3
+    tag: isd-spin-2024.06.00-202407121256
     pullPolicy: IfNotPresent
 
   annotations:
@@ -494,7 +494,7 @@ gate:
   ## Image specific details
   image:
     repository: ubi8-gate
-    tag: v4.0.4.3
+    tag: isd-spin-2024.06.00-202408190706
     pullPolicy: IfNotPresent
 
   serviceAnnotations: {}
@@ -584,7 +584,7 @@ platform:
   ## Image specific details
   image:
     repository: ubi8-oes-platform
-    tag: v4.0.4.3
+    tag: isd-spin-2024.06.00-202408160626
     pullPolicy: IfNotPresent
 
   annotations:
@@ -657,7 +657,7 @@ sapor:
   ## Image specific details
   image:
     repository: ubi8-oes-sapor
-    tag: v4.0.4.3
+    tag: isd-spin-2024.06.00-202407191150
     pullPolicy: IfNotPresent
 
   annotations:
@@ -723,7 +723,7 @@ saporgate:
   enabled: true
   image:
     repository: ubi8-oes-spin-gate
-    tag: v4.0.4.3-saporgate
+    tag: isd-spin-2024.06.00-202408190706-sapor
     pullPolicy: IfNotPresent
 
   annotations:
@@ -750,7 +750,7 @@ ui:
   ## Image specific details
   image:
     repository: ubi8-oes-ui
-    tag: v4.0.4.3
+    tag: isd-spin-2024.06.00-202408281057
     pullPolicy: IfNotPresent
 
   annotations:
@@ -769,7 +769,7 @@ visibility:
   ## Image specific details
   image:
     repository: ubi8-oes-visibility
-    tag: v4.0.4.3
+    tag: isd-spin-2024.06.00-202407121318
     pullPolicy: IfNotPresent
 
   annotations:
