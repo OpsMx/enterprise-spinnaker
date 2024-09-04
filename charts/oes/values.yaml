@@ -107,10 +107,10 @@ global:
 
   ## Set to false only if user uses gitops style and user dont want the repo to be created automatically in github.com
   githubcreationHook: true
-
+  gitops:
+    standardrepoBranch: v4.isd-spin-2024.06.00
   gitea:
     enabled: false
-    standardrepoBranch: v4.0.4.2
     admin:
       existingSecret: gitea-secret
       username: opsmx
