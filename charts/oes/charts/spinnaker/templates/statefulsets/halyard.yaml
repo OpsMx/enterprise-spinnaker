@@ -85,7 +85,7 @@ spec:
         securityContext:
           runAsUser: 65533 # git-sync-user
       {{- end }}
-      - name: "create-halyard-local"
+      - name: "hal-create-local"
       {{- if .Values.gitopsHalyard.enabled }}
         image: {{ .Values.global.customImages.registry }}/awsgit:v3-js
       {{- else }}
@@ -212,7 +212,7 @@ spec:
         {{- end }}
       {{- if .Values.gitopsHalyard.enabled }}
       {{- if or (eq .Values.gitopsHalyard.repo.type "git") (eq .Values.gitopsHalyard.repo.type "s3") }}
-      - name: "halyardconfig-update"
+      - name: "hal-update-config"
         command:
         - sh
         - /tmp/akv2k8s/run.sh
@@ -232,7 +232,7 @@ spec:
         {{- end }}
         {{- end }}
       {{- if .Values.gitopsHalyard.enabled }}
-      - name: "halyard-overrideurl"
+      - name: "hal-override-url"
         command:
         - sh
         - /tmp/autoconfig/call_overrides.sh
@@ -274,7 +274,7 @@ spec:
           name: cacerts
         {{- end }}
         - mountPath: /tmp/autoconfig
-          name: halyard-overrideurl
+          name: hal-override-url
       {{- end }}
       volumes:
       {{- if or .Values.gitopsHalyard.enabled (not .Values.halyard.persistence.enabled) }}
@@ -282,9 +282,9 @@ spec:
         emptyDir: {}
       {{- end }}
       {{- if .Values.gitopsHalyard.enabled }}
-      - name: halyard-overrideurl
+      - name: hal-override-url
         configMap:
-          name: {{ template "spinnaker.fullname" . }}-halyard-overrideurl
+          name: {{ template "spinnaker.fullname" . }}-hal-override-url
       {{- end }}
       {{- if .Values.gitopsHalyard.enabled }}
       {{- if or (eq .Values.gitopsHalyard.repo.type "git") (eq .Values.gitopsHalyard.repo.type "s3") }}  
