@@ -56,6 +56,14 @@ Install OpsMx Enterprise for Spinnaker
   ```console
   $ kubectl create namespace mynamespace
   ```
+- We should create these secrets in namespace before helm installation, Create secrets ldap,redis,db,rabbitmq with following secret names ldap-manager-password,rabbitmq,oes-redis,oes-db.
+  
+  ```console
+- `kubectl -n <namesapce> create secret generic ldapmanagerpassword --from-literal ldapmanagerpassword=opsmxadmin123`
+- `kubectl -n <namesapce> create secret generic redispassword --from-literal redispassword=password`
+- `kubectl -n <namesapce> create secret generic rabbitmq --from-literal rabbitmqpassword=Networks123`
+- `kubectl -n <namesapce> create secret generic oes-db --from-literal pgpassword=networks123`
+   ```
 
 - To install the chart with the release name `my-release`:
 
@@ -63,7 +71,7 @@ Install OpsMx Enterprise for Spinnaker
   ```console
   $ helm install my-release opsmx/oes [--namespace mynamespace]
   ```
-
+   
 The command deploys OES on the Kubernetes cluster in the default configuration. The [configuration](#configuration) section lists the parameters that can be configured during installation.
 
 > **Tip**: List all releases using `helm list`
