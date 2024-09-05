@@ -928,10 +928,10 @@ spinnaker:
   #### The values below this line apply mainly to non-gitOps Spinnaker, best not changed
   ###############################################################################################
   halyard:
-    spinnakerVersion: 1.30.1
+    spinnakerVersion: 1.33.3
     image:
       repository: quay.io/opsmxpublic/ubi8-halyard-cve
-      tag: 1.55.1-f1911d0-202403190813
+      tag: 1.65.0-81942c9-202408200841
     # Set to false to disable persistence data volume for halyard
     persistence:
       enabled: true
