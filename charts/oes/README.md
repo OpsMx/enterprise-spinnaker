@@ -59,7 +59,7 @@ Install OpsMx Enterprise for Spinnaker
 - We should create these secrets in namespace before helm installation, Create secrets ldap,redis,db,rabbitmq with following secret names ldap-manager-password,rabbitmq,oes-redis,oes-db.
   
   ```console
-  $ kubectl -n namespace create secret generic ldap-manager-password \
+  $ kubectl -n namespace create secret generic ldap-manager-password = \
   --from-literal=LDAP_ADMIN_PASSWORD=opsmxadmin123 \
   --from-literal=LDAP_CONFIG_PASSWORD=opsmxconfig123 \
   --from-literal ldapmanagerpassword=opsmxadmin123
