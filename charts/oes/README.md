@@ -59,12 +59,11 @@ Install OpsMx Enterprise for Spinnaker
 - We should create these secrets in namespace before helm installation, Create secrets ldap,redis,db,rabbitmq with following secret names ldap-manager-password,rabbitmq,oes-redis,oes-db.
   
   ```console
-- kubectl -n <namesapce> create secret generic ldapmanagerpassword --from-literal ldapmanagerpassword=opsmxadmin123
-- kubectl -n <namesapce> create secret generic redispassword --from-literal redispassword=password
-- kubectl -n <namesapce> create secret generic rabbitmq --from-literal rabbitmqpassword=Networks123
-- kubectl -n <namesapce> create secret generic oes-db --from-literal pgpassword=networks123
+    kubectl -n <namesapce> create secret generic ldapmanagerpassword --from-literal ldapmanagerpassword=opsmxadmin123
+    kubectl -n <namesapce> create secret generic redispassword --from-literal redispassword=password
+    kubectl -n <namesapce> create secret generic rabbitmq --from-literal rabbitmqpassword=Networks123
+    kubectl -n <namesapce> create secret generic oes-db --from-literal pgpassword=networks123
   ```
-
 - To install the chart with the release name `my-release`:
 
 	Helm v3.x
