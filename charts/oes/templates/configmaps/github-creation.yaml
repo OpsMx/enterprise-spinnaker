@@ -38,11 +38,11 @@ data:
                 if [ "$gitusername" == "$org" ]
                 then
                      curl -H "Authorization: token $gitpassword" --data "$object" https://api.github.com/user/repos
-                     git clone https://github.com/OpsMx/standard-gitops-repo.git -b {{ .Values.global.gitea.standardrepoBranch }}
+                     git clone https://github.com/OpsMx/standard-gitops-repo.git -b {{ .Values.global.gitops.standardrepoBranch }}
                      git clone https://$gitusername:$gitpassword@{{ .Values.spinnaker.gitopsHalyard.repo.baseUrlHostName }}/$gitusername/$repo_name.git
                 else
                      curl -X POST -H "Accept: application/vnd.github.v3+json" -H "Authorization: token $gitpassword" https://api.github.com/orgs/$org/repos -d '{"name":"'$repo_name'"}'
-                     git clone https://github.com/OpsMx/standard-gitops-repo.git -b {{ .Values.global.gitea.standardrepoBranch }}
+                     git clone https://github.com/OpsMx/standard-gitops-repo.git -b {{ .Values.global.gitops.standardrepoBranch }}
                      git clone https://$gitusername:$gitpassword@{{ .Values.spinnaker.gitopsHalyard.repo.baseUrlHostName }}/$org/$repo_name.git
                 fi
 

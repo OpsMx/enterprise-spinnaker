@@ -87,7 +87,7 @@ data:
         then
                 echo "Creating a New Local Gitea Repo gitea-standard-repo......."
                 curl -k -X POST "http://{{ .Release.Name }}-gitea-http.$SPINNAKER_NAMESPACE:3000/api/v1/user/repos" -H "content-type: application/json" -H "Authorization: Basic $basic_auth" --data '{"name":"'gitea-standard-repo'"}'
-                git clone https://github.com/OpsMx/standard-gitops-repo.git -b {{ .Values.global.gitea.standardrepoBranch }} /tmp/spinnaker/test/standard-gitops-repo/
+                git clone https://github.com/OpsMx/standard-gitops-repo.git -b {{ .Values.global.gitops.standardrepoBranch }} /tmp/spinnaker/test/standard-gitops-repo/
                 git clone http://$gitea_user:$gitea_pass@{{ .Release.Name }}-gitea-http.$SPINNAKER_NAMESPACE:3000/$gitea_user/gitea-standard-repo.git /tmp/spinnaker/test/gitea-standard-repo/
                 cp -pr /tmp/spinnaker/test/standard-gitops-repo/* /tmp/spinnaker/test/gitea-standard-repo/
                 cd /tmp/spinnaker/test/gitea-standard-repo/
@@ -122,6 +122,8 @@ data:
     {{- if not (.Values.global.gitea.enabled) }}
     GIT_USER=`echo $GIT_USER | sed 's/ *$//g'`
     GIT_TOKEN=`echo $GIT_TOKEN | sed 's/ *$//g'`
+    OPSMX_REDIS_PASS=`echo $OPSMX_REDIS_PASS | sed 's/ *$//g'`
+
     git -c {{ .Values.gitopsHalyard.repo.configArgs }} clone $GIT_CLONE_PARAM -b {{ .Values.gitopsHalyard.repo.halConfigBranch}} /tmp/spinnaker/test 2>/tmp/tmp.log
     if [[ $? != 0 ]]; then
        echo "ERROR: Failed while trying to execute:"
@@ -203,6 +205,7 @@ data:
     sed -i  s%DYN_ACCNT_CONFG_PATH%{{ .Values.gitopsHalyard.repo.dynAccntConfigPath }}%g /tmp/spinnaker/.hal/default/profiles/spinnakerconfig.yml
     sed -i  s/RELEASE_NAME/{{ .Release.Name }}/g /tmp/spinnaker/.hal/default/profiles/rosco-local.yml
     sed -i  s/RELEASE_NAME/{{ .Release.Name }}/g /tmp/spinnaker/.hal/default/service-settings/redis.yml
+    sed -i  s/OPSMX_REDIS_PASS/${OPSMX_REDIS_PASS}/g /tmp/spinnaker/.hal/default/service-settings/redis.yml
     {{- if not .Values.global.ldap.enabled }}
     yq -i e '.deploymentConfigurations.[].security.authn.ldap.enabled = "false"' /tmp/spinnaker/.hal/config
     {{- end }}
@@ -310,12 +313,15 @@ data:
     {{- if and (.Values.gitopsHalyard.enabled) (eq .Values.gitopsHalyard.repo.type "s3") }}
     #!/bin/bash -x
     rm -rf /tmp/spinnaker/.hal
+    OPSMX_REDIS_PASS=`echo $OPSMX_REDIS_PASS | sed 's/ *$//g'`
     AWS_ACCESS_KEY_ID=$S3_ACCESSKEY AWS_SECRET_ACCESS_KEY=$S3_SECRETKEY aws s3 cp s3://$S3_BUCKET/config /tmp/spinnaker/.hal/config
     AWS_ACCESS_KEY_ID=$S3_ACCESSKEY AWS_SECRET_ACCESS_KEY=$S3_SECRETKEY aws s3 cp s3://$S3_BUCKET/default/ /tmp/spinnaker/.hal/default --recursive
     AWS_ACCESS_KEY_ID=$S3_ACCESSKEY AWS_SECRET_ACCESS_KEY=$S3_SECRETKEY aws s3 cp s3://$S3_BUCKET/halyard.yaml /tmp/spinnaker/.hal/halyard.yaml
     sed -i  s/SPINNAKER_NAMESPACE/${SPINNAKER_NAMESPACE}/ /tmp/spinnaker/.hal/config
     sed -i  s/RELEASE_NAME/{{ .Release.Name }}/g /tmp/spinnaker/.hal/config
     sed -i  s/RELEASE_NAME/{{ .Release.Name }}/g /tmp/spinnaker/.hal/default/service-settings/redis.yml
+    sed -i s/OPSMX_REDIS_PASS/${OPSMX_REDIS_PASS}/g /tmp/spinnaker/.hal/default/service-settings/redis.yml
+    
     if [ -f /tmp/spinnaker/.hal/default/profiles/fiat-local.yml ]; then
     sed -i  s/RELEASE_NAME/{{ .Release.Name }}/g /tmp/spinnaker/.hal/default/profiles/fiat-local.yml
     fi

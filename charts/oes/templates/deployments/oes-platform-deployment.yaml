@@ -28,7 +28,6 @@ spec:
         component: platform
 {{ include "oes.standard-labels" . | indent 8 }}
     spec:
-      {{- if (eq .Values.db.enabled true) }}
       initContainers:
       - name: db-check
         image: {{ .Values.global.customImages.registry }}/pgchecker:v1
@@ -36,12 +35,47 @@ spec:
           - sh
           - -c
           - |
+            OPSMX_REDIS_PASS=`echo $OPSMX_REDIS_PASS | sed 's/ *$//g'`
+            {{- if .Values.db.enabled }}
             echo 'Waiting for OES-DB to become ready...'
             until printf "." && nc -z -w 2 oes-db 5432; do
                sleep 2;
             done;
             echo 'OESDB OK ✓'
-      {{- end }}
+            OPSMX_POSTGRESQL_PASS=`echo $OPSMX_POSTGRESQL_PASS | sed 's/ *$//g'`
+            sed -e s/OPSMX_POSTGRESQL_PASS/${OPSMX_POSTGRESQL_PASS}/g /tmp/platform-local.yml > /tmp/config/platform-local.yml
+            {{- else }}
+            cp /tmp/platform-local.yml > /tmp/config/platform-local.yml
+            {{- end }}
+            sed -i s/OPSMX_REDIS_PASS/${OPSMX_REDIS_PASS}/g /tmp/config/platform-local.yml
+            {{- if .Values.global.ldap.enabled }}
+            LDAP_MANAGER_PASSWORD=`echo $LDAP_MANAGER_PASSWORD | sed 's/ *$//g'`
+            sed -i s/LDAP_MANAGER_PASSWORD/${LDAP_MANAGER_PASSWORD}/g /tmp/config/platform-local.yml
+            {{- end }}
+            echo success
+        env:
+        - name: OPSMX_POSTGRESQL_PASS
+          valueFrom:
+            secretKeyRef:
+              key: pgpassword
+              name: oes-db
+        - name: OPSMX_REDIS_PASS
+          valueFrom:
+            secretKeyRef:
+              key: redispassword
+              name: oes-redis
+        {{- if .Values.global.ldap.enabled }}
+        - name: LDAP_MANAGER_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              key: ldapmanagerpassword
+              name: ldap-manager-password
+        {{- end }}
+        volumeMounts:
+        - mountPath: /tmp
+          name: platform-config-volume
+        - mountPath: /tmp/config/
+          name: platform-config
       containers:
       - image: {{ template "platform.image" . }}
         name: oes-platform
@@ -65,9 +99,9 @@ spec:
             port: 8095
           initialDelaySeconds: 60
           periodSeconds: 60
-        volumeMounts:
+        volumeMounts:      
         - mountPath: /opsmx/conf/platform-local.yml
-          name: platform-config-volume
+          name: platform-config
           subPath: platform-local.yml
         - mountPath: /opsmx/conf/bootstrap.yml
           name: bootstrap-config-volume
@@ -121,9 +155,6 @@ spec:
           - key: cacerts
             path: cacerts
       {{- end }}
-      - name: platform-config-volume
-        secret:
-          secretName: oes-platform-config
       - secret:
           items:
           - key: bootstrap.yml
@@ -137,6 +168,11 @@ spec:
             path: standard-error-codes.csv
           name: standard-error-codes-config
         name: standard-error-conf
+      - emptyDir: {}
+        name: platform-config
+      - configMap:
+          name: oes-platform-config
+        name: platform-config-volume
       - configMap:
           defaultMode: 420
           items:

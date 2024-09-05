@@ -27,6 +27,27 @@ spec:
         component: sapor-gate
 {{ include "oes.standard-labels" . | indent 8 }}
     spec:
+      initContainers:
+      - name: password-check
+        image: {{ .Values.global.customImages.registry }}/pgchecker:v1
+        command:
+          - sh
+          - -c
+          - |
+            OPSMX_REDIS_PASS=`echo $OPSMX_REDIS_PASS | sed 's/ *$//g'`            
+            sed -e s/OPSMX_REDIS_PASS/${OPSMX_REDIS_PASS}/g /tmp/spinnaker.yml > /tmp/config/spinnaker.yml           
+            echo success        
+        env:
+        - name: OPSMX_REDIS_PASS
+          valueFrom:
+            secretKeyRef:
+              key: redispassword
+              name: oes-redis            
+        volumeMounts:
+        - mountPath: /tmp
+          name: sapor-gate-files
+        - mountPath: /tmp/config
+          name: sapor-gate-config        
       containers:
       - image: {{ template "saporgate.image" . }}
         name: sapor-gate
@@ -41,8 +62,21 @@ spec:
         resources:
 {{ toYaml .Values.saporgate.resources | indent 12 }}
         volumeMounts:
-        - mountPath: /opt/spinnaker/config
+        - mountPath: /opt/spinnaker/config/gate.yml
           name: sapor-gate-files
+          subPath: gate.yml
+        - mountPath: /opt/spinnaker/config/gate-local.yml
+          name: sapor-gate-files
+          subPath: gate-local.yml
+        - mountPath: /opt/spinnaker/config/gate-overrides.yml
+          name: sapor-gate-files
+          subPath: gate-overrides.yml
+        - mountPath: /opt/spinnaker/config/spinnakerconfig.yml
+          name: sapor-gate-files
+          subPath: spinnakerconfig.yml
+        - mountPath: /opt/spinnaker/config/spinnaker.yml
+          name: sapor-gate-config
+          subPath: spinnaker.yml
         readinessProbe:
           failureThreshold: 3
           httpGet:
@@ -82,7 +116,9 @@ spec:
 {{ toYaml .Values.global.tolerations | indent 8 }}
       {{- end }}
       volumes:
-      - name: sapor-gate-files
-        secret:
-          secretName: sapor-gate-files
+      - configMap:
+          name: sapor-gate-files
+        name: sapor-gate-files
+      - emptyDir: {}
+        name: sapor-gate-config   
 {{- end -}}
