@@ -335,7 +335,6 @@ autopilot:
   labels:  #If Required,Add Customer-specific labels as well
     app: oes
     component: autopilot
-
   serviceAnnotations: {}
   resources:
     requests:

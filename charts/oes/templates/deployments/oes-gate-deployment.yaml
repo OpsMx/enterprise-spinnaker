@@ -18,7 +18,7 @@ spec:
   template:
     metadata:
       annotations:
-        checksum/secret: {{ (.Files.Glob "config/oes-gate/gate.yml").AsConfig | sha256sum }}
+        checksum/secret: {{ include (print $.Template.BasePath "/secrets/oes-gate-configmap.yaml") . | sha256sum }}
 {{- if .Values.gate.annotations -}}
         {{ toYaml .Values.gate.annotations | nindent 8 }}
 {{- end }}

@@ -19,7 +19,7 @@ spec:
   template:
     metadata:
       annotations:
-        checksum/secret: {{ (.Files.Glob "config/oes-platform/platform-local.yml").AsConfig | sha256sum }}
+        checksum/secret: {{ include (print $.Template.BasePath "/secrets/oes-platform-configmap.yaml") . | sha256sum }}
 {{- if .Values.platform.annotations -}}
         {{ toYaml .Values.platform.annotations | nindent 8 }}
 {{- end }}

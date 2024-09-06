@@ -18,7 +18,7 @@ spec:
   template:
     metadata:
       annotations:
-        configmap/checksum: {{ (.Files.Glob "config/autopilot/autopilot.properties").AsConfig | sha256sum }}
+        checksum/secret: {{ include (print $.Template.BasePath "/secrets/oes-autopilot-secret.yaml") . | sha256sum }}
 {{- if .Values.autopilot.annotations -}}
 {{ toYaml .Values.autopilot.annotations | nindent 8 }}
 {{- end }}

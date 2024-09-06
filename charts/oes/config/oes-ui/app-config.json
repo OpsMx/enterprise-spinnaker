@@ -12,7 +12,7 @@
     "hide_integrations": true,
     "hide_pipelineTemplates": true,
     "hide_policies": true,
-    "hide_users": true,
+    "hide_users": false,
     "grafana_enabled": {{ .Values.grafana.grafana.enabled }},
     "grafanaPipelineInsightsEndpoint": "{{ .Values.global.oesUI.protocol }}://{{ .Values.global.oesUI.host }}/grafana/d/pipeline-insight/pipeinsights",
     "grafanaStageInsightsEndpoint": "{{ .Values.global.oesUI.protocol }}://{{ .Values.global.oesUI.host }}/grafana/d/stage-insight/stageinsights"
