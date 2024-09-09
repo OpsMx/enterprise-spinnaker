@@ -21,7 +21,7 @@ standardErrorCodes:
 secretManagement:
   source:
     config: {{ .Values.secretStore }}
-  encryption: false
+  encryption: true
 oes:
   rbac:
     enabled: {{ .Values.global.commonGate.spinnakerRBAC }}
