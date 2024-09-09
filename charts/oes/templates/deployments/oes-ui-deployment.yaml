@@ -18,7 +18,7 @@ spec:
   template:
     metadata:
       annotations:
-        checksum/configmap: {{ (.Files.Glob "config/oes-ui/app-config.json").AsConfig | sha256sum }}
+        checksum/configmap: {{ include (print $.Template.BasePath "config/oes-ui/app-config.json") . | sha256sum }}
 {{- if .Values.ui.annotations -}}
         {{ toYaml .Values.ui.annotations | nindent 8 }}
 {{- end }}
