@@ -79,5 +79,3 @@ spinnaker:
       username: saitejaopsmx # git user
       token: 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 # ex: ghp_lqNYLgwGsUO0obycpcr2qyqDf # user token
       branch: master # branch to which changes needs to be pushed ex: testbranch
-
-

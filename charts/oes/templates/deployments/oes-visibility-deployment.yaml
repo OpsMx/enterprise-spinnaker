@@ -19,13 +19,12 @@ spec:
   template:
     metadata:
       annotations:
-        configmap/checksum: {{ (.Files.Glob "config/oes-visibility/visibility-local.yml").AsConfig | sha256sum }}
+        checksum/secret: {{ include (print $.Template.BasePath "/secrets/oes-visibility-secret.yaml") . | sha256sum }}
 {{- if .Values.visibility.annotations -}}
         {{ toYaml .Values.visibility.annotations | nindent 8 }}
 {{- end }}
       labels:
-        app: oes
-        component: visibility
+{{ toYaml .Values.visibility.labels | indent 8 }}
 {{ include "oes.standard-labels" . | indent 8 }}
     spec:
       {{- if (eq .Values.db.enabled true) }}
@@ -68,8 +67,6 @@ spec:
           subPath: cacerts
           name: cacerts
         {{- end }}
-        resources:
-{{ toYaml .Values.visibility.resources | indent 12 }}
         readinessProbe:
           tcpSocket:
             port: 8096

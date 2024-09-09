@@ -17,15 +17,13 @@ spec:
       component: autopilot
   template:
     metadata:
-      labels:
-        app: oes
-        component: autopilot
-{{ include "oes.standard-labels" . | indent 8 }}
       annotations:
-        configmap/checksum: {{ (.Files.Glob "config/autopilot/autopilot.properties").AsConfig | sha256sum }}
+        checksum/secret: {{ include (print $.Template.BasePath "/secrets/oes-autopilot-secret.yaml") . | sha256sum }}
 {{- if .Values.autopilot.annotations -}}
-        {{ toYaml .Values.autopilot.annotations | nindent 8 }}
+{{ toYaml .Values.autopilot.annotations | nindent 8 }}
 {{- end }}
+      labels:
+{{ toYaml .Values.autopilot.labels | indent 8 }}
     spec:
       volumes:
         - name: autopilot-config-volume
@@ -103,8 +101,6 @@ spec:
           {{- if .Values.extraEnvVars }}
           {{- include "tplvalues.render" (dict "value" .Values.extraEnvVars "context" $) | nindent 12 }}
           {{- end }}
-          resources:
-{{ toYaml .Values.autopilot.resources | indent 12 }}
           ports:
             - containerPort: 8090
               name: backend

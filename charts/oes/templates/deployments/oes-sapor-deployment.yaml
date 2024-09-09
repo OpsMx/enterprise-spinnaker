@@ -20,12 +20,12 @@ spec:
       annotations:
         checksum/configmap: {{ (.Files.Glob "config/oes-sapor/application.yml").AsConfig | sha256sum }}
         checksum/configmap: {{ (.Files.Glob "templates/forwarder/oes-forwarder-config.yaml").AsConfig | sha256sum }}
+        checksum/secret: {{ include (print $.Template.BasePath "/secrets/oes-sapor-configmap.yaml") . | sha256sum }}
 {{- if .Values.sapor.annotations -}}
         {{ toYaml .Values.sapor.annotations | nindent 8 }}
 {{- end }}
       labels:
-        app: oes
-        component: sapor
+{{ toYaml .Values.sapor.labels | indent 8 }}
 {{ include "oes.standard-labels" . | indent 8 }}
     spec:
       {{- if (eq .Values.db.enabled true) }}
@@ -84,7 +84,7 @@ spec:
           subPath: client.p12
         {{- end }}
         resources:
-{{ toYaml .Values.sapor.resources | indent 12 }}
+{{ toYaml .Values.sapor.resources | indent 10 }}
         readinessProbe:
           tcpSocket:
             port: 8085

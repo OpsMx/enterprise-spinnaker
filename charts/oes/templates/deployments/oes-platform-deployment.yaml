@@ -3,10 +3,10 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   annotations:
-{{ include "isd.standard-annotations" . | indent 4 }}
-  labels:
     app: oes
     component: platform
+  labels:
+{{ toYaml .Values.platform.labels | indent 4 }}
 {{ include "oes.standard-labels" . | indent 4 }}
   name: oes-platform
 spec:
@@ -19,13 +19,12 @@ spec:
   template:
     metadata:
       annotations:
-        checksum/secret: {{ (.Files.Glob "config/oes-platform/platform-local.yml").AsConfig | sha256sum }}
+        checksum/secret: {{ include (print $.Template.BasePath "/secrets/oes-platform-configmap.yaml") . | sha256sum }}
 {{- if .Values.platform.annotations -}}
         {{ toYaml .Values.platform.annotations | nindent 8 }}
 {{- end }}
       labels:
-        app: oes
-        component: platform
+{{ toYaml .Values.platform.labels | indent 8 }}
 {{ include "oes.standard-labels" . | indent 8 }}
     spec:
       {{- if (eq .Values.db.enabled true) }}
