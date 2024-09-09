@@ -101,8 +101,6 @@ spec:
           {{- if .Values.extraEnvVars }}
           {{- include "tplvalues.render" (dict "value" .Values.extraEnvVars "context" $) | nindent 12 }}
           {{- end }}
-          resources:
-{{ toYaml .Values.autopilot.resources | indent 12 }}
           ports:
             - containerPort: 8090
               name: backend

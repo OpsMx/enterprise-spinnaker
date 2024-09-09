@@ -44,8 +44,6 @@ spec:
       containers:
       - image: {{ template "platform.image" . }}
         name: oes-platform
-        resources:
-{{ toYaml .Values.platform.resources | indent 10 }}
         ports:
         - containerPort: 8095
           protocol: TCP
@@ -53,6 +51,8 @@ spec:
        {{- if .Values.extraEnvVars }}
        {{- include "tplvalues.render" (dict "value" .Values.extraEnvVars "context" $) | nindent 8 }}
        {{- end }}
+        resources:
+{{ toYaml .Values.platform.resources | indent 12 }}
         readinessProbe:
           tcpSocket:
             port: 8095

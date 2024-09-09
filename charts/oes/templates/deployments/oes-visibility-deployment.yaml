@@ -44,8 +44,6 @@ spec:
       containers:
       - image: {{ template "visibility.image" . }}
         name: oes-visibility
-        resources:
-{{ toYaml .Values.visibility.resources | indent 10 }}
         ports:
         - containerPort: 8096
           protocol: TCP

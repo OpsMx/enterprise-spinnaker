@@ -48,8 +48,6 @@ spec:
        {{- if .Values.extraEnvVars }}
        {{- include "tplvalues.render" (dict "value" .Values.extraEnvVars "context" $) | nindent 8 }}
        {{- end }}
-        resources:
-{{ toYaml .Values.audit.resources | indent 10 }}
         ports:
         - containerPort: 8097
           name: backend
