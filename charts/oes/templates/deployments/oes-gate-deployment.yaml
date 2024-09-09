@@ -55,8 +55,8 @@ spec:
         ports:
         - containerPort: 8084
           protocol: TCP
-          resources:
-  {{ toYaml .Values.gate.resources | indent 12 }}
+        resources:
+{{ toYaml .Values.gate.resources | indent 12 }}
         volumeMounts:
         - name: gate-volume
           mountPath: /opt/spinnaker/config/gate.yml
