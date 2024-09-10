@@ -1294,7 +1294,7 @@ opa:
   annotations:
     moniker.spinnaker.io/application: isd
   labels:  #If Required,Add Customer-specific labels as well
-    app: oes
+    app: opa
 
 ####################################################
 # AP installs a trial LDAP for POCs and testing purposes
