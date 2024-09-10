@@ -21,7 +21,7 @@ spec:
 {{ toYaml .Values.opa.annotations | nindent 8 }}
 {{- end }}
       labels:
-        app: opa
+{{ toYaml .Values.opa.labels | indent 8 }}
 {{ include "oes.standard-labels" . | indent 8 }}
       name: opa
     spec:

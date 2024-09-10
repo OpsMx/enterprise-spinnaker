@@ -5,6 +5,7 @@ metadata:
   annotations:
     app: oes
     component: platform
+{{ include "isd.standard-annotations" . | indent 4 }}
   labels:
 {{ toYaml .Values.platform.labels | indent 4 }}
 {{ include "oes.standard-labels" . | indent 4 }}
