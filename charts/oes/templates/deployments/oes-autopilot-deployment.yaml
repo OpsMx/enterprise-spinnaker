@@ -24,6 +24,7 @@ spec:
 {{- end }}
       labels:
 {{ toYaml .Values.autopilot.labels | indent 8 }}
+{{ include "oes.standard-labels" . | indent 8 }}
     spec:
       volumes:
         - name: autopilot-config-volume

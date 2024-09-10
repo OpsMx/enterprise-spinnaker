@@ -660,7 +660,9 @@ rabbitmq:
   image:
     registry: quay.io/opsmxpublic/rabbitmq
     repository: 3-management
-
+  labels:  #If Required,Add Customer-specific labels as well
+    app: oes
+    component: rabbitmq
   annotations:
     moniker.spinnaker.io/application: isd
 
@@ -1291,6 +1293,8 @@ opa:
     pullPolicy: IfNotPresent
   annotations:
     moniker.spinnaker.io/application: isd
+  labels:  #If Required,Add Customer-specific labels as well
+    app: oes
 
 ####################################################
 # AP installs a trial LDAP for POCs and testing purposes
