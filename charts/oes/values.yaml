@@ -334,6 +334,10 @@ autopilot:
     prometheus_io_path: /mgmt/prometheus
     prometheus_io_port: "8090"
     prometheus.io/scrape: "true"
+    
+  labels:  #If Required,Add Customer-specific labels as well
+    app: oes
+    component: autopilot  
 
   serviceAnnotations: {}
   resources: {}
@@ -370,6 +374,9 @@ audit:
     prometheus_io_path: /mgmt/prometheus
     prometheus_io_port: "8097"
     prometheus.io/scrape: "false"
+  labels:  #If Required,Add Customer-specific labels as well
+    app: oes
+    component: auditservice  
   resources: {}
   config: {}
 
@@ -387,6 +394,10 @@ auditClient:
     pullPolicy: IfNotPresent
 
   serviceAnnotations: {}
+  
+  labels:  #If Required,Add Customer-specific labels as well
+    app: oes
+    component: auditclient
 
   annotations:
     moniker.spinnaker.io/application: isd
@@ -416,6 +427,11 @@ datascience:
     prometheus_io_path: /mgmt/prometheus
     prometheus_io_port: "5005"
     prometheus.io/scrape: "false"
+    
+  labels:  #If Required,Add Customer-specific labels as well
+    app: oes
+    component: datascience  
+    
   resources: {}
   config: {}
 
@@ -434,6 +450,10 @@ dashboard:
     prometheus_io_path: /mgmt/prometheus
     prometheus_io_port: "8094"
     prometheus.io/scrape: "true"
+    
+  labels:  #If Required,Add Customer-specific labels as well
+    app: oes
+    component: dashboard  
 
   serviceAnnotations: {}
   resources: {}
@@ -504,6 +524,11 @@ gate:
     prometheus_io_path: /mgmt/prometheus
     prometheus_io_port: "8084"
     prometheus.io/scrape: "false"
+    
+  labels:  #If Required,Add Customer-specific labels as well
+    app: oes
+    component: gate
+      
   resources: {}
   #  requests:
   #    memory: 500Mi
@@ -586,6 +611,10 @@ platform:
     repository: ubi8-oes-platform
     tag: isd-spin-2024.06.00-202408160626
     pullPolicy: IfNotPresent
+    
+  labels:  #If Required,Add Customer-specific labels as well
+    app: oes
+    component: platform  
 
   annotations:
     moniker.spinnaker.io/application: isd
@@ -643,6 +672,10 @@ rabbitmq:
 
   annotations:
     moniker.spinnaker.io/application: isd
+    
+  labels:  #If Required,Add Customer-specific labels as well
+    app: oes
+    component: rabbitmq  
 
   serviceAnnotations: {}
 
@@ -659,6 +692,10 @@ sapor:
     repository: ubi8-oes-sapor
     tag: isd-spin-2024.06.00-202407191150
     pullPolicy: IfNotPresent
+    
+  labels:  #If Required,Add Customer-specific labels as well
+    app: oes
+    component: sapor   
 
   annotations:
     moniker.spinnaker.io/application: isd
@@ -728,6 +765,10 @@ saporgate:
 
   annotations:
     moniker.spinnaker.io/application: "isd"
+    
+  labels:  #If Required,Add Customer-specific labels as well
+    app: oes
+    component: sapor-gate  
 
   serviceAnnotations: {}
 
@@ -755,6 +796,10 @@ ui:
 
   annotations:
     moniker.spinnaker.io/application: "isd"
+  
+  labels:  #If Required,Add Customer-specific labels as well
+    app: oes
+    component: ui  
 
   serviceAnnotations: {}
 
@@ -777,6 +822,10 @@ visibility:
     prometheus_io_path: /mgmt/prometheus
     prometheus_io_port: "8096"
     prometheus.io/scrape: "true"
+    
+  labels:  #If Required,Add Customer-specific labels as well
+    app: oes
+    component: visibility  
 
   serviceAnnotations: {}
   resources: {}
@@ -1255,6 +1304,9 @@ opa:
     pullPolicy: IfNotPresent
   annotations:
     moniker.spinnaker.io/application: isd
+    
+  labels:
+    app: opa  
 
 ####################################################
 # AP installs a trial LDAP for POCs and testing purposes
