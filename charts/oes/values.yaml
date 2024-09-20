@@ -38,9 +38,7 @@ dbcleanup:
   enabled: false
   ## Change the days interval value if user wants to delete older than 180days data
   daysinterval: 180
-###########################################  
-#set to false if will list only user related groups for admins in the UI.
-includeAllGroupsForAdminEnabled: true
+
 ####################################################
 # Global variables can be accessed across all the charts including sub-charts
 global:
@@ -107,10 +105,10 @@ global:
 
   ## Set to false only if user uses gitops style and user dont want the repo to be created automatically in github.com
   githubcreationHook: true
-  gitops:
-    standardrepoBranch: v4.isd-spin-2024.06.00
+
   gitea:
     enabled: false
+    standardrepoBranch: v4.isd-spin-2024.06.00
     admin:
       existingSecret: gitea-secret
       username: opsmx
@@ -214,7 +212,7 @@ global:
     enabled: true
     url: ldap://{{ .Release.Name }}-openldap:389
     managerDn: cn=admin,dc=example,dc=org
-    managerPassword: LDAP_MANAGER_PASSWORD
+    managerPassword: opsmxadmin123
     groupSearchBase: ou=groups,dc=example,dc=org
     groupSearchFilter: member={0}
     groupRoleAttributes: cn
@@ -292,7 +290,7 @@ db:
   ## Below url and credentials are used by Autopilot & Sapor
   url: jdbc:postgresql://oes-db:5432
   username: postgres
-  password: OPSMX_POSTGRESQL_PASS
+  password: networks123
 
   ## Image specific details
   image:
@@ -337,7 +335,7 @@ autopilot:
     
   labels:  #If Required,Add Customer-specific labels as well
     app: oes
-    component: autopilot  
+    component: autopilot
 
   serviceAnnotations: {}
   resources: {}
@@ -374,9 +372,11 @@ audit:
     prometheus_io_path: /mgmt/prometheus
     prometheus_io_port: "8097"
     prometheus.io/scrape: "false"
+    
   labels:  #If Required,Add Customer-specific labels as well
     app: oes
-    component: auditservice  
+    component: auditservice
+    
   resources: {}
   config: {}
 
@@ -394,16 +394,17 @@ auditClient:
     pullPolicy: IfNotPresent
 
   serviceAnnotations: {}
-  
-  labels:  #If Required,Add Customer-specific labels as well
-    app: oes
-    component: auditclient
 
   annotations:
     moniker.spinnaker.io/application: isd
     prometheus_io_path: /mgmt/prometheus
     prometheus_io_port: "8098"
     prometheus.io/scrape: "true"
+    
+  labels:  #If Required,Add Customer-specific labels as well
+    app: oes
+    component: auditclient
+      
   resources: {}
   config: {}
 
@@ -430,7 +431,7 @@ datascience:
     
   labels:  #If Required,Add Customer-specific labels as well
     app: oes
-    component: datascience  
+    component: datascience
     
   resources: {}
   config: {}
@@ -453,8 +454,8 @@ dashboard:
     
   labels:  #If Required,Add Customer-specific labels as well
     app: oes
-    component: dashboard  
-
+    component: dashboard
+    
   serviceAnnotations: {}
   resources: {}
   #  requests:
@@ -528,7 +529,7 @@ gate:
   labels:  #If Required,Add Customer-specific labels as well
     app: oes
     component: gate
-      
+    
   resources: {}
   #  requests:
   #    memory: 500Mi
@@ -609,18 +610,19 @@ platform:
   ## Image specific details
   image:
     repository: ubi8-oes-platform
-    tag: isd-spin-2024.06.00-202408160626
+    tag: isd-spin-2024.06.00-202409171119
     pullPolicy: IfNotPresent
-    
-  labels:  #If Required,Add Customer-specific labels as well
-    app: oes
-    component: platform  
 
   annotations:
     moniker.spinnaker.io/application: isd
     prometheus_io_path: /mgmt/prometheus
     prometheus_io_port: "8095"
     prometheus.io/scrape: "true"
+    
+  labels:  #If Required,Add Customer-specific labels as well
+    app: oes
+    component: platform
+    
   serviceAnnotations: {}
   resources: {}
   #  requests:
@@ -665,7 +667,7 @@ rabbitmq:
   url: rabbitmq-service
   port: 5672
   username: rabbitmq
-  password: RABBITMQ_DEFAULT_PASS
+  password: Networks123
   image:
     registry: quay.io/opsmxpublic/rabbitmq
     repository: 3-management
@@ -675,7 +677,7 @@ rabbitmq:
     
   labels:  #If Required,Add Customer-specific labels as well
     app: oes
-    component: rabbitmq  
+    component: rabbitmq
 
   serviceAnnotations: {}
 
@@ -692,16 +694,17 @@ sapor:
     repository: ubi8-oes-sapor
     tag: isd-spin-2024.06.00-202407191150
     pullPolicy: IfNotPresent
-    
-  labels:  #If Required,Add Customer-specific labels as well
-    app: oes
-    component: sapor   
 
   annotations:
     moniker.spinnaker.io/application: isd
     prometheus_io_path: /mgmt/prometheus
     prometheus_io_port: "8085"
     prometheus.io/scrape: "true"
+    
+  labels:  #If Required,Add Customer-specific labels as well
+    app: oes
+    component: sapor
+      
   serviceAnnotations: {}
   resources: {}
   #  requests:
@@ -768,7 +771,7 @@ saporgate:
     
   labels:  #If Required,Add Customer-specific labels as well
     app: oes
-    component: sapor-gate  
+    component: sapor-gate
 
   serviceAnnotations: {}
 
@@ -791,15 +794,15 @@ ui:
   ## Image specific details
   image:
     repository: ubi8-oes-ui
-    tag: isd-spin-2024.06.00-202408281057
+    tag: isd-spin-2024.06.00-202409171059
     pullPolicy: IfNotPresent
 
   annotations:
     moniker.spinnaker.io/application: "isd"
-  
+    
   labels:  #If Required,Add Customer-specific labels as well
     app: oes
-    component: ui  
+    component: ui
 
   serviceAnnotations: {}
 
@@ -825,7 +828,7 @@ visibility:
     
   labels:  #If Required,Add Customer-specific labels as well
     app: oes
-    component: visibility  
+    component: visibility
 
   serviceAnnotations: {}
   resources: {}
@@ -854,7 +857,7 @@ redis:
   image:
     registry: quay.io/opsmxpublic
     repository: bitnami-redis
-  password: OPSMX_REDIS_PASS
+  password: password
   cluster:
     enabled: false
  #The flag is set to true by default.Mandatory change to false only if global.openshift is true and change fsGroups and runAsUser if required
@@ -1059,7 +1062,7 @@ spinnaker:
                 url: ldap://RELEASE_NAME-openldap:389
 
                 managerDn: cn=admin,dc=example,dc=org
-                managerPassword: LDAP_MANAGER_PASSWORD
+                managerPassword: opsmxadmin123
                 groupSearchBase: ou=groups,dc=example,dc=org
                 groupSearchFilter: member={0}
                 groupRoleAttributes: cn

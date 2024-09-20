@@ -26,7 +26,7 @@ spec:
 {{ toYaml .Values.auditClient.labels | indent 8 }}
 {{ include "oes.standard-labels" . | indent 8 }}
     spec:
-
+      {{- if (eq .Values.db.enabled true) }}
       initContainers:
       - name: db-check
         image: {{ .Values.global.customImages.registry }}/pgchecker:v1
@@ -34,31 +34,12 @@ spec:
           - sh
           - -c
           - |
-        {{- if .Values.db.enabled }}
             echo 'Waiting for OES-DB to become ready...'
             until printf "." && nc -z -w 2 oes-db 5432; do
                sleep 2;
             done;
             echo 'OESDB OK ✓'
-            OPSMX_POSTGRESQL_PASS=`echo $OPSMX_POSTGRESQL_PASS | sed 's/ *$//g'`
-            sed -e s/OPSMX_POSTGRESQL_PASS/${OPSMX_POSTGRESQL_PASS}/g /tmp/audit-local.yml > /tmp/config/audit-client-local.yml
-        {{- else }}
-            cp /tmp/audit-local.yml > /tmp/config/audit-client-local.yml
-        {{- end }}
-            echo success
-       {{- if .Values.db.enabled }}
-        env:
-        - name: OPSMX_POSTGRESQL_PASS
-          valueFrom:
-            secretKeyRef:
-              key: pgpassword
-              name: oes-db
-       {{- end }}       
-        volumeMounts:
-        - mountPath: /tmp
-          name: audit-config-volume
-        - mountPath: /tmp/config
-          name: audit-client-config
+      {{- end }}
       containers:
       - image: {{ template "auditclient.image" . }}
         imagePullPolicy: IfNotPresent
@@ -89,9 +70,9 @@ spec:
           tcpSocket:
             port: 8098
         volumeMounts:
-        - mountPath: /opsmx/conf/audit-client-local.yml 
-          name: audit-client-config
-          subPath: audit-client-local.yml
+        - mountPath: /opsmx/conf/audit-client-local.yml
+          name: audit-config-volume
+          subPath: audit-local.yml
         - mountPath: /opsmx/conf/bootstrap.yml
           name: bootstrap-config-volume
           subPath: bootstrap.yml
@@ -135,16 +116,17 @@ spec:
           items:
           - key: cacerts
             path: cacerts
-      {{- end }}        
+      {{- end }}
+      - secret:
+          items:
+          - key: audit-local.yml
+            path: audit-local.yml
+          secretName: oes-audit-client-config
+        name: audit-config-volume
       - name: bootstrap-config-volume
         secret:
           defaultMode: 420
           secretName: bootstrap
-      - emptyDir: {}
-        name: audit-client-config
-      - configMap:
-          name: oes-audit-client-config
-        name: audit-config-volume
       - configMap:
           defaultMode: 420
           items:

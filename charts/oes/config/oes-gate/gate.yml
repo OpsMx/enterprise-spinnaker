@@ -191,7 +191,7 @@ ldap:
   enabled: true
   url: ldap://{{ .Release.Name }}-openldap:389
   managerDn: cn=admin,dc=example,dc=org
-  managerPassword: LDAP_MANAGER_PASSWORD
+  managerPassword: opsmxadmin123
   groupSearchBase: ou=groups,dc=example,dc=org
   groupSearchFilter: member={0}
   groupRoleAttributes: cn
