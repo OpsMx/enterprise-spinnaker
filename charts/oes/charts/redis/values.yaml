@@ -200,10 +200,10 @@ usePassword: true
 ##
 password: ""
 ## Use existing secret (ignores previous password)
-existingSecret: oes-redis
+# existingSecret:
 ## Password key to be retrieved from Redis secret
 ##
-existingSecretPasswordKey: redispassword
+# existingSecretPasswordKey:
 
 ## Mount secrets as files instead of environment variables
 usePasswordFile: false

@@ -26,7 +26,8 @@ spec:
       labels:
 {{ toYaml .Values.visibility.labels | indent 8 }}
 {{ include "oes.standard-labels" . | indent 8 }}
-    spec:      
+    spec:
+      {{- if (eq .Values.db.enabled true) }}
       initContainers:
       - name: db-check
         image: {{ .Values.global.customImages.registry }}/pgchecker:v1
@@ -34,39 +35,12 @@ spec:
           - sh
           - -c
           - |
-            RABBITMQ_DEFAULT_PASS=`echo $RABBITMQ_DEFAULT_PASS | sed 's/ *$//g'`
-            {{- if .Values.db.enabled }}
             echo 'Waiting for OES-DB to become ready...'
             until printf "." && nc -z -w 2 oes-db 5432; do
                sleep 2;
             done;
             echo 'OESDB OK ✓'
-            OPSMX_POSTGRESQL_PASS=`echo $OPSMX_POSTGRESQL_PASS | sed 's/ *$//g'`
-            sed -e s/OPSMX_POSTGRESQL_PASS/${OPSMX_POSTGRESQL_PASS}/g /tmp/visibility-local.yml > /tmp/config/visibility-local.yml
-            {{- else}}
-            cp /tmp/visibility-local.yml > /tmp/config/visibility-local.yml
-            {{- end }}
-            sed -i s/RABBITMQ_DEFAULT_PASS/${RABBITMQ_DEFAULT_PASS}/g /tmp/config/visibility-local.yml
-            echo success
-        env:
-        {{- if .Values.db.enabled }}
-        - name: OPSMX_POSTGRESQL_PASS
-          valueFrom:
-            secretKeyRef:
-              key: pgpassword
-              name: oes-db
-        {{- end}}
-        - name: RABBITMQ_DEFAULT_PASS
-          valueFrom:
-            secretKeyRef:
-              key: rabbitmqpassword
-              name: rabbitmq
-        volumeMounts:
-        - mountPath: /tmp
-          name: visibility-config-volume
-        - mountPath: /tmp/config
-          name: visibility-config
-      
+      {{- end }}
       containers:
       - image: {{ template "visibility.image" . }}
         name: oes-visibility
@@ -78,7 +52,7 @@ spec:
        {{- if .Values.extraEnvVars }}
        {{- include "tplvalues.render" (dict "value" .Values.extraEnvVars "context" $) | nindent 8 }}
        {{- end }}
-        volumeMounts:        
+        volumeMounts:
         - mountPath: /opsmx/conf/visibility-local.yml
           name: visibility-config
           subPath: visibility-local.yml
@@ -131,17 +105,15 @@ spec:
           - key: cacerts
             path: cacerts
       {{- end }}
+      - name: visibility-config
+        secret:
+          secretName: oes-visibility-config
       - secret:
           items:
           - key: bootstrap.yml
             path: bootstrap.yml
           secretName: bootstrap
         name: bootstrap-config-volume
-      - emptyDir: {}
-        name: visibility-config
-      - configMap:
-          name: oes-visibility-config
-        name: visibility-config-volume
       - configMap:
           defaultMode: 420
           items:
