@@ -561,10 +561,10 @@ gate:
       security:
         saml2:
           enabled: false
-          registration-id: SSO #change this to the application name in OKTA
+          registration-id: SSO 
           relyingparty:
             registration:
-              SSO:   #change this to the application name in OKTA
+              SSO:   
                 entity-id: saml-dev #change this to the Okta SP entity id
                 acs:
                   location: https://<isd.opsmx.net>/saml/SSO  #Update ISD URL here
