@@ -19,6 +19,7 @@ spec:
     metadata:
       annotations:
         checksum/secret: {{ include (print $.Template.BasePath "/secrets/oes-audit-service-secret.yaml") . | sha256sum }}
+{{- if .Values.audit.annotations -}}        
         {{ toYaml .Values.audit.annotations | nindent 8 }}
 {{- end }}
       labels:
