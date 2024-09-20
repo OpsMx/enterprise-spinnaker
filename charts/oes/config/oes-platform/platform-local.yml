@@ -6,7 +6,7 @@ spring:
     password: '{{ .Values.db.password }}'
 ldap.managerPassword: '{{ .Values.global.ldap.managerPassword }}'
 redis:
-  connection: {{ template "spinnaker.redisBaseURL" . }}
+    connection: {{ template "spinnaker.redisBaseURL" . }}
 #datasource.url: {{ .Values.db.url }}/visibilitydb
 #postgres.password: '{{ .Values.db.password }}'
 #postgres.username: '{{ .Values.db.username }}'
@@ -30,10 +30,6 @@ user:
   {{- else }}
   source: {{ .Values.platform.config.userSource }}
   {{- end }}
-app:
-  dashboard:
-    adminuser: {{ .Values.global.saporgate.config.adminuser }}
-includeAllGroupsForAdminEnabled: {{ .Values.includeAllGroupsForAdminEnabled }} 
 ldap:
   enabled: {{ .Values.global.ldap.enabled }}
   url: {{ tpl .Values.global.ldap.url . }}

@@ -28,7 +28,7 @@ spec:
 {{ toYaml .Values.sapor.labels | indent 8 }}
 {{ include "oes.standard-labels" . | indent 8 }}
     spec:
-
+      {{- if (eq .Values.db.enabled true) }}
       initContainers:
       - name: db-check
         image: {{ .Values.global.customImages.registry }}/pgchecker:v1
@@ -36,38 +36,12 @@ spec:
           - sh
           - -c
           - |
-            RABBITMQ_DEFAULT_PASS=`echo $RABBITMQ_DEFAULT_PASS | sed 's/ *$//g'`
-          {{- if .Values.db.enabled }}
             echo 'Waiting for OES-DB to become ready...'
             until printf "." && nc -z -w 2 oes-db 5432; do
                sleep 2;
             done;
             echo 'OESDB OK ✓'
-            OPSMX_POSTGRESQL_PASS=`echo $OPSMX_POSTGRESQL_PASS | sed 's/ *$//g'`
-            sed -e s/OPSMX_POSTGRESQL_PASS/${OPSMX_POSTGRESQL_PASS}/g /tmp/application.yml > /tmp/config/application.yml
-          {{- else }}
-            cp /tmp/application.yml > /tmp/config/application.yml
-          {{- end }}
-            sed -i s/RABBITMQ_DEFAULT_PASS/${RABBITMQ_DEFAULT_PASS}/g /tmp/config/application.yml
-            echo success
-        env:
-        {{- if .Values.db.enabled }}          
-        - name: OPSMX_POSTGRESQL_PASS
-          valueFrom:
-            secretKeyRef:
-              key: pgpassword
-              name: oes-db
-        {{- end }}              
-        - name: RABBITMQ_DEFAULT_PASS
-          valueFrom:
-            secretKeyRef:
-              key: rabbitmqpassword
-              name: rabbitmq
-        volumeMounts:
-        - mountPath: /tmp
-          name: sapor-config-volume
-        - mountPath: /tmp/config
-          name: sapor-config
+      {{- end }}
       containers:
       - image: {{ template "sapor.image" . }}
         name: oes-sapor
@@ -90,15 +64,15 @@ spec:
           name: certs-volume
           subPath: tls.key
         {{- end }}
+        - name: sapor-config-volume
+          mountPath: /opt/opsmx/application.yml
+          subPath: application.yml
         - mountPath: /opt/opsmx/bootstrap.yml
           name: bootstrap-config-volume
           subPath: bootstrap.yml
         - mountPath: /opsmx/conf/standard-error-code.csv
           name: standard-error-conf
           subPath: standard-error-codes.csv
-        - mountPath: /opt/opsmx/application.yml
-          name: sapor-config
-          subPath: application.yml
         {{- if .Values.global.customCerts.enabled }}
         - mountPath: /etc/pki/ca-trust/extracted/java/cacerts
           subPath: cacerts
@@ -171,16 +145,14 @@ spec:
             path: cacerts
       {{- end }}
       - secret:
+          secretName: oes-sapor-config
+        name: sapor-config-volume
+      - secret:
           items:
           - key: bootstrap.yml
             path: bootstrap.yml
           secretName: sapor-bootstrap
         name: bootstrap-config-volume
-      - emptyDir: {}
-        name: sapor-config
-      - configMap:
-          name: oes-sapor-config
-        name: sapor-config-volume
       - configMap:
           defaultMode: 420
           items:
