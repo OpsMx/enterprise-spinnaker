@@ -27,17 +27,15 @@ spec:
 {{- end }}
     spec:
       volumes:
+        - name: autopilot-config-volume
+          secret:
+            secretName: oes-autopilot-config
         - secret:
             items:
             - key: bootstrap.yml
               path: bootstrap.yml
             secretName: bootstrap
           name: bootstrap-config-volume
-        - emptyDir: {}
-          name: autopilot-config
-        - configMap:
-            name: oes-autopilot-config
-          name: autopilot-config-volume  
         - configMap:
             defaultMode: 420
             items:
@@ -78,10 +76,11 @@ spec:
       affinity:
 {{ toYaml .Values.global.affinity | indent 8 }}
       {{- end }}
-      {{- if .Values.global.tolerationss }}
+      {{- if .Values.global.tolerations }}
       tolerations:
 {{ toYaml .Values.global.tolerations | indent 8 }}
-      {{- end }}      
+      {{- end }}
+      {{- if (eq .Values.db.enabled true) }}
       initContainers:
       - name: db-check
         image: {{ .Values.global.customImages.registry }}/pgchecker:v1
@@ -89,32 +88,12 @@ spec:
           - sh
           - -c
           - |
-            RABBITMQ_DEFAULT_PASS=`echo $RABBITMQ_DEFAULT_PASS | sed 's/ *$//g'`
-        {{- if .Values.db.enabled }}
             echo 'Waiting for OES-DB to become ready...'
             until printf "." && nc -z -w 2 oes-db 5432; do
                sleep 2;
             done;
             echo 'OESDB OK ✓'
-            OPSMX_POSTGRESQL_PASS=`echo $OPSMX_POSTGRESQL_PASS | sed 's/ *$//g'`
-            sed -e s/OPSMX_POSTGRESQL_PASS/${OPSMX_POSTGRESQL_PASS}/g /tmp/autopilot.properties > /tmp/config/autopilot.properties
-        {{- else }}
-            cp /tmp/autopilot.properties > /tmp/config/autopilot.properties
-        {{- end }}
-            echo success
-        env:
-        {{- if .Values.db.enabled }}
-        - name: OPSMX_POSTGRESQL_PASS
-          valueFrom:
-            secretKeyRef:
-              key: pgpassword
-              name: oes-db
-         {{- end }}
-        volumeMounts:
-        - mountPath: /tmp
-          name: autopilot-config-volume
-        - mountPath: /tmp/config
-          name: autopilot-config
+      {{- end }}
       containers:
         - image: {{ template "autopilot.image" . }}
           imagePullPolicy: {{ .Values.autopilot.image.pullPolicy }}
@@ -133,8 +112,8 @@ spec:
               name: metricfetcher
               protocol: TCP
           volumeMounts:
-          - mountPath: /opsmx/conf/autopilot.properties
-            name: autopilot-config
+          - name: autopilot-config-volume
+            mountPath: /opsmx/conf/autopilot.properties
             subPath: autopilot.properties
           - mountPath: /opsmx/conf/bootstrap.yml
             name: bootstrap-config-volume
