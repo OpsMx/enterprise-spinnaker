@@ -1,9 +1,15 @@
-{{- if .Values.prefersecrets }}
+{{- if not .Values.prefersecrets }}
+{{- if or (eq .Values.installationMode "OES-AP")  (eq .Values.installationMode "EASY") -}}
 apiVersion: v1
-stringData:
+data:
   bootstrap.yml: |-
     spring:
       cloud:
+        config:
+          server:
+            composite:
+              - type: native
+                search-locations: ${user.home}/config
         vault:
           enterprise: {{ .Values.vault.enterpriseEdition }}
           {{- if .Values.vault.namespace }}
@@ -25,12 +31,14 @@ stringData:
     jasypt:
       encryptor:
         password: {{ .Values.global.sapor.config.encrypt.key }}
-    datasource:
-      secretManagement:
-        source: {{ .Values.secretStore }}
-kind: Secret
+{{- if .Values.global.sapor.config.encrypt.enabled }}
+    encrypt:
+      key: {{ .Values.global.sapor.config.encrypt.key }}
+{{- end }}
+kind: ConfigMap
 metadata:
-  name: bootstrap
+  name: sapor-bootstrap
   labels:
 {{ include "oes.standard-labels" . | indent 4 }}
+{{- end }}
 {{- end }}

@@ -28,8 +28,9 @@ spec:
 {{ toYaml .Values.sapor.labels | indent 8 }}
 {{ include "oes.standard-labels" . | indent 8 }}
     spec:
-      {{- if (eq .Values.db.enabled true) }}
+      {{- if or .Values.db.enabled (not .Values.prefersecrets) }}
       initContainers:
+      {{- if (eq .Values.db.enabled true) }}
       - name: db-check
         image: {{ .Values.global.customImages.registry }}/pgchecker:v1
         command:
@@ -41,6 +42,25 @@ spec:
                sleep 2;
             done;
             echo 'OESDB OK ✓'
+      {{- end }}
+      {{- if not .Values.prefersecrets }}
+      - image: nginx:1.27.2
+        name: init-secret-replacer
+        command: ["bash", "-c", "cp /scripts/init-script.sh /tmp/init-script.sh && chmod +x /tmp/init-script.sh && /tmp/init-script.sh"]
+        volumeMounts:
+        - mountPath: /scripts
+          name: script-volume
+        - mountPath: /secrets/
+          name: sapor-config-volume
+        - mountPath: /secrets/bootstrap/
+          name: bootstrap-config-volume
+        - mountPath: /configmaps/
+          name: sapor-config-volume-old
+        - mountPath: /configmaps/bootstrap/
+          name: bootstrap-config-volume-old
+      {{- end }}
+      {{- else }}
+      initContainers: {}
       {{- end }}
       containers:
       - image: {{ template "sapor.image" . }}
@@ -138,12 +158,21 @@ spec:
       {{- end }}
       {{- if .Values.global.customCerts.enabled }}
       - name: cacerts
+        {{- if .Values.preferCertsAsSecret }}
         secret:
           secretName: {{ .Values.global.customCerts.secretName }}
           items:
           - key: cacerts
             path: cacerts
+        {{- else }}
+        configMap:
+          name: {{ .Values.global.customCerts.configMapName }}
+          items:
+          - key: cacerts
+            path: cacerts
+        {{- end }}
       {{- end }}
+      {{- if .Values.prefersecrets }}
       - secret:
           secretName: oes-sapor-config
         name: sapor-config-volume
@@ -153,6 +182,24 @@ spec:
             path: bootstrap.yml
           secretName: sapor-bootstrap
         name: bootstrap-config-volume
+      {{- else }}
+      - name: script-volume
+        configMap:
+          defaultMode: 420
+          name: replace-script-cm
+      - emptyDir: {}
+        name: bootstrap-config-volume
+      - emptyDir: {}
+        name: sapor-config-volume
+      - name: sapor-config-volume-old
+        configMap:
+          name: oes-sapor-config
+          defaultMode: 420
+      - configMap:
+          name: sapor-bootstrap
+          defaultMode: 420
+        name: bootstrap-config-volume-old
+      {{- end }}
       - configMap:
           defaultMode: 420
           items:

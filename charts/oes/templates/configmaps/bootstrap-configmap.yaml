@@ -1,6 +1,6 @@
-{{- if .Values.prefersecrets }}
+{{- if not .Values.prefersecrets }}
 apiVersion: v1
-stringData:
+data:
   bootstrap.yml: |-
     spring:
       cloud:
@@ -28,7 +28,7 @@ stringData:
     datasource:
       secretManagement:
         source: {{ .Values.secretStore }}
-kind: Secret
+kind: ConfigMap
 metadata:
   name: bootstrap
   labels:

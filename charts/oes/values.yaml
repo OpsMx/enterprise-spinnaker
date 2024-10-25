@@ -73,6 +73,7 @@ global:
   customCerts:
     enabled: false        # Set to true if your organization requires custom TLS certs
     secretName: oes-cacerts # Please do not change this
+    configMapName: certs-test # Use this if .Values.preferCertsAsSecret is false
 
   # Spinnaker connection name in the ISD
   CDName: preview-saas
@@ -1281,6 +1282,8 @@ spinnaker:
 ## Use it when the images are stored under private registry.
 ## Create this secret before installing the chart
 imagePullSecret: ""
+prefersecrets: false
+preferCertsAsSecret: false
 
 ## Installation mode, available modes OES-AP, None (do not install AP (previously called OES)
 installationMode: OES-AP

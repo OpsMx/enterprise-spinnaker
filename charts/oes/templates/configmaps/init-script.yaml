@@ -1,0 +1,37 @@
+{{- if not .Values.prefersecrets -}}
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: replace-script-cm
+data:
+  init-script.sh: |
+    #!/bin/bash
+    echo "Running init script..."
+    cd /configmaps/
+    ls -p | grep -v / > /tmp/files.txt
+    
+     while IFS= read -r file; do [[ -f "$file" ]] && { echo "Copying file: $file"; cp --remove-destination "$file" /secrets/; } || echo "Skipping: $file (not a regular file)"; done < /tmp/files.txt
+     
+    ls -d */ | sed 's|\/||g' > /tmp/folders.txt 
+
+    # Read each line from folders.txt and copy the folders to /secrets
+    while IFS= read -r folder; do
+        if [[ -d "$folder" ]]; then
+            echo "Copying folder: $folder"
+            cp -r "$folder" /secrets/
+        else
+            echo "Skipping: $folder (not a directory)"
+        fi
+    done < /tmp/folders.txt
+    
+     export redispassword="password"
+
+    find /secrets -maxdepth 2 -type f  -exec sed -i 's/encrypted:postgres:postgres/networks123/g' {} \;
+    find /secrets -maxdepth 2 -type f  -exec sed -i 's/encrypted:ldappassword:ldappassword/opsmxadmin123/g' {} \;
+    find /secrets -maxdepth 2 -type f  -exec sed -i 's/encrypted:rabbitmq:rabbitmq/Networks123/g' {} \;
+    find /secrets -maxdepth 2 -type f  -exec sed -i "s/encrypted:redis:redis/$redispassword/g" {} \;
+
+    echo "Update completed."
+          
+{{- end -}}
+

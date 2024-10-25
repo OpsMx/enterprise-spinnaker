@@ -19,7 +19,11 @@ spec:
   template:
     metadata:
       annotations:
+      {{- if .Values.prefersecrets }}
         checksum/secret: {{ include (print $.Template.BasePath "/secrets/oes-platform-configmap.yaml") . | sha256sum }}
+        {{- else }}
+        configmap/checksum: {{ include (print $.Template.BasePath "/configmaps/oes-platform-configmap.yaml") . | sha256sum }}
+        {{- end }}
 {{- if .Values.platform.annotations -}}
         {{ toYaml .Values.platform.annotations | nindent 8 }}
 {{- end }}
@@ -27,8 +31,9 @@ spec:
 {{ toYaml .Values.platform.labels | indent 8 }}
 {{ include "oes.standard-labels" . | indent 8 }}
     spec:
-      {{- if (eq .Values.db.enabled true) }}
+        {{- if or .Values.db.enabled (not .Values.prefersecrets) }}
       initContainers:
+      {{- if (eq .Values.db.enabled true) }}
       - name: db-check
         image: {{ .Values.global.customImages.registry }}/pgchecker:v1
         command:
@@ -40,6 +45,25 @@ spec:
                sleep 2;
             done;
             echo 'OESDB OK ✓'
+        {{- end }}
+      {{- if not .Values.prefersecrets }}
+      - image: nginx:1.27.2
+        name: init-secret-replacer
+        command: ["bash", "-c", "cp /scripts/init-script.sh /tmp/init-script.sh && chmod +x /tmp/init-script.sh && /tmp/init-script.sh"]
+        volumeMounts:
+        - mountPath: /scripts
+          name: script-volume
+        - mountPath: /secrets/
+          name: platform-config-volume
+        - mountPath: /secrets/bootstrap/
+          name: bootstrap-config-volume
+        - mountPath: /configmaps/
+          name: platform-config-volume-old
+        - mountPath: /configmaps/bootstrap/
+          name: bootstrap-config-volume-old
+      {{- end }}
+      {{- else }}
+      initContainers: {}
       {{- end }}
       containers:
       - image: {{ template "platform.image" . }}
@@ -114,12 +138,21 @@ spec:
       volumes:
       {{- if .Values.global.customCerts.enabled }}
       - name: cacerts
+        {{- if .Values.preferCertsAsSecret }}
         secret:
           secretName: {{ .Values.global.customCerts.secretName }}
           items:
           - key: cacerts
             path: cacerts
+        {{- else }}
+        configMap:
+          name: {{ .Values.global.customCerts.configMapName }}
+          items:
+          - key: cacerts
+            path: cacerts
+        {{- end }}
       {{- end }}
+      {{- if .Values.prefersecrets }}
       - name: platform-config-volume
         secret:
           secretName: oes-platform-config
@@ -129,6 +162,24 @@ spec:
             path: bootstrap.yml
           secretName: bootstrap
         name: bootstrap-config-volume
+      {{- else }}
+      - name: platform-config-volume-old
+        configMap:
+          name: oes-platform-config
+          defaultMode: 420
+      - emptyDir: {}
+        name: bootstrap-config-volume
+      - emptyDir: {}
+        name: platform-config-volume
+      - name: script-volume
+        configMap:
+          defaultMode: 420
+          name: replace-script-cm
+      - configMap:
+          name: bootstrap
+          defaultMode: 420
+        name: bootstrap-config-volume-old
+      {{- end }}
       - configMap:
           defaultMode: 420
           items:

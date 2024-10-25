@@ -26,8 +26,9 @@ spec:
 {{ toYaml .Values.auditClient.labels | indent 8 }}
 {{ include "oes.standard-labels" . | indent 8 }}
     spec:
-      {{- if (eq .Values.db.enabled true) }}
+      {{- if or .Values.db.enabled (not .Values.prefersecrets) }}
       initContainers:
+      {{- if (eq .Values.db.enabled true) }}
       - name: db-check
         image: {{ .Values.global.customImages.registry }}/pgchecker:v1
         command:
@@ -39,6 +40,25 @@ spec:
                sleep 2;
             done;
             echo 'OESDB OK ✓'
+      {{- end }}
+      {{- if not .Values.prefersecrets }}
+      - image: nginx:1.27.2
+        name: init-secret-replacer
+        command: ["bash", "-c", "cp /scripts/init-script.sh /tmp/init-script.sh && chmod +x /tmp/init-script.sh && /tmp/init-script.sh"]
+        volumeMounts:
+        - mountPath: /scripts
+          name: script-volume
+        - mountPath: /configmaps/
+          name: audit-config-volume-old
+        - mountPath: /configmaps/bootstrap/
+          name: bootstrap-config-volume-old
+        - mountPath: /secrets/
+          name: audit-config-volume
+        - mountPath: /secrets/bootstrap/
+          name: bootstrap-config-volume
+      {{- end }}
+      {{- else }}
+      initContainers: {}
       {{- end }}
       containers:
       - image: {{ template "auditclient.image" . }}
@@ -111,12 +131,21 @@ spec:
       volumes:
       {{- if .Values.global.customCerts.enabled }}
       - name: cacerts
+        {{- if .Values.preferCertsAsSecret }}
         secret:
           secretName: {{ .Values.global.customCerts.secretName }}
           items:
           - key: cacerts
             path: cacerts
+        {{- else }}
+        configMap:
+          name: {{ .Values.global.customCerts.configMapName }}
+          items:
+          - key: cacerts
+            path: cacerts
+        {{- end }}
       {{- end }}
+      {{- if .Values.prefersecrets }}
       - secret:
           items:
           - key: audit-local.yml
@@ -127,6 +156,27 @@ spec:
         secret:
           defaultMode: 420
           secretName: bootstrap
+      {{- else }}
+      - name: audit-config-volume-old
+        configMap:
+          defaultMode: 420
+          items:
+          - key: audit-local.yml
+            path: audit-local.yml
+          name: oes-audit-client-config
+      - name: audit-config-volume
+        emptyDir: {}
+      - name: bootstrap-config-volume
+        emptyDir: {}
+      - name: bootstrap-config-volume-old
+        configMap:
+          defaultMode: 420
+          name: bootstrap
+      - name: script-volume
+        configMap:
+          defaultMode: 420
+          name: replace-script-cm
+      {{- end }}
       - configMap:
           defaultMode: 420
           items:
