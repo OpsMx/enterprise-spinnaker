@@ -1,10 +1,10 @@
-{{- if .Values.prefersecrets -}}
+{{- if not .Values.prefersecrets -}}
 {{- if or (eq .Values.installationMode "OES-AP")  (eq .Values.installationMode "EASY") -}}
 apiVersion: v1
-stringData:
-  platform-local.yml: |
+data:
+  platform-localold.yml: |
     {{- tpl (.Files.Get "config/oes-platform/platform-local.yml") . | nindent 4 }}
-kind: Secret
+kind: ConfigMap
 metadata:
   name: oes-platform-config
   labels:

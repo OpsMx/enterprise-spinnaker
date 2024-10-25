@@ -1,0 +1,25 @@
+{{- if not .Values.prefersecrets -}}
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: replace-script-cm
+data:
+  init-script.sh: |
+    #!/bin/sh
+    echo "Running init script..."
+    for file in /secrets/*old.yml; do
+       echo "Copying Platform config"
+       cp "$file" "/opsmx/conf/$(basename "$file" | sed 's/old//')" 2>/dev/null # Platform Config location
+       echo "Copying Gate config"
+       cp "$file" "/opt/spinnaker/config/$(basename "$file" | sed 's/old//')" 2>/dev/null # Gate Config location
+    done
+
+     
+    find / -type f \( -name "*.yml" -o -name "*.yaml" \) -not -path "/secrets/*" -exec sed -i 's/encrypted:postgres:postgres/networks123/g' {} \;
+    find / -type f \( -name "*.yml" -o -name "*.yaml" \) -not -path "/secrets/*" -exec sed -i 's/encrypted:ldappassword:ldappassword/opsmxadmin123/g' {} \;
+    find / -type f \( -name "*.yml" -o -name "*.yaml" \) -not -path "/secrets/*" -exec sed -i 's/encrypted:rabbitmq:rabbitmq/Networks123/g' {} \;
+    find / -type f \( -name "*.yml" -o -name "*.yaml" \) -not -path "/secrets/*" -exec sed -i 's/encrypted:redis:redis/password/g' {} \;
+  
+    echo "Update completed."
+{{- end -}}
+

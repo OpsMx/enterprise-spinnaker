@@ -1178,6 +1178,7 @@ spinnaker:
 ## Use it when the images are stored under private registry.
 ## Create this secret before installing the chart
 imagePullSecret: ""
+prefersecrets: false
 
 ## Installation mode, available modes OES-AP, None (do not install AP (previously called OES)
 installationMode: OES-AP
