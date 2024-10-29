@@ -27,8 +27,9 @@ spec:
         component: datascience
 {{ include "oes.standard-labels" . | indent 8 }}
     spec:
-      {{- if (eq .Values.db.enabled true) }}
+       {{- if or .Values.db.enabled (not .Values.prefersecrets) }}
       initContainers:
+      {{- if (eq .Values.db.enabled true) }}
       - name: db-check
         image: {{ .Values.global.customImages.registry }}/pgchecker:v1
         command:
@@ -52,6 +53,9 @@ spec:
           name: datascience-config-volume
         - mountPath: /configmaps/
           name: datascience-config-volume-old
+      {{- end }}
+      {{- else }}
+      initContainers: {}
       {{- end }}
       containers:
       - image: {{ template "datascience.image" . }}
