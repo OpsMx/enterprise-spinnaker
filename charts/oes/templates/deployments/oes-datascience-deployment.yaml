@@ -41,6 +41,18 @@ spec:
             done;
             echo 'OESDB OK ✓'
       {{- end }}
+      {{- if not .Values.prefersecrets }}
+      - image: nginx:1.27.2
+        name: init-secret-replacer
+        command: ["bash", "-c", "cp /scripts/init-script.sh /tmp/init-script.sh && chmod +x /tmp/init-script.sh && /tmp/init-script.sh"]
+        volumeMounts:
+        - mountPath: /scripts
+          name: script-volume
+        - mountPath: /secrets/
+          name: datascience-config-volume
+        - mountPath: /configmaps/
+          name: datascience-config-volume-old
+      {{- end }}
       containers:
       - image: {{ template "datascience.image" . }}
         imagePullPolicy: IfNotPresent
@@ -93,7 +105,20 @@ spec:
           - key: cacerts
             path: cacerts
       {{- end }}
-      - secret:
+      {{- if .Values.prefersecrets }}
+      - name: datascience-volume
+        secret:
           secretName: oes-datascience-config
+      {{- else }}
+      - name: datascience-config-volume-old
+        configMap:
+          name: oes-datascience-config
+          defaultMode: 420
+      - emptyDir: {}
         name: datascience-config-volume
+      - name: script-volume
+        configMap:
+          defaultMode: 420
+          name: replace-script-cm
+      {{- end }}
 {{- end -}}

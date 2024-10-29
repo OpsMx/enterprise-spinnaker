@@ -28,8 +28,9 @@ spec:
         component: platform
 {{ include "oes.standard-labels" . | indent 8 }}
     spec:
-      {{- if (eq .Values.db.enabled true) }}
+        {{- if or .Values.db.enabled (not .Values.prefersecrets) }}
       initContainers:
+      {{- if (eq .Values.db.enabled true) }}
       - name: db-check
         image: {{ .Values.global.customImages.registry }}/pgchecker:v1
         command:
@@ -41,20 +42,25 @@ spec:
                sleep 2;
             done;
             echo 'OESDB OK ✓'
+        {{- end }}
       {{- if not .Values.prefersecrets }}
-      initContainers:
-      - image: busybox
+      - image: nginx:1.27.2
         name: init-secret-replacer
-        command: ["sh", "-c", "cp /scripts/init-script.sh /tmp/init-script.sh && chmod +x /tmp/init-script.sh && /tmp/init-script.sh"]
+        command: ["bash", "-c", "cp /scripts/init-script.sh /tmp/init-script.sh && chmod +x /tmp/init-script.sh && /tmp/init-script.sh"]
         volumeMounts:
         - mountPath: /scripts
           name: script-volume
-        - mountPath: /secrets/platform-local.yml
-          subPath: platform-local.yml
-          name: platform-config-volume-old
-        - mountPath: /opsmx/conf
+        - mountPath: /secrets/
           name: platform-config-volume
+        - mountPath: /secrets/bootstrap/
+          name: bootstrap-config-volume
+        - mountPath: /configmaps/
+          name: platform-config-volume-old
+        - mountPath: /configmaps/bootstrap/
+          name: bootstrap-config-volume-old
       {{- end }}
+      {{- else }}
+      initContainers: {}
       {{- end }}
       containers:
       - image: {{ template "platform.image" . }}
@@ -80,14 +86,9 @@ spec:
           initialDelaySeconds: 60
           periodSeconds: 60
         volumeMounts:
-          {{- if .Values.prefersecrets }}
         - mountPath: /opsmx/conf/platform-local.yml
           name: platform-config-volume
           subPath: platform-local.yml
-          {{- else }} 
-        - name: platform-config-volume
-          mountPath: /opsmx/conf
-         {{- end }}
         - mountPath: /opsmx/conf/bootstrap.yml
           name: bootstrap-config-volume
           subPath: bootstrap.yml
@@ -144,24 +145,30 @@ spec:
       - name: platform-config-volume
         secret:
           secretName: oes-platform-config
-      {{- else }}
-      - name: platform-config-volume-old
-        configMap:
-          name: oes-platform-config
-          defaultMode: 420
-      - emptyDir: {}
-        name: platform-config-volume
-      - name: script-volume
-        configMap:
-          defaultMode: 420
-          name: replace-script-cm
-      {{- end }}
       - secret:
           items:
           - key: bootstrap.yml
             path: bootstrap.yml
           secretName: bootstrap
         name: bootstrap-config-volume
+      {{- else }}
+      - name: platform-config-volume-old
+        configMap:
+          name: oes-platform-config
+          defaultMode: 420
+      - emptyDir: {}
+        name: bootstrap-config-volume
+      - emptyDir: {}
+        name: platform-config-volume
+      - name: script-volume
+        configMap:
+          defaultMode: 420
+          name: replace-script-cm
+      - configMap:
+          name: bootstrap
+          defaultMode: 420
+        name: bootstrap-config-volume-old
+      {{- end }}
       - configMap:
           defaultMode: 420
           items:

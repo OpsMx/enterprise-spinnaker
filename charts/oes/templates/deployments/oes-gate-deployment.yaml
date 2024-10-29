@@ -31,8 +31,9 @@ spec:
         component: gate
 {{ include "oes.standard-labels" . | indent 8 }}
     spec:
-      {{- if .Values.global.autoConfiguration.enabled }}
+      {{- if or .Values.global.autoConfiguration.enabled (not .Values.prefersecrets) }}
       initContainers:
+      {{- if .Values.global.autoConfiguration.enabled }}
       - env:
         - name: EXTERNAL_IP_CHECK_DELAY
           value: "{{ .Values.global.autoConfiguration.initContainer.externalIpCheckDelay}}"
@@ -47,21 +48,26 @@ spec:
           subPath: gate.yml
         - mountPath: /opt/spinnaker/config
           name: gate-volume
-        {{- else }}
+        {{- end }}
       {{- if not .Values.prefersecrets }}
       initContainers:
-      - image: busybox
+      - image: nginx:1.27.2
         name: init-secret-replacer
-        command: ["sh", "-c", "cp /scripts/init-script.sh /tmp/init-script.sh && chmod +x /tmp/init-script.sh && /tmp/init-script.sh"]
+        command: ["bash", "-c", "cp /scripts/init-script.sh /tmp/init-script.sh && chmod +x /tmp/init-script.sh && /tmp/init-script.sh"]
         volumeMounts:
         - mountPath: /scripts
           name: script-volume
-        - mountPath: /secrets/gate.yml
-          subPath: gate.yml
+        - mountPath: /configmaps/
           name: gate-volume-old
-        - mountPath: /opt/spinnaker/config
+        - mountPath: /configmaps/bootstrap/
+          name: bootstrap-volume-old
+        - mountPath: /secrets/
           name: gate-volume
+        - mountPath: /secrets/bootstrap/
+          name: bootstrap-volume
       {{- end }}
+      {{- else }}
+      initContainers: {}
       {{- end }}
       containers:
       - image: {{ template "gate.image" . }}
@@ -78,14 +84,9 @@ spec:
         resources:
 {{ toYaml .Values.gate.resources | indent 12 }}
         volumeMounts:
-         {{- if .Values.prefersecrets }}
         - name: gate-volume
           mountPath: /opt/spinnaker/config/gate.yml
           subPath: gate.yml
-         {{- else }}
-        - name: gate-volume
-          mountPath: /opt/spinnaker/config
-         {{- end }}
         - mountPath: /opt/spinnaker/config/bootstrap.yml
           name: bootstrap-volume
           subPath: bootstrap.yml
@@ -170,23 +171,31 @@ spec:
       - name: gate-volume
         secret:
           secretName: oes-gate-config
-       {{- else }}
-      - name: gate-volume-old
-        configMap:
-          name: oes-gate-config
-          defaultMode: 420
-      - emptyDir: {}
-        name: gate-volume
-      - name: script-volume
-        configMap:
-          defaultMode: 420
-          name: replace-script-cm 
-      {{- end }}
-      {{- end }}
       - secret:
           items:
           - key: bootstrap.yml
             path: bootstrap.yml
           secretName: bootstrap
         name: bootstrap-volume
+       {{- else }}
+      - name: gate-volume-old
+        configMap:
+          name: oes-gate-config
+          defaultMode: 420
+      - emptyDir: {}
+        name: bootstrap-volume
+      - emptyDir: {}
+        name: gate-volume
+      - name: script-volume
+        configMap:
+          defaultMode: 420
+          name: replace-script-cm 
+      - configMap:
+          items:
+          - key: bootstrap.yml
+            path: bootstrap.yml
+          name: bootstrap
+        name: bootstrap-volume-old
+      {{- end }}
+      {{- end }}
 {{- end -}}

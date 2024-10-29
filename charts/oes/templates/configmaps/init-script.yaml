@@ -7,32 +7,31 @@ data:
   init-script.sh: |
     #!/bin/bash
     echo "Running init script..."
-    cd /secrets/
-    for file in *; do
-       if [ "$file" = "gate.yml" ]; then
-         echo "Copying Gate config"
-         cp "$file" "/opt/spinnaker/config/$file"
-       elif [ "$file" = "platform-local.yml" ]; then
-         echo "Copying Platform config"
-         cp "$file" "/opsmx/conf/$file"
-       elif [ "$file" = "app-config.yml" ]; then
-         echo "Copying Datascience first config(app-config.yml)"
-         cp "$file" "/home/ubuntu/datascience/app_config.yaml"
-       elif [ "$file" = "minio-credentials" ]; then
-         echo "Copying Datascience last config(minio-credentials)"
-         cp "$file" "/home/ubuntu/.aws/credentials"
-       else 
-         echo "No matching file found"
-       fi
-    done
+    cd /configmaps/
+    ls -p | grep -v / > /tmp/files.txt
+    
+     while IFS= read -r file; do [[ -f "$file" ]] && { echo "Copying file: $file"; cp --remove-destination "$file" /secrets/; } || echo "Skipping: $file (not a regular file)"; done < /tmp/files.txt
+     
+    ls -d */ | sed 's|\/||g' > /tmp/folders.txt 
 
+    # Read each line from folders.txt and copy the folders to /secrets
+    while IFS= read -r folder; do
+        if [[ -d "$folder" ]]; then
+            echo "Copying folder: $folder"
+            cp -r "$folder" /secrets/
+        else
+            echo "Skipping: $folder (not a directory)"
+        fi
+    done < /tmp/folders.txt
+    
      export redispassword="password"
 
-    find / -type f \( -name "*.yml" -o -name "*.yaml" \) -not -path "/secrets/*" -exec sed -i 's/encrypted:postgres:postgres/networks123/g' {} \;
-    find / -type f \( -name "*.yml" -o -name "*.yaml" \) -not -path "/secrets/*" -exec sed -i 's/encrypted:ldappassword:ldappassword/opsmxadmin123/g' {} \;
-    find / -type f \( -name "*.yml" -o -name "*.yaml" \) -not -path "/secrets/*" -exec sed -i 's/encrypted:rabbitmq:rabbitmq/Networks123/g' {} \;
-    find / -type f \( -name "*.yml" -o -name "*.yaml" \) -not -path "/secrets/*" -exec sed -i "s/encrypted:redis:redis/$redispassword/g" {} \;
-  
+    find /secrets -maxdepth 2 -type f  -exec sed -i 's/encrypted:postgres:postgres/networks123/g' {} \;
+    find /secrets -maxdepth 2 -type f  -exec sed -i 's/encrypted:ldappassword:ldappassword/opsmxadmin123/g' {} \;
+    find /secrets -maxdepth 2 -type f  -exec sed -i 's/encrypted:rabbitmq:rabbitmq/Networks123/g' {} \;
+    find /secrets -maxdepth 2 -type f  -exec sed -i "s/encrypted:redis:redis/$redispassword/g" {} \;
+
     echo "Update completed."
+          
 {{- end -}}
 
