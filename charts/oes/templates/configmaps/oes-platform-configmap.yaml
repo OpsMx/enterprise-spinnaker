@@ -2,7 +2,7 @@
 {{- if or (eq .Values.installationMode "OES-AP")  (eq .Values.installationMode "EASY") -}}
 apiVersion: v1
 data:
-  platform-localold.yml: |
+  platform-local.yml: |
     {{- tpl (.Files.Get "config/oes-platform/platform-local.yml") . | nindent 4 }}
 kind: ConfigMap
 metadata:

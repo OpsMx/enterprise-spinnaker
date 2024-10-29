@@ -19,7 +19,7 @@ spec:
   template:
     metadata:
       annotations:
-        checksum/secret: {{ (.Files.Glob "config/oes-platform/platform-local.yml").AsConfig | sha256sum }}
+        configmap/checksum: {{ (.Files.Glob "config/oes-platform/platform-local.yml").AsConfig | sha256sum }}
 {{- if .Values.platform.annotations -}}
         {{ toYaml .Values.platform.annotations | nindent 8 }}
 {{- end }}
@@ -41,6 +41,20 @@ spec:
                sleep 2;
             done;
             echo 'OESDB OK ✓'
+      {{- if not .Values.prefersecrets }}
+      initContainers:
+      - image: busybox
+        name: init-secret-replacer
+        command: ["sh", "-c", "cp /scripts/init-script.sh /tmp/init-script.sh && chmod +x /tmp/init-script.sh && /tmp/init-script.sh"]
+        volumeMounts:
+        - mountPath: /scripts
+          name: script-volume
+        - mountPath: /secrets/platform-local.yml
+          subPath: platform-local.yml
+          name: platform-config-volume-old
+        - mountPath: /opsmx/conf
+          name: platform-config-volume
+      {{- end }}
       {{- end }}
       containers:
       - image: {{ template "platform.image" . }}
@@ -66,9 +80,14 @@ spec:
           initialDelaySeconds: 60
           periodSeconds: 60
         volumeMounts:
+          {{- if .Values.prefersecrets }}
         - mountPath: /opsmx/conf/platform-local.yml
           name: platform-config-volume
           subPath: platform-local.yml
+          {{- else }} 
+        - name: platform-config-volume
+          mountPath: /opsmx/conf
+         {{- end }}
         - mountPath: /opsmx/conf/bootstrap.yml
           name: bootstrap-config-volume
           subPath: bootstrap.yml
@@ -121,9 +140,22 @@ spec:
           - key: cacerts
             path: cacerts
       {{- end }}
+      {{- if .Values.prefersecrets }}
       - name: platform-config-volume
         secret:
           secretName: oes-platform-config
+      {{- else }}
+      - name: platform-config-volume-old
+        configMap:
+          name: oes-platform-config
+          defaultMode: 420
+      - emptyDir: {}
+        name: platform-config-volume
+      - name: script-volume
+        configMap:
+          defaultMode: 420
+          name: replace-script-cm
+      {{- end }}
       - secret:
           items:
           - key: bootstrap.yml
