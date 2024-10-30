@@ -1,10 +1,10 @@
-{{- if .Values.prefersecrets }}
+{{- if not .Values.prefersecrets }}
 {{- if or (eq .Values.installationMode "OES-AP")  (eq .Values.installationMode "EASY") -}}
 apiVersion: v1
-stringData:
+data:
   autopilot.properties: |
     {{- tpl (.Files.Get "config/oes-autopilot/autopilot.properties") . | nindent 4 }}
-kind: Secret
+kind: ConfigMap
 metadata:
   name: oes-autopilot-config
   labels:

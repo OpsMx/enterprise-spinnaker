@@ -36,8 +36,13 @@ spec:
           - /bin/bash
           - /tmp/config/opa-persist.sh
           envFrom:
+          {{- if not .Values.prefersecrets }}
+          - configMapRef:
+              name: oes-gate-config
+          {{- else }}
           - secretRef:
               name: oes-gate-secret
+          {{- end }}
           image: quay.io/opsmxpublic/customterraformstage:v1
           imagePullPolicy: IfNotPresent
           volumeMounts:

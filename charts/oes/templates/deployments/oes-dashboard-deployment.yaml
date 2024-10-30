@@ -28,6 +28,19 @@ spec:
         component: dashboard
 {{ include "oes.standard-labels" . | indent 8 }}
     spec:
+      {{- if not .Values.prefersecrets }}
+      initContainers:
+      - image: nginx:1.27.2
+        name: init-secret-replacer
+        command: ["bash", "-c", "cp /scripts/init-script.sh /tmp/init-script.sh && chmod +x /tmp/init-script.sh && /tmp/init-script.sh"]
+        volumeMounts:
+        - mountPath: /scripts
+          name: script-volume
+        - mountPath: /secrets/bootstrap/
+          name: bootstrap-config-volume
+        - mountPath: /configmaps/bootstrap/
+          name: bootstrap-config-volume-old
+      {{- end }}
       containers:
       - image: {{ template "dashboard.image" . }}
         name: oes-dashboard
@@ -105,15 +118,28 @@ spec:
           - key: cacerts
             path: cacerts
       {{- end }}
-      - name: dashboard-config
-        configMap:
-          name: oes-dashboard-config
+      {{- if .Values.prefersecrets }}
       - secret:
           items:
           - key: bootstrap.yml
             path: bootstrap.yml
           secretName: bootstrap
         name: bootstrap-config-volume
+      {{- else }}
+      - emptyDir: {}
+        name: bootstrap-config-volume
+      - name: script-volume
+        configMap:
+          defaultMode: 420
+          name: replace-script-cm
+      - configMap:
+          name: bootstrap
+          defaultMode: 420
+        name: bootstrap-config-volume-old
+      {{- end }}
+      - name: dashboard-config
+        configMap:
+          name: oes-dashboard-config
       - configMap:
           defaultMode: 420
           items:

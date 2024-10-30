@@ -28,6 +28,7 @@ spec:
 {{- end }}
     spec:
       volumes:
+      {{- if .Values.prefersecrets }}
         - name: autopilot-config-volume
           secret:
             secretName: oes-autopilot-config
@@ -37,6 +38,24 @@ spec:
               path: bootstrap.yml
             secretName: bootstrap
           name: bootstrap-config-volume
+      {{- else }}
+        - name: autopilot-config-volume-old
+          configMap:
+            name: oes-autopilot-config
+            defaultMode: 420
+        - emptyDir: {}
+          name: bootstrap-config-volume
+        - emptyDir: {}
+          name: autopilot-config-volume
+        - name: script-volume
+          configMap:
+            defaultMode: 420
+            name: replace-script-cm
+        - configMap:
+            name: bootstrap
+            defaultMode: 420
+          name: bootstrap-config-volume-old
+        {{- end }}
         - configMap:
             defaultMode: 420
             items:
@@ -81,8 +100,9 @@ spec:
       tolerations:
 {{ toYaml .Values.global.tolerations | indent 8 }}
       {{- end }}
-      {{- if (eq .Values.db.enabled true) }}
+      {{- if or .Values.db.enabled (not .Values.prefersecrets) }}
       initContainers:
+      {{- if (eq .Values.db.enabled true) }}
       - name: db-check
         image: {{ .Values.global.customImages.registry }}/pgchecker:v1
         command:
@@ -94,6 +114,25 @@ spec:
                sleep 2;
             done;
             echo 'OESDB OK ✓'
+      {{- end }}
+      {{- if not .Values.prefersecrets }}
+      - image: nginx:1.27.2
+        name: init-secret-replacer
+        command: ["bash", "-c", "cp /scripts/init-script.sh /tmp/init-script.sh && chmod +x /tmp/init-script.sh && /tmp/init-script.sh"]
+        volumeMounts:
+        - mountPath: /scripts
+          name: script-volume
+        - mountPath: /secrets/
+          name: autopilot-config-volume
+        - mountPath: /secrets/bootstrap/
+          name: bootstrap-config-volume
+        - mountPath: /configmaps/
+          name: autopilot-config-volume-old
+        - mountPath: /configmaps/bootstrap/
+          name: bootstrap-config-volume-old
+      {{- end }}
+      {{- else }}
+      initContainers: {}
       {{- end }}
       containers:
         - image: {{ template "autopilot.image" . }}

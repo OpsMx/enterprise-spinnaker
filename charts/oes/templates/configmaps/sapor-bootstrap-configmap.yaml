@@ -1,7 +1,7 @@
-{{- if .Values.prefersecrets }}
+{{- if not .Values.prefersecrets }}
 {{- if or (eq .Values.installationMode "OES-AP")  (eq .Values.installationMode "EASY") -}}
 apiVersion: v1
-stringData:
+data:
   bootstrap.yml: |-
     spring:
       cloud:
@@ -35,7 +35,7 @@ stringData:
     encrypt:
       key: {{ .Values.global.sapor.config.encrypt.key }}
 {{- end }}
-kind: Secret
+kind: ConfigMap
 metadata:
   name: sapor-bootstrap
   labels:

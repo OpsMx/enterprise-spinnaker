@@ -1,12 +1,12 @@
-{{- if .Values.prefersecrets }}
+{{- if not .Values.prefersecrets }}
 {{- if or (eq .Values.installationMode "OES-AP")  (eq .Values.installationMode "EASY") -}}
 apiVersion: v1
-stringData:
+data:
   application.yml: |
     {{- tpl (.Files.Get "config/oes-sapor/application.yml") . | nindent 4 }}
   client.p12: |
     {{- tpl (.Files.Get "./client.p12") . | nindent 4 }}
-kind: Secret
+kind: ConfigMap
 metadata:
   name: oes-sapor-config
   labels:
