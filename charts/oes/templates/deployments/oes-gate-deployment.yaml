@@ -154,11 +154,19 @@ spec:
       {{- end }}
       {{- if .Values.global.customCerts.enabled }}
       - name: cacerts
+        {{- if .Values.preferCertsAsSecret }}
         secret:
           secretName: {{ .Values.global.customCerts.secretName }}
           items:
           - key: cacerts
             path: cacerts
+        {{- else }}
+        configMap:
+          name: {{ .Values.global.customCerts.configMapName }}
+          items:
+          - key: cacerts
+            path: cacerts
+        {{- end }}
       {{- end }}
       {{- if .Values.global.autoConfiguration.enabled }}
       - secret:
