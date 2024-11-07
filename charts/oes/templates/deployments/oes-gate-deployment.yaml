@@ -136,12 +136,21 @@ spec:
       {{- end }}
       volumes:
       {{- if .Values.gate.config.saml.enabled }}
+      {{- if .Values.preferCertsAsSecret }}
       - secret:
           secretName: {{ .Values.gate.config.saml.jksSecretName }}
         name: saml-jks
       - secret:
           secretName: {{ .Values.gate.config.saml.metadataSecretName }}
         name: metadata-xml
+        {{- else }}
+        - configMap:
+          name: {{ .Values.gate.config.saml.jksSecretName }}
+        name: saml-jks
+      - configMap:
+          name: {{ .Values.gate.config.saml.metadataSecretName }}
+        name: metadata-xml      
+      {{- end }}
       {{- end }}
       {{- if .Values.global.customCerts.enabled }}
       - name: cacerts
