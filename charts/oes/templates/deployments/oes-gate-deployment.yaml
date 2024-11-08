@@ -135,23 +135,6 @@ spec:
 {{ toYaml .Values.global.tolerations | indent 8 }}
       {{- end }}
       volumes:
-      {{- if .Values.gate.config.spring.security.saml2.enabled }}
-      {{- if .Values.preferCertsAsSecret }}
-      - secret:
-          secretName: {{ .Values.gate.config.saml.jksSecretName }}
-        name: saml-jks
-      - secret:
-          secretName: {{ .Values.gate.config.saml.metadataSecretName }}
-        name: metadata-xml
-        {{- else }}
-        - configMap:
-          name: {{ .Values.gate.config.saml.jksSecretName }}
-        name: saml-jks
-      - configMap:
-          name: {{ .Values.gate.config.saml.metadataSecretName }}
-        name: metadata-xml      
-      {{- end }}
-      {{- end }}
       {{- if .Values.global.customCerts.enabled }}
       - name: cacerts
         {{- if .Values.preferCertsAsSecret }}
@@ -208,6 +191,7 @@ spec:
       {{- end }}
 {{- end -}}
 {{- if .Values.gate.config.spring.security.saml2.enabled  }}
+ {{- if .Values.preferCertsAsSecret }}
       - name: samlcerts
         secret:
           secretName: samlcerts
@@ -215,5 +199,15 @@ spec:
             - key: key.pem
               path: key.pem
             - key: cert.pem
-              path: cert.pem      
+              path: cert.pem   
+  {{- else }}
+      - name: samlcerts
+        configMap:
+          name: samlcerts
+          items:
+            - key: key.pem
+              path: key.pem
+            - key: cert.pem
+              path: cert.pem   
+  {{- end -}}
 {{- end -}}
