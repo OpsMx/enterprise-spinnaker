@@ -1,3 +1,13 @@
+{{- if .Values.swaggerUI.enabled }}
+springdoc:
+  writer-with-default-pretty-printer: true
+  swagger-ui:
+    display-request-duration: true
+    disable-swagger-default-url: true
+    url: /v3/api-docs.yaml
+  api-docs:
+    version: openapi_3_0
+{{- end }}
 ok-http-client:
   interceptor:
     skipHeaderCheck: true
