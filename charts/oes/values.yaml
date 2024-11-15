@@ -1542,3 +1542,6 @@ customPlugins:
             url: file:///opt/spinnaker/plugins/plugins.json
          
 
+###########FOR SWAGGER_UI##########################
+swaggerUI:
+  enabled: false
