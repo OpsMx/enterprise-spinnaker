@@ -986,7 +986,7 @@ spinnaker:
     spinnakerVersion: 1.33.3
     image:
       repository: quay.io/opsmxpublic/ubi8-halyard-cve
-      tag: 1.65.0-81942c9-202408200841
+      tag: 1.65.0-e777b4b4-202412031020
     # Set to false to disable persistence data volume for halyard
     persistence:
       enabled: true
