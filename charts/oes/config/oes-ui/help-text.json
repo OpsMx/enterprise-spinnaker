@@ -71,7 +71,7 @@
       "TOOLTIP": "Account name configured in the spinnaker for deployments.",
       "VALIDATION_MESSAGE": {
         "required": "Account name cannot be empty",
-        "cannotContainSpace": "Account name cannot contain space",
+        "cannotContainSpace": "Account name cannot contain space"
       }
     },
     "NAMESPACE": {
@@ -84,7 +84,7 @@
     },
     "DISPLAYNAME": {
       "TOOLTIP": "Custom display name of the environment.",
-      "maxlength": "Environment name should not have more than 63 characters!",
+      "maxlength": "Environment name should not have more than 63 characters!"
     }
   },
   "CLOUDPROVIDER_LISTING": {
