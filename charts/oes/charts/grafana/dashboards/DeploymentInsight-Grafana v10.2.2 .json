@@ -25,7 +25,7 @@
     {
       "datasource": {
         "type": "prometheus",
-        "uid": "cffcb5a0-4a6e-4962-897a-66bffb8a5517"
+        "uid": "datasource-uid-for-isd-insights"
       },
       "fieldConfig": {
         "defaults": {
@@ -108,7 +108,7 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "cffcb5a0-4a6e-4962-897a-66bffb8a5517"
+            "uid": "datasource-uid-for-isd-insights"
           },
           "disableTextWrap": false,
           "editorMode": "code",
@@ -128,7 +128,7 @@
     {
       "datasource": {
         "type": "prometheus",
-        "uid": "cffcb5a0-4a6e-4962-897a-66bffb8a5517"
+        "uid": "datasource-uid-for-isd-insights"
       },
       "description": "",
       "fieldConfig": {
@@ -253,7 +253,7 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "cffcb5a0-4a6e-4962-897a-66bffb8a5517"
+            "uid": "datasource-uid-for-isd-insights"
           },
           "editorMode": "code",
           "expr": "sum(count by (imageName)(deploy_time_total{envName=~\"$targetEnvironment\", status=\"SUCCEEDED\"}))",
@@ -290,7 +290,7 @@
         },
         "datasource": {
           "type": "prometheus",
-          "uid": "cffcb5a0-4a6e-4962-897a-66bffb8a5517"
+          "uid": "datasource-uid-for-isd-insights"
         },
         "definition": "label_values(envName)",
         "hide": 2,
@@ -319,7 +319,7 @@
         },
         "datasource": {
           "type": "prometheus",
-          "uid": "cffcb5a0-4a6e-4962-897a-66bffb8a5517"
+          "uid": "datasource-uid-for-isd-insights"
         },
         "definition": "label_values(envName)",
         "hide": 2,
