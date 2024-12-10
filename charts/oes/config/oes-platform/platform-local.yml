@@ -48,7 +48,8 @@ fixedDelay:
 initialDelay:
  in:
    milliseconds: 600000
-workerThreads: 50
+scheduler.threads: 5
+scheduler.workerThreads: 50
 database:
   cleanup:
     scheduler:
