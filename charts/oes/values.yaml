@@ -365,7 +365,7 @@ audit:
   ##
   image:
     repository: ubi8-oes-audit-service
-    tag: isd-spin-2024.12.00-8d8416f-202412050911
+    tag: isd-spin-2024.12.00-452274c-202412111031
     pullPolicy: IfNotPresent
 
   serviceAnnotations: {}
@@ -393,7 +393,7 @@ auditClient:
   ##
   image:
     repository: ubi8-oes-audit-client
-    tag: isd-spin-2024.12.00-41155d9-202412050904
+    tag: isd-spin-2024.12.00-3995755-202412111026
     pullPolicy: IfNotPresent
 
   serviceAnnotations: {}
@@ -613,7 +613,7 @@ platform:
   ## Image specific details
   image:
     repository: ubi8-oes-platform
-    tag: isd-spin-2024.12.00-837c1965-202412050938
+    tag: isd-spin-2024.12.00-375d5f3b-202412111104
     pullPolicy: IfNotPresent
 
   annotations:
@@ -797,7 +797,7 @@ ui:
   ## Image specific details
   image:
     repository: ubi8-oes-ui
-    tag: isd-spin-2024.12.00-da20fc8d3-202412050918
+    tag: isd-spin-2024.12.00-9effc4b41-202412101126
     pullPolicy: IfNotPresent
 
   annotations:
