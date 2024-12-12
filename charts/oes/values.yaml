@@ -561,6 +561,8 @@ gate:
       security:
         saml2:
           enabled: false
+          validation:
+            inresponseto: true
           registration-id: SSO 
           relyingparty:
             registration:

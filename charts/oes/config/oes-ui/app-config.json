@@ -6,7 +6,7 @@
     "cdTool": "Spinnaker",
     "multi_cd_enabled" : false,
     "hide_accessManagement": true,
-    "hide_agent" : true,
+    "hide_agent": true,
     "hide_cd_integration": false,
     "hide_cloud_targets": true,
     "hide_integrations": true,
@@ -21,5 +21,7 @@
     "grafanaPipelineInsightsEndpoint": "{{ .Values.global.oesUI.protocol }}://{{ .Values.global.oesUI.host }}/grafana/d/pipeline-insight/pipeinsights",
     "grafanaStageInsightsEndpoint": "{{ .Values.global.oesUI.protocol }}://{{ .Values.global.oesUI.host }}/grafana/d/stage-insight/stageinsights",
     "grafanaUserInsightsEndpoint": "{{ .Values.global.oesUI.protocol }}://{{ .Values.global.oesUI.host }}/grafana/d/user-insights/user-insights",
-    "grafanaDeploymentInsightsEndpoint": "{{ .Values.global.oesUI.protocol }}://{{ .Values.global.oesUI.host }}/grafana/d/deployment-insights/deployment-insights" 
+    "grafanaDeploymentInsightsEndpoint": "{{ .Values.global.oesUI.protocol }}://{{ .Values.global.oesUI.host }}/grafana/d/deployment-insights/deployment-insights",
+    "disableSessionExtension": false,
+    "logoutNotificationInSecs": 30
 }
