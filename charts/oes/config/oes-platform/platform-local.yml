@@ -42,16 +42,14 @@ ldap:
   groupSearchFilter: {{ .Values.global.ldap.groupSearchFilter }}
   groupRoleAttributes: {{ .Values.global.ldap.groupRoleAttributes }}
   userDnPattern: {{ .Values.global.ldap.userDnPattern }}
-dashboard:
-  scheduler:
-    enable: false
-    fixedDelay:
-      in:
-        milliseconds: 120000
-    initialDelay:
-      in:
-        milliseconds: 300000
-    workerThreads: 50
+fixedDelay:
+ in:
+   milliseconds: 120000
+initialDelay:
+ in:
+   milliseconds: 600000
+scheduler.threads: 5
+scheduler.workerThreads: 50
 database:
   cleanup:
     scheduler:
