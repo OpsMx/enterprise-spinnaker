@@ -365,7 +365,7 @@ audit:
   ##
   image:
     repository: ubi8-oes-audit-service
-    tag: isd-spin-2024.12.00-452274c-202412111031
+    tag: isd-spin-2024.12.00-9e267a0-202412130625
     pullPolicy: IfNotPresent
 
   serviceAnnotations: {}
