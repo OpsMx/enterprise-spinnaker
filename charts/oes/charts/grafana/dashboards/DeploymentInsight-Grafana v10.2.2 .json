@@ -256,7 +256,7 @@
             "uid": "datasource-uid-for-isd-insights"
           },
           "editorMode": "code",
-          "expr": "sum(count(count_over_time(deploy_time_total{envName=~\"$targetEnvironment\", status=\"SUCCEEDED\"}[$__interval])) by (imageName))",
+          "expr": "count(deploy_time_total{envName=~\"$targetEnvironment\", status=\"SUCCEEDED\"}) OR on() vector(0)",
           "instant": false,
           "interval": "",
           "legendFormat": "__auto",
