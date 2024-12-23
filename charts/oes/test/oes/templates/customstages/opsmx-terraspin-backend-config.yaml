@@ -1,0 +1,134 @@
+---
+# Source: oes/templates/customstages/opsmx-terraspin-backend-config.yaml
+apiVersion: v1
+data:
+  gcloudauth.sh: |
+    #!/bin/bash
+    #set -x
+    jsonkey=$(ls /home/terraspin/opsmx/gcp/)
+    if [ -z "$jsonkey" ]
+            then
+              echo "gcp service account is not configured in backend"
+                exit 5
+     else
+        echo "Authenticating to gcp using service account"
+
+         saemail=$(cat /home/terraspin/opsmx/gcp/$jsonkey | jq -r '.client_email')
+
+          if [ "$?" -eq 0 ]
+          then
+
+    export GOOGLE_APPLICATION_CREDENTIALS=/home/terraspin/opsmx/gcp/$jsonkey
+    gcloud auth activate-service-account $saemail --key-file=/home/terraspin/opsmx/gcp/$jsonkey > /dev/null
+
+
+    bash run.sh
+    else
+
+    echo "service email is missing in the json key which you stored in backend"
+    exit 5
+    fi
+    fi
+  role.sh: "#!/bin/bash\nrole=$awsrole\nns=$namespace\nif [ -z \"$role\" ]\nthen\n
+    \   echo \"not provided account name\"\n    exit 5\nelse\n    echo \"Checking
+    the account validity\"\n    curl -soq GET \"http://spin-clouddriver-ro.$ns.svc.cluster.local:7002/credentials/$role\"
+    --header \"Content-Type: application/json\" > roleinfo.json\n    if [ \"$?\" -eq
+    0 ]\n    then\n        ##Extract the assume role from the account info Json using
+    the jq\n        awsregion=$(cat roleinfo.json  | jq -r '.regions[].name')\n        awsassumeRole=$(cat
+    roleinfo.json | jq -r '.assumeRole')\n        awsaccountId=$(cat roleinfo.json
+    | jq -r '.accountId')\n        ##Get the Account Credentials using the Assume
+    role \n        aws sts assume-role --role-arn \"arn:aws:iam::$awsaccountId:$awsassumeRole\"
+    --role-session-name AWSCLI-Session > creds.json\n        ##Get the Account Credentials
+    using the Assume role\n        awsaccesskey=$(cat creds.json | jq -r '.Credentials.AccessKeyId')\n
+    \       awssecretkey=$(cat creds.json | jq -r '.Credentials.SecretAccessKey')\n
+    \       awssessiontoken=$(cat creds.json | jq -r '.Credentials.SessionToken')\n
+    \       export AWS_ACCESS_KEY_ID=$awsaccesskey\n        export AWS_SECRET_ACCESS_KEY=$awssecretkey\n
+    \       export AWS_SESSION_TOKEN=$awssessiontoken\n        export AWS_REGION=$awsregion\n
+    \       #aws configure list\n        bash run.sh\n    else\n        echo \"In-Valid
+    account $role\"\n        exit 1\n    fi\nfi\n"
+  run.sh: "#!/bin/bash \n#set -x\n\nterraformcommand=\"$command\"\nscriptact=$(echo
+    \"$scriptaccount\" | tr -d [:space:])\ntfrepo=$(echo \"$repo\" | tr -d [:space:])\ntflocation=$(echo
+    \"$location\" | tr -d [:space:])\noverride=$(echo \"$overridefile\" | tr -d [:space:])\nTFCMD=$(echo
+    \"$terraformcommand\" | tr -d [:space:])\nstatefolder=$(echo \"$staterep\" | awk
+    -F/ '{print $2}' | sed 's/\\.git\\>//g')\n\necho \"-------- Terraform Command
+    ----------\"\necho \"            $TFCMD                   \"\necho \"-------------------------------------\"\n\nif
+    [ -z $scriptact ]\nthen\n\techo \" Not Specified the Tf script account \"\n\texit
+    1\nelse\n\tcheckaccount=$(cat /home/terraspin/opsmx/app/config/artifactaccounts.json
+    | jq -r '.[][] | select (.accountname == \"'$scriptact'\")')\n\tif [ -z \"$checkaccount\"
+    ]\n\tthen\n\t\techo \"Script Account is Not there artifactaccounts.json\"\n\t\texit
+    1\n\telse\n\t\techo \"Script account is located in artifactaccounts.json\"\n\t\tusername=$(cat
+    /home/terraspin/opsmx/app/config/artifactaccounts.json | jq -r '.[][] | select
+    (.accountname == \"'$scriptact'\")|.username')\n\t\tpassword=$(cat /home/terraspin/opsmx/app/config/artifactaccounts.json
+    | jq -r '.[][] | select (.accountname == \"'$scriptact'\")|.password')\n\t\thost=$(cat
+    /home/terraspin/opsmx/app/config/artifactaccounts.json | jq -r '.[][] | select
+    (.accountname == \"'$scriptact'\")|.host')\n                echo host $host\n\t\thosturl=$(echo
+    ${host##*/})\n\t\tif [[ \"$tfrepo\" == *//* ]]\n                then\n                        echo
+    \"checking the input Artifact repo  and branch\"\n                        tfbranch=$(echo
+    $tfrepo | awk -F// '{print $2}')\n                        tfrepo=$(echo $tfrepo
+    | awk -F// '{print $1}')\n                                if [[ \"$tfrepo\" ==
+    */* ]] && [[ $tfrepo == *\".git\"* ]]\n                                then\n
+    \                                       echo \"valid Artifact repo  name\"\n                                        if
+    [ -z $tfbranch ]\n                                        then\n                                                 echo
+    \"invalid input format of Artifact repo specify as ....> org/repo.git//branch\"\n
+    \                                                exit 5\n                                         else\n
+    \                                                echo \"Artifact repo Branch specified
+    as $tfbranch\"\n                                         fi\n                                 else\n
+    \                                        echo \"In valid repo name format of Artifact
+    repo should be....> Org/repo.git \"\n                                         exit
+    5\n                                 fi\n                         \n                 else\n
+    \                        echo \"invalid input format of Artifact repo specify
+    as ....>  org/repo.git//branch\"\n                         exit 5\n                 fi\n\tfi\nfi\n\n\n###################################################\n#TERRADORM
+    COMMANDS FUNCTIONALITY \n###################################################\nif
+    [ $TFCMD == \"plan\" ]\nthen\n    echo \"Plan executing............\"\n    cd
+    $HOME\n    git clone https://$username:$password@$hosturl/$tfrepo workspace -b
+    $tfbranch > /dev/null\n    cd workspace/$tflocation\n    TF_WORKSPACE=$TF_WORKSPACE
+    terraform init\n    if [ $? -eq 0 ]; then\n       echo \"Terraform Init Completed\"\n
+    \   else \n        echo \"$TF_WORKSPACE workspace does not exists... creating
+    newly\"\n        terraform workspace new $TF_WORKSPACE\n        TF_WORKSPACE=$TF_WORKSPACE
+    terraform init -reconfigure\n        echo \"Terraform Init Completed\"\n    fi\n
+    \   terraform validate\n    if [ -z $override ]\n    then\n#\t    echo \"Not Specified
+    the Override File\"\n\t    terraform plan -out=terraform.plan\n    else\n\t    terraform
+    plan -var-file=$override -out=terraform.plan\n    fi\n    if [ $? -eq 0 ]; then\n\t
+    \   echo \"Terraform Plan Completed\"\n    \n    else\n\t    echo Terraform Plan
+    FAILED\n\t    exit 5\n    fi\n\nelif [ $TFCMD == \"apply\" ]\nthen\n    echo \"Apply
+    executing...........................\"\n     cd $HOME\n     git clone https://$username:$password@$hosturl/$tfrepo
+    workspace -b $tfbranch > /dev/null\n     cd workspace/$tflocation\n     TF_WORKSPACE=$TF_WORKSPACE
+    terraform init\n     terraform validate\n     #terraform plan -var-file=$override
+    -out terraform.plan\n\tif [ -z $override ]\n\tthen\n\t\t#echo \"Not Specified
+    the Override File\"\n\t\tterraform apply -auto-approve\n\t\tif [ $? -eq 0 ]; then\n\t\t\techo
+    \"------------------------------------------------\"\n\t\t\techo \"           Terraform
+    Apply Completed            \"\n\t\t\techo \"------------------------------------------------\"\n\t\t\techo
+    \"SPINNAKER_PROPERTY_TERRAFORMAPPLY=\"COMPLETED\"\"\n\t\t\tFILE=outputs.tf\n\t\t\tif
+    test -f \"$FILE\"; then\n\t\t\t\techo \"$FILE exists.\"\n\t\t\t\tterraform output
+    > outputvariables\n\t\t\t\tcat outputvariables | tr -d ' ' | tr -d '\"'\n\t\t\tfi\n\t\telse\n\t\t\techo
+    Terraform Apply  FAILED\n                        echo \"SPINNAKER_PROPERTY_TERRAFORMAPPLY=\"FAILED\"\"\n
+    \                       exit 5\n\t\tfi\n\n\telse\n\t\tterraform apply -var-file=$override
+    -auto-approve\n\t\tif [ $? -eq 0 ]; then\n                        echo \"------------------------------------------------\"\n
+    \                       echo \"           Terraform Apply Completed            \"\n
+    \                       echo \"------------------------------------------------\"\n
+    \                       echo \"SPINNAKER_PROPERTY_TERRAFORMAPPLY=\"COMPLETED\"\"\n\t\t\tFILE=outputs.tf\n\t\t\tif
+    test -f \"$FILE\"; then\n\t\t\t\techo \"$FILE exists.\"\n\t\t\t\tterraform output
+    > outputvariables\n\t\t\t\tcat outputvariables | tr -d ' ' | tr -d '\"'\n\t\t\tfi\n\t\telse\n
+    \                       echo Terraform Apply  FAILED\n                        echo
+    \"SPINNAKER_PROPERTY_TERRAFORMAPPLY=\"FAILED\"\"\n                        exit
+    5\n                fi\n\n\n\tfi\n\nelif [ $TFCMD == \"destroy\" ]\nthen\n    echo
+    \"Destroy executed\"\n\t\t     cd $HOME\n                     git clone https://$username:$password@$hosturl/$tfrepo
+    workspace -b $tfbranch > /dev/null\n                     cd workspace/$tflocation\n
+    \                    TF_WORKSPACE=$TF_WORKSPACE terraform init\n                     terraform
+    validate\n\n                        if [ -z $override ]\n                        then\n
+    \                             #  echo \"Not Specified the Override File\"\n                                terraform
+    destroy -auto-approve\n\t\t\t\tif [ $? -eq 0 ]; then\n\t\t\t\t\techo \"------------------------------------------------\"\n\t\t\t\t\techo
+    \"           Terraform Destroy Completed            \"\n\t\t\t\t\techo \"------------------------------------------------\"\n\t\t\t\t\techo
+    \"SPINNAKER_PROPERTY_TERRAFORMDESTROY=\"COMPLETED\"\"\n\t\t\t\telse\n\t\t\t\t\techo
+    \"Terraform Destroy Failed\"\n\t\t\t\t\texit 5\n\t\t\t\tfi\n\t\t\telse\n                                terraform
+    destroy -var-file=$override -auto-approve\n\t\t\t\tif [ $? -eq 0 ]; then\n                                        echo
+    \"------------------------------------------------\"\n                                        echo
+    \"           Terraform Destroy Completed          \"\n                                        echo
+    \"------------------------------------------------\"\n                                        echo
+    \"SPINNAKER_PROPERTY_TERRAFORMDESTROY=\"COMPLETED\"\"\n                                else\n
+    \                                       echo \"Terraform Destroy Failed\"\n\t\t\t\t\texit
+    5\n                                fi\n\n                        fi\nelse\n    echo
+    \"Not able to validate Terraform state \"plan\" or \"apply\" or \"destroy\" \"\nfi\n"
+kind: ConfigMap
+metadata:
+  name: opsmx-terraspin-backend-config

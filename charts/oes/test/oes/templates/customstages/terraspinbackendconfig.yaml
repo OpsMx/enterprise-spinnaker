@@ -1,0 +1,19 @@
+---
+# Source: oes/templates/customstages/terraspinbackendconfig.yaml
+apiVersion: v1
+stringData:
+  artifactaccounts.json: |
+         {
+            "artifactaccounts": [
+               {
+                 "accountname": "OpsMx-artifact-Github-account",
+                 "artifacttype": "Github",
+                 "host": "https://github.com",
+                 "username": "opsmx",
+                 "password": "wtwetr4543534"
+                }
+               ]
+         }
+kind: Secret
+metadata:
+  name: terraspinbackendconfig

@@ -1,0 +1,1102 @@
+---
+# Source: oes/templates/pipeline-promotion/pipe-promot-scripts-cm.yaml
+apiVersion: v1
+data:
+  bitbucket.sh: |
+    #!/bin/bash
+    #this script funtions only work for bitbucket central repository
+    #this script funtions only work for git repo
+    #env variables needed for this to work are as below
+    #***git_url="example.bitbucket.com" make sure you dont add http/https or / in the url
+    #****git_repo="pipelinepromotion" repo to be pushed/download pipeline json files from
+    #***git_project="kes" project key is needed to clone/push/pull merge code
+    #***git_user="tes.user" user is needed for cloning and pusing changes (stash does not support only access key)
+    #***git_branch="testbranch" the branch to which the code should be merged with
+    #***merge_branch=false if true then provide all the below env variables
+    #   git_secret_token="dafjaljoahfoasjoijso" needed to create pull requests should be the git_users secret token
+    #   git_pr_token="slkdfjaljoajfopaj" this is approver token to approve pull requests / you can also provide approver password here.
+    #   git_approve_user="test.approver"  username of the pull request approver
+    #   git_password="adjoowddaw" make sure your password does not include special characters like # @*/. special characters cause git clone command to fail with https
+    #  repo_type="stash" for selfhosted bitbucket server please use stash as repo type
+    #***root_folder="path/to/pipeline-promotion/folder" folder to be selected in the repo to which the pipeline jobs to be pushed
+    #***command=upload for running specific job -
+    #                                         upload - to upload spinnaker pipeline json files to repo
+    #                                         download - to download pipeline json file from repo and apply on spinnaker
+    #***spinnaker_applications="testapp,sampleapp" application needed to collect the pipeline information
+    #spinnaker_pipelines="" provide pipelines to be collected, if nothing given, all the pipelines of the application are collected
+    #git_secret_sshkey="sshkey" ssh key if you want to clone repo with ssh protocol
+    # note *** env variables are mandatory to work with the script
+
+    source scripts/git.sh
+    git_bitbucket_api=$git_api_url
+    pr_id=0
+    approve_pr_bitbucket(){
+      approve_req=$(curl -X POST -u $git_approve_user:$git_pr_token \
+      $git_bitbucket_api${git_project}/${git_repo}/pullrequests/${pr_id}/approve -o -I -L -s -w "%{http_code}")
+      echo $approve_req
+      if [[ $approve_req == "200" ]];then
+        echo "merge request approved successfully"
+      else
+        echo "FAIL: failed to approve the request "
+        exit 1
+      fi
+    }
+    merge_pr_bitbucket(){
+      merge_req=$(curl  -X POST -u $git_user:$git_secret_token   \
+      $git_bitbucket_api${git_project}/${git_repo}/pullrequests/${pr_id}/merge -o -I -L -s -w "%{http_code}")
+      echo $merge_req
+      if [[ $merge_req == 200  ]]; then
+        echo "merged pr successfully"
+      elif [[ $merge_req == 202 ]]; then
+        echo "merging is in progress will be merged in less than a min"
+      else
+        echo "FAILED: failed to merge $merge_pr"
+        exit 1
+    fi
+    }
+    create_pr_bitbucket(){
+      local output=$(curl  -X POST -H "Content-Type: application/json" -u $git_user:$git_secret_token   $git_bitbucket_api${git_project}/${git_repo}/pullrequests -d '{
+        "title": "merging '$git_branch' to '$target_branch'",
+        "source": {
+                "branch": {
+                    "name": "'$git_branch'"
+                }
+            },
+            "destination": {
+                "branch": {
+                    "name": "'$target_branch'"
+                }
+            }
+    }')
+      echo $output
+      echo $output > pr_response.json
+      grep  "There are no changes to be pulled" pr_response.json
+      if [ "$?" = 0 ]
+      then
+        echo "master branch is already up-to-date"
+        exit 0
+      else
+        pr_id=$(cat  pr_response.json| jq '(.id)' | sed 's/\"//g')
+        if [ $? = 0 ]; then
+          echo "successfully created pull request "
+          #rm -f pr_response.json
+        else
+          echo "ERROR: failed to raise pull request $output"
+          exit 1
+      fi
+    fi
+    }
+    sync_spin_to_bitbucket(){
+      setup_git
+      sync_spin_to_git
+      if [[ $merge_branch == "true" && $target_branch != "" && ($git_branch != $target_branch)  ]];then
+        if [[ $git_api_url_port != "" ]];then
+          git_bitbucket_api=$git_bitbucket_api:$git_api_url_port
+          create_pr_bitbucket
+          if [[ $auto_merge == "true" ]]; then
+            approve_pr_bitbucket
+            sleep 5
+            merge_pr_bitbucket
+          fi
+        else
+          create_pr_bitbucket
+          if [[ $auto_merge == "true" ]]; then
+            approve_pr_bitbucket
+            sleep 5
+            merge_pr_bitbucket
+          fi
+        fi
+      fi
+    }
+  deployer.sh: |
+    #!/bin/bash
+    echo "In deployer.sh"
+    SBASE=scripts
+    source config/repo.properties
+    BRANCH_NAME_UI=$(echo $branch_ui | sed 's/[][]//g')
+    echo $BRANCH_NAME_UI
+    if [ -z "$BRANCH_NAME_UI" ]
+    then
+      echo "Not Provided the Branch in the spinnaker UI....Continuing with the default branch specified in configmap"
+      echo $git_branch
+    else
+      echo "Provided the User defined Branch in spinnaker UI"
+      git_branch=$BRANCH_NAME_UI
+      echo $git_branch
+    fi
+    ROOT_FOLDER_UI=$(echo $rootfolder_ui | sed 's/[][]//g')
+    echo $ROOT_FOLDER_UI
+    if [ -z "$ROOT_FOLDER_UI" ]
+    then
+      echo "Not Provided the Save Path in the spinnaker UI....Continuing with the default path specified in configmap"
+      echo $root_folder
+    else
+      echo "Provided the User defined Branch in spinnaker UI"
+      root_folder=$ROOT_FOLDER_UI
+      echo $root_folder
+    fi
+    source $SBASE/spin.sh
+    source $SBASE/stash.sh
+    source $SBASE/s3.sh
+    source $SBASE/github.sh
+    source $SBASE/bitbucket.sh
+    echo "Sourcing complete"
+    sync_repo_from_spinnaker(){
+      if [[ $repo_type = "s3" ]];
+      then
+        upload_spin_to_s3
+      elif [[ $repo_type = "stash" ]]; then
+        sync_spin_to_stash
+      elif [[ $repo_type == "bitbucket" ]]; then
+        sync_spin_to_bitbucket
+      elif [[ $repo_type = "git" ]]; then
+        sync_spin_to_github
+      elif [[ $repo_type = "gitea" ]]; then
+        sync_spin_to_github
+      else
+        echo "Not specified Repo type"
+        exit 5
+      fi
+    }
+    sync_spinnaker_from_repo(){
+      if [[ $repo_type = "s3" ]];
+      then
+        sync_from_s3_spin
+      elif [[ $repo_type = "stash" || $repo_type = "git" || $repo_type = "bitbucket" ]]; then
+        sync_git_to_spin
+      elif [[ $repo_type = "gitea" ]]; then
+        sync_git_to_spin
+      fi
+    }
+    if [[ "$command" == "download" ]]; then
+      sync_spinnaker_from_repo
+    elif [[ "$command" == "upload" ]]; then
+      echo "executing upload"
+      #statement
+      sync_repo_from_spinnaker
+    else
+      echo "ERROR: unknown command"
+    fi
+    echo "Done executing"
+  git.sh: |
+    #!/bin/bash
+    source scripts/spin.sh
+    git_repo=$repo_name
+    tempdir="/tmp/"
+    pull_requred=false
+    branch_check() {
+    if [[ $git_branch == "" ]]
+    then
+      cd $tempdir/$git_repo
+      defaultbranch=$(git branch | awk '{print $2}')
+      git_branch="$defaultbranch"
+      echo "WAR: Not specified the branch to push the pipeline json, Considering the default branch $git_branch ..."
+      cd -
+    fi
+    }
+    setup_git() {
+      echo "Setting up the Git "
+      local name=${git_user:-spinnaker}
+      local email=${git_user_email:-phani@opsmx.io}
+      git config --global user.email "$email"
+      git config --global user.name "$name"
+    }
+    validate_clone() {
+      if [ $? == 0 ]
+      then
+        echo "Cloning done ${git_repo}"
+      else
+        echo "Cloning failed with repo ${git_repo}, Please check credentials and repo access...."
+        exit 5
+      fi
+      branch_check
+    }
+    git_clone_http() {
+      echo "cloning $git_project/$git_repo over https"
+      if [[ $repo_type == "git" || $repo_type == "bitbucket" ]]; then
+        clone_result=$(git clone https://$git_user:${git_secret_token}@${git_url}/${git_project}/${git_repo}.git $tempdir/$git_repo 2> /dev/null)
+        validate_clone
+      elif [[ $repo_type == "gitea" ]]; then
+        clone_result=$(git clone http://$git_user:${git_secret_token}@${git_url}/${git_project}/${git_repo}.git $tempdir/$git_repo 2> /dev/null)
+        validate_clone
+      elif [[ $repo_type == "stash" ]]; then
+        #statements
+        if [[ $git_url_port != "" ]]; then
+          clone_result=$(git  clone https://$git_user:${git_secret_token}@${git_url}:$git_url_port/scm/${git_project}/$git_repo.git $tempdir/$git_repo 2> /dev/null)
+          validate_clone
+        else
+          clone_result=$(git  clone https://$git_user:${git_secret_token}@${git_url}/scm/${git_project}/$git_repo.git $tempdir/$git_repo 2> /dev/null)
+          validate_clone
+        fi
+      fi
+      #echo $clone_result
+    }
+    load_ssh(){
+      mkdir /home/opsmx/.ssh
+      cp /etc/git-secret/git_secret_sshkey ~/.ssh/id_rsa
+      chmod 400 ~/.ssh/id_rsa
+      ssh-keyscan github.com >> ~/.ssh/known_hosts
+    }
+    git_clone_ssh(){
+      echo "cloning $git_project/$git_repo over ssh"
+      if [[ $repo_type == "git" || $repo_type == "bitbucket" ]]
+      then
+        load_ssh
+        clone_result=$(git clone git@${git_url}:${git_project}/$git_repo.git $tempdir/$git_repo 2> /dev/null)
+        validate_clone
+      elif [[ $repo_type == "stash" && $git_url_port != "" ]]; then
+        #statements
+        clone_result=$(git clone ssh://git@${git_url}:$git_url_port/${git_project}/$git_repo.git $tempdir/$git_repo 2> /dev/null)
+      else
+        clone_result=$(git clone ssh://git@${git_url}:${git_project}/$git_repo.git $tempdir/$git_repo $tempdir/$git_repo 2> /dev/null)
+      fi
+      #echo $clone_result
+    }
+    git_add_file() {
+      local file=$1
+      git add $file
+    }
+    git_add_all() {
+      git add $1
+    }
+    git_tag_all() {
+      git tag -a Backup-$TAGSTAMP -m "$msg"
+      git push --tags
+    }
+    git_delete_file() {
+      local file=$1
+      git rm $file
+    }
+    git_checkout_branch(){
+      all_branches=$(git branch -r| grep -w  origin/$git_branch)
+      echo $all_lbranches
+      if [[ $all_branches != "" ]]
+      then
+        branch_checkout_result=$(git checkout $git_branch)
+        echo $branch_checkout_result
+        pull_requred=true
+      else
+        git checkout -b $git_branch
+      fi
+    }
+    git_add_all(){
+      git add $1
+    }
+    git_commit_all() {
+      local branch=$git_branch
+      local msg="checking application and pipeline raw data"
+      if [ "$pull_requred" = true ]; then
+        git pull origin $branch --no-edit
+        if [ "$?" != "0" ];then
+         echo "[ERROR]: Failed to pull $branch upstream."
+         exit 1
+        fi
+      fi
+      opts=""
+      if [ "$git_commit_sign" == "true" ]; then
+        opts="-s"
+      fi
+      #git commit $opts -a -m $msg
+      git commit -m "$msg"
+      git push --set-upstream origin $branch
+      if [ "$?" != "0" ];then
+        echo "[ERROR]: Failed to push $branch upstream."
+        exit 1
+      fi
+    }
+    sync_spin_to_git() {
+      echo "In upload function which copies spinnaker application and pipeline from spinnaker to repo"
+      local user_root_folder=$root_folder
+      if [ "$git_secret_sshkey" != "" ]; then
+        git_clone_ssh
+      elif [ "$git_secret_token" != "" ]; then
+        git_clone_http
+      else
+        echo "git cloning requires either a git_aws_secret_key to be set or git_aws_secret_token"
+       exit 5
+      fi
+      projectdir=$tempdir/$git_repo
+      cd $projectdir
+      #We are done, get update git
+      git_checkout_branch
+      if [ -z $spinnaker_applications ]
+      then
+        spin application list > app.json
+        testappjson=$(cat app.json)
+        if [ "$testappjson" == "null" ]; then
+          echo "ERROR: spin application list , There are no applications"
+          echo "Please check the spin-cli-config secret username and password is valid or not"
+          exit 1
+        else
+          spinnaker_app=$(cat app.json | jq -r '[.[].name]| @csv' | sed 's/","/,/g; s/^"\|"$//g')
+          rm -rf app.json
+          get_pipelines_data  $spinnaker_app
+        fi
+      else
+        get_pipelines_data  $spinnaker_applications
+      fi
+      git_add_all $root_folder
+      git_commit_all
+      return 0
+    }
+    sync_git_to_spin(){
+      setup_git
+      if [ "$git_secret_sshkey" != "" ]; then
+        git_clone_ssh
+      elif [ "$git_secret_token" != "" ]; then
+        git_clone_http
+      else
+        echo "git cloning requires either a git_aws_secret_key to be set or git_aws_secret_token"
+       exit 5
+      fi
+      projectdir=$tempdir/$git_repo
+      cd $projectdir
+      git_checkout_branch
+      syncup_spin
+    }
+  github.sh: |
+    #!/bin/bash
+    #this script funtions only work for github central repository
+    #this script funtions only work for git repo
+    #env variables needed for this to work are as below
+    #***git_url="example.bitbucket.com" make sure you dont add http/https or / in the url
+    #****git_repo="pipelinepromotion" repo to be pushed/download pipeline json files from
+    #***git_project="kes" project key is needed to clone/push/pull merge code
+    #***git_user="tes.user" user is needed for cloning and pusing changes (stash does not support only access key)
+    #***git_branch="testbranch" the branch to which the code should be merged with
+    #***merge_branch=false if true then provide all the below env variables
+    #   git_secret_token="dafjaljoahfoasjoijso" needed to create pull requests should be the git_users secret token
+    #   git_pr_token="slkdfjaljoajfopaj" this is approver token to approve pull requests / you can also provide approver password here.
+    #   git_approve_user="test.approver"  username of the pull request approver
+    #   git_password="adjoowddaw" make sure your password does not include special characters like # @*/. special characters cause git clone command to fail with https
+    #  repo_type="stash" for selfhosted bitbucket server please use stash as repo type
+    #***root_folder="path/to/pipeline-promotion/folder" folder to be selected in the repo to which the pipeline jobs to be pushed
+    #***command=upload for running specific job -
+    #                                         upload - to upload spinnaker pipeline json files to repo
+    #                                         download - to download pipeline json file from repo and apply on spinnaker
+    #***spinnaker_applications="testapp,sampleapp" application needed to collect the pipeline information
+    #spinnaker_pipelines="" provide pipelines to be collected, if nothing given, all the pipelines of the application are collected
+    #git_secret_sshkey="sshkey" ssh key if you want to clone repo with ssh protocol
+    # note *** env variables are mandatory to work with the script
+
+    source scripts/git.sh
+    git_hub_api_url=$git_api_url
+    approve_pr_github(){
+      approve_req=$(curl -o -I -L -s -w "%{http_code}" -X POST -H "Accept: application/vnd.github.v3+json" -u $git_approve_user:$git_pr_token  $git_hub_api_url/$git_user/${git_repo}/pulls/${pr_id}/reviews \
+      -d '{"body": "Spinnaker says LGTM","event": "APPROVE"}')
+      echo $approve_req
+      if [[ $approve_req == "200" ]];then
+        echo "merge request approved successfully"
+      else
+        echo "FAIL: failed to approve the request $"
+        exit 1
+      fi
+    }
+    merge_pr_github(){
+      merge_req=$(curl -o -I -L -s -w "%{http_code}" -X PUT -H "Accept: application/vnd.github.v3+json" -u $git_user:$git_secret_token $git_hub_api_url/$git_user/${git_repo}/pulls/${pr_id}/merge)
+      echo $merge_req
+      if [[ $merge_req == "200" ]]; then
+        echo "merged pr successfully"
+      else
+        echo "FAILED: failed to merge $merge_pr"
+        exit 1
+    fi
+    }
+    create_pr_github(){
+      local output=$(curl  -X POST -H "Accept: application/vnd.github.v3+json" -u $git_user:$git_secret_token $git_hub_api_url/${git_user}/${git_repo}/pulls \
+      -d '{"title": "pull request to merge '$git_branch' to master","body": "pull request to merge latest pipleine jobs information to '$target_branch'", "head": "'${git_branch}'","base": "'$target_branch'"}')
+      if [ "$?" != 0 ]
+      then
+        echo "master branch is already up-to-date"
+        exit 0
+      else
+        echo $output
+        echo $output > pr_response.json
+        errors=$(cat  pr_response.json| jq '(.errors)' | sed 's/\"//g')
+        if [[ $errors != null ]]; then
+          echo "ERROR: failed to raise pull request $errors"
+          exit 1
+        fi
+        pr_id=$(cat  pr_response.json| jq '(.number)' | sed 's/\"//g')
+        if [[  $pr_id != ""  ]]; then
+          echo "successfully created pull request "
+        else
+          echo "ERROR: failed to raise pull request $output"
+          exit 1
+      fi
+    fi
+    }
+    sync_spin_to_github(){
+      setup_git
+      sync_spin_to_git
+      if [[ $merge_branch == "true" && $target_branch != "" && ($git_branch != $target_branch)  ]];then
+        if [[ $git_api_url_port != "" ]];then
+          git_hub_api_url=$git_hub_api_url:$git_api_url_port
+          create_pr_github
+          if [[ $auto_merge == "true" ]]; then
+            approve_pr_github
+            merge_pr_github
+          fi
+        else
+          create_pr_github
+          if [[ $auto_merge == "true" ]]; then
+            approve_pr_github
+            merge_pr_github
+          fi
+        fi
+      fi
+    }
+  s3.sh: |
+    #!/bin/bash
+    source scripts/spin.sh
+    absolute_path="$(dirname $(readlink -f $0))"
+    # s3_folder=folder/in/s3/bucket if not given script uploads to root folder or the s3 bucket
+    # ***bucket_name=testenvpipelinebucket "bucktet name to upload pipeline configuration"
+    # ***AWS_ACCESS_KEY_ID="SKJGIHOBGIHIHOOH" access key to access s3 bucket
+    # ***AWS_SECRET_ACCESS_KEY="sdfjlasj2e334234sdljflsjflsd98y9sy/0UVv6eCg" secret to access s3 bucket
+    # ***repo_type=s3 provide repo type as s3
+    #***command=upload for running specific job -
+    #                                         upload - to upload spinnaker pipeline json files to repo
+    #                                         download - to download pipeline json file from repo and apply on spinnaker
+    #***spinnaker_applications="testapp,sampleapp" application needed to collect the pipeline information
+    #spinnaker_pipelines="" provide pipelines to be collected, if nothing given, all the pipelines of the application are collected
+
+    # note *** env variables are mandatory to work with the script
+    s3_folder=$root_folder
+    tempdir="/tmp/"
+    bucket_name=$repo_name
+    create_bucket(){
+      #to create a bucket in s3 bucket name needed
+      aws s3 mb s3://$bucket_name
+      if [ $? != 0 ]; then
+        echo "[ERROR]: Failed to create s3 bucket  might be aleady existing"
+      fi
+    }
+
+    list_bucket(){
+      # to llst bucket objects
+      aws s3 ls s3://$bucket_name/
+      if [ $? != 0 ]; then
+        echo "[ERROR]: Failed to list s3 bucket "
+      fi
+    }
+
+    list_application_folder(){
+      # to list an object folder
+      aws ls s3://$bucket_name/${s_folder}/$1 | awk '{print $4}'
+    }
+
+    upload_spin_to_s3(){
+      # get the pipeline data from spinnaker and store in root_folder
+      echo APP $spinnaker_applications
+      if [ -z $spinnaker_applications ]
+      then
+        spin application list > app.json
+        testappjson=$(cat app.json)
+        if [ "$testappjson" == "null" ]; then
+          echo "ERROR: spin application list , There are no applications"
+          echo "Please check the spin-cli-config secret username and password is valid or not"
+          exit 1
+        else
+          spinnaker_app=$(cat app.json | jq -r '[.[].name]| @csv' | sed 's/","/,/g; s/^"\|"$//g')
+          rm -rf app.json
+          get_pipelines_data  $spinnaker_app
+        fi
+      else
+        get_pipelines_data $spinnaker_applications
+      fi
+      #  get_pipelines_data
+      #upload spinnaker pipelines data and upload to s3 folder
+      aws s3 cp $tempdir/$bucket_name/$s3_folder s3://$bucket_name/$s3_folder --recursive
+      if [ "$?" != 0 ]; then
+        echo "[ERROR]: Failed to upload to bucket" $bucket_name
+      else
+        echo "uploaded to bucket successfully"
+      fi
+    }
+    sync_from_s3_spin(){
+      echo "downloading  spinnaker application pipelines configuration"
+      aws s3 sync  s3://$bucket_name/$s3_folder $tempdir$s3_folder
+      #apply configuration in spinnaker
+      syncup_spin
+    }
+    delete_s3_object(){
+      #delete an object in bucket
+      aws rm s3://$bucket_name/${s3_folder}/${application_name}/  --recursive
+      if [ $? != 0 ]; then
+        echo "[ERROR]: Failed to delete s3 application folder "
+      else
+        echo "created bucket successfully"
+      fi
+    }
+  spin.sh: |
+    #!/bin/bash
+    #source $(dirname $0)/git.sh
+    tempdir="/tmp/"
+    #spinnaker_applications="sampleapp"
+    get_app_pipelines(){
+      spin pipeline list --application $1  > tmp.json
+      testjson=$(cat tmp.json)
+      if [ "$testjson" == "null" ]; then
+        echo "ERROR: spin pipeline list --application $1, There is no pipeline json for the application $1"
+        echo "Please check the spin-cli-config secret username and password is valid or not"
+        exit 1
+      fi
+      cat tmp.json | jq '.[] | (.name)' | sed 's/\"//g' > pipelines_in_application.list
+      cat tmp.json | jq '.[] | (.id)' | sed 's/\"//g' > pipelines_guid.list
+      rm tmp.json
+    }
+
+    live_backup_spin() {
+    #This function will backup existing spinnaker data and store it in local for further comparison
+      if [[ $repo_type = "s3" ]]; then
+        projectdir=$tempdir/$root_folder
+      else
+        projectdir=$tempdir/${git_repo}/$root_folder
+      fi
+      live_projectdir_workdir=$projectdir/live_backup
+      if [ -d "$live_projectdir_workdir" ]
+      then
+        echo "given live_spinnaker_project_work_dir is present"
+      else
+        echo "given live_spinnaker_project_work_dir is not present therefore creating it"
+        mkdir -p "$projectdir/live_backup"
+      fi
+      cd $live_projectdir_workdir
+      spinnaker_app=$spinnaker_applications
+      IFS=',' read -r -a spinnaker_app_array <<< "$spinnaker_app"
+
+      spinnaker_pipe=$spinnaker_pipelines
+      IFS=',' read -r -a spinnaker_pipe_array <<< "$spinnaker_pipe"
+
+      for (( m=0; m<${#spinnaker_app_array[@]}; m++ )); do
+         sourceApp=${spinnaker_app_array[$m]}
+         echo -e "Processing application $sourceApp\n"
+         mkdir -p $sourceApp ; cd $sourceApp
+         # Get into the correct directory
+         spin -k pipeline list --application $sourceApp  > tmp.json
+         testjson=$(cat tmp.json)
+         if [ "$testjson" == "null" ]; then
+           echo "ERROR: spin pipeline list --application $sourceApp, There is no pipeline json for the application $sourceApp"
+           echo "Please check the spin-cli-config secret username and password is valid or not"
+           exit 1
+         fi
+         cat tmp.json | jq '.[] | (.name)' | sed 's/\"//g' > live_pipelines_in_application.list
+         cat tmp.json | jq '.[] | (.id)' | sed 's/\"//g' > live_pipelines_guid.list
+         rm tmp.json
+
+         spin -k application get $sourceApp  > $sourceApp.json
+         if [ "$?" != "0" ]; then
+           echo "ERROR: spin application get $sourceApp"
+           return 1
+         fi
+
+         if [[ ${#spinnaker_pipe_array[@]} > 0 ]]; then
+           for (( p=0; p<${#spinnaker_pipe_array[@]}; p++ )); do
+                pipeLine=${spinnaker_pipe_array[$p]}
+                echo -e "    Processing pipeline $pipeLine\n"
+                # Check if pipeline exists
+                existingPipe=`grep \^${pipeLine}\$ live_pipelines_in_application.list`
+                if [[ "$existingPipe" == "${pipeLine}" ]]; then
+                   spin -k pipeline get --application $sourceApp  --name "$pipeLine" > "$pipeLine.json"
+                   if [ "$?" != "0" ]; then
+                       echo "ERROR: spin spin pipeline get --application $sourceApp  --name \"$pipeLine\""
+                       return 1
+                   fi
+                else
+                   echo "WARNING: pipeline=${pipeLine} not found in application=$sourceApp ... skipping"
+                fi
+             done
+         else # No pipelines defined, get all the pipelines
+             while read -r line; do
+                echo -e "    Processing pipeline $line\n"
+                spin -k pipeline get --application $sourceApp --name "$line" > "$line.json"
+                if [ "$?" != "0" ]; then
+                  echo "ERROR: spin spin pipeline get --application $sourceApp  --name $line"
+                  return 1
+                fi
+             done < live_pipelines_in_application.list
+         fi
+         cd ..
+      done
+      return 0
+    }
+
+    delete_odd_pipelines() {
+      #Delete the additional pielines that are in spinnaker and not in git
+      for (( m=0; m<${#spinnaker_app_array[@]}; m++ )); do
+        sourceApp=${spinnaker_app_array[$m]}
+        if [ -f "$projectdir/live_backup/$sourceApp/odd_pipeline.txt" ]; then
+          if [ ! -s "$projectdir/live_backup/$sourceApp/odd_pipeline.txt" ]; then
+            echo "no new pipelines to delete"
+          else
+            echo "============ Delete pipeline in $sourceApp Application ============="
+            while IFS= read -r pipelinename; do
+              echo "Deleting the pipeline $pipelinename"
+              spin -k pipeline delete --name $pipelinename --application $sourceApp
+            done < $projectdir/live_backup/$sourceApp/odd_pipeline.txt
+            rm -rf $projectdir/live_backup/$sourceApp/odd_pipeline.txt
+          fi
+        fi
+      done
+    }
+    #Create default parameterconfig-files
+    create_default_params() {
+      targetDir=${1:-default-config}
+      echo "Processing pipelines and creating output in $targetDir"
+      mkdir -p $targetDir
+      for json in *.json ; do
+        [[ -f "$json" ]] || continue
+          echo "processing $json"
+          cat "$json" | jq '.parameterConfig | reduce .[] as $p  ({};.Parameters += {($p.name): $p.default})'  >  $targetDir/tmp-param.json 2>/dev/null
+          cat "$json" | jq '.triggers[0] '  >  $targetDir/tmp-trig.json 2>/dev/null
+          if [[ `cat $targetDir/tmp-trig.json | wc -c` -gt 5 ]]
+          then
+            cat $targetDir/tmp-param.json | jq '.triggerValues=$pp' --argfile pp $targetDir/tmp-trig.json > $targetDir/"$json" 2>/dev/null
+          else
+            cp  $targetDir/tmp-param.json $targetDir/"$json"
+          fi
+        done
+        rm -f $targetDir/tmp-param.json
+        rm -f $targetDir/tmp-trig.json
+        #Remove all files with zero size
+        echo "Removing files that do not have any parameters defined"
+        find $targetDir -type f -size -4c -delete # No parameterConfig in the file
+        #find $targetDir -type f -size -4c -print -delete # No parameterConfig in the file
+    }
+
+    equate_pipelines_in_app() {
+     #This function will comapre the applications and pipelines in git and spinnaker and gives the additional pipelines data
+      IFS=',' read -r -a spinnaker_app_array <<< "$spinnaker_app"
+      IFS=',' read -r -a spinnaker_pipe_array <<< "$spinnaker_pipe"
+      for (( m=0; m<${#spinnaker_app_array[@]}; m++ )); do
+         sourceApp=${spinnaker_app_array[$m]}
+         touch $projectdir/live_backup/$sourceApp/odd_pipeline_id.txt
+         echo $projectdir
+         echo $git_project_work_dir
+         echo $sourceApp
+         diff $projectdir/$git_project_work_dir/$sourceApp/pipelines_guid.list $projectdir/live_backup/$sourceApp/live_pipelines_guid.list | awk '{print $2}' | sed 1d > $projectdir/live_backup/$sourceApp/odd_pipeline_id.txt
+         #list all existing spinnaker pipelines with app as reference
+         spin -k pipeline list --application $sourceApp > $projectdir/live_backup/$sourceApp/$sourceApp-pipeline_list.json
+         touch $projectdir/live_backup/$sourceApp/odd_pipeline.txt
+         while IFS= read -r id; do
+         #Extract the pipeline names using guids as reference
+         cat $projectdir/live_backup/$sourceApp/$sourceApp-pipeline_list.json | jq '.[] | select (.id=="'$id'") | .name' -r >> $projectdir/live_backup/$sourceApp/odd_pipeline.txt
+         done < $projectdir/live_backup/$sourceApp/odd_pipeline_id.txt
+      done
+    }
+
+    syncup_spin() {
+      echo "In Download function that updates the spinnaker instance with the contents in repo"
+      #Backup of existing spinnaker pipelines with guids
+      live_backup_spin
+      #Compare guids of existing pipelines and pipelines in git and provide names of additional pipelines
+      equate_pipelines_in_app
+      #Delete the extra pipelines(pipelines in spinnaker and not in git)
+      if [[ $delete_on_sync_spin == "true" ]]; then
+        delete_odd_pipelines
+      fi
+      if [[ $repo_type = "s3" ]]; then
+        projectdir=$tempdir/$root_folder
+        echo "project dir at synup spin $projectdir"
+      else
+        projectdir=$tempdir/${git_repo}/$root_folder
+      fi
+      if [ -d "$projectdir" ]
+      then
+        echo "given git_project_work_dir is present"
+      else
+        echo "given git_project_work_dir is not present therefore creating it"
+        mkdir -p "$projectdir/$git_project_work_dir"
+      fi
+
+      cd $projectdir
+      spinnaker_app=$spinnaker_applications
+      IFS=',' read -r -a spinnaker_app_array <<< "$spinnaker_app"
+
+      spinnaker_pipe=$spinnaker_pipelines
+      #IFS=',' read -r -a spinnaker_pipe_array <<< "k8s-deploy"
+      IFS=',' read -r -a spinnaker_pipe_array <<< "$spinnaker_pipe"
+
+      echo $projectdir
+      for (( m=0; m<${#spinnaker_app_array[@]}; m++ )); do
+         sourceApp=${spinnaker_app_array[$m]}
+         echo -e "Processing application $sourceApp\n"
+         cd $sourceApp              # Get into the correct directory
+         if [ "$?" != "0" ]; then
+           echo "ERROR: Unable to change to application directory: $sourceApp"
+           return 1
+         fi
+         #Create the application by default, we can have flag to for this later
+         spin -k application save -f $sourceApp.json
+         retVal=$?
+         if [[ "$retVal" != "0" && "$ignore_errors" == "false" ]]; then
+           echo "ERROR: spin application save $sourceApp"
+           return 1
+         elif [[ "$retVal" != "0" && "$ignore_errors" == "true" ]]; then
+           echo "ERROR: spin application save $sourceApp, continuing"
+           cd ..
+           continue
+         fi
+         #sleep 30 # Give a few seconds after application creation
+         if [[ ${#spinnaker_pipe_array[@]} > 0 ]]; then
+             for (( p=0; p<${#spinnaker_pipe_array[@]}; p++ )); do
+                pipeLine=${spinnaker_pipe_array[$p]}
+                echo -e "    Processing pipeline $pipeLine\n"
+                # Check if pipeline file  exists
+                if [ -f "$pipeLine.json" ]; then
+                  #Update parameterConfig
+                  if [[ "$pipelineconfig" == "true" ]]; then
+                    mkdir -p temp
+                    update_params "$pipeLine.json"
+                    rm -rf temp
+                  fi
+                  spin -k pipeline save --file "$pipeLine.json"
+                  retVal=$?
+                  if [[ "$retVal" != "0" && "$ignore_errors" == "false" ]]; then
+                    echo "ERROR: spin pipeline save --file $pipeLine.json"
+                    return 1
+                  elif [[ "$retVal" != "0" && "$ignore_errors" == "true" ]]; then
+                    echo "ERROR: spin pipeline save --file $pipeLine.json, continuing"
+                    continue
+                  fi
+                else
+                   echo "WARNING: pipeline=${pipeLine} not found in application=$sourceApp ... skipping"
+                fi
+             done
+         else # No pipelines defined, get all the pipelines
+           while read -r line; do
+             [[ -f "$line.json" ]] || continue
+             pipeLine=$line
+             echo -e "    Processing pipeline $pipeLine\n"
+             #Update parameterConfig
+             if [[ "$pipelineconfig" == "true" ]]; then
+               echo "in pipelineconfig else"
+               mkdir -p temp
+               update_params "$pipeLine.json"
+               #rm -rf temp
+             fi
+             echo `realpath $pipeLine.json`
+             if test -f "$pipeLine.json"; then
+               spin -k pipeline save --file "$pipeLine.json"
+             fi
+             retVal=$?
+             if [[ "$retVal" != "0" && "$ignore_errors" == "false"  ]]; then
+               echo "ERROR: spin pipeline save --file $pipeLine.json"
+               return 1
+             elif [[ "$retVal" != "0" && "$ignore_errors" == "true" ]]; then
+               echo "ERROR: spin pipeline save --file $pipeLine.json, continuing"
+               continue
+             fi
+             sleep 10 # Slow it down
+           done < pipelines_in_application.list
+         fi
+         cd ..
+      done
+    }
+    get_pipelines_data(){
+      echo $1
+      local  spinnaker_app=$1
+      IFS=',' read -r -a spinnaker_app_array <<< "$spinnaker_app"
+      spinnaker_pipe=$spinnaker_pipelines
+      #IFS=',' read -r -a spinnaker_pipe_array <<< "k8s-deploy"
+      IFS=',' read -r -a spinnaker_pipe_array <<< "$spinnaker_pipe"
+      if [[ $root_folder == "" ]]; then
+        root_folder="."
+      fi
+      for (( m=0; m<${#spinnaker_app_array[@]}; m++ )); do
+        sourceApp=${spinnaker_app_array[$m]}
+        echo -e "Processing application $sourceApp\n"
+        echo "get pipelines data $root_folder"
+        mkdir -p $tempdir/$git_repo/${root_folder}/$sourceApp ; cd $tempdir/$git_repo/${root_folder}/$sourceApp              # Get into the correct directory
+        get_app_pipelines $sourceApp
+        spin application get $sourceApp  > $sourceApp.json
+        if [ "$?" != "0" ]; then
+          echo "ERROR: spin application get $sourceApp"
+          return 1
+        fi
+        if [[ ${#spinnaker_pipe_array[@]} > 0 ]]; then
+          for (( p=0; p<${#spinnaker_pipe_array[@]}; p++ )); do
+            pipeLine=${spinnaker_pipe_array[$p]}
+            echo -e "    Processing pipeline $pipeLine\n"
+            # Check if pipeline exists
+            existingPipe=`grep \^${pipeLine}\$ pipelines_in_application.list`
+            if [[ "$existingPipe" == "${pipeLine}" ]]; then
+              spin pipeline get --application $sourceApp  --name "$pipeLine" > "$pipeLine.json"
+              if [ "$?" != "0" ]; then
+                 echo "ERROR: spin spin pipeline get --application $sourceApp  --name \"$pipeLine\""
+                 return 1
+              fi
+            else
+              echo "WARNING: pipeline=${pipeLine} not found in application=$sourceApp ... skipping"
+            fi
+          done
+        else # No pipelines defined, get all the pipelines
+          while read -r line; do
+            echo -e "    Processing pipeline $line\n"
+            spin pipeline get --application $sourceApp --name "$line" > "$line.json"
+            if [ "$?" != "0" ]; then
+               echo "ERROR: spin spin pipeline get --application $sourceApp  --name $line"
+               return 1
+            fi
+          done < pipelines_in_application.list
+        fi
+        if [[ "$pipelinecreateconf" == "true" ]]; then
+          create_default_params
+        fi
+        cd -
+      done
+    }
+
+    download_spin() {
+      echo "In Download function that updates the spinnaker instance with the contents in git"
+      local user_root_folder=$root_folder
+      if [ "$git_secret_sshkey" != "" ]; then
+        git_clone_ssh_change $user_root_folder $git_repo $git_project
+      elif [ "$git_secret_token" != "" ]; then
+        git_clone_http $user_root_folder $git_repo $git_project
+      else
+        echo "git cloning requires either a git_secret_sshkey to be set or git_secret_token"
+       exit 5
+      fi
+      projectdir=$HOME/$git_project
+      cd $projectdir
+      spinnaker_app=$spinnaker_applications
+      IFS=',' read -r -a spinnaker_app_array <<< "$spinnaker_app"
+
+      spinnaker_pipe=$spinnaker_pipelines
+      #IFS=',' read -r -a spinnaker_pipe_array <<< "k8s-deploy"
+      IFS=',' read -r -a spinnaker_pipe_array <<< "$spinnaker_pipe"
+
+      for (( m=0; m<${#spinnaker_app_array[@]}; m++ )); do
+        sourceApp=${spinnaker_app_array[$m]}
+        echo -e "Processing application $sourceApp\n"
+        cd $sourceApp              # Get into the correct directory
+        if [ "$?" != "0" ]; then
+          echo "ERROR: Unable to change to application directory: $sourceApp"
+          return 1
+        fi
+        #Create the application by default, we can have flag to for this later
+        spin application save -f $sourceApp.json
+        retVal=$?
+        if [[ "$retVal" != "0" && "$ignore_errors" == "false" ]]; then
+          echo "ERROR: spin application save $sourceApp"
+          return 1
+        elif [[ "$retVal" != "0" && "$ignore_errors" == "true" ]]; then
+          echo "ERROR: spin application save $sourceApp, continuing"
+          cd ..
+          continue
+        fi
+        sleep 30 # Give a few seconds after application creation
+        if [[ ${#spinnaker_pipe_array[@]} > 0 ]]; then
+          for (( p=0; p<${#spinnaker_pipe_array[@]}; p++ )); do
+            pipeLine=${spinnaker_pipe_array[$p]}
+            echo -e "    Processing pipeline $pipeLine\n"
+            # Check if pipeline file  exists
+            if [ -f "$pipeLine.json" ]; then
+              #Update parameterConfig
+              if [[ "$pipelineconfig" == "true" ]]; then
+                 mkdir -p temp
+                 update_params "$pipeLine.json"
+                 rm -rf temp
+              fi
+              spin pipeline save --file "$pipeLine.json"
+              retVal=$?
+              if [[ "$retVal" != "0" && "$ignore_errors" == "false" ]]; then
+                 echo "ERROR: spin pipeline save --file $pipeLine.json"
+                 return 1
+              elif [[ "$retVal" != "0" && "$ignore_errors" == "true" ]]; then
+                 echo "ERROR: spin pipeline save --file $pipeLine.json, continuing"
+                 continue
+              fi
+            else
+              echo "WARNING: pipeline=${pipeLine} not found in application=$sourceApp ... skipping"
+            fi
+          done
+         else # No pipelines defined, get all the pipelines
+           while read -r line; do
+             [[ -f "$line.json" ]] || continue
+             pipeLine=$line
+             echo -e "    Processing pipeline $pipeLine\n"
+             #Update parameterConfig
+             if [[ "$pipelineconfig" == "true" ]]; then
+                mkdir -p temp
+                update_params "$pipeLine.json"
+                #rm -rf temp
+             fi
+             spin pipeline save --file "$pipeLine.json"
+             retVal=$?
+             if [[ "$retVal" != "0" && "$ignore_errors" == "false"  ]]; then
+               echo "ERROR: spin pipeline save --file $pipeLine.json"
+               return 1
+             elif [[ "$retVal" != "0" && "$ignore_errors" == "true" ]]; then
+               echo "ERROR: spin pipeline save --file $pipeLine.json, continuing"
+               continue
+             fi
+             sleep 10 # Slow it down
+           done < pipelines_in_application.list
+         fi
+         cd ..
+      done
+    }
+
+    update_params() {
+      confDir=${pipelineconfigdir}
+      if [ ! -d "$confDir" ] ; then
+        echo "Directory specified for configuratio ($confDir) not found in application directory"
+        return
+      fi
+      if [ ! -f "$confDir/$json" ] ; then
+        echo "INFO: No configuration found for $json in $confDir"
+        return
+      fi
+      json="$1"
+      echo "Processing pipeline ($json) and updating pipelines as per configuration in $confDir"
+      #Extract .parameterConfig
+      cat "$json" | jq '.parameterConfig' > temp/"config-$json"
+      #Replace parameters
+      cat temp/"config-$json" | jq -f /home/opsmx/scripts/replace-params.jq --argfile pp $confDir/"$json" > temp/"updated-config-$json"
+      #Replace .parameterConfig
+      cat "$json" | jq  '.parameterConfig=$uc' --argfile uc temp/"updated-config-$json" > temp/"$json"
+      ########################################################################
+      #Extract 1st trigger
+      cat  temp/"$json"| jq '.triggers[0]' > temp/tmp-trig.json
+      #Update first trigger
+      cat temp/tmp-trig.json | jq 'if $pp.triggerValues != null then . * $pp.triggerValues else . end'  --argfile pp $confDir/"$json"  > temp/updated-tmp-trig.json
+      #Update pipeline-json with updated trigger
+      if [[ `cat temp/updated-tmp-trig.json | wc -c` -gt 5 ]]
+      then
+        cat temp/"$json" | jq '.triggers[0]=$pp' --argfile pp temp/updated-tmp-trig.json > temp/final-replaced.json
+        cp temp/final-replaced.json "$json"
+      else
+        cp  temp/"$json" "$json"
+      fi
+      ########################################################################
+    }
+  stash.sh: |
+    #!/bin/bash
+    #this script funtions only work for self hosted bitbucketserver/stash central repository
+    #env variables needed for this to work are as below
+    #***git_url="example.bitbucket.com" make sure you dont add http/https or / in the url
+    #****git_repo="pipelinepromotion" repo to be pushed/download pipeline json files from
+    #***git_project="kes" project key is needed to clone/push/pull merge code
+    #***git_user="tes.user" user is needed for cloning and pusing changes (stash does not support only access key)
+    #git_password="adjoowddaw" make sure your password does not include special characters like # @*/. special characters cause git clone command to fail with https
+    #***git_branch="testbranch" the branch to which the code should be merged with
+    #***merge_branch=false if true then provide all the below env variables
+    #   git_secret_token="dafjaljoahfoasjoijso" needed to create pull requests should be the git_users secret token
+    #   git_pr_token="slkdfjaljoajfopaj" this is approver token to approve pull requests / you can also provide approver password here.
+    #   git_approve_user="test.approver"  username of the pull request approver
+    #
+    # repo_type="stash" for selfhosted bitbucket server please use stash as repo type
+    #***root_folder="path/to/pipeline-promotion/folder" folder to be selected in the repo to which the pipeline jobs to be pushed
+    #***command=upload for running specific job -
+    #                                         upload - to upload spinnaker pipeline json files to repo
+    #                                         download - to download pipeline json file from repo and apply on spinnaker
+    #***spinnaker_applications="testapp,sampleapp" application needed to collect the pipeline information
+    #spinnaker_pipelines="" provide pipelines to be collected, if nothing given, all the pipelines of the application are collected
+    #git_secret_sshkey="sshkey" ssh key if you want to clone repo with ssh protocol
+
+    # note *** env variables are mandatory to work with the script
+    source scripts/git.sh
+    git_repo=$repo_name
+    pr_id=0
+    pr_version=0
+    approve_pr_stash(){
+      approve_req=$(curl -k -o -I -L -s -w "%{http_code}"  -X POST -H "Content-Type: application/json" -u $git_approve_user:$git_pr_token \
+      https://$git_api_url/${git_project}/repos/${git_repo}/pull-requests/${pr_id}/approve)
+      echo $approve_req
+      if [[ $approve_req == "200" ]];then
+        echo "merge request approved successfully"
+      else
+        echo "FAIL: failed to approve the request "
+        exit 1
+      fi
+    }
+
+    merge_pr_stash(){
+      merge_req=$(curl -k -o -I -L -s -w "%{http_code}"  -X POST -H "Content-Type: application/json" -u $git_user:$git_secret_token   \
+      https://$git_api_url/${git_project}/repos/${git_repo}/pull-requests/${pr_id}/merge?version=$pr_version)
+      echo $merge_req
+      if [ $merge_req == "200" ]; then
+        echo "merged pr successfully"
+      else
+        echo "FAILED: failed to merge $merge_pr"
+        exit 1
+    fi
+    }
+    create_pr_stash(){
+        local output=$(curl -k -X POST -H "Content-Type: application/json" -u $git_user:$git_secret_token   https://$git_api_url/${git_project}/repos/${git_repo}/pull-requests -d '{
+        "title": "merging '"$git_branch"' to '"$target_branch"'",
+        "description": "changes from spinnaker pipeline jobs are to be merged to master",
+        "state": "OPEN",
+        "open": true,
+        "closed": false,
+        "fromRef": {
+            "id": "refs/heads/'"${git_branch}"'",
+            "repository": {
+                "slug": "'"${git_repo}"'",
+                "name": null,
+                "project": {
+                    "key": "'"${git_project}"'"
+                }
+            }
+        },
+        "toRef": {
+            "id": "refs/heads/'"$target_branch"'",
+            "repository": {
+                "slug": "'"${git_repo}"'",
+                "name": null,
+                "project": {
+                    "key": "'"${git_project}"'"
+                }
+            }
+        },
+        "locked": false
+    }')
+      echo $output
+      echo $output > pr_response.json
+      grep  "is already up-to-date with branch" pr_response.json
+      if [ "$?" = 0 ]
+      then
+        echo "master branch is already up-to-date"
+        exit 0
+      else
+        pr_id=$(cat  pr_response.json| jq '(.id)' | sed 's/\"//g')
+        pr_version=$(cat pr_response.json | jq '(.version)' | sed 's/\"//g')
+        if [ $? = 0 ]; then
+          echo "successfully created pull request "
+          #rm -f pr_response.json
+        else
+          echo "ERROR: failed to raise pull request $output"
+          exit 1
+      fi
+    fi
+    }
+
+    sync_spin_to_stash(){
+      #setup git configuration using email and username
+      setup_git
+      #upload spinnaker configuration to git
+      sync_spin_to_git
+      #check if custom port is being used for repo
+      if [[ $merge_branch == "true" && $target_branch != "" && ($git_branch != $target_branch)  ]];then
+        if [[ $git_api_url_port != "" ]];then
+          git_api_url=$git_api_url:$git_api_url_port
+          create_pr_stash
+          if [[ $auto_merge == "true" ]]; then
+            approve_pr_stash
+            merge_pr_stash
+          fi
+        else
+          create_pr_stash
+          if [[ $auto_merge == "true" ]]; then
+            approve_pr_stash
+            merge_pr_stash
+          fi
+        fi
+      fi
+    }
+kind: ConfigMap
+metadata:
+  name: pipe-promot-scripts

@@ -1,0 +1,113 @@
+---
+# Source: oes/templates/deployments/oes-sapor-deployment.yaml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  annotations:
+    moniker.spinnaker.io/application: isd
+  labels:
+    app: oes
+    component: sapor
+    heritage: "Helm"
+    release: "release-name"
+    chart: "oes-4.0.19"
+  name: oes-sapor
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: oes
+      component: sapor
+  template:
+    metadata:
+      annotations:
+        checksum/configmap: 820333eb52c694c9d4071b21e6b8d85808d604a9e237106a75c298f2a97dd827
+        checksum/configmap: 44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a
+        checksum/secret: 0fc3fa3c51b1f08284f11e89bea41bcbf8be1602e6dfecbd6575902651146fe9
+        moniker.spinnaker.io/application: isd
+        prometheus.io/scrape: "true"
+        prometheus_io_path: /mgmt/prometheus
+        prometheus_io_port: "8085"
+      labels:
+        app: oes
+        component: sapor
+        heritage: "Helm"
+        release: "release-name"
+        chart: "oes-4.0.19"
+    spec:
+      initContainers:
+      - name: db-check
+        image: quay.io/opsmxpublic/pgchecker:v1
+        command:
+          - sh
+          - -c
+          - |
+            echo 'Waiting for OES-DB to become ready...'
+            until printf "." && nc -z -w 2 oes-db 5432; do
+               sleep 2;
+            done;
+            echo 'OESDB OK ✓'
+      containers:
+      - image: quay.io/opsmxpublic/ubi8-oes-sapor:isd-spin-2024.12.00-2d3e047f-202412050638
+        name: oes-sapor
+        env:
+        ports:
+        - containerPort: 8085
+          protocol: TCP
+        volumeMounts:
+        - mountPath: /opt/opsmx/controller/ca.crt
+          name: ca-certs-volume
+          subPath: tls.crt
+        - mountPath: /opt/opsmx/controller/cert/tls.crt
+          name: certs-volume
+          subPath: tls.crt
+        - mountPath: /opt/opsmx/controller/cert/tls.key
+          name: certs-volume
+          subPath: tls.key
+        - name: sapor-config-volume
+          mountPath: /opt/opsmx/application.yml
+          subPath: application.yml
+        - mountPath: /opt/opsmx/bootstrap.yml
+          name: bootstrap-config-volume
+          subPath: bootstrap.yml
+        - mountPath: /opsmx/conf/standard-error-code.csv
+          name: standard-error-conf
+          subPath: standard-error-codes.csv
+        resources:
+            {}
+        readinessProbe:
+          tcpSocket:
+            port: 8085
+          initialDelaySeconds: 60
+          periodSeconds: 10
+          failureThreshold: 10
+        livenessProbe:
+          httpGet:
+            path: /mgmt/health
+            port: 8085
+          initialDelaySeconds: 60
+          periodSeconds: 10
+          failureThreshold: 10
+      volumes:
+      - secret:
+          secretName: oes-control-secret
+        name: certs-volume
+      - secret:
+          secretName: ca-secret
+        name: ca-certs-volume
+      - secret:
+          secretName: oes-sapor-config
+        name: sapor-config-volume
+      - secret:
+          items:
+          - key: bootstrap.yml
+            path: bootstrap.yml
+          secretName: sapor-bootstrap
+        name: bootstrap-config-volume
+      - configMap:
+          defaultMode: 420
+          items:
+          - key: standard-error-codes.csv
+            path: standard-error-codes.csv
+          name: standard-error-codes-config
+        name: standard-error-conf

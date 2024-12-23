@@ -1,0 +1,101 @@
+---
+# Source: oes/templates/deployments/oes-audit-client.yaml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  annotations:
+    moniker.spinnaker.io/application: isd
+  labels:
+    app: oes
+    component: auditclient
+    heritage: "Helm"
+    release: "release-name"
+    chart: "oes-4.0.19"
+  name: oes-audit-client
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: oes
+      component: auditclient
+  template:
+    metadata:
+      annotations:
+        checksum/secret: 4d6738530b415fe57d38558c0f1b433e69dd89b2890631a7b0b337d84293c306
+        moniker.spinnaker.io/application: isd
+        prometheus.io/scrape: "true"
+        prometheus_io_path: /mgmt/prometheus
+        prometheus_io_port: "8098"
+      labels:
+        app: oes
+        component: auditclient
+        heritage: "Helm"
+        release: "release-name"
+        chart: "oes-4.0.19"
+    spec:
+      initContainers:
+      - name: db-check
+        image: quay.io/opsmxpublic/pgchecker:v1
+        command:
+          - sh
+          - -c
+          - |
+            echo 'Waiting for OES-DB to become ready...'
+            until printf "." && nc -z -w 2 oes-db 5432; do
+               sleep 2;
+            done;
+            echo 'OESDB OK ✓'
+      containers:
+      - image: quay.io/opsmxpublic/ubi8-oes-audit-client:isd-spin-2024.12.00-3995755-202412111026
+        imagePullPolicy: IfNotPresent
+        name: oes-audit-client
+        env:
+        ports:
+        - containerPort: 8098
+          name: backend
+          protocol: TCP
+        livenessProbe:
+          failureThreshold: 3
+          httpGet:
+            path: /mgmt/health
+            port: 8098
+            scheme: HTTP
+          initialDelaySeconds: 60
+          periodSeconds: 60
+          successThreshold: 1
+          timeoutSeconds: 1
+        readinessProbe:
+          failureThreshold: 3
+          initialDelaySeconds: 60
+          periodSeconds: 10
+          successThreshold: 1
+          tcpSocket:
+            port: 8098
+        volumeMounts:
+        - mountPath: /opsmx/conf/audit-client-local.yml
+          name: audit-config-volume
+          subPath: audit-local.yml
+        - mountPath: /opsmx/conf/bootstrap.yml
+          name: bootstrap-config-volume
+          subPath: bootstrap.yml
+        - mountPath: /opsmx/conf/standard-error-code.csv
+          name: standard-error-conf
+          subPath: standard-error-codes.csv
+      volumes:
+      - secret:
+          items:
+          - key: audit-local.yml
+            path: audit-local.yml
+          secretName: oes-audit-client-config
+        name: audit-config-volume
+      - name: bootstrap-config-volume
+        secret:
+          defaultMode: 420
+          secretName: bootstrap
+      - configMap:
+          defaultMode: 420
+          items:
+          - key: standard-error-codes.csv
+            path: standard-error-codes.csv
+          name: standard-error-codes-config
+        name: standard-error-conf

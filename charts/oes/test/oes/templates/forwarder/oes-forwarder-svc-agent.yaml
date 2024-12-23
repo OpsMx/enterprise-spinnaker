@@ -1,0 +1,45 @@
+---
+# Source: oes/templates/forwarder/oes-forwarder-svc-agent.yaml
+apiVersion: v1
+kind: Service
+metadata:
+  name: opsmx-controller-controller1
+  labels:
+    agent.opsmx.com/name: controller1
+    agent.opsmx.com/role: controller
+    heritage: "Helm"
+    release: "release-name"
+    chart: "oes-4.0.19"
+spec:
+  selector:
+    app: opsmx-controller-controller1
+  type: ClusterIP
+  ports:
+  - name: service-api
+    port: 9002
+    targetPort: service-api
+  - name: control-api
+    port: 9003
+    targetPort: control-api
+  - name: remote-command
+    port: 9004
+    targetPort: remote-command
+---
+# Source: oes/templates/forwarder/oes-forwarder-svc-agent.yaml
+apiVersion: v1
+kind: Service
+metadata:
+  name: agent-grpc
+  labels:
+    agent.opsmx.com/name: controller1
+    agent.opsmx.com/role: controller
+    heritage: "Helm"
+    release: "release-name"
+    chart: "oes-4.0.19"
+spec:
+  selector:
+    app: opsmx-controller-controller1
+  type: LoadBalancer
+  ports:
+  - name: agent-grpc
+    port: 9001

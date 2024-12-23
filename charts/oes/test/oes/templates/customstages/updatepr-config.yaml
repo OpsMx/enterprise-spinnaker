@@ -1,0 +1,17 @@
+---
+# Source: oes/templates/customstages/updatepr-config.yaml
+apiVersion: v1
+data:
+  run.sh: "#!/bin/sh\naccesstoken=$(echo \"$accesstoken\" | tr -d [:space:])\nmethod=$(echo
+    \"$method\"| tr -d [:space:])\nurl=$(echo $url | tr -d [:space:])\nif [ -z $accesstoken
+    ]\nthen\n\techo \"not specified accesstoken\"\n\texit 5\nelse\n\tif [ -z $method
+    ]\n\tthen\n\t\techo \"not specified the method ....POST\"\n\t\texit 5\n\telse\n\t\tif
+    [ -z \"$url\" ]\n\t\tthen\n\t\t       echo \"not specified the URL\"\n\t\t       exit
+    5\n\t       else\n\t\t       curl -s -H \"Authorization: token $accesstoken\"
+    -X $method -d '{\"body\":\"'\"$payload\"'\"}' \"$url\"\n\t\t       if [ $? -eq
+    0 ]\n\t\t       then\n\t\t\t       echo \"curl call succeded\"\n\t\t       else\n\t\t\t
+    \      echo Curl call not succeded with the URL $url\n\t\t\t       exit 5\n\t\t
+    \      fi\n\t       fi\n       fi\nfi\n"
+kind: ConfigMap
+metadata:
+  name: updatepr-config

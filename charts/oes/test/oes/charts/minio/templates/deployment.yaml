@@ -1,0 +1,71 @@
+---
+# Source: oes/charts/minio/templates/deployment.yaml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: release-name-minio
+  labels:
+    app: minio
+    chart: minio-8.0.9
+    release: release-name
+    heritage: Helm
+spec:
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxSurge: 100%
+      maxUnavailable: 0
+  selector:
+    matchLabels:
+      app: minio
+      release: release-name
+  template:
+    metadata:
+      name: release-name-minio
+      labels:
+        app: minio
+        release: release-name
+      annotations:
+        checksum/secrets: 1a0ca5b40b74de0e6c8f6cfe9f6a966abcbfe6ca05ea649678243db0349c6dc3
+        checksum/config: c5437ab034aa2db477a5da61c0599e7b9df73ffefe53f671bd0dc90febb1501b
+    spec:
+      serviceAccountName: "release-name-minio"
+      securityContext:
+        runAsUser: 1000
+        runAsGroup: 1000
+        fsGroup: 1000
+      containers:
+        - name: minio
+          image: "minio/minio:RELEASE.2020-12-03T05-49-24Z"
+          imagePullPolicy: IfNotPresent
+          command:
+            - "/bin/sh"
+            - "-ce"
+            - "/usr/bin/docker-entrypoint.sh minio -S /etc/minio/certs/ server /export"
+          volumeMounts:
+            - name: export
+              mountPath: /export            
+          ports:
+            - name: http
+              containerPort: 9000
+          env:
+            - name: MINIO_ACCESS_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: release-name-minio
+                  key: accesskey
+            - name: MINIO_SECRET_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: release-name-minio
+                  key: secretkey
+          resources:
+            requests:
+              memory: 4Gi      
+      volumes:
+        - name: export
+          persistentVolumeClaim:
+            claimName: release-name-minio
+        - name: minio-user
+          secret:
+            secretName: release-name-minio

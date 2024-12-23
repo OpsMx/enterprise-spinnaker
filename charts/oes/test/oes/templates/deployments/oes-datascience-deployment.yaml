@@ -1,0 +1,75 @@
+---
+# Source: oes/templates/deployments/oes-datascience-deployment.yaml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  annotations:
+    moniker.spinnaker.io/application: isd
+  labels:
+    app: oes
+    component: datascience
+    heritage: "Helm"
+    release: "release-name"
+    chart: "oes-4.0.19"
+  name: oes-datascience
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: oes
+      component: datascience
+  template:
+    metadata:
+      annotations:
+        checksum/secret: 43690ae3316ea3d3f8f2924af0bdbac41b8fb291306b8827b3b8028a99ead5b9
+        moniker.spinnaker.io/application: isd
+        prometheus.io/scrape: "false"
+        prometheus_io_path: /mgmt/prometheus
+        prometheus_io_port: "5005"
+      labels:
+        app: oes
+        component: datascience
+        heritage: "Helm"
+        release: "release-name"
+        chart: "oes-4.0.19"
+    spec:
+      initContainers:
+      - name: db-check
+        image: quay.io/opsmxpublic/pgchecker:v1
+        command:
+          - sh
+          - -c
+          - |
+            echo 'Waiting for OES-DB to become ready...'
+            until printf "." && nc -z -w 2 oes-db 5432; do
+               sleep 2;
+            done;
+            echo 'OESDB OK ✓'
+      containers:
+      - image: quay.io/opsmxpublic/ubi8-oes-datascience:isd-spin-2024.12.00-ac2240e91-202411271123
+        imagePullPolicy: IfNotPresent
+        name: oes-datascience
+        env:
+        ports:
+        - containerPort: 5005
+          name: backend
+          protocol: TCP
+        readinessProbe:
+          failureThreshold: 3
+          initialDelaySeconds: 60
+          periodSeconds: 10
+          successThreshold: 1
+          tcpSocket:
+            port: 5005
+          timeoutSeconds: 1
+        volumeMounts:
+        - mountPath: /home/ubuntu/.aws/credentials
+          name: datascience-config-volume
+          subPath: minio-credentials
+        - mountPath: /home/ubuntu/datascience/app_config.yaml
+          name: datascience-config-volume
+          subPath: app-config.yml
+      volumes:
+      - secret:
+          secretName: oes-datascience-config
+        name: datascience-config-volume

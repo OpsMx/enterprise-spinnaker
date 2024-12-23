@@ -1,0 +1,22 @@
+---
+# Source: oes/templates/services/oes-datascience-service.yaml
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    app: oes
+    component: datascience
+    heritage: "Helm"
+    release: "release-name"
+    chart: "oes-4.0.19"
+  name: oes-datascience
+spec:
+  ports:
+  - name: datascience
+    port: 5005
+    protocol: TCP
+    targetPort: 5005
+  selector:
+    app: oes
+    component: datascience
+  type: ClusterIP

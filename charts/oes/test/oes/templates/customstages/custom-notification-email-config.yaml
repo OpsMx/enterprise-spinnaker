@@ -1,0 +1,61 @@
+---
+# Source: oes/templates/customstages/custom-notification-email-config.yaml
+apiVersion: v1
+data:
+  run.sh: |
+    #!/bin/sh
+    #Install SSMTP
+    apk add ssmtp > /dev/null
+    #Removing default file
+    cat /dev/null >/etc/ssmtp/ssmtp.conf
+    #Add configuration in ssmtp.conf file
+    ssmtpemail=$(echo "$ssmtpemail" | tr -d [:space:])
+    email=$(echo "$email"| tr -d [:space:])
+    body=$(echo $body | tr -d [:space:])
+    if [ -z $ssmtpemail ]
+    then
+    echo "not specified smtp email"
+    exit 5
+    else
+    if [ -z $email ]
+    then
+    echo "not specified the sender email address"
+    exit 5
+    else
+    if [ -z "$body" ]
+    then
+    echo "not specified the Email body"
+    exit 5
+    else
+    cat <<EOT>> /etc/ssmtp/ssmtp.conf
+    root=$ssmtpemail
+    mailhub=smtp.gmail.com:587
+    AuthUser=$ssmtpemail
+    AuthPass=$emailpassword
+    UserTLS=YES
+    UseSTARTTLS=YES
+    rewriteDomain=gmail.com
+    hostname=localhost
+    FromLineOverride=YES
+    EOT
+    #add body to file
+    touch body.txt
+    cat <<EOT>> body.txt
+    $body
+    EOT
+    export MAILFROM="$ssmtpemail"
+    export MAILTO="$email,$ccmail"
+    export SUBJECT="$subject"
+    export BODY="body.txt"
+    (
+    echo "From: $MAILFROM"
+    echo "To: $MAILTO"
+    echo "Subject: $SUBJECT"
+    cat $BODY
+    ) | /usr/sbin/sendmail $MAILTO
+    fi
+    fi
+    fi
+kind: ConfigMap
+metadata:
+  name: email-config

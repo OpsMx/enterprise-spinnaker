@@ -1,0 +1,148 @@
+---
+# Source: oes/charts/spinnaker/templates/configmap/halyard-overrideurl.yaml
+apiVersion: v1
+data:
+  call_overrides.sh: |
+    echo $SPINNAKER_NAMESPACE
+    sh /tmp/autoconfig/config_overrideurl.sh spin-gate-overrideurl-gitops
+    sh /tmp/autoconfig/config_overrideurl.sh spin-deck-overrideurl-gitops
+  config_overrideurl.sh: |
+    #!/bin/bash -x
+
+    if [ $# -gt 1 ]
+    then
+       echo "Invalid input, only one argument expected"
+       exit
+    fi
+
+    COMPONENT=$1
+    EXTERNAL_IP_CHECK_DELAY=1
+
+    check_for_loadBalancer()
+    {
+        ## Wait for $EXTERNAL_IP_CHECK_DELAY till K8s assins a load Balancer IP to oes-gate
+        iter=0
+        lapsedTime=0
+        while [ $iter -lt 100 ]
+        do
+          ENDPOINT_IP=$(kubectl get svc $1 -o jsonpath="{.status.loadBalancer.ingress[].ip}")
+          if [ ! -z "$ENDPOINT_IP" ];
+          then
+            echo "Found LoadBalancer IP for" $1
+            break
+          fi
+          sleep 5
+          lapsedTime=`expr $lapsedTime + 5`
+          if [ $lapsedTime -gt $EXTERNAL_IP_CHECK_DELAY ];
+          then
+    	echo "Time Lapsed" $lapsedTime
+            echo "Timeout! Fetching nodeport IP alternatively"
+            break
+          fi
+          echo "Time Lapsed" $lapsedTime
+          iter=`expr $iter + 1`
+        done
+    }
+
+    case "$COMPONENT" in
+      spin-gate)
+        ENDPOINT_IP=""
+        PORT=8084
+
+        ## Wait for $EXTERNAL_IP_CHECK_DELAY till K8s assins a load Balancer IP to oes-gate
+        check_for_loadBalancer spin-gate-lb
+
+        ## If external IP is not available
+        if [ -z "$ENDPOINT_IP" ]; then
+          ## Fetch the nodePort IP and replace in spinnaker.yaml
+          #ENDPOINT_IP=$(kubectl get ep kubernetes -n default -o jsonpath="{.subsets[].addresses[].ip}")
+          ENDPOINT_IP=$NODE_IP
+          PORT=$(kubectl get svc spin-gate-np -o jsonpath="{.spec.ports[].nodePort}")
+          sed -i  s/OVERRIDE_API_URL/$ENDPOINT_IP:$PORT/g /tmp/spinnaker/.hal/config
+        else
+          ## Substitute spin-gate external IP in hal config
+          sed -i  s/OVERRIDE_API_URL/$ENDPOINT_IP:$PORT/g /tmp/spinnaker/.hal/config
+        fi
+        ;;
+
+      spin-deck)
+        ENDPOINT_IP=""
+        PORT=9000
+
+        ## Wait for $EXTERNAL_IP_CHECK_DELAY till K8s assins a load Balancer IP to oes-gate
+        check_for_loadBalancer spin-deck-lb
+
+        ## If external IP is not available
+        if [ -z "$ENDPOINT_IP" ]; then
+          ## Fetch the nodePort & nodeport and replace in app-config.js
+          ENDPOINT_IP=$NODE_IP
+          PORT=$(kubectl get svc spin-deck-np -o jsonpath="{.spec.ports[].nodePort}")
+          sed -i  s/OVERRIDE_DECK_URL/$ENDPOINT_IP:$PORT/g /tmp/spinnaker/.hal/config
+        else
+          ## Substitute spin-deck external IP in hal config
+          sed -i  s/OVERRIDE_DECK_URL/$ENDPOINT_IP:$PORT/g /tmp/spinnaker/.hal/config
+        fi
+        ;;
+      override-gate-url)
+        ENDPOINT_IP=""
+        PORT=8084
+
+        export DAEMON_ENDPOINT=http://release-name-spinnaker-halyard:8064
+        export HAL_COMMAND="hal --daemon-endpoint $DAEMON_ENDPOINT"
+
+        ## Wait for $EXTERNAL_IP_CHECK_DELAY till K8s assins a load Balancer IP to oes-gate
+        check_for_loadBalancer spin-gate-np
+
+        ## If external IP is not available
+        if [ -z "$ENDPOINT_IP" ]; then
+          ## Fetch the nodePort IP and replace in spinnaker.yaml
+          #ENDPOINT_IP=$(kubectl get ep kubernetes -n default -o jsonpath="{.subsets[].addresses[].ip}")
+          ENDPOINT_IP=$NODE_IP
+          PORT=$(kubectl get svc spin-gate-np -o jsonpath="{.spec.ports[].nodePort}")
+          $HAL_COMMAND config security api edit --no-validate --override-base-url http://$ENDPOINT_IP:$PORT
+        else
+          ## Run hal config edit command to override gate url
+          $HAL_COMMAND config security api edit --no-validate --override-base-url http://$ENDPOINT_IP:$PORT
+        fi
+        ;;
+      override-deck-url)
+        ENDPOINT_IP=""
+        PORT=9000
+
+        export DAEMON_ENDPOINT=http://release-name-spinnaker-halyard:8064
+        export HAL_COMMAND="hal --daemon-endpoint $DAEMON_ENDPOINT"
+
+        ## Wait for $EXTERNAL_IP_CHECK_DELAY till K8s assins a load Balancer IP to oes-gate
+        check_for_loadBalancer spin-deck-np
+
+        ## If external IP is not available
+        if [ -z "$ENDPOINT_IP" ]; then
+          ## Fetch the nodePort & nodeport and replace in app-config.js
+          ENDPOINT_IP=$NODE_IP
+          PORT=$(kubectl get svc spin-deck-np -o jsonpath="{.spec.ports[].nodePort}")
+          $HAL_COMMAND config security ui edit --no-validate --override-base-url http://$ENDPOINT_IP:$PORT
+        else
+          ## Run hal config edit command to override deck url
+          $HAL_COMMAND config security ui edit --no-validate --override-base-url http://$ENDPOINT_IP:$PORT
+        fi
+        ;;
+      spin-gate-overrideurl-gitops)
+        ## Configured ingress host url as override url
+          echo "Substituting gate url"
+          sed -i 's,PROTOCOL,http,g' /tmp/spinnaker/.hal/config
+          sed -i 's,OVERRIDE_API_URL,oes.example.ops.com/gate,g' /tmp/spinnaker/.hal/config
+        ;;
+      spin-deck-overrideurl-gitops)
+        ## Configured ingress host url as override url
+          echo "Substituting deck url"
+          sed -i 's,OVERRIDE_DECK_URL,oes.example.ops.com/deck,g' /tmp/spinnaker/.hal/config
+        ;;
+      *)
+        echo  COMP=$COMPONENT
+        echo "Invalid input:$COMPONENT"
+        ;;
+    esac
+
+kind: ConfigMap
+metadata:
+  name: release-name-spinnaker-halyard-overrideurl

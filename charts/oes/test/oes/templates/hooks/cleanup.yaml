@@ -1,0 +1,27 @@
+---
+# Source: oes/templates/hooks/cleanup.yaml
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: "oes-cleanup"
+  labels:
+    heritage: "Helm"
+    release: "release-name"
+    chart: "oes-4.0.19"
+  annotations:
+    "helm.sh/hook": "pre-delete"
+    "helm.sh/hook-delete-policy": "before-hook-creation"
+spec:
+  template:
+    metadata:
+      labels:
+        heritage: "Helm"
+        release: "release-name"
+        chart: "oes-4.0.19"
+    spec:
+      restartPolicy: OnFailure
+      containers:
+      - name: oes-cleanup
+        image: quay.io/opsmxpublic/ubi8-halyard-cve:1.65.0-e777b4b4-202412031020
+        command: ["/bin/bash","-c"]
+        args: ["kubectl delete ingress --ignore-not-found oes-gate-ingress oes-ui-ingress release-name-spinnaker-deck; kubectl delete secret --ignore-not-found ca-secret jwt-secret oes-cacerts oes-control-secret"]

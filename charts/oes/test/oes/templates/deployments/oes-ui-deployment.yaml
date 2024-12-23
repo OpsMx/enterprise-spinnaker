@@ -1,0 +1,69 @@
+---
+# Source: oes/templates/deployments/oes-ui-deployment.yaml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  annotations:
+    moniker.spinnaker.io/application: isd
+  labels:
+    app: oes
+    component: ui
+    heritage: "Helm"
+    release: "release-name"
+    chart: "oes-4.0.19"
+  name: oes-ui
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: oes
+      component: ui
+  template:
+    metadata:
+      annotations:
+        checksum/configmap: 5ea0f3bbd987c5dea515b0d9e94cd1455db4cab08c34cc0d9cdf8bc82882aae2
+        moniker.spinnaker.io/application: isd
+      labels:
+        app: oes
+        component: ui
+        heritage: "Helm"
+        release: "release-name"
+        chart: "oes-4.0.19"
+    spec:
+      containers:
+      - image: quay.io/opsmxpublic/ubi8-oes-ui:isd-spin-2024.12.00-9effc4b41-202412101126
+        name: oes-ui
+        env:
+        ports:
+        - containerPort: 8080
+          protocol: TCP
+        volumeMounts:
+        - name: config-dir
+          mountPath: /var/www/html/ui/assets/config/app-config.json
+          subPath: app-config.json
+        - name: config-dir
+          mountPath: /var/www/html/ui/assets/config/help-text.json
+          subPath: help-text.json
+        - mountPath: /etc/nginx/nginx.conf
+          name: nginx-config
+          subPath: nginx.conf
+        readinessProbe:
+          tcpSocket:
+            port: 8080
+          initialDelaySeconds: 15
+          periodSeconds: 5
+        livenessProbe:
+          httpGet:
+            path: /ui/indexl.html
+            port: 8080
+          initialDelaySeconds: 15
+          periodSeconds: 5
+      volumes:
+      - configMap:
+          defaultMode: 420
+          name: oes-ui-config
+        name: config-dir
+      - configMap:
+          defaultMode: 420
+          name: oes-ui-nginxconf
+        name: nginx-config

@@ -1,0 +1,192 @@
+---
+# Source: oes/charts/spinnaker/templates/configmap/halyard-init-script.yaml
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: release-name-spinnaker-halyard-init-script
+  labels:
+    app: "release-name-spinnaker"
+    heritage: "Helm"
+    release: "release-name"
+    chart: "spinnaker-2.2.3"
+data:
+  init.sh: |
+    #!/bin/bash -x
+    rm -rf /tmp/spinnaker/.hal
+    GIT_USER=`echo $GIT_USER | sed 's/ *$//g'`
+    GIT_TOKEN=`echo $GIT_TOKEN | sed 's/ *$//g'`
+    git -c http.sslVerify=false clone $GIT_CLONE_PARAM -b master /tmp/spinnaker/test 2>/tmp/tmp.log
+    if [[ $? != 0 ]]; then
+       echo "ERROR: Failed while trying to execute:"
+       echo "git -c http.sslVerify=false clone $GIT_CLONE_PARAM -b master /tmp/spinnaker/test" | sed s/$GIT_TOKEN/\<TOKEN_REDACTED\>/g
+       sed s/$GIT_TOKEN/\<TOKEN_REDACTED\>/g /tmp/tmp.log
+       echo "####"
+       echo "Correct baseUrlHostName, organization, username, token and repository in values.yaml and re-execute 'helm upgrade --install ....' command"
+       echo "   It is possible that you need to use repoType as stash instead of git. Please check the documentation."
+       echo "To expedite the restart, wait for 60 seconds and delete the spinnaker-halyard-0 pod from another window"
+       exit 4
+    fi
+    cp -r /tmp/spinnaker/test// /tmp/spinnaker/.hal
+    if [ -d "/tmp/spinnaker/test/pipeline-promotion/" ]
+    then
+       cp -r /tmp/spinnaker/test/pipeline-promotion /tmp/spinnaker/pipeline-promotion
+    fi
+    if [ -d "/tmp/spinnaker/test/clusterconfig/" ]
+    then
+       cp -r /tmp/spinnaker/test/clusterconfig /tmp/spinnaker/clusterconfig
+    fi
+    ## If BOM file present in gitops repo consider bom file and replace images in the service-setting folder to the respective services
+    if [ -r "/tmp/spinnaker/test/bom" ]
+    then
+      cp -r /tmp/spinnaker/test/bom /tmp/spinnaker/bom
+      rm -rf /tmp/spinnaker/.hal/bom
+      ## Updated the halyard config version
+      crthalversion=$(yq e '.deploymentConfigurations.[].version' /tmp/spinnaker/.hal/config)
+      halversion=$(yq e '.version' /tmp/spinnaker/bom)
+      echo "INFO: Updating the halyard version from VERSION $crthalversion to VERSION $halversion"
+      yq -i e '.deploymentConfigurations.[].version = "'$halversion'"' /tmp/spinnaker/.hal/config
+      ## Read service  as asingle line comma saperated
+      echo "INFO: Updating the spinnaker images of service-settings folder using bom file in gitops"
+      halservices=$(yq e '(.services | keys)[]' /tmp/spinnaker/bom | xargs | sed -e 's/ /,/g')
+      IFS=","
+      for i in $halservices
+      do
+        svcimg=$(yq e '.services.'$i'.image' /tmp/spinnaker/bom)
+        svcn=$(find /tmp/spinnaker/.hal/default/service-settings/ -name "$i"* | awk -F"/" '{print $NF}' | xargs | sed -e 's/ /,/g')
+        if [[ "$svcn" != "" ]];
+        then
+          IFS=","
+          for svcfile in $svcn
+          do
+            yq -i e '.artifactId = "'$svcimg'"' /tmp/spinnaker/.hal/default/service-settings/$svcfile
+          done
+        else
+          echo "WARNING: Service file $i is not located in default/service-settings/ to override the artifact image from bom"
+        fi
+      done
+    else
+      echo "WARNING: Not specified bom in gitops repo overidden images will be  taken from default/service-settings"
+    fi
+    rm -rf /tmp/spinnaker/test
+    DYNAMIC_ACCOUNTS_REPO=`echo $DYNAMIC_ACCOUNTS_REPO | sed 's/ *$//g'`
+    sed -i  s/SPINNAKER_NAMESPACE/${SPINNAKER_NAMESPACE}/ /tmp/spinnaker/.hal/config
+    sed -i  s/RELEASE_NAME/release-name/g /tmp/spinnaker/.hal/config
+    BRANCH=master
+    sed -i s/BRANCH/${BRANCH}/ /tmp/spinnaker/.hal/default/profiles/spinnakerconfig.yml
+    KEY=Q7udUkHPuA3VnNlOtksSgQ
+    sed -i s/KEY/${KEY}/ /tmp/spinnaker/.hal/default/profiles/spinnakerconfig.yml
+    CDName=preview-saas
+    sed -i s/CDName/${CDName}/ /tmp/spinnaker/.hal/default/profiles/echo-local.yml
+    sed -i  s/GIT_USER/${GIT_USER}/g /tmp/spinnaker/.hal/default/profiles/spinnakerconfig.yml
+    sed -i  s/GIT_TOKEN/${GIT_TOKEN}/g /tmp/spinnaker/.hal/default/profiles/spinnakerconfig.yml
+    sed -i  's|DYNAMIC_ACCOUNTS_REPO|'"${DYNAMIC_ACCOUNTS_REPO}"'|' /tmp/spinnaker/.hal/default/profiles/spinnakerconfig.yml
+    sed -i  s%DYN_ACCNT_CONFG_PATH%/%g /tmp/spinnaker/.hal/default/profiles/spinnakerconfig.yml
+    sed -i  s/RELEASE_NAME/release-name/g /tmp/spinnaker/.hal/default/profiles/rosco-local.yml
+    sed -i  s/RELEASE_NAME/release-name/g /tmp/spinnaker/.hal/default/service-settings/redis.yml
+    yq -i e '.deploymentConfigurations.[].security.authn.ldap.enabled = "false"' /tmp/spinnaker/.hal/config
+    yq -i e '.deploymentConfigurations.[].security.authz.enabled = "false"' /tmp/spinnaker/.hal/config
+    if [ -f /tmp/spinnaker/.hal/default/profiles/fiat-local.yml ]; then
+    sed -i  s/RELEASE_NAME/release-name/g /tmp/spinnaker/.hal/default/profiles/fiat-local.yml
+    fi
+    sed -i  s/SPINNAKER_NAMESPACE/${SPINNAKER_NAMESPACE}/ /tmp/spinnaker/.hal/default/profiles/orca-local.yml
+    printf 'server.address: 0.0.0.0\n' > /tmp/config/halyard-local.yml
+    if [ -f /tmp/spinnaker/.hal/halyard.yaml ]; then
+    cp /tmp/spinnaker/.hal/halyard.yaml /tmp/config
+    fi
+    yq -i e '.deploymentConfigurations.[].security.authn.saml.enabled = "false"' /tmp/spinnaker/.hal/config
+    rm -rf /tmp/spinnaker/.hal/default/profiles/orca-overrides.yml
+    rm -rf /tmp/spinnaker/.hal/default/profiles/fiat-overrides.yml
+    rm -rf /tmp/spinnaker/.hal/default/profiles/gate-overrides.yml
+    rm -rf /tmp/spinnaker/.hal/default/profiles/spinnaker.yml  # git or stash  # Enabled  # End of S3
+
+    # The decrypt token extract
+    kubectl get secret bootstrap -o jsonpath='{.data.bootstrap\.yml}' -n ${SPINNAKER_NAMESPACE} | base64 -d > /tmp/decryptkry.txt
+    decrypt_key=$(yq e '.jasypt.encryptor.password' /tmp/decryptkry.txt)
+
+    # pipeline promotion configuration setup
+    #
+    ls -lart /home/spinnaker/java-lib/
+    if [ -d "/tmp/spinnaker/pipeline-promotion/" ]
+    then
+      if [[ $decrypt_key != "" ]];
+      then
+        for filename in /tmp/spinnaker/pipeline-promotion/*; do
+          java -cp "Decryptor.jar:/home/spinnaker/java-lib/*" Decryptor $decrypt_key "$filename"
+        done
+      mkdir /tmp/spinnaker/pipeline-decrypted/
+      mv /tmp/spinnaker/pipeline-promotion/*decrypted.yaml /tmp/spinnaker/pipeline-decrypted/
+      kubectl apply -f /tmp/spinnaker/pipeline-promotion/pipe-promot-config-cm.yaml -n ${SPINNAKER_NAMESPACE}
+      kubectl apply -f /tmp/spinnaker/pipeline-decrypted/ -n ${SPINNAKER_NAMESPACE}
+     fi
+    fi
+    # decrypt json files for integrations
+
+    ls /tmp/spinnaker/.hal -1 | grep .enc > /tmp/jsonfiles
+    if [ -s /tmp/jsonfiles ];
+    then
+      if [[ $decrypt_key != "" ]];
+      then
+        echo "Data is available in jsonfiles"
+        while read -r line;
+        do
+         echo "$line" ;
+         java -cp "Decryptor.jar:/home/spinnaker/java-lib/*" Decryptor $decrypt_key "/tmp/spinnaker/.hal/$line" json
+        done < /tmp/jsonfiles
+        rm -rf /tmp/spinnaker/.hal/*.enc
+        cp /tmp/spinnaker/.hal/decrypted/* /tmp/spinnaker/.hal/
+        rm -rf /tmp/spinnaker/.hal/decrypted/
+      fi
+    fi
+    ############# Auto Configuration for Custom Stages in ORCA #############
+
+    if [ -d "/tmp/spinnaker/clusterconfig/" ]
+    then
+      if [[ $decrypt_key != "" ]];
+      then
+        for filename in /tmp/spinnaker/clusterconfig/*; do
+          java -cp "Decryptor.jar:/home/spinnaker/java-lib/*" Decryptor $decrypt_key "$filename"
+        done
+      mkdir /tmp/spinnaker/clusterconfig-decrypted/
+      mv /tmp/spinnaker/clusterconfig/*decrypted.yaml /tmp/spinnaker/clusterconfig-decrypted/
+      kubectl apply -f /tmp/spinnaker/clusterconfig-decrypted/ -n ${SPINNAKER_NAMESPACE}
+        if [ -r "/tmp/spinnaker/clusterconfig/servicenow-secret.yaml" ]
+        then
+           #### Extracting the Service NOW information from secret ####
+           SERVICENOW_USER=$(kubectl get secret servicenow-secret -o jsonpath='{.data.SERVICENOW_USERNAME}' -n ${SPINNAKER_NAMESPACE} | base64 -d)
+           SERVICENOW_DNS=$(kubectl get secret servicenow-secret -o jsonpath='{.data.SERVICENOW_URL}' -n ${SPINNAKER_NAMESPACE} | base64 -d)
+           SERVICENOW_PASSWD=$(kubectl get secret servicenow-secret -o jsonpath='{.data.SERVICENOW_PASSWORD}' -n ${SPINNAKER_NAMESPACE} | base64 -d)
+           SERVICENOW_BASE64_USR_PASSWD=$(echo -n "$SERVICENOW_USER:$SERVICENOW_PASSWD" | base64)
+           sed -i s%SERVICENOW_URL%${SERVICENOW_DNS}%g /tmp/spinnaker/.hal/default/profiles/orca-local.yml
+           sed -i  s/SERVICENOW_BASE64_USR_PASSWD/${SERVICENOW_BASE64_USR_PASSWD}/g /tmp/spinnaker/.hal/default/profiles/orca-local.yml
+        else
+           echo "Not able to find the ServiceNow secret file"
+        fi
+        if [ -r "/tmp/spinnaker/clusterconfig/jira-secret.yaml" ]
+        then
+           #### Extracting the JIRA information from secret ####
+           JIRA_TYPE=$(kubectl get secret jira-secret -o jsonpath='{.data.JIRA_TYPE}' -n ${SPINNAKER_NAMESPACE} | base64 -d)
+           if [ "$JIRA_TYPE" == "onPremJira" ];then
+             echo "Using the Jira On Prem Details"
+             JIRA_USER=$(kubectl get secret jira-secret -o jsonpath='{.data.JIRA_USERNAME}' -n ${SPINNAKER_NAMESPACE} | base64 -d)
+             JIRA_DNS=$(kubectl get secret jira-secret -o jsonpath='{.data.JIRA_URL}' -n ${SPINNAKER_NAMESPACE} | base64 -d)
+             JIRA_TOKN=$(kubectl get secret jira-secret -o jsonpath='{.data.JIRA_TOKEN}' -n ${SPINNAKER_NAMESPACE} | base64 -d)
+             JIRA_BASE64_USR_PASSWD=$JIRA_TOKN
+             sed -i s%JIRA_URL%${JIRA_DNS}%g /tmp/spinnaker/.hal/default/profiles/orca-local.yml
+             sed -i 's/Basic JIRA_BASE64_USR_PASSWD/Bearer TOKEN/g' /tmp/spinnaker/.hal/default/profiles/orca-local.yml
+             sed -i s/TOKEN/${JIRA_TOKN}/g /tmp/spinnaker/.hal/default/profiles/orca-local.yml
+           else
+             if [ "$JIRA_TYPE" == "cloudJira" ];then
+               echo "Using the Jira Cloud Details"
+               JIRA_USER=$(kubectl get secret jira-secret -o jsonpath='{.data.JIRA_USERNAME}' -n ${SPINNAKER_NAMESPACE} | base64 -d)
+               JIRA_DNS=$(kubectl get secret jira-secret -o jsonpath='{.data.JIRA_URL}' -n ${SPINNAKER_NAMESPACE} | base64 -d)
+               JIRA_TOKN=$(kubectl get secret jira-secret -o jsonpath='{.data.JIRA_TOKEN}' -n ${SPINNAKER_NAMESPACE} | base64 -d)
+               JIRA_BASE64_USR_PASSWD=$(echo -n "$JIRA_USER:$JIRA_TOKN" | base64 )
+               sed -i s%JIRA_URL%${JIRA_DNS}%g /tmp/spinnaker/.hal/default/profiles/orca-local.yml
+               sed -i s/JIRA_BASE64_USR_PASSWD/${JIRA_BASE64_USR_PASSWD}/g /tmp/spinnaker/.hal/default/profiles/orca-local.yml
+             fi
+           fi
+        else
+          echo "Not able to find the JIRA secret file"
+        fi
+      fi
+    fi

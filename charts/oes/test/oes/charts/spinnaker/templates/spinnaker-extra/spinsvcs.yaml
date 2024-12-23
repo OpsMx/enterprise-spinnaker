@@ -1,0 +1,48 @@
+---
+# Source: oes/charts/spinnaker/templates/spinnaker-extra/spinsvcs.yaml
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    app: spin
+    stack: deck
+    heritage: "Helm"
+    release: "release-name"
+    chart: "spinnaker-2.2.3"
+  name: spin-deck-lb
+spec:
+  type: 
+  ports:
+   - name: "https"
+     port: 443
+     targetPort: 9000
+   - name: "http"
+     port: 80
+     protocol: TCP
+     targetPort: 9000
+  selector:
+    cluster: spin-deck
+---
+# Source: oes/charts/spinnaker/templates/spinnaker-extra/spinsvcs.yaml
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    app: spin
+    stack: gate
+    heritage: "Helm"
+    release: "release-name"
+    chart: "spinnaker-2.2.3"
+  name: spin-gate-lb
+spec:
+  type: 
+  ports:
+   - name: https
+     port: 443
+     targetPort: 8084
+   - name: "http"
+     port: 80
+     protocol: TCP
+     targetPort: 8084
+  selector:
+    cluster: spin-gate

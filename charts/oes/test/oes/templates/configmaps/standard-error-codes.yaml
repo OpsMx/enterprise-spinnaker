@@ -1,0 +1,72 @@
+---
+# Source: oes/templates/configmaps/standard-error-codes.yaml
+apiVersion: v1
+data:
+  standard-error-codes.csv: |-
+    standardErrorCodesMapping.ISD-IsEmpty-400-01 = ISD-IsEmpty-400-01 : {0} - {1} is empty. Please provide the {1}.
+    standardErrorCodesMapping.ISD-IsNull-400-02 = ISD-IsNull-400-02 : {0} - {1} is null. Please provide the {1}.
+    standardErrorCodesMapping.ISD-MustBeAlphanumericName-400-03 = ISD-MustBeAlphanumericName-400-03 : {0} - {1} should be alphanumeric without any special characters !
+    standardErrorCodesMapping.ISD-ExceedsMaxStringLength-400-04 = ISD-ExceedsMaxStringLength-400-04 : {0} - {1} should not have more than {2} characters.
+    standardErrorCodesMapping.ISD-NotConfigured-400-05 = ISD-NotConfigured-400-05 : {0} - {1} is not configured. Please configure the {1} !
+    standardErrorCodesMapping.ISD-PolicyNotProvided-400-06 = ISD-PolicyNotProvided-400-06 : {0} - Policies are mandatory for automated approval gate.
+    standardErrorCodesMapping.ISD-EmptyKeyOrValueInJson-400-07 = ISD-EmptyKeyOrValueInJson-400-07 : {0} - {1} is missing in json !
+    standardErrorCodesMapping.ISD-UnableToParseJSON-400-08 = ISD-UnableToParseJSON-400-08 : {0} - Unable to parse Json. Please provide a valid json with required data !
+    standardErrorCodesMapping.ISD-MustBeANumber-400-09 = ISD-MustBeANumber-400-09 : {0} - {1} must be a number : {2}
+    standardErrorCodesMapping.ISD-InvalidURL-400-10 = ISD-InvalidURL-400-10 : {0} - {1} is invalid - {2}
+    standardErrorCodesMapping.ISD-BadRequest-400-11 = ISD-BadRequest-400-11 : {0} - {1} {2}
+    standardErrorCodesMapping.ISD-Unauthorized-401-01 = ISD-Unauthorized-401-01 : {0} - {1} not authorized. {2}.
+    standardErrorCodesMapping.ISD-Unauthorized-401-02 = ISD-Unauthorized-401-02 : {0} - User group not found for user : {1}.
+    standardErrorCodesMapping.ISD-NotAdmin-401-03 = ISD-NotAdmin-401-03 : {0} - {1} is not an admin !
+    standardErrorCodesMapping.ISD-Forbidden-403-01 = ISD-Forbidden-403-01 : {0} - {1} doesn't have {2} permission on this feature: {3}
+    standardErrorCodesMapping.ISD-Forbidden-403-02 = ISD-Forbidden-403-02 : {0} - {1} is invalid.
+    standardErrorCodesMapping.ISD-Forbidden-403-03 = ISD-Forbidden-403-03 : {0} - {1} : {2}.
+    standardErrorCodesMapping.ISD-Forbidden-403-04 = ISD-Forbidden-403-04 : {0} - {1} namespace is not accessible for given kubeconfig account {2}.
+    standardErrorCodesMapping.ISD-IsNotFound-404-01 = ISD-IsNotFound-404-01 : {0} - {1} not found : {2}
+    standardErrorCodesMapping.ISD-NoData-404-02 = ISD-NoData-404-02 : {0} - No data found for {1}
+    standardErrorCodesMapping.ISD-DoesNotExist-404-03 = ISD-DoesNotExist-404-03 : {0} - {1} does not exist {2}.
+    standardErrorCodesMapping.ISD-IsNotFound-404-04 = ISD-IsNotFound-404-04 : {0} - {1} not found {2}.
+    standardErrorCodesMapping.ISD-AlreadyExists-409-01 = ISD-AlreadyExists-409-01 : {0} - {1} already exists: {2}
+    standardErrorCodesMapping.ISD-Disconnected-409-02 = ISD-Disconnected-409-02 : {0} - {1}
+    standardErrorCodesMapping.ISD-FailedToDelete-412-01 = ISD-FailedToDelete-412-01 : {0} - Unable to delete {1} as {1} is already in use !
+    standardErrorCodesMapping.ISD-FailedToDeletePolicy-412-02 = ISD-FailedToDeletePolicy-412-02 : {0} - Unable to delete policy as it is already in use for {1} gate !
+    standardErrorCodesMapping.ISD-FailedToUpdate-412-03 = ISD-FailedToUpdate-412-03 : {0} - Unable to update {1} as {1} is already in use !
+    standardErrorCodesMapping.ISD-InvalidURL-422-01 = ISD-InvalidURL-422-01 : {0} - The requested {1} URL is invalid !
+    standardErrorCodesMapping.ISD-ConnectionOrAuthenticationFailed-422-02 = ISD-ConnectionOrAuthenticationFailed-422-02 : {0} - {1} connection or authentication failed : HTTP status {2}
+    standardErrorCodesMapping.ISD-InvalidCredentials-422-03 = ISD-InvalidCredentials-422-03 : {0} - {1} credentials are invalid !
+    standardErrorCodesMapping.ISD-InvalidEndpoint-422-04 = ISD-InvalidEndpoint-422-04 : {0} - {1} endpoint is invalid !
+    standardErrorCodesMapping.ISD-InvalidEndpointOrCredentials-422-05 = ISD-InvalidEndpointOrCredentials-422-05 : {0} - {1} endpoint or credentials are invalid !
+    standardErrorCodesMapping.ISD-UsernameOrPasswordIsBlank-422-06 = ISD-UsernameOrPasswordIsBlank-422-06 : {0} - {1} is blank but {2} is supplied. Both must be present or blank.
+    standardErrorCodesMapping.ISD-UnknownDatasource-422-07 = ISD-UnknownDatasource-422-07 : {0} - Unknown datasource or datasource is currently not supported : {1}
+    standardErrorCodesMapping.ISD-InvalidProvider-422-08 = ISD-InvalidProvider-422-08 : {0} - {1} provider is invalid !
+    standardErrorCodesMapping.ISD-InvalidPath-422-09 = ISD-InvalidPath-422-09 : {0} - {1} path is invalid !
+    standardErrorCodesMapping.ISD-UnableToGenerate-422-10 = ISD-UnableToGenerate-422-10 : {0} - Unable to generate {1} !
+    standardErrorCodesMapping.ISD-FailedToCreate-422-11 = ISD-FailedToCreate-422-11 : {0} - Failed to create {1}.
+    standardErrorCodesMapping.ISD-EndpointIsBlank-422-12 = ISD-EndpointIsBlank-422-12 : {0} - {1} endpoint is blank. {2} must be blank.
+    standardErrorCodesMapping.ISD-ConnectionOrAuthenticationFailed-422-13 = ISD-ConnectionOrAuthenticationFailed-422-13 : {0} - {1} connection or authentication failed.
+    standardErrorCodesMapping.ISD-FailedToUpdate-422-14 = ISD-FailedToUpdate-422-14 : {0} - Failed to Update {1}.
+    standardErrorCodesMapping.ISD-FailedToDelete-422-15 = ISD-FailedToDelete-422-15 : {0} - Failed to Delete {1}.
+    standardErrorCodesMapping.ISD-DoesNotMatch-422-16 = ISD-DoesNotMatch-422-16 : {0} - {1} does not match {2}.
+    standardErrorCodesMapping.ISD-DoesNotExist-422-17 =  ISD-DoesNotExist-422-17 : {0} - {1} does not exist {2}.
+    standardErrorCodesMapping.ISD-DoesNotSupport-422-18 = ISD-DoesNotSupport-422-18 : {0} - {1} does not support {2}.
+    standardErrorCodesMapping.ISD-UnableToVerify-422-19 = ISD-UnableToVerify-422-19 : {0} - Unable to verify {1}.
+    standardErrorCodesMapping.ISD-FailedToInitialize-422-20 = ISD-FailedToInitialize-422-20 : {0} - Failed to initialize {1}.
+    standardErrorCodesMapping.ISD-DoesNotHave-422-21 = ISD-DoesNotHave-422-21 : {0} - {1} does not have {2}.
+    standardErrorCodesMapping.ISD-UnableToAddStage-424-01 = ISD-UnableToAddStage-424-01 : {0} - Unable to add stage in {1} !
+    standardErrorCodesMapping.ISD-UnableToDelete-424-02 = ISD-UnableToDelete-424-02 : {0} - Unable to delete {1} while analysis is under process !
+    standardErrorCodesMapping.ISD-UnableToDelete-424-03 = ISD-UnableToDelete-424-03 : {0} - Unable to delete {1} as already in use {2}
+    standardErrorCodesMapping.ISD-UnableToDelete-424-04 = ISD-UnableToDelete-424-04 : {0} - Unable to delete {1} as it is involved in multi-service analysis !
+    standardErrorCodesMapping.ISD-ShouldBeNumber-500-01 = ISD-ShouldBeNumber-500-01 : {0} - {1} should be an number !
+    standardErrorCodesMapping.ISD-ShouldBePositiveNumber-500-02 = ISD-ShouldBePositiveNumber-500-02 : {0} - {1} should be an positive number !
+    standardErrorCodesMapping.ISD-UnableToFetch-500-03 = ISD-UnableToFetch-500-03 : {0} - Unable to fetch {1} from database. Please try after some time !
+    standardErrorCodesMapping.ISD-UnableToCreate-500-04 = ISD-UnableToCreate-500-04 : {0} - Unable to create {1} !
+    standardErrorCodesMapping.ISD-UnableToDelete-500-05 = ISD-UnableToDelete-500-05 : {0} - Unable to delete {1} !
+    standardErrorCodesMapping.ISD-UnableToUpdate-500-06 = ISD-UnableToUpdate-500-06 : {0} - Unable to update {1} !
+    standardErrorCodesMapping.ISD-UnableToValidate-500-07 = ISD-UnableToValidate-500-07 : {0} - Unable to validate {1} !
+    standardErrorCodesMapping.ISD-ServiceUnavailable-503-01 = ISD-ServiceUnavailable-503-01 : {0} - {1} : {2}
+    standardErrorCodesMapping.ISD-ServiceUnavailable-503-02 = ISD-ServiceUnavailable-503-02 : {0} - {1}
+    standardErrorCodesMapping.ISD-UnKnowHostException-503-03 = ISD-UnKnowHostException-503-03 : {0} - {1}
+kind: ConfigMap
+metadata:
+  labels:
+    app: oes
+  name: standard-error-codes-config

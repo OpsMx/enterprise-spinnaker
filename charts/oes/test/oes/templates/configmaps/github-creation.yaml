@@ -1,0 +1,58 @@
+---
+# Source: oes/templates/configmaps/github-creation.yaml
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  annotations:
+    "helm.sh/hook": "pre-install"
+    "helm.sh/hook-delete-policy": "before-hook-creation"
+    "helm.sh/hook-weight": "-10"
+  name: release-name-oes-github-creation
+  labels:
+    heritage: "Helm"
+    release: "release-name"
+    chart: "oes-4.0.19"
+data:
+  github-create.sh: |-
+        #!/bin/sh
+
+        #set -x
+
+        gitusermailid=user@mail.com
+        gitusername=git/stash_username
+        gitpassword=git/stash_token
+        org=OpsMx
+        repo_name=standard-gitops-repo
+
+
+        git config --global user.email "$gitusermailid"
+        git config --global user.name "$gitusername"
+        object='{"name":"'"$repo_name"'","private":"true"}'
+        curlResp=$(curl -s -X GET -H "Authorization: token $gitpassword" https://api.github.com/repos/$org/$repo_name)
+        message=$(echo $curlResp | jq -r '.name')
+
+        if [ "$repo_name" == "$message" ]
+        then
+                echo "REPO EXISTS"
+                exit 0
+        else
+                object='{"name":"'"$repo_name"'","private":"true"}'
+                if [ "$gitusername" == "$org" ]
+                then
+                     curl -H "Authorization: token $gitpassword" --data "$object" https://api.github.com/user/repos
+                     git clone https://github.com/OpsMx/standard-gitops-repo.git -b isd-spin-2024.12.00
+                     git clone https://$gitusername:$gitpassword@github.com/$gitusername/$repo_name.git
+                else
+                     curl -X POST -H "Accept: application/vnd.github.v3+json" -H "Authorization: token $gitpassword" https://api.github.com/orgs/$org/repos -d '{"name":"'$repo_name'"}'
+                     git clone https://github.com/OpsMx/standard-gitops-repo.git -b isd-spin-2024.12.00
+                     git clone https://$gitusername:$gitpassword@github.com/$org/$repo_name.git
+                fi
+
+                cp -pr standard-gitops-repo/* $repo_name/
+                cd $repo_name/
+                git checkout -b master
+                git status
+                git add .
+                git commit -m "cloned standard-gitops-repo content"
+                git push origin master
+        fi

@@ -1,0 +1,23 @@
+---
+# Source: oes/charts/spinnaker/templates/rbac/spinnaker-sa.yaml
+# In the case of a local cluster Spinnaker needs
+# to be able to deploy to all namespaces in the cluster.
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding  # ClusterRoleBinding, if we have access accross the cluster
+metadata:
+  name: release-name-spinnaker-spinnaker
+  labels:
+    app: "release-name-spinnaker"
+    heritage: "Helm"
+    release: "release-name"
+    chart: "spinnaker-2.2.3"
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: Role             # ClusteRoleBinding if we have access accross the cluster
+  name: spinnaker-role   # cluster-admin if we have the access
+subjects:
+- namespace: default
+  kind: ServiceAccount
+  # Clouddriver does not currently allow config of its
+  # service account.
+  name: default

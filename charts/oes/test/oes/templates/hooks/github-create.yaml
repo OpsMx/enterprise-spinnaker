@@ -1,0 +1,43 @@
+---
+# Source: oes/templates/hooks/github-create.yaml
+apiVersion: batch/v1
+kind: Job
+metadata:
+  annotations:
+    moniker.spinnaker.io/application: isd
+    "helm.sh/hook": "pre-install"
+    "helm.sh/hook-delete-policy": "before-hook-creation"
+    "helm.sh/hook-weight": "1"
+  labels:
+    app: oes
+    component: github-config
+    heritage: "Helm"
+    release: "release-name"
+    chart: "oes-4.0.19"
+  name: github-config
+spec:
+  backoffLimit: 1
+  template:
+    metadata:
+      annotations:
+        moniker.spinnaker.io/application: isd
+      labels:
+        app: oes
+        component: github-config
+        heritage: "Helm"
+        release: "release-name"
+        chart: "oes-4.0.19"
+    spec:
+      containers:
+      - command: ["sh", "/tmp/config/github-create.sh" ]
+        name: github-creation-api
+        image: quay.io/opsmxpublic/awsgit:v2-openssh
+        volumeMounts:
+        - mountPath: /tmp/config
+          name: github-creation
+      restartPolicy: Never
+      volumes:
+      - configMap:
+          defaultMode: 420
+          name: release-name-oes-github-creation
+        name: github-creation

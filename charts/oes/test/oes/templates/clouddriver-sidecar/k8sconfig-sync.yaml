@@ -1,0 +1,22 @@
+---
+# Source: oes/templates/clouddriver-sidecar/k8sconfig-sync.yaml
+apiVersion: v1
+data:
+  k8config-sync.sh: |
+    #!/bin/bash
+    export GIT_CLONE_PARAM=$(cat /tmp/secret/gitcloneparam)
+    export GIT_URL=$(cat /tmp/secret/dynamicaccountsgituri)
+    export DYNAMIC_ACCOUNTS_REPO=$(cat /tmp/secret/dynamicAccRepository)
+    rm -rf $DYNAMIC_ACCOUNTS_REPO
+    mkdir -p /opsmx
+    echo " ####### Cloning the Dynamic Account Repo #################"
+    git clone -c http.sslVerify=false $GIT_CLONE_PARAM
+    #cd $DYNAMIC_ACCOUNTS_REPO/
+    cat $DYNAMIC_ACCOUNTS_REPO///clouddriver-local.yml |grep -i opsmx |awk '{print $2}' |tr -d '"' | awk 'BEGIN{FS="/opsmx/"}{print $2}' > /opsmx/config_files.txt
+    for config in $(cat /opsmx/config_files.txt)
+    do
+    kubectl get secrets $config -o=jsonpath='{.data.*}'|base64 -d > /opsmx/$config
+    done
+kind: ConfigMap
+metadata:
+  name: k8config-sync

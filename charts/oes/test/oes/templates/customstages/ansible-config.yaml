@@ -1,0 +1,50 @@
+---
+# Source: oes/templates/customstages/ansible-config.yaml
+apiVersion: v1
+data:
+  run.sh: |
+        #!/bin/bash
+
+        file="$inventoryfile"
+
+        if test -z "$file"
+
+        then
+
+        echo "No Inventory file specified taking default values"
+
+        exit 1
+
+        else
+
+        echo "Inventory file specified Manually"
+
+        ssh-keygen -t rsa -N "" -f ~/.ssh/id_rsa
+
+        git clone "https://"$gitusername":"$gitpassword"@"$gitrepo""
+
+        host1=$(head -1 $file)
+
+        ip=$(cat $file | head -2 | tail -1)
+
+        host2=$(echo $host1 | cut -d "[" -f2 | cut -d "]" -f1)
+
+        sshpass -p "$userpassword" ssh-copy-id -o StrictHostKeyChecking=no $nodeuser@$ip
+
+        cat $file >> /etc/ansible/hosts
+
+        touch /etc/ansible/group_vars/$host2
+
+        echo "ansible_ssh_user: $nodeuser" > /etc/ansible/group_vars/$host2
+
+        ansible -i /etc/ansible/hosts $host2 -m ping
+
+        ansible-playbook --syntax-check "$ansiblefile"
+
+        ansible-playbook "$ansiblefile"
+
+        fi
+
+kind: ConfigMap
+metadata:
+  name: ansible-config
