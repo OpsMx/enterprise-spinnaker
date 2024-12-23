@@ -365,7 +365,7 @@ audit:
   ##
   image:
     repository: ubi8-oes-audit-service
-    tag: isd-spin-2024.12.00-9e267a0-202412130625
+    tag: isd-spin-2024.12.00-6283e2b-202412201248
     pullPolicy: IfNotPresent
 
   serviceAnnotations: {}
@@ -393,7 +393,7 @@ auditClient:
   ##
   image:
     repository: ubi8-oes-audit-client
-    tag: isd-spin-2024.12.00-3995755-202412111026
+    tag: isd-spin-2024.12.00-3995755-202412201241
     pullPolicy: IfNotPresent
 
   serviceAnnotations: {}
@@ -518,7 +518,7 @@ gate:
   ## Image specific details
   image:
     repository: ubi8-gate
-    tag: isd-spin-2024.12.00-1afb2677-202412051325
+    tag: isd-spin-2024.12.00-9fe8468c-202412201250
     pullPolicy: IfNotPresent
 
   serviceAnnotations: {}
@@ -697,7 +697,7 @@ sapor:
   ## Image specific details
   image:
     repository: ubi8-oes-sapor
-    tag: isd-spin-2024.12.00-2d3e047f-202412050638
+    tag: isd-spin-2024.12.00-11256142-202412201249
     pullPolicy: IfNotPresent
 
   annotations:
@@ -799,7 +799,7 @@ ui:
   ## Image specific details
   image:
     repository: ubi8-oes-ui
-    tag: isd-spin-2024.12.00-9effc4b41-202412101126
+    tag: isd-spin-2024.12.00-581a216ec-202412200739
     pullPolicy: IfNotPresent
 
   annotations:
@@ -988,7 +988,7 @@ spinnaker:
     spinnakerVersion: 1.33.3
     image:
       repository: quay.io/opsmxpublic/ubi8-halyard-cve
-      tag: 1.65.0-e777b4b4-202412031020
+      tag: 1.65.0-87f825e3-202412181005
     # Set to false to disable persistence data volume for halyard
     persistence:
       enabled: true
