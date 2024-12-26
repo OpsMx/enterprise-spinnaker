@@ -768,7 +768,7 @@ saporgate:
   enabled: true
   image:
     repository: ubi8-oes-spin-gate
-    tag: isd-spin-2024.06.00-202408190706-sapor
+    tag: isd-spin-2024.12.00-9fe8468c-202412201250
     pullPolicy: IfNotPresent
 
   annotations:
