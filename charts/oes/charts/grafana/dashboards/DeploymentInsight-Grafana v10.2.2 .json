@@ -37,7 +37,7 @@
             "axisBorderShow": false,
             "axisCenteredZero": false,
             "axisColorMode": "text",
-            "axisLabel": "Latency(in days)",
+            "axisLabel": "Latency",
             "axisPlacement": "auto",
             "barAlignment": 0,
             "drawStyle": "points",
