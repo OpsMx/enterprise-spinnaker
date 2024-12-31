@@ -42,11 +42,11 @@
   },
   "ENVIRONMENT_MAPPING_LISTING": {
     "HEADER": "No Environment Mapping Targets found!",
-    "BODY": "<div><p>Cloud Targets are integrations to Cloud platforms you deploy your applications to.</p> <p>In this section, you’ll register credentials for your Cloud platforms. Those credentials are known as Accounts. ISD allows you to create & manage Accounts for different Cloud Providers such as AWS, GCP, Kubernetes, etc.</p> <p>When CD instance (Spinnaker) is configured for <b>Direct Sync</b>, <b>New Accounts</b> button will not be visible.</p> <p><b>New Accounts</b> button will be enabled when CD instance (Spinnaker) is configured to use External Accounts in <b>Setup->CD Integration</b>.Click on <b>New Accounts</b> button to create an account for your cloud provider. You can create multiple accounts for the same provider.</p> <p>Click on <b>Sync Accounts</b> button to sync Cloud target accounts with CD Tool</p></div>"
+    "BODY": "<div><p>This page provides a way to map Spinnaker Accounts to user-defined Environments (such as dev, staging, prod).</p><p>Account to Environment mapping defined here is used to identify deployments to an environment in order to populate <b>Deployment Insights</b>.</p></div> <div><p>Click on <b>Import Mapping</b> to fetch Accounts from Spinnaker. Once populated, you need to edit each record and set the missing fields such as Environment, Namespace.</p></div> <div><p>If Accounts and Namespaces are known, you may create a json file to define the mapping and import the mapping using the <b>Bulk import</b> option.</p></div>"
   },
   "ENVIRONMENT_MAPPING_CREATION": {
     "HEADER": "Environment Mapping",
-    "BODY": "<p>In this page, you can create & manage Cloud Target Accounts</p>",
+    "BODY": "<div><p>In this page, you can assign (or create and assign) an Environment to the Spinnaker Account and Namespace. This will be used to identify deployments to an environment.</p></div>",
     "CLOUD_PROVIDER": {
       "TOOLTIP": "The Cloud Target type for which you want to add the account",
       "VALIDATION_MESSAGE": {
