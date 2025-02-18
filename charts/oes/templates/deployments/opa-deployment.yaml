@@ -38,7 +38,7 @@ spec:
           envFrom:
           - secretRef:
               name: oes-gate-secret
-          image: quay.io/opsmxpublic/customterraformstage:v1
+          image: quay.io/opsmxpublic/opa:curl-jq-kubectl
           imagePullPolicy: IfNotPresent
           volumeMounts:
           - mountPath: /tmp/config
