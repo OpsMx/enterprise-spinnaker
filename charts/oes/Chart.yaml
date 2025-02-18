@@ -2,7 +2,7 @@ apiVersion: v2
 name: oes
 version: 4.0.23
 appVersion: 2024.06.00
-description: "ISD and Spinnaker with v1.33.3 SAML2 Configuration"
+description: "ISD and Spinnaker with v1.33.3 SAML2 Configurations"
 icon: https://raw.githubusercontent.com/OpsMx/enterprise-spinnaker/master/img/opsmx.png
 maintainers:
 - email: srinivas@opsmx.io
