@@ -877,6 +877,7 @@ redis:
   external:
     host: "<EXTERNAL-REDIS-HOST-NAME>"
     port: 6379
+    username: default
     # password: ""
   nodeSelector: {}
   master:
