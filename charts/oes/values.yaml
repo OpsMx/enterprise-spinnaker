@@ -518,7 +518,7 @@ gate:
   ## Image specific details
   image:
     repository: ubi8-gate
-    tag: isd-spin-2024.12.00-9fe8468c-202412261138
+    tag: isd-spin-2024.12.01-a8ea4459-202502191250
     pullPolicy: IfNotPresent
 
   serviceAnnotations: {}
@@ -615,7 +615,7 @@ platform:
   ## Image specific details
   image:
     repository: ubi8-oes-platform
-    tag: isd-spin-2024.12.00-375d5f3b-202412111104
+    tag: isd-spin.2024.12.01-f6bc65ae-202502170620
     pullPolicy: IfNotPresent
 
   annotations:

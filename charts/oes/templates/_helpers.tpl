@@ -217,7 +217,7 @@ Redis base URL for Spinnaker
 {{- if .Values.installRedis }}
 {{- printf "redis://:%s@%s-redis-master:6379" .Values.redis.password .Release.Name -}}
 {{- else if .Values.redis.external.password }}
-{{- printf "redis://:%s@%s:%s" .Values.redis.external.password .Values.redis.external.host (.Values.redis.external.port | toString) -}}
+{{- printf "rediss://%s:%s@%s:%s" .Values.redis.external.username .Values.redis.external.password .Values.redis.external.host (.Values.redis.external.port | toString) -}}
 {{- else }}
 {{- printf "redis://%s:%s" .Values.redis.external.host (.Values.redis.external.port | toString) -}}
 {{- end }}
