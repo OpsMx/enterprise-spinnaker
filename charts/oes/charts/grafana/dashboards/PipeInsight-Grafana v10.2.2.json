@@ -986,7 +986,7 @@
       "type": "bargauge"
     }
   ],
-  "refresh": "",
+  "refresh": "5s",
   "schemaVersion": 38,
   "tags": [],
   "templating": {
