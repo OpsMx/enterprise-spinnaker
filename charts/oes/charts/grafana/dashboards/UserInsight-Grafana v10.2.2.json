@@ -18,7 +18,7 @@
   "editable": true,
   "fiscalYearStartMonth": 0,
   "graphTooltip": 0,
-  "id": 7,
+  "id": 1,
   "links": [],
   "liveNow": false,
   "panels": [
@@ -703,7 +703,7 @@
           },
           "editorMode": "code",
           "exemplar": false,
-          "expr": "sum by (appName) (floor(increase(pipelines_execution_count_counter_total[$__range])))",
+          "expr": "sum by (appName) (floor(increase(pipelines_execution_count_total[$__range])))",
           "format": "table",
           "instant": true,
           "legendFormat": "__auto",
@@ -745,6 +745,6 @@
   "timezone": "",
   "title": "User Insights",
   "uid": "user-insights",
-  "version": 11,
+  "version": 2,
   "weekStart": ""
 }

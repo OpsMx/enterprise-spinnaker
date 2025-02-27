@@ -18,7 +18,7 @@
   "editable": true,
   "fiscalYearStartMonth": 0,
   "graphTooltip": 0,
-  "id": 1,
+  "id": 3,
   "links": [],
   "liveNow": true,
   "panels": [
@@ -153,7 +153,7 @@
             "uid": "datasource-uid-for-isd-insights"
           },
           "editorMode": "code",
-          "expr": "sum by(status)(increase(pipelines_execution_count_counter_total{appName=~\"$application\",sourceName=~\"$cdName\"}[$__interval]))",
+          "expr": "rate(pipelines_execution_count_total{appName=~\"$application\",sourceName=~\"$cdName\"}[$__rate_interval])",
           "instant": false,
           "interval": "",
           "legendFormat": "__auto",
@@ -279,275 +279,6 @@
       "fieldConfig": {
         "defaults": {
           "color": {
-            "mode": "palette-classic"
-          },
-          "custom": {
-            "axisBorderShow": false,
-            "axisCenteredZero": false,
-            "axisColorMode": "text",
-            "axisLabel": "",
-            "axisPlacement": "auto",
-            "axisSoftMax": 1,
-            "axisSoftMin": 0,
-            "barAlignment": 0,
-            "drawStyle": "line",
-            "fillOpacity": 0,
-            "gradientMode": "none",
-            "hideFrom": {
-              "legend": false,
-              "tooltip": false,
-              "viz": false
-            },
-            "insertNulls": false,
-            "lineInterpolation": "linear",
-            "lineWidth": 1,
-            "pointSize": 5,
-            "scaleDistribution": {
-              "type": "linear"
-            },
-            "showPoints": "auto",
-            "spanNulls": true,
-            "stacking": {
-              "group": "A",
-              "mode": "none"
-            },
-            "thresholdsStyle": {
-              "mode": "off"
-            }
-          },
-          "mappings": [],
-          "thresholds": {
-            "mode": "absolute",
-            "steps": [
-              {
-                "color": "green",
-                "value": null
-              },
-              {
-                "color": "red",
-                "value": 80
-              }
-            ]
-          },
-          "unit": "percentunit"
-        },
-        "overrides": []
-      },
-      "gridPos": {
-        "h": 9,
-        "w": 12,
-        "x": 12,
-        "y": 9
-      },
-      "id": 37,
-      "options": {
-        "legend": {
-          "calcs": [],
-          "displayMode": "list",
-          "placement": "bottom",
-          "showLegend": false
-        },
-        "tooltip": {
-          "mode": "single",
-          "sort": "none"
-        }
-      },
-      "targets": [
-        {
-          "datasource": {
-            "type": "prometheus",
-            "uid": "datasource-uid-for-isd-insights"
-          },
-          "editorMode": "code",
-          "expr": "sum(pipelines_execution_count_counter_total{status=\"SUCCEEDED\"})\n  /\nsum(pipelines_execution_count_counter_total)",
-          "instant": false,
-          "legendFormat": "__auto",
-          "range": true,
-          "refId": "A"
-        }
-      ],
-      "title": "Pipeline Success Rate",
-      "type": "timeseries"
-    },
-    {
-      "datasource": {
-        "type": "prometheus",
-        "uid": "datasource-uid-for-isd-insights"
-      },
-      "fieldConfig": {
-        "defaults": {
-          "color": {
-            "fixedColor": "green",
-            "mode": "fixed"
-          },
-          "links": [
-            {
-              "targetBlank": true,
-              "title": "",
-              "url": "${__field.labels.srcBaseUrl}/deck/#/applications/${__field.labels.appName}/executions?pipeline=${__field.labels.pipelineName}"
-            }
-          ],
-          "mappings": [],
-          "min": 0,
-          "thresholds": {
-            "mode": "absolute",
-            "steps": [
-              {
-                "color": "green",
-                "value": null
-              },
-              {
-                "color": "green",
-                "value": 0
-              }
-            ]
-          },
-          "unit": "none"
-        },
-        "overrides": []
-      },
-      "gridPos": {
-        "h": 11,
-        "w": 12,
-        "x": 0,
-        "y": 18
-      },
-      "id": 33,
-      "options": {
-        "displayMode": "gradient",
-        "minVizHeight": 10,
-        "minVizWidth": 0,
-        "namePlacement": "left",
-        "orientation": "horizontal",
-        "reduceOptions": {
-          "calcs": [
-            "lastNotNull"
-          ],
-          "fields": "",
-          "values": false
-        },
-        "showUnfilled": true,
-        "text": {
-          "titleSize": 12,
-          "valueSize": 12
-        },
-        "valueMode": "text"
-      },
-      "pluginVersion": "10.2.2",
-      "targets": [
-        {
-          "datasource": {
-            "type": "prometheus",
-            "uid": "datasource-uid-for-isd-insights"
-          },
-          "editorMode": "code",
-          "exemplar": false,
-          "expr": "topk(10,changes(pipelines_execution_count_counter_total{status=~\"SUCCEEDED\",appName=~\"$application\",sourceName=~\"$cdName\"}[$timeFilter] offset $offsetDuration) + 1)",
-          "format": "time_series",
-          "instant": true,
-          "legendFormat": "{{appName}}  - {{pipelineName}} ",
-          "range": false,
-          "refId": "A"
-        }
-      ],
-      "title": "Most Successful Pipelines",
-      "transformations": [],
-      "type": "bargauge"
-    },
-    {
-      "datasource": {
-        "type": "prometheus",
-        "uid": "datasource-uid-for-isd-insights"
-      },
-      "fieldConfig": {
-        "defaults": {
-          "color": {
-            "fixedColor": "dark-red",
-            "mode": "fixed"
-          },
-          "links": [
-            {
-              "targetBlank": true,
-              "title": "Go to Spinnaker pipelines executions",
-              "url": "${__field.labels.srcBaseUrl}/deck/#/applications/${__field.labels.appName}/executions?pipeline=${__field.labels.pipelineName}&status=TERMINAL"
-            }
-          ],
-          "mappings": [],
-          "min": 0,
-          "thresholds": {
-            "mode": "absolute",
-            "steps": [
-              {
-                "color": "dark-red",
-                "value": null
-              },
-              {
-                "color": "dark-red",
-                "value": 0
-              }
-            ]
-          },
-          "unit": "none"
-        },
-        "overrides": []
-      },
-      "gridPos": {
-        "h": 11,
-        "w": 12,
-        "x": 12,
-        "y": 18
-      },
-      "id": 34,
-      "links": [],
-      "options": {
-        "displayMode": "gradient",
-        "minVizHeight": 10,
-        "minVizWidth": 0,
-        "namePlacement": "left",
-        "orientation": "horizontal",
-        "reduceOptions": {
-          "calcs": [
-            "lastNotNull"
-          ],
-          "fields": "",
-          "values": false
-        },
-        "showUnfilled": true,
-        "text": {
-          "titleSize": 12,
-          "valueSize": 12
-        },
-        "valueMode": "text"
-      },
-      "pluginVersion": "10.2.2",
-      "targets": [
-        {
-          "datasource": {
-            "type": "prometheus",
-            "uid": "datasource-uid-for-isd-insights"
-          },
-          "editorMode": "code",
-          "exemplar": false,
-          "expr": "topk(10, changes(pipelines_execution_count_counter_total{status=~\"TERMINAL\",appName=~\"$application\",sourceName=~\"$cdName\"}[$timeFilter] offset $offsetDuration) + 1)",
-          "format": "time_series",
-          "instant": true,
-          "legendFormat": "{{appName}}  - {{pipelineName}}",
-          "range": false,
-          "refId": "A"
-        }
-      ],
-      "title": "Most Failed Pipelines",
-      "transformations": [],
-      "type": "bargauge"
-    },
-    {
-      "datasource": {
-        "type": "prometheus",
-        "uid": "datasource-uid-for-isd-insights"
-      },
-      "fieldConfig": {
-        "defaults": {
-          "color": {
             "mode": "thresholds"
           },
           "custom": {
@@ -563,7 +294,8 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "green"
+                "color": "green",
+                "value": null
               },
               {
                 "color": "red",
@@ -608,8 +340,8 @@
       "gridPos": {
         "h": 9,
         "w": 12,
-        "x": 0,
-        "y": 29
+        "x": 12,
+        "y": 9
       },
       "id": 24,
       "options": {
@@ -634,7 +366,7 @@
           },
           "editorMode": "code",
           "exemplar": false,
-          "expr": "sum by(pipelineName,appName,stageName,sourceName,srcBaseUrl)(currently_executing_pipelines_new_ratio{appName=~\"$application\",sourceName=~\"$cdName\"}) > 0",
+          "expr": "sum by(pipelineName,appName,stageName,sourceName,srcBaseUrl)(currently_executing_pipelines{appName=~\"$application\",sourceName=~\"$cdName\"}) > 0",
           "format": "table",
           "instant": true,
           "legendFormat": "",
@@ -690,27 +422,30 @@
       "fieldConfig": {
         "defaults": {
           "color": {
-            "mode": "thresholds"
+            "fixedColor": "dark-red",
+            "mode": "fixed"
           },
-          "custom": {
-            "align": "auto",
-            "cellOptions": {
-              "type": "auto"
-            },
-            "filterable": true,
-            "inspect": false
-          },
-          "links": [],
+          "decimals": 4,
+          "links": [
+            {
+              "targetBlank": true,
+              "title": "",
+              "url": "${__data.fields.srcBaseUrl}/deck/#/applications/${__data.fields.appName}/executions?pipeline=${__data.fields.pipelineName}"
+            }
+          ],
           "mappings": [],
+          "min": 0,
+          "noValue": "No executions in the selected duration",
           "thresholds": {
             "mode": "absolute",
             "steps": [
               {
-                "color": "green"
+                "color": "dark-red",
+                "value": null
               },
               {
-                "color": "red",
-                "value": 80
+                "color": "dark-red",
+                "value": 0
               }
             ]
           }
@@ -719,30 +454,12 @@
           {
             "matcher": {
               "id": "byName",
-              "options": "stageType"
+              "options": "duration"
             },
             "properties": [
               {
-                "id": "custom.width",
-                "value": 186
-              }
-            ]
-          },
-          {
-            "matcher": {
-              "id": "byName",
-              "options": "pipelineName"
-            },
-            "properties": [
-              {
-                "id": "links",
-                "value": [
-                  {
-                    "targetBlank": true,
-                    "title": "Go to pipeline  stages waiting for user action ",
-                    "url": "${__data.fields.srcBaseUrl}/deck/#/applications/${__data.fields.appName}/executions?pipeline=${__data.fields.pipelineName}&status=RUNNING"
-                  }
-                ]
+                "id": "unit",
+                "value": "ms"
               }
             ]
           },
@@ -753,34 +470,39 @@
             },
             "properties": [
               {
-                "id": "custom.hidden",
-                "value": true
+                "id": "noValue"
               }
             ]
           }
         ]
       },
       "gridPos": {
-        "h": 9,
+        "h": 11,
         "w": 12,
-        "x": 12,
-        "y": 29
+        "x": 0,
+        "y": 18
       },
-      "id": 38,
-      "maxDataPoints": 1000,
+      "id": 28,
       "options": {
-        "cellHeight": "sm",
-        "footer": {
-          "countRows": false,
-          "enablePagination": true,
-          "fields": "",
-          "reducer": [
-            "sum"
+        "displayMode": "gradient",
+        "minVizHeight": 10,
+        "minVizWidth": 0,
+        "namePlacement": "left",
+        "orientation": "horizontal",
+        "reduceOptions": {
+          "calcs": [
+            "allValues"
           ],
-          "show": false
+          "fields": "",
+          "limit": 10,
+          "values": true
         },
-        "showHeader": true,
-        "sortBy": []
+        "showUnfilled": true,
+        "text": {
+          "titleSize": 12,
+          "valueSize": 12
+        },
+        "valueMode": "text"
       },
       "pluginVersion": "10.2.2",
       "targets": [
@@ -789,47 +511,75 @@
             "type": "prometheus",
             "uid": "datasource-uid-for-isd-insights"
           },
-          "disableTextWrap": false,
           "editorMode": "code",
           "exemplar": false,
-          "expr": "sum by(pipelineName, appName, stageName, stageType,sourceName, srcBaseUrl) (currently_executing_stages_ratio{stageType =~ \"manualJudgment|approval\",sourceName=~\"$cdName\",appName=~\"$application\"}) > 0",
+          "expr": "rate(pipelines_execution_duration_milliseconds_total{appName=~\"$application\", sourceName=~\"$cdName\"}[5m])",
           "format": "table",
-          "fullMetaSearch": false,
-          "includeNullMetadata": true,
-          "instant": true,
-          "legendFormat": "",
-          "range": false,
-          "refId": "A",
-          "useBackend": false
+          "instant": false,
+          "legendFormat": "__auto",
+          "range": true,
+          "refId": "A"
         }
       ],
-      "title": "Awaiting User Action",
+      "title": "Slowest Pipelines",
       "transformations": [
+        {
+          "id": "groupBy",
+          "options": {
+            "fields": {
+              "appName": {
+                "aggregations": [],
+                "operation": "groupby"
+              },
+              "duration": {
+                "aggregations": [],
+                "operation": "groupby"
+              },
+              "executionId": {
+                "aggregations": [],
+                "operation": "groupby"
+              },
+              "pipelineName": {
+                "aggregations": [],
+                "operation": "groupby"
+              },
+              "sourceName": {
+                "aggregations": [],
+                "operation": "groupby"
+              },
+              "srcBaseUrl": {
+                "aggregations": [],
+                "operation": "groupby"
+              },
+              "status": {
+                "aggregations": [],
+                "operation": "groupby"
+              }
+            }
+          }
+        },
+        {
+          "id": "convertFieldType",
+          "options": {
+            "conversions": [
+              {
+                "destinationType": "number",
+                "targetField": "duration"
+              }
+            ],
+            "fields": {}
+          }
+        },
         {
           "id": "organize",
           "options": {
             "excludeByName": {
-              "Time": true,
-              "Value": true,
-              "sourceName": true
+              "executionId": true,
+              "sourceName": true,
+              "status": true
             },
-            "indexByName": {
-              "Time": 0,
-              "Value": 6,
-              "appName": 2,
-              "pipelineName": 3,
-              "sourceName": 1,
-              "stageName": 4,
-              "stageType": 5
-            },
-            "renameByName": {
-              "Value": "No of executions",
-              "appName": "Application",
-              "pipelineName": "Pipeline",
-              "sourceName": "CD Name",
-              "stageName": "Stage",
-              "stageType": "Stage Type"
-            }
+            "indexByName": {},
+            "renameByName": {}
           }
         },
         {
@@ -839,16 +589,404 @@
             "sort": [
               {
                 "desc": true,
-                "field": "no of executions"
+                "field": "duration"
               }
             ]
           }
+        },
+        {
+          "id": "limit",
+          "options": {}
+        },
+        {
+          "id": "convertFieldType",
+          "options": {
+            "conversions": [
+              {
+                "destinationType": "enum",
+                "targetField": "srcBaseUrl"
+              }
+            ],
+            "fields": {}
+          }
         }
       ],
-      "type": "table"
+      "type": "bargauge"
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "datasource-uid-for-isd-insights"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "fixedColor": "green",
+            "mode": "fixed"
+          },
+          "decimals": 4,
+          "links": [
+            {
+              "targetBlank": true,
+              "title": "",
+              "url": "${__data.fields.srcBaseUrl}/deck/#/applications/${__data.fields.appName}/executions?pipeline=${__data.fields.pipelineName}"
+            }
+          ],
+          "mappings": [],
+          "min": 0,
+          "noValue": "No executions in the selected duration",
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 0
+              }
+            ]
+          }
+        },
+        "overrides": [
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "duration"
+            },
+            "properties": [
+              {
+                "id": "unit",
+                "value": "ms"
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "srcBaseUrl"
+            },
+            "properties": [
+              {
+                "id": "noValue"
+              }
+            ]
+          }
+        ]
+      },
+      "gridPos": {
+        "h": 11,
+        "w": 12,
+        "x": 12,
+        "y": 18
+      },
+      "id": 29,
+      "options": {
+        "displayMode": "gradient",
+        "minVizHeight": 10,
+        "minVizWidth": 0,
+        "namePlacement": "left",
+        "orientation": "horizontal",
+        "reduceOptions": {
+          "calcs": [
+            "allValues"
+          ],
+          "fields": "",
+          "limit": 10,
+          "values": true
+        },
+        "showUnfilled": true,
+        "text": {
+          "titleSize": 12,
+          "valueSize": 11
+        },
+        "valueMode": "text"
+      },
+      "pluginVersion": "10.2.2",
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "datasource-uid-for-isd-insights"
+          },
+          "editorMode": "code",
+          "exemplar": false,
+          "expr": "rate(pipelines_execution_duration_milliseconds_total{appName=~\"$application\", sourceName=~\"$cdName\"}[5m])",
+          "format": "table",
+          "instant": false,
+          "legendFormat": "__auto",
+          "range": true,
+          "refId": "A"
+        }
+      ],
+      "title": "Fastest Pipelines",
+      "transformations": [
+        {
+          "id": "groupBy",
+          "options": {
+            "fields": {
+              "appName": {
+                "aggregations": [],
+                "operation": "groupby"
+              },
+              "duration": {
+                "aggregations": [],
+                "operation": "groupby"
+              },
+              "executionId": {
+                "aggregations": [],
+                "operation": "groupby"
+              },
+              "pipelineName": {
+                "aggregations": [],
+                "operation": "groupby"
+              },
+              "sourceName": {
+                "aggregations": [],
+                "operation": "groupby"
+              },
+              "srcBaseUrl": {
+                "aggregations": [],
+                "operation": "groupby"
+              },
+              "status": {
+                "aggregations": [],
+                "operation": "groupby"
+              }
+            }
+          }
+        },
+        {
+          "id": "convertFieldType",
+          "options": {
+            "conversions": [
+              {
+                "destinationType": "number",
+                "targetField": "duration"
+              }
+            ],
+            "fields": {}
+          }
+        },
+        {
+          "id": "organize",
+          "options": {
+            "excludeByName": {
+              "executionId": true,
+              "sourceName": true,
+              "status": true
+            },
+            "indexByName": {},
+            "renameByName": {}
+          }
+        },
+        {
+          "id": "sortBy",
+          "options": {
+            "fields": {},
+            "sort": [
+              {
+                "desc": false,
+                "field": "duration"
+              }
+            ]
+          }
+        },
+        {
+          "id": "limit",
+          "options": {
+            "limitField": 10
+          }
+        },
+        {
+          "id": "convertFieldType",
+          "options": {
+            "conversions": [
+              {
+                "destinationType": "enum",
+                "targetField": "srcBaseUrl"
+              }
+            ],
+            "fields": {}
+          }
+        }
+      ],
+      "type": "bargauge"
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "datasource-uid-for-isd-insights"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "fixedColor": "green",
+            "mode": "fixed"
+          },
+          "links": [
+            {
+              "targetBlank": true,
+              "title": "",
+              "url": "${__field.labels.srcBaseUrl}/deck/#/applications/${__field.labels.appName}/executions?pipeline=${__field.labels.pipelineName}"
+            }
+          ],
+          "mappings": [],
+          "min": 0,
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "green",
+                "value": 0
+              }
+            ]
+          },
+          "unit": "none"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 11,
+        "w": 12,
+        "x": 0,
+        "y": 29
+      },
+      "id": 33,
+      "options": {
+        "displayMode": "gradient",
+        "minVizHeight": 10,
+        "minVizWidth": 0,
+        "namePlacement": "left",
+        "orientation": "horizontal",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "showUnfilled": true,
+        "text": {
+          "titleSize": 12,
+          "valueSize": 12
+        },
+        "valueMode": "text"
+      },
+      "pluginVersion": "10.2.2",
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "datasource-uid-for-isd-insights"
+          },
+          "editorMode": "code",
+          "exemplar": false,
+          "expr": "topk(10,changes(pipelines_execution_count_total{status=~\"SUCCEEDED\",appName=~\"$application\",sourceName=~\"$cdName\"}[$timeFilter] offset $offsetDuration) + 1)",
+          "format": "time_series",
+          "instant": true,
+          "legendFormat": "{{appName}}  - {{pipelineName}} ",
+          "range": false,
+          "refId": "A"
+        }
+      ],
+      "title": "Most Successful Pipelines",
+      "transformations": [],
+      "type": "bargauge"
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "datasource-uid-for-isd-insights"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "fixedColor": "dark-red",
+            "mode": "fixed"
+          },
+          "links": [
+            {
+              "targetBlank": true,
+              "title": "Go to Spinnaker pipelines executions",
+              "url": "${__field.labels.srcBaseUrl}/deck/#/applications/${__field.labels.appName}/executions?pipeline=${__field.labels.pipelineName}&status=TERMINAL"
+            }
+          ],
+          "mappings": [],
+          "min": 0,
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "dark-red",
+                "value": null
+              },
+              {
+                "color": "dark-red",
+                "value": 0
+              }
+            ]
+          },
+          "unit": "none"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 11,
+        "w": 12,
+        "x": 12,
+        "y": 29
+      },
+      "id": 34,
+      "links": [],
+      "options": {
+        "displayMode": "gradient",
+        "minVizHeight": 10,
+        "minVizWidth": 0,
+        "namePlacement": "left",
+        "orientation": "horizontal",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "showUnfilled": true,
+        "text": {
+          "titleSize": 12,
+          "valueSize": 12
+        },
+        "valueMode": "text"
+      },
+      "pluginVersion": "10.2.2",
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "datasource-uid-for-isd-insights"
+          },
+          "editorMode": "code",
+          "exemplar": false,
+          "expr": "topk(10, changes(pipelines_execution_count_total{status=~\"TERMINAL\",appName=~\"$application\",sourceName=~\"$cdName\"}[$timeFilter] offset $offsetDuration) + 1)",
+          "format": "time_series",
+          "instant": true,
+          "legendFormat": "{{appName}}  - {{pipelineName}}",
+          "range": false,
+          "refId": "A"
+        }
+      ],
+      "title": "Most Failed Pipelines",
+      "transformations": [],
+      "type": "bargauge"
     }
   ],
-  "refresh": "5s",
+  "refresh": "",
   "schemaVersion": 38,
   "tags": [],
   "templating": {
@@ -1124,6 +1262,6 @@
   "timezone": "",
   "title": "PipeInsights",
   "uid": "pipeline-insight",
-  "version": 7,
+  "version": 9,
   "weekStart": ""
 }
