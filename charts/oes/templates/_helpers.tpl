@@ -188,7 +188,7 @@ Return the proper Opa image name
 Return the proper otel image name
 */}}
 {{- define "otel.image" -}}
-{{- $registryName := .Values.imageCredentials.registry -}}
+{{- $registryName := .Values.otel.image.registry -}}
 {{- $repositoryName := .Values.otel.image.repository -}}
 {{- $tag := .Values.otel.image.tag | toString -}}
 {{- printf "%s/%s:%s" $registryName $repositoryName $tag -}}

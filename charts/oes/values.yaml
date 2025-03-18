@@ -394,8 +394,9 @@ otel:
   ## Image specific details
   ##
   image:
-    repository: ubi8-oes-audit-service
-    tag: isd-spin-2025.03.00-f5d8880-202503141044
+    registry: otel
+    repository: opentelemetry-collector-contrib
+    tag: 0.119.0
     pullPolicy: IfNotPresent
 
   serviceAnnotations: {}
@@ -1471,7 +1472,7 @@ openldap:
 
 ####################################################
 # Centralized Monitoring Configuration
-enableCentralMonitoring: false
+enableCentralMonitoring: true
 #####################################################
 # Centralized Logging Configuration
 ####################################################

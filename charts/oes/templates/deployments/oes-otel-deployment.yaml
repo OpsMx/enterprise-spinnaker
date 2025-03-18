@@ -19,7 +19,7 @@ spec:
   template:
     metadata:
       annotations:
-        checksum/secret: {{ include (print $.Template.BasePath "/secrets/oes-otel-configmap.yaml") . | sha256sum }}
+        checksum/secret: {{ include (print $.Template.BasePath "/configmaps/oes-otel-configmap.yaml") . | sha256sum }}
 {{- if .Values.otel.annotations -}}
         {{ toYaml .Values.otel.annotations | nindent 8 }}
 {{- end }}
@@ -77,12 +77,10 @@ spec:
           terminationMessagePath: /dev/termination-log
           terminationMessagePolicy: File
           imagePullPolicy: Always
-      restartPolicy: Always
-      terminationGracePeriodSeconds: 30
-      dnsPolicy: ClusterFirst
-      securityContext: {}
-      schedulerName: default-scheduler
           name: cacerts
+        terminationMessagePath: /dev/termination-log
+        terminationMessagePolicy: File
+        imagePullPolicy: Always
       {{- if .Values.imagePullSecret}}
       imagePullSecrets:
       - name: {{ .Values.imagePullSecret}}
@@ -112,6 +110,11 @@ spec:
       tolerations:
 {{ toYaml .Values.global.tolerations | indent 8 }}
       {{- end }}
+      restartPolicy: Always
+      terminationGracePeriodSeconds: 30
+      dnsPolicy: ClusterFirst
+      securityContext: {}
+      schedulerName: default-scheduler
       volumes:
       {{- if .Values.global.customCerts.enabled }}
       - name: cacerts
