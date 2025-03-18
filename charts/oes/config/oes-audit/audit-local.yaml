@@ -32,6 +32,15 @@ feign:
       url: http://oes-visibility:8096
     dashboard:
       url: http://oes-dashboard:8094
+otel:
+  exporter:
+    otlp:
+      metric-prefix:
+      metrics:
+        endpoint: http://otel-collector:4318/v1/metrics
+        temporality.preference: CUMULATIVE
+      traces:
+        endpoint: http://otel-collector:4318/v1/traces     
 open-telemetry:
   enabled: {{ .Values.global.openTelemetry }}
   baseUrl: {{ .Values.global.oesUI.protocol }}://{{ .Values.global.oesUI.host }}

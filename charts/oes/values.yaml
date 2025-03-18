@@ -384,6 +384,37 @@ audit:
   config: {}
 
 ###############################################################################
+
+###############################################################################
+##
+## Values of OES otel
+##
+otel:
+  replicas: 1
+  ## Image specific details
+  ##
+  image:
+    repository: ubi8-oes-audit-service
+    tag: isd-spin-2025.03.00-f5d8880-202503141044
+    pullPolicy: IfNotPresent
+
+  serviceAnnotations: {}
+
+  annotations:
+    moniker.spinnaker.io/application: isd
+    prometheus_io_path: /mgmt/prometheus
+    prometheus_io_port: "4318"
+    prometheus.io/scrape: "false"
+    
+  labels:  #If Required,Add Customer-specific labels as well
+    app: oes
+    component: otel
+    
+  resources: {}
+  config: {}
+
+###############################################################################
+
 ##
 ## Values of OES auditclient
 ##

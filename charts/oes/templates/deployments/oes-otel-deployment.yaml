@@ -1,0 +1,138 @@
+{{- if or (eq .Values.installationMode "OES-AP")  (eq .Values.installationMode "EASY") -}}
+{{- if .Values.enableCentralMonitoring }}
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  annotations:
+{{ include "isd.standard-annotations" . | indent 4 }}
+  labels:
+    app: oes
+    component: otel
+{{ include "oes.standard-labels" . | indent 4 }}
+  name: otel-collector
+spec:
+  replicas: {{ .Values.otel.replicas }}
+  selector:
+    matchLabels:
+      app: oes
+      component: otel
+  template:
+    metadata:
+      annotations:
+        checksum/secret: {{ include (print $.Template.BasePath "/secrets/oes-otel-configmap.yaml") . | sha256sum }}
+{{- if .Values.otel.annotations -}}
+        {{ toYaml .Values.otel.annotations | nindent 8 }}
+{{- end }}
+      labels:
+        app: oes
+        component: otel
+{{ include "oes.standard-labels" . | indent 8 }}
+    spec:
+      {{- if (eq .Values.db.enabled true) }}
+      initContainers:
+      - name: db-check
+        image: {{ .Values.global.customImages.registry }}/pgchecker:v1
+        command:
+          - sh
+          - -c
+          - |
+            echo 'Waiting for OES-DB to become ready...'
+            until printf "." && nc -z -w 2 oes-db 5432; do
+               sleep 2;
+            done;
+            echo 'OESDB OK ✓'
+      {{- end }}
+      containers:
+      - image: {{ template "otel.image" . }}
+        name: oes-otel
+        ports:
+        - containerPort: 4318
+          protocol: TCP
+        env:
+       {{- if .Values.extraEnvVars }}
+       {{- include "tplvalues.render" (dict "value" .Values.extraEnvVars "context" $) | nindent 8 }}
+       {{- end }}
+        resources:
+{{ toYaml .Values.otel.resources | indent 12 }}
+        readinessProbe:
+          tcpSocket:
+            port: 4318
+          initialDelaySeconds: 10
+          periodSeconds: 5
+        livenessProbe:
+          httpGet:
+            path: /mgmt/health
+            port: 4318
+          initialDelaySeconds: 60
+          periodSeconds: 60
+        volumeMounts:
+        - name: otel-agent-config-vol
+          mountPath: /conf
+        - name: varlogpods
+          readOnly: true
+          mountPath: /var/log/pods
+        - name: varlibdockercontainers
+          readOnly: true
+          mountPath: /var/lib/docker/containers
+          terminationMessagePath: /dev/termination-log
+          terminationMessagePolicy: File
+          imagePullPolicy: Always
+      restartPolicy: Always
+      terminationGracePeriodSeconds: 30
+      dnsPolicy: ClusterFirst
+      securityContext: {}
+      schedulerName: default-scheduler
+          name: cacerts
+      {{- if .Values.imagePullSecret}}
+      imagePullSecrets:
+      - name: {{ .Values.imagePullSecret}}
+      {{- end }}
+      {{- if and (.Values.global.openshift) (not .Values.global.securityContext) }}
+      securityContext: {{ default "{}" }}
+      {{- else }}
+      {{- if and (.Values.global.openshift) (.Values.global.securityContext) }}
+      securityContext:
+{{ toYaml .Values.global.securityContext | indent 8 }}
+      {{- else }}
+      {{- if and (not .Values.global.openshift) (.Values.global.securityContext) }}
+      securityContext:
+{{ toYaml .Values.global.securityContext | indent 8 }}
+      {{- end }}
+      {{- end }}
+      {{- end }}
+      {{- if .Values.global.nodeSelector }}
+      nodeSelector:
+{{ toYaml .Values.global.nodeSelector | indent 8 }}
+      {{- end }}
+      {{- if .Values.global.affinity }}
+      affinity:
+{{ toYaml .Values.global.affinity | indent 8 }}
+      {{- end }}
+      {{- if .Values.global.tolerations }}
+      tolerations:
+{{ toYaml .Values.global.tolerations | indent 8 }}
+      {{- end }}
+      volumes:
+      {{- if .Values.global.customCerts.enabled }}
+      - name: cacerts
+        secret:
+          secretName: {{ .Values.global.customCerts.secretName }}
+          items:
+          - key: cacerts
+            path: cacerts
+      {{- end }}
+      - configMap:
+          defaultMode: 420
+          name: otel-agent-config-vol
+        name: otel-agent-config-vol
+      - configMap:
+          defaultMode: 420
+          name: varlogpods
+        name: varlogpods
+      - configMap:
+          defaultMode: 420
+          name: varlibdockercontainers
+        name: varlibdockercontainers  
+{{- end }}
+{{- end -}}
+
