@@ -126,16 +126,13 @@ spec:
       {{- end }}
       - configMap:
           defaultMode: 420
-          name: otel-agent-config-vol
+          name: otel-collector-config
         name: otel-agent-config-vol
-      - configMap:
-          defaultMode: 420
-          name: varlogpods
-        name: varlogpods
-      - configMap:
-          defaultMode: 420
-          name: varlibdockercontainers
-        name: varlibdockercontainers  
+      - name: varlogpods
+        emptyDir: {}
+      - name: varlibdockercontainers
+        emptyDir: {}
+          
 {{- end }}
 {{- end -}}
 

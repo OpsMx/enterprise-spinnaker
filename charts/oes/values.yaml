@@ -798,10 +798,10 @@ saporgate:
   ## Image specific details
   ##
   enabled: true
-  image:
-    repository: ubi8-oes-spin-gate
-    tag: isd-spin-2025.03.00-6d2400cb-202503121129
-    pullPolicy: IfNotPresent
+#  image:
+#    repository: ubi8-oes-spin-gate
+#    tag: isd-spin-2025.03.00-6d2400cb-202503121129
+#    pullPolicy: IfNotPresent
 
   annotations:
     moniker.spinnaker.io/application: "isd"

@@ -27,7 +27,7 @@ spec:
 {{ include "oes.standard-labels" . | indent 8 }}
     spec:
       containers:
-      - image: {{ template "saporgate.image" . }}
+      - image: {{ template "gate.image" . }}
         name: sapor-gate
         env:
         - name: JAVA_OPTS
