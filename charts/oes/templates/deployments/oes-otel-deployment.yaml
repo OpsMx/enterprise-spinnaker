@@ -45,6 +45,9 @@ spec:
       containers:
       - image: {{ template "otel.image" . }}
         name: oes-otel
+        command:
+          - /otelcol-contrib
+          - '--config=/conf/otel-config.yaml'
         ports:
         - containerPort: 4318
           protocol: TCP
