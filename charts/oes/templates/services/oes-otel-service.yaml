@@ -14,7 +14,8 @@ metadata:
   name: otel-collector
 spec:
   selector:
-    app: otel-collector
+    app: oes
+    component: otel
   ports:
     - name: otlp-http
       port: 4318
