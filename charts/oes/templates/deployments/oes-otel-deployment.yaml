@@ -47,7 +47,7 @@ spec:
         name: oes-otel
         command:
           - /otelcol-contrib
-          - '--config=/conf/otel-config.yaml'
+          - '--config=/conf/otel.conf'
         ports:
           - hostPort: 4318
             containerPort: 4318

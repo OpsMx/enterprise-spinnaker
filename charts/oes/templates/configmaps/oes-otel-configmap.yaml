@@ -1,8 +1,8 @@
-{{ if or (eq .Values.installationMode "OES-AP")  (eq .Values.installationMode "EASY") }}
 {{- if .Values.enableCentralMonitoring }}
 apiVersion: v1
 data:
-{{ (tpl (.Files.Glob "config/oes-otel/otel-config.yaml").AsConfig . ) | indent 2 }}
+  otel.conf: |
+{{ (tpl (.Files.Get "config/oes-otel/otel.conf") . ) | nindent 4 }}  
 kind: ConfigMap
 metadata:
   name: otel-collector-config
@@ -11,4 +11,3 @@ metadata:
     component: otel
 {{ include "oes.standard-labels" . | indent 4 }}
 {{- end }}
-{{ end }}
