@@ -1,4 +1,5 @@
 {{- if or (eq .Values.installationMode "OES-AP")  (eq .Values.installationMode "EASY") -}}
+{{- if .Values.enableCentralMonitoring }}
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -6,24 +7,25 @@ metadata:
 {{ include "isd.standard-annotations" . | indent 4 }}
   labels:
     app: oes
-    component: auditservice
+    component: otel
 {{ include "oes.standard-labels" . | indent 4 }}
-  name: oes-audit-service
+  name: otel-collector
 spec:
-  replicas: {{ .Values.audit.replicas }}
+  replicas: {{ .Values.otel.replicas }}
   selector:
     matchLabels:
       app: oes
-      component: auditservice
+      component: otel
   template:
     metadata:
       annotations:
-        checksum/secret: {{ include (print $.Template.BasePath "/secrets/oes-audit-service-secret.yaml") . | sha256sum }}
-{{- if .Values.audit.annotations -}}        
-        {{ toYaml .Values.audit.annotations | nindent 8 }}
+        checksum/secret: {{ include (print $.Template.BasePath "/configmaps/oes-otel-configmap.yaml") . | sha256sum }}
+{{- if .Values.otel.annotations -}}
+        {{ toYaml .Values.otel.annotations | nindent 8 }}
 {{- end }}
       labels:
-{{ toYaml .Values.audit.labels | indent 8 }}
+        app: oes
+        component: otel
 {{ include "oes.standard-labels" . | indent 8 }}
     spec:
       {{- if (eq .Values.db.enabled true) }}
@@ -41,45 +43,38 @@ spec:
             echo 'OESDB OK ✓'
       {{- end }}
       containers:
-      - image: {{ template "auditservice.image" . }}
-        imagePullPolicy: IfNotPresent
-        name: oes-audit
+      - image: {{ template "otel.image" . }}
+        name: oes-otel
+        command:
+          - /otelcol-contrib
+          - '--config=/conf/otel.conf'
+        ports:
+          - hostPort: 4318
+            containerPort: 4318
+            protocol: TCP
         env:
        {{- if .Values.extraEnvVars }}
        {{- include "tplvalues.render" (dict "value" .Values.extraEnvVars "context" $) | nindent 8 }}
        {{- end }}
-        ports:
-        - containerPort: 8097
-          name: backend
-          protocol: TCP
-        livenessProbe:
-          failureThreshold: 3
-          httpGet:
-            path: /mgmt/health
-            port: 8097
-            scheme: HTTP
-          initialDelaySeconds: 60
-          periodSeconds: 60
-          successThreshold: 1
-          timeoutSeconds: 1
-        readinessProbe:
-          failureThreshold: 3
-          initialDelaySeconds: 60
-          periodSeconds: 10
-          successThreshold: 1
-          tcpSocket:
-            port: 8097
-          timeoutSeconds: 1
+        resources:
+{{ toYaml .Values.otel.resources | indent 12 }}
         volumeMounts:
-        - mountPath: /opsmx/conf/audit-service-local.yml
-          name: audit-config-volume
-          subPath: audit-local.yml
-        - mountPath: /opsmx/conf/bootstrap.yml
-          name: bootstrap-config-volume
-          subPath: bootstrap.yml
-        - mountPath: /opsmx/conf/standard-error-code.csv
-          name: standard-error-conf
-          subPath: standard-error-codes.csv
+        - name: otel-agent-config-vol
+          mountPath: /conf
+        - name: varlogpods
+          readOnly: true
+          mountPath: /var/log/pods
+        - name: varlibdockercontainers
+          readOnly: true
+          mountPath: /var/lib/docker/containers
+        {{- if .Values.global.customCerts.enabled }}
+        - mountPath: /etc/pki/ca-trust/extracted/java/cacerts
+          subPath: cacerts          
+          name: cacerts
+        {{- end }}  
+        terminationMessagePath: /dev/termination-log
+        terminationMessagePolicy: File
+        imagePullPolicy: Always
       {{- if .Values.imagePullSecret}}
       imagePullSecrets:
       - name: {{ .Values.imagePullSecret}}
@@ -109,6 +104,11 @@ spec:
       tolerations:
 {{ toYaml .Values.global.tolerations | indent 8 }}
       {{- end }}
+      restartPolicy: Always
+      terminationGracePeriodSeconds: 30
+      dnsPolicy: ClusterFirst
+      securityContext: {}
+      schedulerName: default-scheduler
       volumes:
       {{- if .Values.global.customCerts.enabled }}
       - name: cacerts
@@ -118,22 +118,14 @@ spec:
           - key: cacerts
             path: cacerts
       {{- end }}
-      volumes:
-      - secret:
-          items:
-          - key: audit-local.yml
-            path: audit-local.yml
-          secretName: oes-audit-service-config
-        name: audit-config-volume
-      - name: bootstrap-config-volume
-        secret:
-          defaultMode: 420
-          secretName: bootstrap
       - configMap:
           defaultMode: 420
-          items:
-          - key: standard-error-codes.csv
-            path: standard-error-codes.csv
-          name: standard-error-codes-config
-        name: standard-error-conf
+          name: otel-collector-config
+        name: otel-agent-config-vol
+      - name: varlogpods
+        emptyDir: {}
+      - name: varlibdockercontainers
+        emptyDir: {}
+          
+{{- end }}
 {{- end -}}

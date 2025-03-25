@@ -1,0 +1,31 @@
+{{- if or (eq .Values.installationMode "OES-AP") (eq .Values.installationMode "EASY") -}}
+{{- if .Values.enableCentralMonitoring }}
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    app: oes
+    component: otel
+{{ include "oes.standard-labels" . | indent 4 }}
+{{- if .Values.otel.serviceAnnotations }}
+  annotations:
+{{ toYaml .Values.otel.serviceAnnotations | indent 4 }}
+{{- end }}
+  name: otel-collector
+spec:
+  selector:
+    app: oes
+    component: otel
+  ports:
+    - name: otlp-http
+      port: 4318
+      targetPort: 4318
+    - name: prometheus-metrics  # Prometheus metrics endpoint
+      port: 9464
+      targetPort: 9464
+    - name: metrics
+      port: 8888
+      targetPort: 8888
+  type: ClusterIP
+{{- end -}}
+{{- end -}}

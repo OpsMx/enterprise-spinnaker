@@ -1,0 +1,13 @@
+{{- if .Values.enableCentralMonitoring }}
+apiVersion: v1
+data:
+  otel.conf: |
+{{ (tpl (.Files.Get "config/oes-otel/otel.conf") . ) | nindent 4 }}  
+kind: ConfigMap
+metadata:
+  name: otel-collector-config
+  labels:
+    app: oes
+    component: otel
+{{ include "oes.standard-labels" . | indent 4 }}
+{{- end }}

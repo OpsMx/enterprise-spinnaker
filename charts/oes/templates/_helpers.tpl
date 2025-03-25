@@ -186,6 +186,16 @@ Return the proper Opa image name
 {{- end -}}
 
 {{/*
+Return the proper otel image name
+*/}}
+{{- define "otel.image" -}}
+{{- $registryName := .Values.otel.image.registry -}}
+{{- $repositoryName := .Values.otel.image.repository -}}
+{{- $tag := .Values.otel.image.tag | toString -}}
+{{- printf "%s/%s:%s" $registryName $repositoryName $tag -}}
+{{- end -}}
+
+{{/*
 Return the proper Create Controller Image
 */}}
 {{- define "createcontroller.image" -}}
