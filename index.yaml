@@ -9,7 +9,7 @@ entries:
     name: hello-kubernetes
     type: application
     urls:
-    - https://opsmx.github.io/enterprise-spinnaker/hello-world/hello-kubernetes-1.0.4x.tgz
+    - https://opsmx.github.io/enterprise-spinnaker/hello-world/hello-kubernetes-1.0.4.tgz
     version: 1.0.4
   - apiVersion: v2
     appVersion: "1.10"
