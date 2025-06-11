@@ -2,7 +2,7 @@ apiVersion: v1
 entries:
   hello-kubernetes:
   - apiVersion: v2
-    appVersion: "1.10.0"
+    appVersion: 1.10.0
     created: "2021-06-30T16:28:02.882287751+05:30"
     description: A demo application for a Kubernetes cluster.
     digest: 8487f40cae0c6dba20671bdfbca18b268c6c4c6eff13f440db5f13f35f0b3835
@@ -83,6 +83,65 @@ entries:
     - https://helmcharts.opsmx.com/issuegen-0.1.0.tgz
     version: 0.1.0
   oes:
+  - apiVersion: v2
+    appVersion: 2025.03.00
+    created: "2025-06-11T04:40:48.077567806Z"
+    dependencies:
+    - condition: global.installOpenLdap
+      name: openldap
+      repository: ""
+      version: 1.2.3
+    - condition: installSpinnaker
+      name: spinnaker
+      repository: ""
+      version: 2.2.3
+    - condition: global.minio.enabled
+      name: minio
+      repository: ""
+      version: 8.0.9
+    - condition: installRedis
+      name: redis
+      repository: ""
+      version: 10.5.3
+    - condition: enableCentralLogging
+      name: elasticsearch
+      repository: ""
+      version: 7.5.0
+    - condition: enableCentralLogging
+      name: kibana
+      repository: ""
+      version: 7.5.0
+    - condition: enableCentralLogging
+      name: fluent-bit
+      repository: ""
+      version: 2.8.2
+    - condition: enableCentralMonitoring
+      name: prometheus
+      repository: ""
+      version: 11.16.2
+    - condition: enableCentralMonitoring
+      name: grafana
+      repository: ""
+      version: 7.0.19
+    - condition: global.gitea.enabled
+      name: gitea
+      repository: ""
+      version: 5.0.1
+    description: ISD and Spinnaker with cve v1.33.3 SAML2 Configuration
+    digest: 5c6562067ece0f92c0703e53883179a6159eabfef0cde5cad4e5a5589f7b2ce6
+    home: https://www.opsmx.com/
+    icon: https://raw.githubusercontent.com/OpsMx/enterprise-spinnaker/master/img/opsmx.png
+    keywords:
+    - OpsMx
+    - OES
+    - Autopilot
+    maintainers:
+    - email: srinivas@opsmx.io
+      name: ksrinimba
+    name: oes
+    urls:
+    - https://github.com/OpsMx/enterprise-spinnaker/releases/download/oes-4.0.25/oes-4.0.25.tgz
+    version: 4.0.25
   - apiVersion: v2
     appVersion: 2024.12.00
     created: "2025-03-04T11:22:13.36688622Z"
