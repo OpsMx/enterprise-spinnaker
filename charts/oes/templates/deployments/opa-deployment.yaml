@@ -31,6 +31,7 @@ spec:
           args:
             - "run"
             - "--server"
+            - --addr=0.0.0.0:8181
         - name: opa-persist
           command:
           - /bin/bash
@@ -38,7 +39,7 @@ spec:
           envFrom:
           - secretRef:
               name: oes-gate-secret
-          image: quay.io/opsmxpublic/opa:curl-jq-kubectl
+          image: quay.io/opsmxpublic/opa:curl-jq-kubectl-v1.0
           imagePullPolicy: IfNotPresent
           volumeMounts:
           - mountPath: /tmp/config
