@@ -3,7 +3,7 @@ name: Release Charts
 on:
   push:
     branches:
-      - isd-spin-2025.03.00
+      - isd-spin-2025.03.01
     paths:
       - 'charts/oes/Chart.yaml'
       - 'charts/oes/Chart.lock'
