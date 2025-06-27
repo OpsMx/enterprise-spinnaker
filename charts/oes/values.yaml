@@ -111,7 +111,7 @@ global:
 
   gitea:
     enabled: false
-    standardrepoBranch: 2025.03.00
+    standardrepoBranch: 2025.03.01
     admin:
       existingSecret: gitea-secret
       username: opsmx
@@ -707,7 +707,7 @@ rabbitmq:
   password: Networks123
   image:
     registry: quay.io/opsmxpublic/rabbitmq
-    repository: 3-management
+    repository: 4.1-management-v1.0
 
   annotations:
     moniker.spinnaker.io/application: isd
@@ -1341,7 +1341,7 @@ opa:
   enabled: true
   image:
     repository: opa
-    tag: v0.47.0
+    tag: 1.6.0-dev-static
     pullPolicy: IfNotPresent
   annotations:
     moniker.spinnaker.io/application: isd
