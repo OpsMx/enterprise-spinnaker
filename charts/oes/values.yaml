@@ -111,7 +111,7 @@ global:
 
   gitea:
     enabled: false
-    standardrepoBranch: 2025.03.00
+    standardrepoBranch: 2025.03.01
     admin:
       existingSecret: gitea-secret
       username: opsmx
