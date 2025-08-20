@@ -625,21 +625,42 @@ gate:
     #####################################################
     oauth2:
       enabled: false
-      client:
+      provider: google   # options: github | google
+#For GOOGLE
+      google:
+        loginPath: /oauth2/authorization/google
+        client:
+          registration:
+            google:
+              client-id: <GOOGLE.CLIENT.ID>
+              client-secret: <GOOGLE.SECRET.ID>
+              accessTokenUri: <GOOGLE.ACCESSTOKENURI.URI>
+              userAuthorizationUri: <GOOGLE.AUTO]HORIZATION.URI>
+              redirect-uri: "{baseUrl}/login/oauth2/code/google"
+              scope: openid, email, profile
+            userInfoRequirements:
+              hd: /^(opsmx.io)$/ #Allowed domains
+          provider:
+            google:
+              authorization-uri: https://accounts.google.com/o/oauth2/auth
+              token-uri: https://oauth2.googleapis.com/token
+              user-info-uri: https://www.googleapis.com/oauth2/v3/userinfo
+              user-name-attribute: sub
+#For GITHUB
+      github:
         clientId: #CLIENT_ID
         clientSecret: #CLIENT_SECRET_ID
         accessTokenUri: https://github.com/login/oauth/access_token
         userAuthorizationUri: https://github.com/login/oauth/authorize
         scope: user-email
-      resource:
-        userInfoUri: https://api.github.com/user
-      userInfoMapping:
-        email: email
-        firstName: firstname
-        lastName: name
-        username: login
-      provider: GITHUB
-
+        resource:
+          userInfoUri: https://api.github.com/user
+        userInfoMapping:
+          email: email
+          firstName: firstname
+          lastName: name
+          username: login
+        provider: GITHUB
 ###############################################################################
 ## Values of OES Platform
 platform:
