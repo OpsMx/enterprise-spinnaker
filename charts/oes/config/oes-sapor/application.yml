@@ -83,6 +83,14 @@ pipeline-promotion:
     region: {{ .Values.spinnaker.gitopsHalyard.repo.s3region }}
     bucketName: {{ .Values.spinnaker.gitopsHalyard.repo.s3bucket }}
 spinnaker:
+  connection:
+    validate:
+      fixedDelay:
+        in:
+          milliseconds: '3300000'
+      initialDelay:
+        in:
+          milliseconds: '3300000'
   restart:
     endPoint: /webhooks/webhook/restartSpinnaker
   encrypt:
