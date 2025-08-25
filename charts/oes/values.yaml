@@ -327,7 +327,7 @@ autopilot:
   ## Image specific details
   image:
     repository: ubi8-oes-autopilot
-    tag: isd-spin-2025.08.00-5594f7a55-202507211004
+    tag: isd-spin-2025.08.00-609707a86-202508250549
     pullPolicy: IfNotPresent
 
   annotations:
