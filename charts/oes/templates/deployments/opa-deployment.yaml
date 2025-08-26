@@ -32,6 +32,7 @@ spec:
             - "run"
             - "--server"
             - "--addr=0.0.0.0:8181"
+            - "--v0-compatible"
         - name: opa-persist
           command:
           - /bin/bash
