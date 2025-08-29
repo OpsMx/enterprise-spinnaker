@@ -66,7 +66,7 @@ spinnaker:
       halConfigPath: / #hal config path configuration path supports relative path from the root folder must be same as  dynAccntConfigPath
       dynAccntConfigPath: / #dymanic account configuration path supports relative path from the root folder must be same as halConfigPath
       #username: saitejaopsmx  # Username to authenticate with git/stash repo
-      #token: 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  # Token corresponding to above username
+      #token: ghp_*  # Token corresponding to above username
       usermailid: susmita.lakkireddy@opsmx.io
     # Promote applications and pipelines from one environment to another or take backup
     pipelinePromotion:
@@ -77,7 +77,8 @@ spinnaker:
       rootFolder: pipeline/
       baseUrl: github.com  #  "git_url"
       username: saitejaopsmx # git user
-      token: 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 # ex: ghp_lqNYLgwGsUO0obycpcr2qyqDf # user token
+      token: ghp_* # ex: ghp_lqNYLgwGsUO0obycpcr2qyqDf # user token
       branch: master # branch to which changes needs to be pushed ex: testbranch
+
 
 
