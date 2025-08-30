@@ -33,9 +33,8 @@ data:
     {{- end }}
     then
         echo \"Spinnaker and OES is Installed and ready\"
-        mkdir -p /tmp/config/git/
-        git -c {{ .Values.gitopsHalyard.repo.configArgs }} clone https://github.com/OpsMx/sample-pipelines.git /tmp/config/git/
         cd /tmp/config/git
+        cp -r /tmp/sample/. /tmp/config/git
         cp -p /tmp/config/spin/config .
         sed 's/$/ --config config/' create-app.sh >create-app1.sh
         bash -xe create-app1.sh
