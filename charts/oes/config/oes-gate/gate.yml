@@ -226,14 +226,45 @@ spring:
     saml2:
 {{ toYaml .Values.gate.config.spring.security.saml2 | indent 6 }}
 {{- end }}
+
 {{- if .Values.gate.config.oauth2.enabled }}
+pipeline:
+  rbac: {{ .Values.global.commonGate.spinnakerpipelineRBAC }}
 security:
   contentSecurityPolicy: "object-src 'none'; script-src 'unsafe-eval' 'unsafe-inline' https: http:;"
   basic:
     enabled: true
-  user: {}
-  oauth2:
-{{ toYaml .Values.gate.config.oauth2 | indent 4 }}
+spring:
+  security:
+    oauth2:
+      enabled: true
+
+{{- if eq .Values.gate.config.oauth2.provider "github" }}
+      client:
+        clientId: {{ .Values.gate.config.oauth2.github.clientId | quote }}
+        clientSecret: {{ .Values.gate.config.oauth2.github.clientSecret | quote }}
+        accessTokenUri: {{ .Values.gate.config.oauth2.github.accessTokenUri | quote }}
+        userAuthorizationUri: {{ .Values.gate.config.oauth2.github.userAuthorizationUri | quote }}
+        scope: {{ .Values.gate.config.oauth2.github.scope | quote }}
+      resource:
+        userInfoUri: {{ .Values.gate.config.oauth2.github.resource.userInfoUri | quote }}
+      userInfoMapping:
+{{ toYaml .Values.gate.config.oauth2.github.userInfoMapping | indent 8 }}
+      provider: {{ .Values.gate.config.oauth2.github.provider | default "GITHUB" }}
+
+{{- else if eq .Values.gate.config.oauth2.provider "google" }}
+      login-path: {{ .Values.gate.config.oauth2.google.loginPath | quote }}
+      client:
+        registration:
+          google:
+{{ toYaml .Values.gate.config.oauth2.google.client.registration.google | indent 12 }}
+          userInfoRequirements:
+{{ toYaml .Values.gate.config.oauth2.google.client.registration.userInfoRequirements | indent 12 }}
+        provider:
+          google:
+{{ toYaml .Values.gate.config.oauth2.google.client.provider.google | indent 12 }}
+
+{{- end }}
 {{- end }}
 file:
   enabled: {{ .Values.gate.config.fileBasedAuthentication.enabled }}
