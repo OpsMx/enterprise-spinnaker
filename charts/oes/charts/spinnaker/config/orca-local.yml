@@ -383,6 +383,10 @@ spinnaker:
         enabled: true
         version: 1.0.1
         config:
+      Opsmx.RuntimePipelineValidatePlugin:
+        enabled: true
+        version: 1.0.1
+        config:   
     repositories:
       opsmx-repo:
         id: opsmx-repo
