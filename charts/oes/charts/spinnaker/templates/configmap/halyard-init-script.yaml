@@ -239,6 +239,9 @@ data:
     yq -i e '.pipeline.rbac = true' /tmp/spinnaker/.hal/default/profiles/front50-local.yml
     yq -i e '.pipeline.rbac = true' /tmp/spinnaker/.hal/default/profiles/fiat-local.yml
     {{- end }}
+    {{- if .Values.global.commonGate.spinnakerpipelineValidateRuntimePolicy }}
+    yq -i e '.pipeline.validate.runtime.enabled = true' /tmp/spinnaker/.hal/default/profiles/orca-local.yml
+    {{- end }}
     {{- if and .Values.global.auth.saml (not .Values.global.spinnakerUrl) .Values.global.commonGate.enabled }}
     kubectl get secret oes-gate-config -o jsonpath='{.data.*}' -n ${SPINNAKER_NAMESPACE} | base64 -d > /tmp/gate1.yml
     oesuihost=$(yq e '.saml.redirectHostname' /tmp/gate1.yml)

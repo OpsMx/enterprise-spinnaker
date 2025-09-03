@@ -83,6 +83,7 @@ global:
     spinnakerRBAC: false  # Set to true if RBAC is enabled in Spinnaker
     spinnakerpipelineRBAC: false
     spinnakerKayanta: false
+    spinnakerpipelineValidateRuntimePolicy: false
 
   # Set to true if user need to access Spinnaker seperately
   spinnakerUrl: false
