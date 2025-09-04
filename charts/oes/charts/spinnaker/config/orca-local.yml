@@ -383,8 +383,17 @@ spinnaker:
         enabled: true
         version: 1.0.1
         config:
+      Opsmx.RuntimePipelineValidatePlugin:
+        enabled: true
+        version: 1.0.1
+        config:   
     repositories:
       opsmx-repo:
         id: opsmx-repo
         url: file:///opt/spinnaker/plugins/plugins.json
         #url: https://raw.githubusercontent.com/opsmx/spinnakerPluginRepository/v3.10.0/plugins.json
+pipeline:
+  rbac: false
+  validate:
+    runtime:
+      enabled: false        
