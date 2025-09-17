@@ -25,9 +25,9 @@ dependencies:
   version: 11.16.2
 - name: grafana
   repository: ""
-  version: 7.0.19
+  version: 9.3.4
 - name: gitea
   repository: ""
   version: 5.0.1
-digest: sha256:769850129bcda91fdb904b438e3479d27428d895dd76f9dff174910f14cbc77f
-generated: "2024-01-24T16:58:41.899837+05:30"
+digest: sha256:86fe27658ef2b7bcb13f64ab46a955d5583f07ad140699b3c209eb93a2a9c44a
+generated: "2025-09-17T19:43:50.417715+05:30"
