@@ -566,6 +566,14 @@ gate:
     app: oes
     component: gate
     
+  logging:
+    level:
+      com.netflix.spinnaker.gate.security: INFO
+      org.springframework.security: INFO
+      org.springframework.web: INFO
+      #com.netflix.spinnaker.gate.security: DEBUG
+      #org.springframework.security: DEBUG
+      #org.springframework.web: DEBUG
   resources: {}
   #  requests:
   #    memory: 500Mi
