@@ -53,6 +53,10 @@ management:
       enabled: false
     ldap:
       enabled: false
+  otlp:
+    metrics:
+      export:
+        enabled: {{ .Values.global.openTelemetry }}
 
 ui:
   approval:
@@ -109,9 +113,3 @@ datasource:
 
 standardErrorCodes:
   filePath: /opsmx/conf/standard-error-code.csv
-
-management:
-  otlp:
-    metrics:
-      export:
-        enabled: {{ .Values.global.openTelemetry }}
