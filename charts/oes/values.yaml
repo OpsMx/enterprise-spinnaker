@@ -26,11 +26,11 @@ installRedis: true
 # OES UI, OES Gate, Spinnaker Deck and Spinnaker Gate service type
 k8sServiceType: ClusterIP
 
-#extraEnvVars:
+extraEnvVars:
 #  - name: JAVA_OPTS
 #    value: -Dhttps.proxyHost=proxy.server.local -Dhttps.proxyPort=3128
-#  - name: JAVA_OPTS
-#    value: -Xmx512m
+ - name: JAVA_OPTS
+   value: -Xms2g -Xmx6g
 
 #####################################################
 ## Set to true if user want to clean up the ISD Data;default is false

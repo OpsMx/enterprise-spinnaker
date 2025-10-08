@@ -20,3 +20,8 @@ spinnakerLink: {{ .Values.dashboard.config.spinnakerLink }}
 {{- else }}
 spinnakerLink: /deck/
 {{- end }}
+management:
+  otlp:
+    metrics:
+      export:
+        enabled: {{ .Values.global.openTelemetry }}

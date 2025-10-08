@@ -96,3 +96,8 @@ db:
     enabled: {{ .Values.dbmigration.enable }}
     version:
       from: {{ .Values.dbmigration.versionFrom }}
+management:
+  otlp:
+    metrics:
+      export:
+        enabled: {{ .Values.global.openTelemetry }}

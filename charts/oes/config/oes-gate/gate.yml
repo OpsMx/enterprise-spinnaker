@@ -316,3 +316,8 @@ message-broker:
 logging:
   level:
 {{ toYaml .Values.gate.logging.level | indent 4 }}
+management:
+  otlp:
+    metrics:
+      export:
+        enabled: {{ .Values.global.openTelemetry }}
