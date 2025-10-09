@@ -3,6 +3,10 @@ spring:
     url: {{ .Values.db.url }}/auditdb
     username: '{{ .Values.db.username }}'
     password: '{{ .Values.db.password }}'
+    hikari:
+      maximum-pool-size: 30
+      minimum-idle: 5
+      connection-timeout: 60000
 logging:
   level:
     com.opsmx.auditclientservice: INFO
@@ -32,3 +36,8 @@ initialDelay:
     milliseconds: 300000
 scheduler:
   threads: 16
+management:
+  otlp:
+    metrics:
+      export:
+        enabled: {{ .Values.global.openTelemetry }}

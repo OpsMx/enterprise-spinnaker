@@ -119,3 +119,8 @@ kubernetes:
     path: /opt/opsmx/controller
     kubectlTemplateFileName: kubeconfig.template
     manifestTemplateFileName: deploy-agent.template
+management:
+  otlp:
+    metrics:
+      export:
+        enabled: {{ .Values.global.openTelemetry }}

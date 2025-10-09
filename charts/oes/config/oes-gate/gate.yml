@@ -315,9 +315,9 @@ message-broker:
 
 logging:
   level:
-    com.netflix.spinnaker.gate.security: INFO
-    org.springframework.security: INFO
-    org.springframework.web: INFO
-    #com.netflix.spinnaker.gate.security: DEBUG
-    #org.springframework.security: DEBUG
-    #org.springframework.web: DEBUG
+{{ toYaml .Values.gate.logging.level | indent 4 }}
+management:
+  otlp:
+    metrics:
+      export:
+        enabled: {{ .Values.global.openTelemetry }}

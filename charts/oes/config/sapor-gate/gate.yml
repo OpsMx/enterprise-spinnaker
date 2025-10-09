@@ -52,3 +52,8 @@ spring:
       enabled: false
     kv:
       enabled: false
+management:
+  otlp:
+    metrics:
+      export:
+        enabled: {{ .Values.global.openTelemetry }}
