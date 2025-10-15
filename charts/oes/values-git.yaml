@@ -45,7 +45,7 @@ global:
     admin:
       existingSecret: gitea-secret
       username: saiteja
-      password: sai123
+      password: encrypted:saiteja-PASSOWORD:saiteja-PASSWORD
       email: "opsmx@local.domain"
    #ingress:
       #host: gitea-spinnaker.play.opsmx.org

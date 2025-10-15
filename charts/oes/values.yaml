@@ -72,7 +72,7 @@ global:
     admin:
       existingSecret: gitea-secret
       username: opsmx
-      password: opsmxadmin123
+      password: encrypted:opsmx-PASSOWORD:opsmx-PASSWORD
       email: "support@opsmx.com"
 
 
@@ -141,7 +141,7 @@ global:
     enabled: true
     url: ldap://{{ .Release.Name }}-openldap:389
     managerDn: cn=admin,dc=example,dc=org
-    managerPassword: opsmxadmin123
+    managerPassword: encrypted:manager-PASSOWORD:manager-PASSWORD
     groupSearchBase: ou=groups,dc=example,dc=org
     groupSearchFilter: member={0}
     groupRoleAttributes: cn
@@ -223,7 +223,7 @@ db:
   ## Below url and credentials are used by Autopilot & Sapor
   url: jdbc:postgresql://oes-db:5432
   username: postgres
-  password: networks123
+  password: encrypted:postgres-PASSOWORD:postgres-PASSWORD
 
   ## Image specific details
   image:
@@ -446,7 +446,7 @@ gate:
       enabled: false
       userSource: gate  # Groups will be obtained from SAML
       keyStore: /opt/spinnaker/saml/oessaml.jks  # The key in this secret must be oessaml.jks
-      keyStorePassword: changeit
+      keyStorePassword: encrypted:keyStore-PASSOWORD:keyStore-PASSWORD
       keyStoreAliasName: saml
       metadataUrl: /opt/spinnaker/saml/oesmetadata.xml # The key in this secret must be oesmetadata.xml
       redirectProtocol: https
@@ -528,7 +528,7 @@ rabbitmq:
   url: rabbitmq-service
   port: 5672
   username: rabbitmq
-  password: Networks123
+  password: encrypted:rabbitmq-PASSOWORD:rabbitmq-PASSWORD
   image:
     registry: quay.io/opsmxpublic/rabbitmq
     repository: 3-management
@@ -584,7 +584,7 @@ sapor:
       x509:
         enabled: false
         client:
-          password: changeit
+          password: encrypted:unknown-PASSOWORD:unknown-PASSWORD
           
     #encryption key needed for sapor to startup from 3.9
     encrypt:
@@ -628,7 +628,7 @@ saporgate:
 
   config:
     username: admin      # User name with admin permissions and belonging to admin groups defined in platform service
-    password: saporadmin # Any generic String, need not be the real password
+    password: encrypted:admin-PASSOWORD:admin-PASSWORD  # Any generic String, need not be the real password
 
 ###############################################################################
 ## Values of OES UI
@@ -690,7 +690,7 @@ redis:
   image:
     registry: quay.io/opsmxpublic
     repository: bitnami-redis
-  password: password
+  password: encrypted:unknown-PASSOWORD:unknown-PASSWORD
   cluster:
     enabled: false
 
@@ -888,7 +888,7 @@ spinnaker:
                 url: ldap://RELEASE_NAME-openldap:389
 
                 managerDn: cn=admin,dc=example,dc=org
-                managerPassword: opsmxadmin123
+                managerPassword: encrypted:manager-PASSOWORD:manager-PASSWORD
                 groupSearchBase: ou=groups,dc=example,dc=org
                 groupSearchFilter: member={0}
                 groupRoleAttributes: cn
@@ -1090,7 +1090,7 @@ spinnaker:
       enabled: true
       basic:
         username: admin          # Use credentials corresponding to saporgate.config.username
-        password: saporadmin     # Use credentials corresponding to saporgate.config.password
+        password: encrypted:admin-PASSOWORD:admin-PASSWORD  # Use credentials corresponding to saporgate.config.password
 
 ###############################################################################################
 ###############################################################################################
@@ -1135,8 +1135,8 @@ opa:
 # OpenLDAP custom configuration; will override default configuration of openldap helm chart
 openldap:
   # Password for the admin user; by default it is set to admin
-  adminPassword: opsmxadmin123
-  configPassword: opsmxconfig123
+  adminPassword: encrypted:admin-PASSOWORD:admin-PASSWORD
+  configPassword: encrypted:config-PASSOWORD:config-PASSWORD
   omitClusterIP: true
   affinity: {}
   tolerations: []

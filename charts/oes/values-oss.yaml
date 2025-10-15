@@ -339,8 +339,8 @@ installOpenLdap: true
 ##
 openldap:
   # Password for the admin user; by default it is set to admin
-  adminPassword: opsmxadmin123
-  configPassword: opsmxconfig123
+  adminPassword: encrypted:admin-PASSOWORD:admin-PASSWORD
+  configPassword: encrypted:config-PASSOWORD:config-PASSWORD
   omitClusterIP: true
   persistence:
     enabled: true
@@ -456,7 +456,7 @@ ldap:
   userDnPattern: cn={0}
   basedn: dc=example,dc=org # Value of ldap.base.dn
   adminDn: cn=admin,dc=example,dc=org
-  adminPassword: opsmxadmin123
+  adminPassword: encrypted:admin-PASSOWORD:admin-PASSWORD
   userDisplayName: displayName
   pattern: (&(cn=USERNAME))
   userGroupIdentity: memberOf

@@ -46,7 +46,7 @@ global:
     enabled: true
     url: ldaps://xxx.opsmx.net:636
     managerDn: cn=admin,dc=example,dc=org
-    managerPassword: opsmxadmin123
+    managerPassword: encrypted:manager-PASSOWORD:manager-PASSWORD
     groupSearchBase: ou=groups,dc=example,dc=org
     groupSearchFilter: member={0}
     groupRoleAttributes: cn
@@ -80,7 +80,7 @@ gate:
       enabled: false
       userSource: gate  # Groups will be obtained from SAML
       keyStore: /opt/spinnaker/saml/oessaml.jks  # The key in this secret must be oessaml.jks
-      keyStorePassword: changeit
+      keyStorePassword: encrypted:keyStore-PASSOWORD:keyStore-PASSWORD
       keyStoreAliasName: saml
       metadataUrl: /opt/spinnaker/saml/oesmetadata.xml # The key in this secret must be oesmetadata.xml
       redirectProtocol: https

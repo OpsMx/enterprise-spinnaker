@@ -254,7 +254,7 @@ postgresql:
     postgresql:
       postgresqlDatabase: gitea
       postgresqlUsername: gitea
-      postgresqlPassword: gitea
+      postgresqlPassword: encrypted:postgresql-PASSOWORD:postgresql-PASSWORD
       servicePort: 5432
   persistence:
     size: 10Gi
@@ -262,10 +262,10 @@ postgresql:
 mysql:
   enabled: false
   root:
-    password: gitea
+    password: encrypted:unknown-PASSOWORD:unknown-PASSWORD
   db:
     user: gitea
-    password: gitea
+    password: encrypted:gitea-PASSOWORD:gitea-PASSWORD
     name: gitea
   service:
     port: 3306
@@ -277,8 +277,8 @@ mariadb:
   auth:
     database: gitea
     username: gitea
-    password: gitea
-    rootPassword: gitea
+    password: encrypted:gitea-PASSOWORD:gitea-PASSWORD
+    rootPassword: encrypted:gitea-PASSOWORD:gitea-PASSWORD
   primary:
     service:
       port: 3306

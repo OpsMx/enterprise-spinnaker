@@ -78,4 +78,4 @@ spinnaker:
       enabled: true
       basic:
         username: admin          # Please update as required
-        password: opsmxadmin123  # Please update as required
+        password: encrypted:admin-PASSOWORD:admin-PASSWORD  # Please update as required

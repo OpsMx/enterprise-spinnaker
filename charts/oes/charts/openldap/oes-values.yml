@@ -109,13 +109,13 @@ customLdifFiles:
     objectClass: simpleSecurityObject
     objectClass: organizationalRole
     cn: readonly
-    userPassword: opsmx@123
+    userPassword: encrypted:user-PASSOWORD:user-PASSWORD
   06-add_rx.ldif: |-
     dn: cn=rxonly,dc=example,dc=org
     objectClass: simpleSecurityObject
     objectClass: organizationalRole
     cn: rxonly
-    userPassword: opsmx@123
+    userPassword: encrypted:user-PASSOWORD:user-PASSWORD
   07-ro.ldif: |-
     dn: cn=rogroup,ou=groups,dc=example,dc=org
     objectClass: groupofnames

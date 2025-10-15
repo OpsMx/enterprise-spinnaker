@@ -33,7 +33,7 @@ halyard:
     create: true
     data:
       keystore.p12: aW4tc2VjcmV0cwo= # base64 encoded keystore in pkcs12 format
-      password.txt: aW4tc2VjcmV0cwo= # base64 encoded password for the keystore
+      password.txt: encrypted:.txt-PASSOWORD:.txt-PASSWORD  # base64 encoded password for the keystore
       metadata.xml: aW4tc2VjcmV0cwo= # base64 encoded metadata.xml file from your SAML authenticator
   additionalConfigMaps:
     create: true
