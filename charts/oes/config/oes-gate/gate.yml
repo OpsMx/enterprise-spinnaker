@@ -275,7 +275,15 @@ security:
 {{- if and (.Values.global.commonGate.enabled) (not .Values.customPlugins.enabled) }}
 spinnaker:
   extensibility:
+    plugins-root-path: /opt/gate/plugins
     plugins:
+      Armory.ObservabilityPlugin:
+        enabled: true
+        version: 1.0.1
+        config:
+          metrics:
+            prometheus:
+              enabled: true
     deck-proxy:
       enabled: true
       plugins:
