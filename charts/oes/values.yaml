@@ -112,7 +112,7 @@ global:
 
   gitea:
     enabled: false
-    standardrepoBranch: 2025.10.00
+    standardrepoBranch: 2025.10.01
     admin:
       existingSecret: gitea-secret
       username: opsmx
@@ -328,7 +328,7 @@ autopilot:
   ## Image specific details
   image:
     repository: ubi8-oes-autopilot
-    tag: isd-spin-2025.10.00-6b162eaca-202510270840
+    tag: isd-spin-2025.10.01-af26a30d4-202511261054
     pullPolicy: IfNotPresent
 
   annotations:
@@ -366,7 +366,7 @@ audit:
   ##
   image:
     repository: ubi8-oes-audit-service
-    tag: isd-spin-2025.10.00-9dc6cdd-202510280515
+    tag: isd-spin-2025.10.01-20f6397-202511261032
     pullPolicy: IfNotPresent
 
   serviceAnnotations: {}
@@ -426,7 +426,7 @@ auditClient:
   ##
   image:
     repository: ubi8-oes-audit-client
-    tag: isd-spin-2025.10.00-d9081a9-202510271036
+    tag: isd-spin-2025.10.01-cb1bfce-202511261037
     pullPolicy: IfNotPresent
 
   serviceAnnotations: {}
@@ -454,7 +454,7 @@ datascience:
   ##
   image:
     repository: ubi8-oes-datascience
-    tag: isd-spin-2025.10.00-6b162eaca-202510271038
+    tag: isd-spin-2025.10.01-af26a30d4-202511261054
     pullPolicy: IfNotPresent
 
   serviceAnnotations: {}
@@ -479,7 +479,7 @@ dashboard:
   ## Image specific details
   image:
     repository: ubi8-oes-dashboard
-    tag: isd-spin-2025.10.00-2bfa1be-202510270840
+    tag: isd-spin-2025.10.01-7a79b1f-202511261118
     pullPolicy: IfNotPresent
 
   annotations:
@@ -551,7 +551,7 @@ gate:
   ## Image specific details
   image:
     repository: ubi8-gate
-    tag: isd-spin-2025.10.00-1abd45c0-202510271152
+    tag: isd-spin-2025.10.01-5c720954-202511260810
     pullPolicy: IfNotPresent
 
   serviceAnnotations: {}
@@ -677,7 +677,7 @@ platform:
   ## Image specific details
   image:
     repository: ubi8-oes-platform
-    tag: isd-spin-2025.10.00-98e3060c-202510270838
+    tag: isd-spin-2025.10.01-a7c191ec-202511261122
     pullPolicy: IfNotPresent
 
   annotations:
@@ -759,7 +759,7 @@ sapor:
   ## Image specific details
   image:
     repository: ubi8-oes-sapor
-    tag: isd-spin-2025.10.00-3782e8fe-202510271036
+    tag: isd-spin-2025.10.01-a806b31e-202511261206
     pullPolicy: IfNotPresent
 
   annotations:
@@ -861,7 +861,7 @@ ui:
   ## Image specific details
   image:
     repository: ubi8-oes-ui
-    tag: isd-spin-2025.10.00-58958f887-202510281236
+    tag: isd-spin-2025.10.01-e6f6f01-202512100640
     pullPolicy: IfNotPresent
 
   annotations:
@@ -884,7 +884,7 @@ visibility:
   ## Image specific details
   image:
     repository: ubi8-oes-visibility
-    tag: isd-spin-2025.10.00-1c7f2bb-202510271034
+    tag: isd-spin-2025.10.01-757c113-202511261143
     pullPolicy: IfNotPresent
 
   annotations:
@@ -1051,7 +1051,7 @@ spinnaker:
     spinnakerVersion: 1.33.3
     image:
       repository: quay.io/opsmxpublic/ubi8-halyard-cve
-      tag: 1.65.0-cc984c3-202510270924
+      tag: 1.65.0-c25674a2-202511260857
     # Set to false to disable persistence data volume for halyard
     persistence:
       enabled: true
@@ -1371,7 +1371,7 @@ opa:
   enabled: true
   image:
     repository: opa
-    tag: 1.6.0
+    tag: 1.12.0
     pullPolicy: IfNotPresent
   annotations:
     moniker.spinnaker.io/application: isd
