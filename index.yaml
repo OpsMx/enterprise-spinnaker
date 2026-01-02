@@ -1,5 +1,16 @@
 apiVersion: v1
 entries:
+  job-chart:
+  - apiVersion: v2
+    appVersion: 1.16.0"
+    created: "2026-01-02T16:28:02.882287751+05:30"
+    description: A Helm chart for MA job.
+    digest: ab8789a5f647597c7f059bdadb33e6f89ce16e93196aae6b25f9fffc5e6d00b1
+    name: job-chart
+    type: application
+    urls:
+    - https://opsmx.github.io/enterprise-spinnaker/job-chart-0.1.0.tgz
+    version: 0.1.0
   hello-kubernetes:
   - apiVersion: v2
     appVersion: 1.10.0
