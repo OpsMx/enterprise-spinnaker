@@ -40,7 +40,7 @@ spec:
           envFrom:
           - secretRef:
               name: oes-gate-secret
-          image: quay.io/opsmxpublic/opa:curl-jq-kubectl-v1.0
+          image: quay.io/opsmxpublic/opa:opa-sidecar-v1.0
           imagePullPolicy: IfNotPresent
           volumeMounts:
           - mountPath: /tmp/config

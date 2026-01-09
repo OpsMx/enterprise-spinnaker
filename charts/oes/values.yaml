@@ -737,7 +737,7 @@ rabbitmq:
   password: Networks123
   image:
     registry: quay.io/opsmxpublic/rabbitmq
-    repository: 4.1-management
+    repository: 4.2-management
 
   annotations:
     moniker.spinnaker.io/application: isd
