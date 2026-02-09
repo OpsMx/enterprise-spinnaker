@@ -345,7 +345,7 @@ allowUnauthenticatedAccess:
   webhooks: {{ .Values.gate.config.webhooks }}
 
 message-broker:
-  enabled: true
+  enabled: {{ gt (int .Values.rabbitmq.replicas) 0 | ternary true false }}
   username: {{ .Values.rabbitmq.username }}
   password: {{ .Values.rabbitmq.password }}
   host: {{ .Values.rabbitmq.url }}
