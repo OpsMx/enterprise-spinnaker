@@ -361,3 +361,7 @@ management:
     metrics:
       export:
         enabled: {{ .Values.global.openTelemetry }}
+  datadog:
+     metrics:
+       export:
+         enabled: {{ .Values.global.dataDog }}
